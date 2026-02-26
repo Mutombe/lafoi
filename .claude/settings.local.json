@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed 's/?.*//')",
+      "Bash(sed:*)",
+      "WebFetch(domain:images.unsplash.com)",
+      "Bash(curl:*)",
+      "WebSearch",
+      "WebFetch(domain:unsplash.com)",
+      "Bash(npx:*)"
+    ]
+  }
+}
