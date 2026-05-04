@@ -47,6 +47,7 @@ export default function Home() {
       transition={{ duration: 0.5 }}
     >
       <Hero />
+      <FinishBand />
       <Manifesto />
       <FinishGallery />
       <Approach />
@@ -60,10 +61,11 @@ export default function Home() {
 }
 
 /* ============================================================================
-   1. HERO
-   Asymmetric editorial. Headline left, metadata card lower-right, finish
-   thumbnail strip floats at the bottom of the viewport — a tiny moodboard
-   that signals what the studio actually does.
+   1. HERO — Pattern C: Layered cinematic
+   Single full-bleed luminous ceiling image. Asymmetric headline anchored to
+   the lower-left. Tiny floating metadata card lower-right (luxury magazine
+   ad). Everything fits within 100svh — no scroll required to see all hero
+   content. The finish strip has been moved out into its own band below.
    ============================================================================ */
 
 function Hero() {
@@ -72,25 +74,18 @@ function Hero() {
     target: ref,
     offset: ['start start', 'end start'],
   })
-  const y = useTransform(scrollYProgress, [0, 1], [0, 180])
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.08])
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
-
-  const finishStrip = [
-    { name: 'Matte', meta: 'soft · diffused', img: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=600&q=80', slug: 'matte-stretch-membrane' },
-    { name: 'Satin', meta: 'pearl · 18% gloss', img: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=600&q=80', slug: 'satin-stretch-membrane' },
-    { name: 'Gloss', meta: 'liquid · mirrored', img: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&q=80', slug: 'gloss-lacquer-membrane' },
-    { name: 'Translucent', meta: 'backlit · 75%', img: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=600&q=80', slug: 'translucent-backlit-membrane' },
-    { name: 'Printed', meta: 'photographic · 1440 dpi', img: 'https://images.unsplash.com/photo-1618259715220-a89a4e4da76b?w=600&q=80', slug: 'printed-photographic-membrane' },
-    { name: 'Sculptural', meta: '3D · subframe', img: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=600&q=80', slug: '3d-sculptural-membrane' },
-  ]
+  const y = useTransform(scrollYProgress, [0, 1], [0, 120])
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.06])
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-lafoi-dark">
-      {/* parallax background */}
+    <section
+      ref={ref}
+      className="relative h-[100svh] min-h-[640px] overflow-hidden bg-lafoi-dark"
+    >
+      {/* parallax background — luminous translucent ceiling */}
       <motion.div className="absolute inset-0" style={{ y, scale }}>
         <OptimizedImage
-          src="https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2000&q=85"
+          src="https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85"
           alt="Luminous translucent stretch ceiling glowing across a hotel ballroom"
           className="w-full h-full object-cover object-center"
           fill
@@ -99,76 +94,84 @@ function Hero() {
         />
       </motion.div>
 
-      {/* layered overlays — gradient instead of flat dim, preserves the image */}
-      <motion.div className="absolute inset-0" style={{ opacity: overlayOpacity }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/85 via-lafoi-dark/55 to-lafoi-dark/15" />
-        <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/80 via-transparent to-lafoi-dark/40" />
-      </motion.div>
+      {/* refined cinematic overlays — preserve the image, deepen the corners */}
+      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55" />
+      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20" />
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-60 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse at 50% 35%, rgba(34,197,94,0.10), transparent 55%)',
+        }}
+      />
 
-      {/* CONTENT — asymmetric editorial layout */}
-      <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 min-h-[100svh] flex flex-col justify-between pt-32 pb-10 lg:pb-14">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 flex-1 items-center">
-          {/* Left — headline */}
+      {/* CONTENT — single viewport, anchored bottom-left */}
+      <div className="relative z-10 h-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col">
+        {/* eyebrow — top of viewport */}
+        <motion.div
+          className="pt-28 lg:pt-32"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lafoi-green opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-lafoi-green-light" />
+            </span>
+            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
+              Stretch ceilings · Architectural lighting · Harare
+            </span>
+          </span>
+        </motion.div>
+
+        {/* headline anchored bottom — the centre of gravity of the hero */}
+        <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
           <motion.div
             className="lg:col-span-8"
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-10"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+            <h1
+              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.4rem] xl:text-[7.2rem]"
+              style={{ fontVariationSettings: '"opsz" 144' }}
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lafoi-green opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-lafoi-green-light" />
-              </span>
-              <span className="text-[11px] font-sora text-white/85 font-medium tracking-[0.2em] uppercase">
-                Zimbabwe's first stretch ceiling studio
-              </span>
-            </motion.div>
-
-            <h1 className="heading-xl text-white text-[2.6rem] leading-[1.02] sm:text-6xl lg:text-[5.6rem] xl:text-[6.4rem]">
-              <span className="block">Light,</span>
+              <span className="block font-light text-white/95">Light, shaped</span>
               <span className="block">
-                <span className="font-cabinet italic font-light text-white/95">shaped</span>
-                <span className="text-white"> by</span>
-              </span>
-              <span className="block">
-                <span className="font-cabinet italic font-light text-white/95">surface</span>
+                <span className="font-normal text-white">by </span>
+                <span className="font-normal text-lafoi-green-light">surface</span>
                 <span className="text-lafoi-green-light">.</span>
               </span>
             </h1>
 
             <motion.p
-              className="mt-8 lg:mt-10 max-w-xl text-base sm:text-lg text-white/65 font-general leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
+              className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
               German-engineered stretch membranes and Estonian printed ceilings, paired with
-              bespoke LED architecture. We design overhead — the surface most often forgotten,
-              and the one with the most to give.
+              bespoke LED architecture. We design the surface most often forgotten.
             </motion.p>
 
             <motion.div
-              className="mt-10 lg:mt-12 flex flex-wrap items-center gap-x-6 gap-y-4"
-              initial={{ opacity: 0, y: 20 }}
+              className="mt-8 lg:mt-10 flex flex-wrap items-center gap-x-5 gap-y-3"
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.8 }}
+              transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
             >
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-3 px-7 py-4 bg-white text-lafoi-dark rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green-light hover:text-white transition-all duration-500 shadow-[0_8px_30px_rgba(255,255,255,0.12)]"
+                className="group inline-flex items-center gap-3 px-7 py-3.5 bg-lafoi-green-light text-white rounded-full font-body text-sm font-medium hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
               >
                 Start your project
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
               <Link
                 to="/projects"
-                className="group inline-flex items-center gap-2 text-white/80 hover:text-white font-sora text-sm font-medium pb-1 border-b border-white/30 hover:border-lafoi-green-light transition-colors"
+                className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
               >
                 Explore our work
                 <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
@@ -176,71 +179,83 @@ function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Right — metadata card */}
+          {/* lower-right metadata card — luxury magazine credit */}
           <motion.aside
-            className="lg:col-span-4 lg:pt-32 hidden lg:block"
-            initial={{ opacity: 0, y: 40 }}
+            className="lg:col-span-4 hidden lg:block"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 1 }}
+            transition={{ duration: 0.9, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="ml-auto max-w-[260px] border-l border-white/15 pl-6 py-4">
-              <p className="font-sora text-[10px] font-semibold tracking-[0.25em] uppercase text-lafoi-green-light mb-4">
-                Studio · Est. 2024
+            <div className="ml-auto max-w-[280px] border-l border-white/20 pl-6">
+              <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-green-light mb-4">
+                Studio — Est. 2024
               </p>
-              <div className="space-y-3 text-white/70 font-general text-sm">
+              <div className="space-y-2 font-body font-light text-[13px] text-white/70 leading-relaxed">
                 <p>Belgravia, Harare</p>
-                <p>German + Estonian engineered</p>
+                <p>German &amp; Estonian engineered</p>
                 <p>15-year manufacturer warranty</p>
                 <p>Class A1 fire performance</p>
               </div>
             </div>
           </motion.aside>
         </div>
+      </div>
 
-        {/* finish strip — the signature surprise */}
-        <motion.div
-          className="mt-12 lg:mt-0"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 1 }}
-          style={{ opacity: overlayOpacity }}
-        >
-          <div className="flex items-center justify-between mb-3 px-1">
-            <p className="text-[10px] font-sora text-white/40 tracking-[0.3em] uppercase">
-              Six finishes · eighteen products
-            </p>
-            <p className="text-[10px] font-sora text-white/40 tracking-[0.3em] uppercase hidden sm:block">
-              Scroll →
-            </p>
-          </div>
-          <div
-            className="flex gap-3 overflow-x-auto pb-1 -mx-4 sm:-mx-6 lg:-mx-10 px-4 sm:px-6 lg:px-10 snap-x snap-mandatory scrollbar-thin"
-            style={{ scrollbarWidth: 'thin' }}
-          >
-            {finishStrip.map((f) => (
-              <Link
-                key={f.slug}
-                to={`/products/${f.slug}`}
-                className="group relative flex-shrink-0 w-[140px] sm:w-[160px] aspect-[3/4] rounded-2xl overflow-hidden snap-start border border-white/10 hover:border-lafoi-green-light/50 transition-colors duration-500"
-              >
-                <OptimizedImage
-                  src={f.img}
-                  alt={`${f.name} stretch ceiling finish`}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-                  fill
-                  vision={`${f.name} stretch ceiling finish — ${f.meta}`}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <p className="font-cabinet italic text-xl text-white leading-none">{f.name}</p>
-                  <p className="text-[9px] font-sora text-white/55 tracking-[0.15em] uppercase mt-1.5">
-                    {f.meta}
-                  </p>
-                </div>
-              </Link>
+      {/* tiny scroll cue — bottom centre */}
+      <motion.div
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 1.1 }}
+      >
+        <span className="text-[9px] font-sora tracking-[0.35em] uppercase text-white/45">Scroll</span>
+        <span className="block w-px h-8 bg-gradient-to-b from-white/45 to-transparent" />
+      </motion.div>
+    </section>
+  )
+}
+
+/* ============================================================================
+   1b. FINISH BAND — slim typographic chapter index sitting just below the hero
+   Replaces the old in-hero thumbnail strip. Six finishes, hairline rules,
+   pure typography. Cream bg, very tight padding.
+   ============================================================================ */
+
+function FinishBand() {
+  const finishes = [
+    { name: 'Matte', slug: 'matte-stretch-membrane' },
+    { name: 'Satin', slug: 'satin-stretch-membrane' },
+    { name: 'Gloss', slug: 'gloss-lacquer-membrane' },
+    { name: 'Translucent', slug: 'translucent-backlit-membrane' },
+    { name: 'Printed', slug: 'printed-photographic-membrane' },
+    { name: 'Sculptural', slug: '3d-sculptural-membrane' },
+  ]
+
+  return (
+    <section className="bg-lafoi-cream border-y border-lafoi-dark/8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-5 lg:py-6">
+        <div className="flex items-center gap-4 lg:gap-6">
+          <span className="hidden sm:inline-block text-[9px] font-sora text-lafoi-gray/70 tracking-[0.3em] uppercase whitespace-nowrap">
+            The library
+          </span>
+          <span className="hidden sm:block flex-shrink-0 w-8 h-px bg-lafoi-dark/15" />
+          <ul className="flex items-center gap-x-5 sm:gap-x-7 lg:gap-x-10 overflow-x-auto whitespace-nowrap -mx-1 px-1 scrollbar-none">
+            {finishes.map((f, i) => (
+              <li key={f.slug} className="flex items-center gap-x-5 sm:gap-x-7 lg:gap-x-10">
+                <Link
+                  to={`/products/${f.slug}`}
+                  className="font-display text-base sm:text-lg lg:text-xl text-lafoi-dark hover:text-lafoi-green transition-colors duration-300 tracking-tight"
+                  style={{ fontVariationSettings: '"opsz" 60' }}
+                >
+                  {f.name}
+                </Link>
+                {i < finishes.length - 1 && (
+                  <span aria-hidden className="hidden sm:block w-1 h-1 rounded-full bg-lafoi-dark/20" />
+                )}
+              </li>
             ))}
-          </div>
-        </motion.div>
+          </ul>
+        </div>
       </div>
     </section>
   )
@@ -269,10 +284,10 @@ function Manifesto() {
           <AnimatedSection delay={0.1}>
             <h2 className="heading-lg text-white text-3xl sm:text-4xl lg:text-[3.4rem] leading-[1.15] tracking-[-0.02em]">
               We believe a ceiling is the{' '}
-              <span className="font-cabinet italic font-light text-lafoi-green-light">sixth surface</span>
+              <span className="font-display font-light text-lafoi-green-light">sixth surface</span>
               <span className="text-white"> — </span>
               the one most often forgotten, and the one
-              <span className="font-cabinet italic font-light text-white/85"> with the most to give.</span>
+              <span className="font-display font-light text-white/85"> with the most to give.</span>
             </h2>
           </AnimatedSection>
         </div>
@@ -338,7 +353,7 @@ function FinishGallery() {
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
                 Eight finishes.
                 <br />
-                <span className="font-cabinet italic font-light text-lafoi-green">
+                <span className="font-display font-light text-lafoi-green">
                   One ceiling that listens.
                 </span>
               </h2>
@@ -392,7 +407,7 @@ function FinishGallery() {
                   <p className="text-[10px] font-sora text-lafoi-green-light tracking-[0.25em] uppercase mb-2 opacity-80">
                     {p.finish}
                   </p>
-                  <h3 className="font-cabinet italic font-light text-3xl lg:text-4xl text-white leading-none">
+                  <h3 className="font-display font-light text-3xl lg:text-4xl text-white leading-none">
                     {p.finish}
                   </h3>
                   <p className="text-xs font-sora text-white/55 tracking-wide mt-3">
@@ -413,7 +428,7 @@ function FinishGallery() {
             to="/products"
             className="group inline-flex items-center gap-3 text-lafoi-dark font-sora text-sm font-medium pb-1 border-b border-lafoi-dark/30 hover:border-lafoi-green hover:text-lafoi-green transition-colors duration-300"
           >
-            <span className="font-cabinet italic font-light text-base">Explore the full library</span>
+            <span className="font-display font-light text-base">Explore the full library</span>
             <ArrowRight
               size={16}
               className="group-hover:translate-x-1 transition-transform duration-300"
@@ -493,7 +508,7 @@ function Approach() {
             <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-[4rem] leading-[1.05]">
               Three stages.
               <br />
-              <span className="font-cabinet italic font-light text-lafoi-green">No surprises.</span>
+              <span className="font-display font-light text-lafoi-green">No surprises.</span>
             </h2>
           </AnimatedSection>
         </div>
@@ -535,7 +550,7 @@ function Approach() {
                       />
                     ))}
                   </div>
-                  <p className="font-cabinet italic text-white text-2xl">
+                  <p className="font-display font-normal text-white text-2xl">
                     {stages[activeStep].title}
                   </p>
                 </div>
@@ -579,13 +594,13 @@ function ScrollStage({ stage, index }) {
       </div>
 
       <div className="flex items-baseline gap-6 mb-5">
-        <span className="font-cabinet italic font-light text-7xl lg:text-8xl text-lafoi-green/15 leading-none">
+        <span className="font-display font-light text-7xl lg:text-8xl text-lafoi-green/15 leading-none">
           {stage.num}
         </span>
         <span className="h-px flex-1 bg-lafoi-dark/15" />
       </div>
 
-      <h3 className="font-cabinet italic font-light text-4xl lg:text-5xl text-lafoi-dark mb-5">
+      <h3 className="font-display font-light text-4xl lg:text-5xl text-lafoi-dark mb-5">
         {stage.title}
       </h3>
       <p className="text-base lg:text-lg text-lafoi-gray font-general leading-relaxed max-w-md">
@@ -660,7 +675,7 @@ function Stats() {
           <AnimatedSection delay={0.1}>
             <h2 className="heading-xl text-white text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.1]">
               Quietly,{' '}
-              <span className="font-cabinet italic font-light text-lafoi-green-light">
+              <span className="font-display font-light text-lafoi-green-light">
                 consistently,
               </span>
               <br />
@@ -676,7 +691,7 @@ function Stats() {
                 <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4">
                   0{i + 1}
                 </span>
-                <p className="font-cabinet italic font-light text-white text-6xl lg:text-7xl xl:text-[6rem] leading-none tracking-[-0.03em]">
+                <p className="font-display font-light text-white text-6xl lg:text-7xl xl:text-[6rem] leading-none tracking-[-0.03em]">
                   <CountUp to={s.value} suffix={s.suffix} />
                 </p>
                 <p className="mt-5 text-xs lg:text-sm text-white/55 font-sora tracking-wide max-w-[200px] leading-relaxed">
@@ -717,7 +732,7 @@ function ProjectsBento() {
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
                 Rooms where the
                 <br />
-                <span className="font-cabinet italic font-light text-lafoi-green">
+                <span className="font-display font-light text-lafoi-green">
                   ceiling does the talking.
                 </span>
               </h2>
@@ -728,7 +743,7 @@ function ProjectsBento() {
               to="/projects"
               className="group inline-flex items-center gap-3 text-lafoi-dark font-sora text-sm font-medium hover:text-lafoi-green transition-colors duration-300"
             >
-              <span className="font-cabinet italic font-light text-base">All case studies</span>
+              <span className="font-display font-light text-base">All case studies</span>
               <span className="w-10 h-10 rounded-full border border-lafoi-dark/20 group-hover:border-lafoi-green group-hover:bg-lafoi-green flex items-center justify-center transition-all duration-300">
                 <ArrowRight
                   size={14}
@@ -761,7 +776,7 @@ function ProjectsBento() {
         <AnimatedSection delay={0.2} className="mt-14 flex justify-center">
           <Link
             to="/projects"
-            className="font-cabinet italic font-light text-2xl lg:text-3xl text-lafoi-dark hover:text-lafoi-green transition-colors duration-300 link-underline"
+            className="font-display font-light text-2xl lg:text-3xl text-lafoi-dark hover:text-lafoi-green transition-colors duration-300 link-underline"
           >
             More transformations →
           </Link>
@@ -797,7 +812,7 @@ function BentoProject({ project, large = false }) {
       {/* title block */}
       <div className="absolute bottom-0 left-0 right-0 p-5 lg:p-7">
         <h3
-          className={`font-cabinet italic font-light text-white leading-[1.05] ${
+          className={`font-display font-light text-white leading-[1.05] ${
             large ? 'text-3xl sm:text-4xl lg:text-5xl' : 'text-2xl lg:text-3xl'
           }`}
         >
@@ -872,11 +887,11 @@ function Testimonial() {
             {/* opening quote glyph — purely decorative */}
             <span
               aria-hidden
-              className="block font-cabinet italic font-light text-lafoi-green/15 text-[10rem] lg:text-[14rem] leading-none -mb-8 lg:-mb-14"
+              className="block font-display font-light text-lafoi-green/15 text-[10rem] lg:text-[14rem] leading-none -mb-8 lg:-mb-14"
             >
               “
             </span>
-            <blockquote className="font-cabinet italic font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[3.4rem] xl:text-[3.8rem] leading-[1.2] tracking-[-0.02em]">
+            <blockquote className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[3.4rem] xl:text-[3.8rem] leading-[1.2] tracking-[-0.02em]">
               {t.quote}
             </blockquote>
           </AnimatedSection>
@@ -905,7 +920,7 @@ function Testimonial() {
               {[...clients, ...clients].map((c, i) => (
                 <span
                   key={i}
-                  className="mx-8 font-cabinet italic font-light text-2xl lg:text-3xl text-lafoi-gray/60"
+                  className="mx-8 font-display font-light text-2xl lg:text-3xl text-lafoi-gray/60"
                 >
                   {c}
                   <span className="inline-block ml-16 w-1 h-1 rounded-full bg-lafoi-green/30 align-middle" />
@@ -933,7 +948,7 @@ function Partners() {
             <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green mb-6">
               — Provenance
             </p>
-            <h2 className="font-cabinet italic font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[4.4rem] leading-[1.05] tracking-[-0.02em]">
+            <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[4.4rem] leading-[1.05] tracking-[-0.02em]">
               Engineered in Europe,
               <br />
               <span className="text-lafoi-green">installed in Zimbabwe.</span>
@@ -958,7 +973,7 @@ function Partners() {
                   key={p.country}
                   className="p-5 rounded-2xl border border-lafoi-dark/10 bg-white/40 backdrop-blur-sm hover:border-lafoi-green/40 transition-colors duration-500"
                 >
-                  <p className="font-cabinet italic text-2xl text-lafoi-dark leading-none mb-2">
+                  <p className="font-display font-normal text-2xl text-lafoi-dark leading-none mb-2">
                     {p.country}
                   </p>
                   <p className="text-[11px] font-sora text-lafoi-green tracking-wider uppercase font-semibold mb-3">
@@ -1008,7 +1023,7 @@ function CinematicCTA() {
 
           <AnimatedSection delay={0.1}>
             <h2 className="heading-xl text-white text-5xl sm:text-6xl lg:text-[5.2rem] xl:text-[6rem] leading-[1.02] tracking-[-0.025em]">
-              <span className="block font-cabinet italic font-light">Begin with</span>
+              <span className="block font-display font-light">Begin with</span>
               <span className="block">a conversation.</span>
             </h2>
           </AnimatedSection>

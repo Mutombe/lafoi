@@ -137,7 +137,7 @@ export default function ProjectDetail() {
                   The story
                 </p>
                 <h2 className="heading-lg text-3xl lg:text-4xl text-lafoi-dark mb-5">
-                  How <span className="font-cabinet italic font-light text-lafoi-green">{project.title.split(' ')[0]}</span> came together
+                  How <span className="font-display font-light text-lafoi-green">{project.title.split(' ')[0]}</span> came together
                 </h2>
                 <p className="font-general text-lafoi-gray text-base leading-relaxed">
                   Three short chapters: the brief our client brought us, the design response we proposed, and the measurable outcome on completion.
@@ -170,7 +170,7 @@ export default function ProjectDetail() {
                   Project highlights
                 </p>
                 <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark">
-                  What makes this <span className="font-cabinet italic font-light text-lafoi-green">special</span>
+                  What makes this <span className="font-display font-light text-lafoi-green">special</span>
                 </h2>
               </div>
             </AnimatedSection>
@@ -235,7 +235,7 @@ export default function ProjectDetail() {
                     Project gallery
                   </p>
                   <h2 className="heading-lg text-3xl lg:text-4xl text-lafoi-dark">
-                    {project.gallery.length} images from <span className="font-cabinet italic font-light text-lafoi-green">the install</span>
+                    {project.gallery.length} images from <span className="font-display font-light text-lafoi-green">the install</span>
                   </h2>
                 </div>
                 <p className="text-sm font-general text-lafoi-gray-medium max-w-xs">
@@ -342,7 +342,7 @@ export default function ProjectDetail() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
             <AnimatedSection>
               <Quote size={36} className="text-lafoi-green mx-auto mb-6" />
-              <blockquote className="font-sora italic text-2xl sm:text-3xl lg:text-4xl text-lafoi-dark leading-snug font-light">
+              <blockquote className="font-display font-light text-2xl sm:text-3xl lg:text-4xl text-lafoi-dark leading-snug tracking-tight">
                 &ldquo;{project.testimonial.quote}&rdquo;
               </blockquote>
               <div className="mt-8 flex items-center justify-center gap-4">

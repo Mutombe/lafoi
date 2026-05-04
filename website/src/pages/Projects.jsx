@@ -136,7 +136,7 @@ export default function Projects() {
                   All projects
                 </p>
                 <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark">
-                  The complete <span className="font-cabinet italic font-light text-lafoi-green">archive</span>
+                  The complete <span className="font-display font-light text-lafoi-green">archive</span>
                 </h2>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -198,7 +198,7 @@ export default function Projects() {
                 The numbers
               </p>
               <h2 className="heading-lg text-3xl lg:text-5xl">
-                Proof in <span className="font-cabinet italic font-light">square metres</span>
+                Proof in <span className="font-display font-light">square metres</span>
               </h2>
             </div>
           </AnimatedSection>
@@ -232,7 +232,7 @@ export default function Projects() {
                 Start your project
               </p>
               <h2 className="heading-lg text-3xl lg:text-5xl text-white mb-4">
-                Become the <span className="font-cabinet italic font-light">next case study</span>.
+                Become the <span className="font-display font-light">next case study</span>.
               </h2>
               <p className="text-white/70 font-general text-lg mb-8 max-w-lg">
                 Every project on this page started with a site visit. Free, no-obligation assessment within 5 working days of contact.

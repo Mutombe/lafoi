@@ -131,7 +131,7 @@ export default function Products() {
                   <Sparkles size={14} /> Editor&rsquo;s pick
                 </p>
                 <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark max-w-2xl">
-                  Four signatures, <span className="font-cabinet italic font-light text-lafoi-green">always specified</span>.
+                  Four signatures, <span className="font-display font-light text-lafoi-green">always specified</span>.
                 </h2>
               </div>
               <p className="font-general text-lafoi-gray max-w-md">
@@ -303,7 +303,7 @@ export default function Products() {
                 By application
               </p>
               <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark">
-                Find what fits <span className="font-cabinet italic font-light text-lafoi-green">your space</span>.
+                Find what fits <span className="font-display font-light text-lafoi-green">your space</span>.
               </h2>
             </div>
           </AnimatedSection>
@@ -364,7 +364,7 @@ export default function Products() {
                 Specifying support
               </p>
               <h2 className="heading-lg text-3xl lg:text-5xl text-white mb-4">
-                Need help <span className="font-cabinet italic font-light">choosing</span>?
+                Need help <span className="font-display font-light">choosing</span>?
               </h2>
               <p className="text-white/70 font-general text-lg mb-8 max-w-lg">
                 Our consultants will walk you through finishes, lighting compatibility, and on-site samples — at no charge.

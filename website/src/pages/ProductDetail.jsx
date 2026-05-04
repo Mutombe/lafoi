@@ -231,7 +231,7 @@ export default function ProductDetail() {
                   <p className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase mb-3">
                     In context
                   </p>
-                  <h2 className="heading-lg text-3xl lg:text-4xl text-lafoi-dark">Seen in <span className="font-cabinet italic font-light text-lafoi-green">the field</span></h2>
+                  <h2 className="heading-lg text-3xl lg:text-4xl text-lafoi-dark">Seen in <span className="font-display font-light text-lafoi-green">the field</span></h2>
                 </div>
                 <p className="text-sm font-general text-lafoi-gray-medium max-w-xs">
                   Click any image to view at full size. Real installations from the La Foi project archive.
