@@ -6,7 +6,7 @@ import {
   Search, X, Menu, ChevronDown, ArrowRight,
   Sparkles, Building2, Briefcase, Camera, Phone,
   HelpCircle, Newspaper, Users, Lightbulb, Palette,
-  LayoutGrid, Zap, Star
+  LayoutGrid, Zap, Star, Package
 } from 'lucide-react'
 
 const navGroups = [
@@ -15,12 +15,14 @@ const navGroups = [
     items: [
       { name: 'Our Story', path: '/about', icon: Sparkles, desc: 'The journey behind La Foi' },
       { name: 'Portfolio', path: '/portfolio', icon: Camera, desc: 'Stunning transformations' },
+      { name: 'Projects', path: '/projects', icon: Camera, desc: 'Case studies & transformations' },
       { name: 'Blog & Insights', path: '/blog', icon: Newspaper, desc: 'Design trends & tips' },
     ],
   },
   {
     label: 'Solutions',
     items: [
+      { name: 'Products', path: '/products', icon: Package, desc: 'Membranes, lighting & accessories' },
       { name: 'Stretch Ceilings', path: '/services/stretch-ceilings', icon: LayoutGrid, desc: 'Premium ceiling systems' },
       { name: 'Custom Lighting', path: '/services/custom-lighting', icon: Lightbulb, desc: 'Architectural illumination' },
       { name: 'All Services', path: '/services', icon: Palette, desc: 'Full service catalog' },
@@ -53,12 +55,26 @@ const searchableContent = [
   { title: 'Residential Projects', path: '/portfolio', section: 'Projects', keywords: 'residential home house living room bedroom' },
   { title: 'Commercial Installations', path: '/portfolio', section: 'Projects', keywords: 'commercial office hotel restaurant retail' },
   { title: 'Free Consultation', path: '/contact', section: 'Connect', keywords: 'consultation free quote estimate' },
+  // Products
+  { title: 'All Products & Materials', path: '/products', section: 'Products', keywords: 'products catalog catalogue range materials membrane' },
+  { title: 'Matte Stretch Membrane', path: '/products/matte-stretch-membrane', section: 'Products', keywords: 'matte ceiling membrane german' },
+  { title: 'Gloss Lacquer Membrane', path: '/products/gloss-lacquer-membrane', section: 'Products', keywords: 'gloss lacquer mirror reflective ceiling' },
+  { title: 'Translucent Backlit Membrane', path: '/products/translucent-backlit-membrane', section: 'Products', keywords: 'translucent backlit luminous ceiling' },
+  { title: 'Printed Photographic Membrane', path: '/products/printed-photographic-membrane', section: 'Products', keywords: 'printed photographic custom artwork ceiling estonia' },
+  { title: '3D Sculptural Membrane', path: '/products/3d-sculptural-membrane', section: 'Products', keywords: '3d three dimensional sculptural wave dome ceiling' },
+  { title: 'Fibre-Optic Starfield Kit', path: '/products/fiber-optic-starfield', section: 'Products', keywords: 'fibre fiber optic star starry sky ceiling lighting' },
+  { title: 'Linear LED Cove System', path: '/products/linear-led-cove', section: 'Products', keywords: 'led cove perimeter lighting strip linear' },
+  // Projects
+  { title: 'Project Case Studies', path: '/projects', section: 'Projects', keywords: 'projects case studies transformations archive' },
+  { title: 'Borrowdale Private Residence', path: '/projects/borrowdale-private-residence', section: 'Projects', keywords: 'borrowdale residence home residential case study' },
+  { title: 'Meikles Grand Ballroom', path: '/projects/meikles-grand-ballroom', section: 'Projects', keywords: 'meikles hotel ballroom hospitality case study' },
+  { title: 'TechHub Belgravia Office', path: '/projects/techhub-belgravia-office', section: 'Projects', keywords: 'techhub office commercial acoustic case study' },
 ]
 
 // Pages with dark hero backgrounds where navbar text must be white
-const darkHeroPages = ['/', '/portfolio', '/services', '/faq', '/careers']
+const darkHeroPages = ['/', '/portfolio', '/services', '/faq', '/careers', '/products', '/projects']
 // Pages with sub-routes that also have dark heroes
-const darkHeroPrefixes = ['/services/']
+const darkHeroPrefixes = ['/services/', '/products/', '/projects/']
 
 function useHasDarkHero(pathname) {
   return darkHeroPages.includes(pathname) || darkHeroPrefixes.some(p => pathname.startsWith(p))

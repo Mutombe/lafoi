@@ -8,6 +8,7 @@ import AnimatedSection from '../ui/AnimatedSection'
 
 const footerLinks = {
   Solutions: [
+    { name: 'All Products', path: '/products' },
     { name: 'Stretch Ceilings', path: '/services/stretch-ceilings' },
     { name: 'Custom Lighting', path: '/services/custom-lighting' },
     { name: 'Printed Ceilings', path: '/services/printed-ceilings' },
@@ -16,6 +17,7 @@ const footerLinks = {
   ],
   Company: [
     { name: 'Our Story', path: '/about' },
+    { name: 'Projects', path: '/projects' },
     { name: 'Portfolio', path: '/portfolio' },
     { name: 'Careers', path: '/careers' },
     { name: 'Blog', path: '/blog' },
