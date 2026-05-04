@@ -1,9 +1,21 @@
-import React from 'react';
-import { motion } from 'framer-motion'
-import { useState } from 'react'
+import React, { useRef } from 'react'
+import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowRight, Check, Stack, Lightbulb, Printer, Cube, SpeakerHigh, Palette, CaretRight, Sparkle, Star, ArrowUpRight } from '@phosphor-icons/react'
-import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
+import {
+  ArrowRight,
+  ArrowUpRight,
+  ArrowLeft,
+  Stack,
+  Lightbulb,
+  Printer,
+  Cube,
+  SpeakerHigh,
+  Palette,
+  Sparkle,
+  Trophy,
+  CheckCircle,
+} from '@phosphor-icons/react'
+import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
@@ -31,105 +43,175 @@ const allServices = [
     slug: 'stretch-ceilings',
     icon: Stack,
     title: 'Stretch Ceilings',
-    subtitle: 'Premium Membrane Systems',
+    subtitle: 'Premium membrane systems',
     hero: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1920&q=80',
-    heroVision: 'Elegant living room with premium stretch ceiling and warm lighting',
-    desc: 'Our stretch ceilings are manufactured from premium PVC and fabric membranes sourced from Germany and Estonia. Available in over 200 colors and multiple finishes, they transform any space into a masterpiece.',
-    features: ['Matte, Gloss & Satin finishes', 'Over 200 color options', 'Translucent & Backlit options', 'Moisture & mildew resistant', 'Fire-rated (Class B-s1, d0)', 'Quick installation (usually 1 day)', '10-year manufacturer warranty', 'Eco-friendly & recyclable'],
-    applications: ['Living rooms & bedrooms', 'Bathrooms & kitchens', 'Hotels & restaurants', 'Office spaces', 'Medical facilities', 'Retail showrooms'],
-    image: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=800&q=80',
-    imageVision: 'Modern home interior with smooth stretch ceiling and integrated lighting',
-    color: 'from-lafoi-green to-emerald-600',
-    bgAccent: 'bg-lafoi-green/10',
+    heroVision: 'Living room with premium stretch ceiling and warm lighting',
+    desc: 'Stretch ceilings manufactured from premium PVC and fabric membranes sourced from Germany and Estonia. Available in over 200 colours and multiple finishes — engineered to disappear into great architecture.',
+    features: [
+      { label: 'Finish library', detail: 'Matte, satin, gloss, translucent, printed' },
+      { label: 'Colour matches', detail: '220+ pigment-locked options' },
+      { label: 'Class A1 fire', detail: 'B-s1, d0 — self-extinguishing' },
+      { label: 'Moisture proof', detail: 'Bathroom and kitchen rated' },
+      { label: 'Installation', detail: 'One working day per room' },
+      { label: 'Warranty', detail: '15-year manufacturer backing' },
+    ],
+    applications: [
+      'Living rooms & bedrooms',
+      'Bathrooms & kitchens',
+      'Hotels & restaurants',
+      'Office spaces',
+      'Medical facilities',
+      'Retail showrooms',
+    ],
+    image: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1400&q=80',
+    imageVision: 'Modern home interior with stretch ceiling',
   },
   {
     slug: 'custom-lighting',
     icon: Lightbulb,
     title: 'Custom Lighting',
-    subtitle: 'Architectural Illumination',
-    hero: 'https://images.unsplash.com/photo-1767203330128-b4c27297f320?w=1920&q=80',
-    heroVision: 'Modern ceiling lights with artistic blue and white accents',
-    desc: 'From fiber optic starry skies to programmable LED arrays, our lighting solutions create atmosphere and ambiance that elevate any interior to new heights.',
-    features: ['LED strip integration', 'Fiber optic starry sky effects', 'Backlit ceiling panels', 'Color-changing RGB systems', 'Smart home integration', 'Energy-efficient solutions', 'Dimmable controls', 'Custom light patterns'],
-    applications: ['Master bedrooms', 'Home cinemas', 'Spa & wellness centers', 'Restaurant ambiance', 'Nightclub & lounge design', 'Children\'s rooms'],
-    image: 'https://images.unsplash.com/photo-1767203330128-b4c27297f320?w=800&q=80',
-    imageVision: 'Room with LED integrated ceiling creating atmospheric lighting',
-    color: 'from-amber-500 to-orange-600',
-    bgAccent: 'bg-amber-500/10',
+    subtitle: 'Architectural illumination',
+    hero: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1920&q=80',
+    heroVision: 'Architectural lighting throughout a hospitality lobby',
+    desc: 'From fibre-optic starry skies to programmable LED arrays, our lighting solutions create atmosphere and ambiance that elevate any interior to new heights.',
+    features: [
+      { label: 'LED systems', detail: 'Strip, panel and linear integration' },
+      { label: 'Fibre optic', detail: 'Starry skies and edge accents' },
+      { label: 'Backlit panels', detail: 'Translucent membrane lighting' },
+      { label: 'RGB & tunable', detail: 'Colour-changing and white-tunable' },
+      { label: 'Smart control', detail: 'Home-system and DMX-ready' },
+      { label: 'Energy', detail: 'Dimmable, low-power architecture' },
+    ],
+    applications: [
+      'Master bedrooms',
+      'Home cinemas',
+      'Spa & wellness centres',
+      'Restaurant ambiance',
+      'Lounge & nightclub design',
+      "Children's rooms",
+    ],
+    image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1400&q=80',
+    imageVision: 'Spa-like room with translucent backlit ceiling',
   },
   {
     slug: 'printed-ceilings',
     icon: Printer,
     title: 'Printed Ceilings',
-    subtitle: 'Custom Visual Expressions',
-    hero: 'https://images.unsplash.com/photo-1648858308067-2fdba1ca32f2?w=1920&q=80',
-    heroVision: 'Beautiful sky with clouds, inspiration for printed ceiling designs',
-    desc: 'Transform your ceiling into a canvas with high-resolution UV-printed designs. From photorealistic sky scenes to custom artwork and brand logos, the possibilities are limitless.',
-    features: ['UV-resistant HD printing', 'Custom artwork & photos', 'Brand logo integration', 'Nature scenes & sky effects', 'Geometric patterns', 'Washable & durable', 'Seamless large format', 'Color-accurate reproduction'],
-    applications: ['Swimming pools & spas', 'Children\'s rooms & nurseries', 'Themed restaurants', 'Corporate branding', 'Retail environments', 'Medical & dental clinics'],
-    image: 'https://images.unsplash.com/photo-1648858308067-2fdba1ca32f2?w=800&q=80',
-    imageVision: 'Sky with clouds creating beautiful natural patterns',
-    color: 'from-violet-500 to-purple-600',
-    bgAccent: 'bg-violet-500/10',
+    subtitle: 'Custom visual expressions',
+    hero: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=1920&q=80',
+    heroVision: 'Quiet gallery space awaiting a printed ceiling installation',
+    desc: 'Transform your ceiling into a canvas with high-resolution UV-printed designs. From photorealistic skies and custom artwork to brand logos — the possibilities are limitless, the resolution exact.',
+    features: [
+      { label: 'Resolution', detail: '1440 dpi UV pigment' },
+      { label: 'Format', detail: 'Seamless large-format' },
+      { label: 'Durability', detail: 'UV-resistant, washable' },
+      { label: 'Custom artwork', detail: 'Photographs, illustration, brand' },
+      { label: 'Themes', detail: 'Sky, geometry, nature, abstraction' },
+      { label: 'Colour accuracy', detail: 'Calibrated proofing' },
+    ],
+    applications: [
+      'Swimming pools & spas',
+      "Children's rooms & nurseries",
+      'Themed restaurants',
+      'Corporate branding',
+      'Retail environments',
+      'Medical & dental clinics',
+    ],
+    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400&q=80',
+    imageVision: 'Contemporary architecture interior with photographic feature',
   },
   {
     slug: '3d-ceilings',
     icon: Cube,
     title: '3D Ceiling Forms',
-    subtitle: 'Sculptural Architecture',
+    subtitle: 'Sculptural architecture',
     hero: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=1920&q=80',
-    heroVision: 'Large modern building with dramatic architectural ceiling with skylight',
+    heroVision: 'Building with dramatic architectural ceiling',
     desc: 'Push the boundaries of interior design with three-dimensional ceiling installations. Waves, cones, domes, and custom organic forms that make spaces unforgettable.',
-    features: ['Wave & curve forms', 'Cone & dome shapes', 'Custom organic designs', 'Multi-level installations', 'Integrated lighting options', 'Lightweight construction', 'Architectural focal points', 'Unlimited shape possibilities'],
-    applications: ['Hotel lobbies', 'Corporate reception areas', 'Event venues', 'Exhibition spaces', 'Luxury residences', 'Architectural features'],
-    image: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=800&q=80',
-    imageVision: 'Dramatic architectural ceiling with skylight creating dynamic forms',
-    color: 'from-cyan-500 to-blue-600',
-    bgAccent: 'bg-cyan-500/10',
+    features: [
+      { label: 'Forms', detail: 'Waves, curves, cones, domes' },
+      { label: 'Custom geometry', detail: 'Organic and parametric' },
+      { label: 'Multi-level', detail: 'Stepped and stratified installs' },
+      { label: 'Lighting', detail: 'Integrated cove and accent' },
+      { label: 'Construction', detail: 'Lightweight subframe systems' },
+      { label: 'Focal points', detail: 'Architectural centrepieces' },
+    ],
+    applications: [
+      'Hotel lobbies',
+      'Corporate reception areas',
+      'Event venues',
+      'Exhibition spaces',
+      'Luxury residences',
+      'Architectural features',
+    ],
+    image: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=1400&q=80',
+    imageVision: 'Dramatic architectural ceiling with skylight',
   },
   {
     slug: 'acoustic',
     icon: SpeakerHigh,
     title: 'Acoustic Solutions',
-    subtitle: 'Sound Management',
+    subtitle: 'Sound management',
     hero: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1920&q=80',
-    heroVision: 'Professional recording studio with acoustic treatment',
-    desc: 'Micro-perforated stretch ceilings that combine visual elegance with superior sound absorption. Perfect for spaces where both aesthetics and acoustics matter.',
-    features: ['Micro-perforated membranes', 'NRC up to 0.90', 'Hidden acoustic backing', 'Seamless appearance', 'All finishes available', 'Sound level reduction', 'Echo elimination', 'Meets acoustic standards'],
-    applications: ['Recording studios', 'Conference rooms', 'Open-plan offices', 'Restaurants & cafes', 'Cinemas & theatres', 'Educational facilities'],
-    image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=800&q=80',
-    imageVision: 'Professional recording studio with acoustic treatment panels',
-    color: 'from-teal-500 to-emerald-600',
-    bgAccent: 'bg-teal-500/10',
+    heroVision: 'Open-plan office with acoustic ceiling treatment',
+    desc: 'Micro-perforated stretch ceilings that combine visual elegance with superior sound absorption. For spaces where both aesthetics and acoustics matter equally.',
+    features: [
+      { label: 'Perforation', detail: 'Micro-perforated membrane' },
+      { label: 'NRC rating', detail: 'Up to 0.90 sound absorption' },
+      { label: 'Backing', detail: 'Hidden acoustic substrate' },
+      { label: 'Appearance', detail: 'Seamless, no visible joints' },
+      { label: 'Finishes', detail: 'Available across all colour matches' },
+      { label: 'Standards', detail: 'Meets EU acoustic regulations' },
+    ],
+    applications: [
+      'Recording studios',
+      'Conference rooms',
+      'Open-plan offices',
+      'Restaurants & cafes',
+      'Cinemas & theatres',
+      'Educational facilities',
+    ],
+    image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1400&q=80',
+    imageVision: 'Acoustic office space with treated ceiling',
   },
   {
     slug: 'consulting',
     icon: Palette,
     title: 'Design Consulting',
-    subtitle: 'Vision to Reality',
+    subtitle: 'Vision to reality',
     hero: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1920&q=80',
-    heroVision: 'Modern lobby with marble floors and decorative ceiling design',
-    desc: 'Our trained design consultants guide you through every step -- from material selection and color matching to lighting design and 3D visualization of your finished space.',
-    features: ['Free initial consultation', 'Site assessment', '3D visualization', 'Material sampling', 'Color matching', 'Lighting design', 'Budget planning', 'Project management'],
-    applications: ['New builds', 'Renovations', 'Commercial fit-outs', 'Interior redesigns', 'Event installations', 'Architectural projects'],
-    image: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=800&q=80',
-    imageVision: 'Modern lobby with marble floors and beautiful decorative ceiling',
-    color: 'from-rose-500 to-pink-600',
-    bgAccent: 'bg-rose-500/10',
+    heroVision: 'Lobby in design — finishes being specified',
+    desc: 'Our trained design consultants guide you through every step — from material selection and colour matching to lighting design and 3D visualisation of your finished space.',
+    features: [
+      { label: 'Free consult', detail: 'Initial brief and site visit' },
+      { label: 'Site assessment', detail: 'Measured drawings, samples' },
+      { label: '3D visualisation', detail: 'Render before fabrication' },
+      { label: 'Material sampling', detail: 'In your light, not ours' },
+      { label: 'Lighting design', detail: 'Layout, control logic, scenes' },
+      { label: 'Project management', detail: 'Single point of contact' },
+    ],
+    applications: [
+      'New builds',
+      'Renovations',
+      'Commercial fit-outs',
+      'Interior redesigns',
+      'Event installations',
+      'Architectural projects',
+    ],
+    image: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1400&q=80',
+    imageVision: 'Design consulting — lobby fit-out in progress',
   },
 ]
 
 export default function Services() {
   const { serviceSlug } = useParams()
-  const [activeService, setActiveService] = useState(
-    serviceSlug ? allServices.find(s => s.slug === serviceSlug) || allServices[0] : null
-  )
+  const activeService = serviceSlug ? allServices.find((s) => s.slug === serviceSlug) : null
 
   useSEO({
     title: activeService ? activeService.title : 'Our Services',
     description: activeService
       ? activeService.desc
-      : 'Explore La Foi Designs\' comprehensive ceiling and lighting solutions -- stretch ceilings, custom lighting, printed ceilings, 3D forms, and acoustic solutions.',
+      : "Explore La Foi Designs' comprehensive ceiling and lighting solutions — stretch ceilings, custom lighting, printed ceilings, 3D forms, and acoustic solutions.",
     path: activeService ? `/services/${activeService.slug}` : '/services',
   })
 
@@ -143,264 +225,522 @@ export default function Services() {
       transition={{ duration: 0.5 }}
     >
       <ServicesHero />
-      <ServicesGrid />
-      <ProcessOverview />
+      <ServicesEditorial />
+      <Process />
       <WhyChooseUs />
       <ServicesCTA />
     </motion.div>
   )
 }
 
+/* ============================================================================
+   1. HERO — Single viewport editorial
+   ============================================================================ */
+
 function ServicesHero() {
+  const ref = useRef(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
+
   return (
-    <section className="relative min-h-[65vh] flex items-center bg-lafoi-dark overflow-hidden">
+    <section
+      ref={ref}
+      className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark"
+    >
       <HeroSlideshow slides={SERVICES_HERO_SLIDES} interval={6500} parallax overlay={false} />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/70 to-lafoi-dark/40 pointer-events-none" />
-      <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
-      <div className="absolute top-20 right-20 w-96 h-96 bg-lafoi-green/5 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-lafoi-green/5 rounded-full blur-[100px]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
 
-      {/* Decorative geometric elements */}
-      <motion.div
-        className="absolute top-40 right-[15%] w-20 h-20 border border-white/5 rounded-2xl hidden lg:block"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-      />
-      <motion.div
-        className="absolute bottom-32 right-[25%] w-12 h-12 border border-lafoi-green/10 rounded-full hidden lg:block"
-        animate={{ y: [-10, 10, -10] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      />
+      {/* Volume artifact */}
+      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
+        <span className="hidden sm:block w-8 h-px bg-white/30" />
+        <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
+          Vol.&nbsp;03 &mdash; 2026 &middot; The Catalogue
+        </span>
+      </div>
 
-      <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-20">
+      <motion.div
+        className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full"
+        style={{ opacity }}
+      >
         <motion.div
-          className="max-w-3xl"
-          initial={{ opacity: 0, y: 40 }}
+          className="pt-28 lg:pt-32"
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="w-2 h-2 rounded-full bg-lafoi-green animate-pulse" />
-            <span className="text-xs font-sora text-white/70 font-medium tracking-wider uppercase">Our Solutions</span>
-          </motion.div>
-
-          <h1 className="heading-xl text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-white mt-4 mb-6">
-            Ceiling & lighting
-            <br />
-            <span className="text-gradient">solutions catalog</span>
-          </h1>
-          <p className="text-white/60 font-general text-lg max-w-xl leading-relaxed">
-            From premium stretch ceilings to bespoke lighting design, discover the full range of services that make La Foi Designs Zimbabwe's leading interior ceiling provider.
-          </p>
-
-          {/* Quick service pills */}
-          <motion.div
-            className="flex flex-wrap gap-3 mt-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            {allServices.map((s) => (
-              <Link
-                key={s.slug}
-                to={`/services/${s.slug}`}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/70 text-xs font-sora font-medium hover:bg-lafoi-green/20 hover:border-lafoi-green/30 hover:text-white transition-all duration-300"
-              >
-                <s.icon size={12} weight="regular" />
-                {s.title}
-              </Link>
-            ))}
-          </motion.div>
+          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
+            <Sparkle size={12} weight="fill" className="text-lafoi-green-light" />
+            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
+              Six services &middot; One studio
+            </span>
+          </span>
         </motion.div>
-      </div>
-    </section>
-  )
-}
 
-function ServicesGrid() {
-  return (
-    <section className="py-24 lg:py-32">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
-        <AnimatedSection className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-lafoi-green font-sora text-sm font-semibold tracking-widest uppercase">What We Offer</span>
-          <h2 className="heading-lg text-3xl sm:text-4xl text-lafoi-dark mt-4 mb-5">
-            Comprehensive solutions for <span className="text-gradient">every space</span>
-          </h2>
-          <p className="text-lafoi-gray font-general">
-            Each service is backed by German and Estonian engineering, installed by certified professionals, and protected by comprehensive warranties.
-          </p>
-        </AnimatedSection>
+        <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+          <motion.div
+            className="lg:col-span-9"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <h1
+              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.4rem] xl:text-[7rem]"
+              style={{ fontVariationSettings: '"opsz" 144' }}
+            >
+              <span className="block font-light">Ceilings, light,</span>
+              <span className="block">
+                <span className="font-normal text-white">and the </span>
+                <span className="font-normal text-lafoi-green-light">craft</span>
+                <span className="text-lafoi-green-light"> between</span>
+                <span className="text-lafoi-green-light">.</span>
+              </span>
+            </h1>
 
-        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" staggerDelay={0.08}>
-          {allServices.map((service) => (
-            <StaggerItem key={service.slug}>
-              <Link
-                to={`/services/${service.slug}`}
-                className="group block h-full rounded-3xl overflow-hidden border border-gray-100 bg-white hover:shadow-2xl hover:shadow-black/[0.06] transition-all duration-500"
+            <motion.p
+              className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Six services, each engineered to stand alone — and designed to work together. From
+              the membrane overhead to the fibre-optic stars within it.
+            </motion.p>
+
+            <motion.div
+              className="mt-8 lg:mt-10 flex flex-wrap items-center gap-x-5 gap-y-3"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <a
+                href="#catalogue"
+                className="group inline-flex items-center gap-3 px-7 py-3.5 bg-lafoi-green-light text-white rounded-full font-body text-sm font-medium hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
               >
-                <div className="relative h-56 overflow-hidden">
-                  <OptimizedImage
-                    src={service.image}
-                    alt={service.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    fill
-                    vision={service.imageVision}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-                  <div className={`absolute top-4 left-4 w-11 h-11 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center shadow-lg`}>
-                    <service.icon size={18} weight="regular" className="text-white" />
-                  </div>
-                  {/* Hover arrow */}
-                  <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/0 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-white/20 backdrop-blur-sm transition-all duration-300">
-                    <ArrowUpRight size={16} weight="bold" className="text-white" />
-                  </div>
-                </div>
-                <div className="p-6">
-                  <p className="text-xs text-lafoi-green font-sora font-semibold uppercase tracking-wider mb-2">{service.subtitle}</p>
-                  <h3 className="font-sora text-xl font-bold text-lafoi-dark mb-3 group-hover:text-lafoi-green transition-colors duration-300">{service.title}</h3>
-                  <p className="text-sm text-lafoi-gray font-general line-clamp-3 mb-5 leading-relaxed">{service.desc}</p>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-sora font-semibold text-lafoi-green group-hover:gap-2.5 transition-all duration-300">
-                    Learn More <ArrowRight size={14} weight="bold" />
-                  </span>
-                </div>
+                Browse the catalogue
+                <ArrowRight
+                  size={15}
+                  weight="bold"
+                  className="group-hover:translate-x-1 transition-transform duration-300"
+                />
+              </a>
+              <Link
+                to="/contact"
+                className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
+              >
+                Request samples
+                <ArrowUpRight
+                  size={14}
+                  weight="regular"
+                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
+                />
               </Link>
-            </StaggerItem>
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 1.1 }}
+      >
+        <span className="text-[9px] font-sora tracking-[0.35em] uppercase text-white/45">Scroll</span>
+        <span className="block w-px h-8 bg-gradient-to-b from-white/45 to-transparent" />
+      </motion.div>
+    </section>
+  )
+}
+
+/* ============================================================================
+   2. CATALOGUE — Editorial alternating spreads
+   ============================================================================ */
+
+function ServicesEditorial() {
+  return (
+    <section id="catalogue" className="relative py-20 lg:py-32 bg-lafoi-cream overflow-hidden">
+      <div className="absolute inset-0 pattern-cross-light opacity-40 pointer-events-none" />
+
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        {/* header */}
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-16 lg:mb-24">
+          <div className="max-w-2xl">
+            <AnimatedSection>
+              <div className="flex items-center gap-3 mb-5">
+                <span className="block w-10 h-px bg-lafoi-green/60" />
+                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                  The catalogue
+                </p>
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
+                  01 / 04
+                </span>
+              </div>
+            </AnimatedSection>
+            <AnimatedSection delay={0.1}>
+              <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
+                Six services.{' '}
+                <span className="text-lafoi-green">Read like a magazine.</span>
+              </h2>
+            </AnimatedSection>
+          </div>
+          <AnimatedSection delay={0.2}>
+            <p className="font-body text-lafoi-gray max-w-sm leading-relaxed">
+              Each entry below is a complete service. Click through for specifications, applications,
+              and a request-quote sidebar.
+            </p>
+          </AnimatedSection>
+        </div>
+
+        {/* alternating editorial rows */}
+        <div className="space-y-24 lg:space-y-36">
+          {allServices.map((s, i) => (
+            <ServiceRow key={s.slug} service={s} index={i} total={allServices.length} />
           ))}
-        </StaggerContainer>
+        </div>
       </div>
     </section>
   )
 }
 
-function ProcessOverview() {
+function ServiceRow({ service, index, total }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.25 })
+  const isLeft = index % 2 === 0
+  const Icon = service.icon
+
+  return (
+    <motion.div
+      ref={ref}
+      className={`grid lg:grid-cols-12 gap-8 lg:gap-16 items-center ${
+        !isLeft ? 'lg:[&>*:first-child]:order-2' : ''
+      }`}
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {/* image column */}
+      <div className="lg:col-span-7">
+        <div className="relative aspect-[5/4] rounded-3xl overflow-hidden bg-lafoi-dark group">
+          <OptimizedImage
+            src={service.image}
+            alt={service.title}
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            fill
+            vision={service.imageVision}
+          />
+          <div className="absolute inset-0 bg-gradient-to-tr from-lafoi-dark/30 via-transparent to-transparent" />
+
+          {/* corner index */}
+          <div className="absolute top-6 left-6 right-6 flex items-start justify-between">
+            <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/65 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
+              0{index + 1} / 0{total}
+            </span>
+            <span className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
+              <Icon size={16} weight="regular" className="text-white" />
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* text column */}
+      <div className="lg:col-span-5">
+        <div className="flex items-center gap-3 mb-6">
+          <span className="block w-10 h-px bg-lafoi-green/60" />
+          <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+            {service.subtitle}
+          </p>
+        </div>
+
+        <h3 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[2.8rem] leading-[1.1] tracking-[-0.02em] mb-6">
+          {service.title}
+        </h3>
+
+        <p className="font-body font-light text-base lg:text-[17px] text-lafoi-gray leading-[1.7] mb-8 max-w-md">
+          {service.desc}
+        </p>
+
+        {/* applications — hairline-divided rows */}
+        <div className="space-y-0 border-t border-lafoi-dark/10 mb-8 max-w-md">
+          {service.applications.slice(0, 4).map((a, idx) => (
+            <div
+              key={a}
+              className="flex items-baseline gap-4 py-3 border-b border-lafoi-dark/10"
+            >
+              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
+                {idx % 2 === 0 ? `0${idx + 1}` : <span>&mdash;</span>}
+              </span>
+              <span className="font-body text-sm text-lafoi-dark/85">{a}</span>
+            </div>
+          ))}
+        </div>
+
+        <Link
+          to={`/services/${service.slug}`}
+          className="group inline-flex items-center gap-3 text-lafoi-dark font-sora text-sm font-medium pb-1 border-b border-lafoi-dark/30 hover:border-lafoi-green hover:text-lafoi-green transition-colors duration-300"
+        >
+          <span className="font-display font-light text-base">Explore the service</span>
+          <ArrowRight
+            size={16}
+            weight="bold"
+            className="group-hover:translate-x-1 transition-transform duration-300"
+          />
+        </Link>
+      </div>
+    </motion.div>
+  )
+}
+
+/* ============================================================================
+   3. PROCESS — Numbered editorial sequence
+   ============================================================================ */
+
+function Process() {
   const steps = [
-    { num: '01', title: 'Free Consultation', desc: 'We assess your space and discuss design possibilities.' },
-    { num: '02', title: 'Custom Design', desc: 'We create detailed plans with material and lighting selections.' },
-    { num: '03', title: 'Manufacturing', desc: 'Your ceiling is custom-made using premium European materials.' },
-    { num: '04', title: 'Installation', desc: 'Expert installation, typically completed in just one day.' },
+    { num: '01', title: 'Free consultation', desc: 'We assess your space, listen to the brief, and discuss design possibilities. The first conversation costs nothing.' },
+    { num: '02', title: 'Custom design', desc: 'Detailed plans with material, lighting and edge-detail selections. Sampled in your light, not ours.' },
+    { num: '03', title: 'Manufacturing', desc: 'Your ceiling is custom-made by our German and Estonian partners using premium European materials.' },
+    { num: '04', title: 'Installation', desc: 'Expert installation, typically completed in a single working day per room — no demolition needed.' },
   ]
 
   return (
-    <section className="py-20 lg:py-28 bg-lafoi-dark relative overflow-hidden">
-      <div className="absolute inset-0 grid-pattern opacity-20" />
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
-        <AnimatedSection className="text-center max-w-2xl mx-auto mb-14">
-          <h2 className="heading-lg text-2xl sm:text-3xl text-white">
-            Our simple <span className="text-gradient">4-step process</span>
-          </h2>
-        </AnimatedSection>
+    <section className="relative py-24 lg:py-32 bg-lafoi-dark overflow-hidden">
+      <div className="absolute inset-0 pattern-blueprint-light opacity-50 pointer-events-none" />
+      <div className="absolute inset-0 dot-pattern opacity-15 pointer-events-none" />
 
-        <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.1}>
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="max-w-3xl mb-16 lg:mb-20">
+          <AnimatedSection>
+            <div className="flex items-center gap-3 mb-5">
+              <span className="block w-10 h-px bg-lafoi-green-light/60" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                The process
+              </p>
+              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
+                02 / 04
+              </span>
+            </div>
+          </AnimatedSection>
+          <AnimatedSection delay={0.1}>
+            <h2 className="font-display font-light text-white text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em]">
+              Four stages.{' '}
+              <span className="text-lafoi-green-light">No surprises.</span>
+            </h2>
+          </AnimatedSection>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 lg:gap-x-10 gap-y-12 border-t border-white/10 pt-10 lg:pt-14">
           {steps.map((step, i) => (
-            <StaggerItem key={step.num}>
-              <div className="relative p-6 rounded-2xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] transition-all duration-300 group h-full">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-lafoi-green/20 flex items-center justify-center group-hover:bg-lafoi-green transition-colors duration-300">
-                    <span className="font-sora text-sm font-bold text-lafoi-green group-hover:text-white transition-colors">{step.num}</span>
-                  </div>
-                  {i < steps.length - 1 && (
-                    <div className="hidden lg:block flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
-                  )}
+            <AnimatedSection key={step.num} delay={i * 0.08}>
+              <div className="flex flex-col">
+                <div className="flex items-baseline gap-3 mb-5">
+                  <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/40">
+                    Stage
+                  </span>
+                  <span className="font-display font-light text-white text-5xl lg:text-6xl leading-none">
+                    {step.num}
+                  </span>
                 </div>
-                <h3 className="font-sora text-base font-bold text-white mb-2">{step.title}</h3>
-                <p className="text-sm text-white/40 font-general leading-relaxed">{step.desc}</p>
+                <span className="block w-8 h-px bg-lafoi-green-light/60 mb-5" />
+                <h3 className="font-display font-light text-white text-2xl lg:text-[1.65rem] mb-3 leading-tight">
+                  {step.title}
+                </h3>
+                <p className="font-body font-light text-sm text-white/55 leading-relaxed">
+                  {step.desc}
+                </p>
               </div>
-            </StaggerItem>
+            </AnimatedSection>
           ))}
-        </StaggerContainer>
+        </div>
       </div>
     </section>
   )
 }
+
+/* ============================================================================
+   4. WHY CHOOSE US — Editorial 4-up
+   ============================================================================ */
 
 function WhyChooseUs() {
   const reasons = [
-    { title: 'First in Zimbabwe', desc: 'We pioneered stretch ceilings in Zimbabwe, bringing technology never before seen in the country.', icon: Star },
-    { title: 'International Quality', desc: 'German and Estonian manufactured materials meet the highest European quality and safety standards.', icon: Sparkle },
-    { title: 'Expert Installation', desc: 'Our team trained directly with European manufacturers for flawless, fast installations.', icon: Check },
-    { title: 'Full Warranty', desc: 'Every installation is backed by comprehensive manufacturer warranties of 10+ years.', icon: Sparkle },
+    {
+      title: 'First in Zimbabwe',
+      desc: 'We pioneered stretch ceilings in Zimbabwe — bringing technology never before seen in the country.',
+      icon: Trophy,
+    },
+    {
+      title: 'European quality',
+      desc: 'German and Estonian manufactured materials meet the highest EU quality and safety standards.',
+      icon: Sparkle,
+    },
+    {
+      title: 'Trained installers',
+      desc: 'Our team trained directly with European manufacturers for fast, flawless installations.',
+      icon: CheckCircle,
+    },
+    {
+      title: 'Full warranty',
+      desc: 'Every installation is backed by a 15-year manufacturer warranty and 2-year workmanship cover.',
+      icon: Sparkle,
+    },
   ]
 
   return (
-    <section className="py-24 lg:py-32 bg-lafoi-green-soft relative overflow-hidden">
-      <div className="absolute inset-0 mesh-gradient-1" />
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
-        <AnimatedSection className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-lafoi-green font-sora text-sm font-semibold tracking-widest uppercase">Why Us</span>
-          <h2 className="heading-lg text-3xl sm:text-4xl text-lafoi-dark mt-4">Why choose <span className="text-gradient">La Foi Designs?</span></h2>
-        </AnimatedSection>
-        <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.1}>
-          {reasons.map((r) => (
-            <StaggerItem key={r.title}>
-              <div className="p-6 rounded-2xl bg-white border border-gray-100 h-full hover:shadow-xl hover:shadow-lafoi-green/[0.05] transition-all duration-500 group">
-                <div className="w-11 h-11 rounded-xl bg-lafoi-green/10 flex items-center justify-center mb-4 group-hover:bg-lafoi-green transition-colors duration-300">
-                  <r.icon size={18} weight="regular" className="text-lafoi-green group-hover:text-white transition-colors" />
+    <section className="relative py-24 lg:py-32 bg-lafoi-cream overflow-hidden">
+      <div className="absolute inset-0 mesh-gradient-1 pointer-events-none" />
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="max-w-3xl mb-14 lg:mb-20">
+          <AnimatedSection>
+            <div className="flex items-center gap-3 mb-5">
+              <span className="block w-10 h-px bg-lafoi-green/60" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Why choose us
+              </p>
+              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
+                03 / 04
+              </span>
+            </div>
+          </AnimatedSection>
+          <AnimatedSection delay={0.1}>
+            <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em]">
+              Four reasons{' '}
+              <span className="text-lafoi-green">we keep being asked back</span>.
+            </h2>
+          </AnimatedSection>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+          {reasons.map((r, i) => (
+            <AnimatedSection key={r.title} delay={i * 0.08}>
+              <div className="group h-full p-7 lg:p-8 rounded-3xl border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500">
+                <div className="flex items-baseline justify-between mb-7">
+                  <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
+                    0{i + 1} / 04
+                  </span>
+                  <r.icon size={16} weight="regular" className="text-lafoi-green/70 group-hover:text-lafoi-green transition-colors" />
                 </div>
-                <h3 className="font-sora text-base font-bold text-lafoi-dark mb-2">{r.title}</h3>
-                <p className="text-sm text-lafoi-gray font-general leading-relaxed">{r.desc}</p>
+                <span className="block w-8 h-px bg-lafoi-green/60 mb-5" />
+                <h3 className="font-display font-light text-lafoi-dark text-2xl mb-4 leading-tight">
+                  {r.title}
+                </h3>
+                <p className="font-body font-light text-sm text-lafoi-gray leading-[1.7]">
+                  {r.desc}
+                </p>
               </div>
-            </StaggerItem>
+            </AnimatedSection>
           ))}
-        </StaggerContainer>
+        </div>
       </div>
     </section>
   )
 }
+
+/* ============================================================================
+   5. CTA — Cinematic full-bleed
+   ============================================================================ */
 
 function ServicesCTA() {
   return (
-    <section className="relative py-24 lg:py-32 overflow-hidden">
+    <section className="relative min-h-[80vh] lg:min-h-[88vh] flex items-center overflow-hidden bg-lafoi-dark">
       <div className="absolute inset-0">
         <OptimizedImage
-          src="https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=1920&q=80"
-          alt="Luxury interior"
-          className="w-full h-full object-cover"
+          src="https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2000&q=85"
+          alt="Master suite with stretch ceiling"
+          className="w-full h-full object-cover object-center"
           fill
-          vision="Luxurious hotel lobby with dramatic lighting and gold accents"
+          vision="Master suite with luminous stretch ceiling — invitation to specify"
         />
-        <div className="absolute inset-0 bg-lafoi-dark/85 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/85 via-lafoi-dark/30 to-lafoi-dark/55" />
+        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/30" />
       </div>
-      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
-        <AnimatedSection>
-          <h2 className="heading-lg text-3xl sm:text-4xl lg:text-5xl text-white mb-6">
-            Not sure which solution<br />is right for you?
-          </h2>
-          <p className="text-white/50 font-general text-lg mb-10 max-w-lg mx-auto">
-            Book a free consultation and our design experts will help you choose the perfect ceiling and lighting combination for your space.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              to="/contact"
-              className="group flex items-center gap-3 px-8 py-4 bg-lafoi-green text-white rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green-light transition-all duration-300 shadow-lg shadow-lafoi-green/25"
-            >
-              Book Free Consultation
-              <ArrowRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <a
-              href="tel:+263712326951"
-              className="flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md text-white rounded-full font-sora text-sm font-semibold border border-white/20 hover:bg-white/20 transition-all duration-300"
-            >
-              Call +263 712 326 951
-            </a>
-          </div>
-        </AnimatedSection>
+
+      <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full py-24 lg:py-32">
+        <div className="max-w-3xl">
+          <AnimatedSection>
+            <div className="flex items-center gap-3 mb-7">
+              <span className="block w-12 h-px bg-lafoi-green-light/70" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                Specifying support
+              </p>
+              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
+                04 / 04
+              </span>
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.1}>
+            <h2 className="font-display text-white text-5xl sm:text-6xl lg:text-[5rem] xl:text-[5.6rem] leading-[1.02] tracking-[-0.025em]">
+              <span className="block font-light">Not sure which</span>
+              <span className="block font-normal">solution fits?</span>
+            </h2>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.25}>
+            <p className="mt-8 max-w-xl text-base lg:text-lg text-white/70 font-body font-light leading-relaxed">
+              Our consultants walk you through finishes, lighting compatibility and on-site samples
+              — at no charge. WhatsApp is the fastest channel; email if you'd rather attach drawings.
+            </p>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.4}>
+            <div className="mt-12 flex flex-wrap items-center gap-4 lg:gap-5">
+              <Link
+                to="/contact"
+                className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
+              >
+                Speak to a specialist
+                <ArrowRight
+                  size={16}
+                  weight="bold"
+                  className="group-hover:translate-x-1 transition-transform duration-300"
+                />
+              </Link>
+              <Link
+                to="/projects"
+                className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-white/10 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-500"
+              >
+                See products in projects
+                <ArrowUpRight
+                  size={16}
+                  weight="bold"
+                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
+                />
+              </Link>
+            </div>
+          </AnimatedSection>
+        </div>
       </div>
     </section>
   )
 }
 
+/* ============================================================================
+   SERVICE DETAIL — /services/:slug
+   ============================================================================ */
+
 function ServiceDetail({ service }) {
-  // Build 3 slides: service hero + verified fallbacks (skip duplicates)
   const detailSlides = [
     { src: service.hero, alt: service.title, vision: service.heroVision },
-    { src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85', alt: 'Luminous lobby ceiling', vision: 'Luminous backlit ceiling' },
-    { src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85', alt: 'Master suite with stretch ceiling', vision: 'Suite ceiling and lighting' },
-  ].filter((s, i, arr) => arr.findIndex(x => x.src === s.src) === i).slice(0, 3)
+    {
+      src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+      alt: 'Luminous lobby ceiling',
+      vision: 'Luminous backlit ceiling',
+    },
+    {
+      src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
+      alt: 'Master suite with stretch ceiling',
+      vision: 'Suite ceiling and lighting',
+    },
+  ]
+    .filter((s, i, arr) => arr.findIndex((x) => x.src === s.src) === i)
+    .slice(0, 3)
+
+  // adjacent
+  const idx = allServices.findIndex((s) => s.slug === service.slug)
+  const prev = allServices[(idx - 1 + allServices.length) % allServices.length]
+  const next = allServices[(idx + 1) % allServices.length]
+
+  const Icon = service.icon
 
   return (
     <motion.div
@@ -409,107 +749,250 @@ function ServiceDetail({ service }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Hero — slideshow */}
-      <section className="relative min-h-[65vh] flex items-end overflow-hidden bg-lafoi-dark">
+      {/* Hero */}
+      <section className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark">
         <HeroSlideshow slides={detailSlides} interval={6500} parallax overlay={false} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/30 pointer-events-none" />
-        <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pb-16 pt-40">
-          <Link to="/services" className="inline-flex items-center gap-1.5 text-white/60 text-sm font-general mb-6 hover:text-white transition-colors group">
-            <ArrowRight size={14} weight="regular" className="rotate-180 group-hover:-translate-x-1 transition-transform" />
-            Back to Services
-          </Link>
-          <div className="flex items-center gap-5 mb-4">
-            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center shadow-xl`}>
-              <service.icon size={28} weight="regular" className="text-white" />
-            </div>
-            <div>
-              <p className="text-lafoi-green text-xs font-sora font-semibold uppercase tracking-wider mb-1">{service.subtitle}</p>
-              <h1 className="heading-xl text-3xl sm:text-4xl lg:text-5xl text-white">{service.title}</h1>
-            </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+
+        {/* Volume artifact */}
+        <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
+          <span className="hidden sm:block w-8 h-px bg-white/30" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
+            Service 0{idx + 1} / 0{allServices.length} &middot; {service.subtitle}
+          </span>
+        </div>
+
+        <div className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full">
+          {/* breadcrumb */}
+          <div className="pt-28 lg:pt-32">
+            <Link
+              to="/services"
+              className="group inline-flex items-center gap-2 text-white/65 font-sora text-xs tracking-[0.2em] uppercase hover:text-white transition-colors"
+            >
+              <ArrowLeft
+                size={13}
+                weight="regular"
+                className="group-hover:-translate-x-0.5 transition-transform"
+              />
+              Back to catalogue
+            </Link>
+          </div>
+
+          {/* headline anchored bottom */}
+          <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 items-end">
+            <motion.div
+              className="lg:col-span-9"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className="block w-12 h-px bg-lafoi-green-light/70" />
+                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                  {service.subtitle}
+                </p>
+              </div>
+              <h1
+                className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6rem] xl:text-[6.6rem]"
+                style={{ fontVariationSettings: '"opsz" 144' }}
+              >
+                <span className="block font-light text-white/95">{service.title}</span>
+              </h1>
+              <p className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]">
+                {service.desc}
+              </p>
+            </motion.div>
+
+            {/* Right metadata card */}
+            <motion.aside
+              className="lg:col-span-3 hidden lg:block"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="ml-auto max-w-[280px] relative bg-white/[0.06] backdrop-blur-md border border-white/15 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-lg rounded-bl-lg p-6 overflow-hidden">
+                <div aria-hidden className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
+                <div className="relative">
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-green-light">
+                      The brief
+                    </span>
+                    <Icon size={16} weight="regular" className="text-white/55" />
+                  </div>
+                  <div className="space-y-3 font-body font-light text-[13px] text-white/75 leading-relaxed">
+                    {service.features.slice(0, 3).map((f) => (
+                      <div key={f.label} className="flex items-baseline justify-between gap-3">
+                        <span className="text-white/50 shrink-0">{f.label}</span>
+                        <span className="text-white text-right">{f.detail}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.aside>
           </div>
         </div>
       </section>
 
-      {/* Content */}
-      <section className="py-16 lg:py-24">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
-          <div className="grid lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2">
+      {/* BODY — two-column with editorial sticky sidebar */}
+      <section className="relative py-20 lg:py-32 bg-lafoi-cream overflow-hidden">
+        <div className="absolute inset-0 pattern-cross-light opacity-30 pointer-events-none" />
+
+        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
+            {/* Left — long-form */}
+            <div className="lg:col-span-8">
               <AnimatedSection>
-                <p className="body-text text-lg mb-10 leading-relaxed">{service.desc}</p>
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="block w-10 h-px bg-lafoi-green/60" />
+                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                    The specification
+                  </p>
+                </div>
+                <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[2.8rem] leading-[1.1] tracking-[-0.02em] mb-6">
+                  Features &amp; benefits
+                </h2>
+                <p className="font-body font-light text-base lg:text-lg text-lafoi-gray leading-[1.75] mb-12 max-w-2xl">
+                  {service.desc}
+                </p>
               </AnimatedSection>
+
+              {/* Features as hairline-divided rows */}
               <AnimatedSection delay={0.1}>
-                <h3 className="font-sora text-xl font-bold text-lafoi-dark mb-6">Features & Benefits</h3>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {service.features.map((f) => (
-                    <div key={f} className="flex items-center gap-3 p-3.5 rounded-xl bg-lafoi-green-soft border border-lafoi-green/[0.06] hover:border-lafoi-green/20 transition-colors">
-                      <div className="w-6 h-6 rounded-lg bg-lafoi-green/10 flex items-center justify-center shrink-0">
-                        <Check size={14} className="text-lafoi-green" />
-                      </div>
-                      <span className="text-sm text-lafoi-dark font-medium">{f}</span>
+                <div className="space-y-0 border-t border-lafoi-dark/10 mb-12">
+                  {service.features.map((f, idx) => (
+                    <div
+                      key={f.label}
+                      className="flex items-baseline gap-6 py-5 border-b border-lafoi-dark/10"
+                    >
+                      <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium shrink-0">
+                        {idx % 2 === 0 ? `0${idx + 1}` : <span>&mdash;</span>}
+                      </span>
+                      <span className="font-display font-normal text-lafoi-dark text-lg lg:text-xl shrink-0 min-w-[180px]">
+                        {f.label}
+                      </span>
+                      <span className="font-body font-light text-sm lg:text-base text-lafoi-gray flex-1">
+                        {f.detail}
+                      </span>
                     </div>
                   ))}
                 </div>
               </AnimatedSection>
 
-              {/* Related services */}
-              <AnimatedSection delay={0.2} className="mt-12">
-                <h3 className="font-sora text-lg font-bold text-lafoi-dark mb-4">Explore Other Services</h3>
-                <div className="flex flex-wrap gap-3">
-                  {allServices.filter(s => s.slug !== service.slug).slice(0, 3).map((s) => (
+              {/* Image break */}
+              <AnimatedSection delay={0.2}>
+                <div className="relative aspect-[16/9] rounded-3xl overflow-hidden bg-lafoi-dark mb-12">
+                  <OptimizedImage
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover object-center"
+                    fill
+                    vision={service.imageVision}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/30 via-transparent to-transparent" />
+                </div>
+              </AnimatedSection>
+
+              {/* Other services */}
+              <AnimatedSection delay={0.25}>
+                <div className="pt-10 border-t border-lafoi-dark/10">
+                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green mb-6">
+                    Continue exploring
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-4">
                     <Link
-                      key={s.slug}
-                      to={`/services/${s.slug}`}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 text-sm font-sora font-medium text-lafoi-dark hover:bg-lafoi-green/5 hover:border-lafoi-green/20 hover:text-lafoi-green transition-all duration-300"
+                      to={`/services/${prev.slug}`}
+                      className="group p-6 rounded-2xl border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 transition-colors duration-500"
                     >
-                      <s.icon size={14} />
-                      {s.title}
+                      <div className="flex items-center gap-2 mb-3">
+                        <ArrowLeft size={12} weight="regular" className="text-lafoi-gray-medium group-hover:-translate-x-0.5 transition-transform" />
+                        <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
+                          Previous
+                        </span>
+                      </div>
+                      <p className="font-display font-light text-xl text-lafoi-dark group-hover:text-lafoi-green transition-colors">
+                        {prev.title}
+                      </p>
                     </Link>
-                  ))}
+                    <Link
+                      to={`/services/${next.slug}`}
+                      className="group p-6 rounded-2xl border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 transition-colors duration-500 sm:text-right"
+                    >
+                      <div className="flex items-center gap-2 mb-3 sm:justify-end">
+                        <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
+                          Next
+                        </span>
+                        <ArrowRight size={12} weight="regular" className="text-lafoi-gray-medium group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                      <p className="font-display font-light text-xl text-lafoi-dark group-hover:text-lafoi-green transition-colors">
+                        {next.title}
+                      </p>
+                    </Link>
+                  </div>
                 </div>
               </AnimatedSection>
             </div>
 
-            {/* Sidebar */}
-            <div>
+            {/* Right — sticky sidebar */}
+            <aside className="lg:col-span-4">
               <AnimatedSection direction="right">
-                <div className="sticky top-28 space-y-6">
-                  <div className="p-6 rounded-3xl bg-lafoi-green-soft border border-lafoi-green/10">
-                    <h3 className="font-sora text-lg font-bold text-lafoi-dark mb-5">Ideal For</h3>
-                    <div className="space-y-3 mb-6">
-                      {service.applications.map((a) => (
-                        <div key={a} className="flex items-center gap-2.5">
-                          <CaretRight size={14} weight="regular" className="text-lafoi-green" />
-                          <span className="text-sm text-lafoi-gray font-general">{a}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <Link
-                      to="/contact"
-                      className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-lafoi-green text-white rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green-light transition-colors shadow-lg shadow-lafoi-green/20 group"
-                    >
-                      Get a Free Quote
-                      <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </div>
+                <div className="sticky top-28 space-y-5">
+                  {/* Applications card — glass + asymmetric */}
+                  <div className="relative p-7 lg:p-8 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-2xl rounded-bl-2xl bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] overflow-hidden">
+                    <div aria-hidden className="absolute inset-0 pattern-blueprint opacity-20 pointer-events-none" />
+                    <div className="relative">
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="block w-8 h-px bg-lafoi-green/60" />
+                        <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                          Ideal for
+                        </p>
+                      </div>
 
-                  {/* Trust signals */}
-                  <div className="p-5 rounded-2xl bg-white border border-gray-100">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="flex -space-x-1">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <Star key={i} size={14} weight="fill" className="text-lafoi-green" />
+                      <div className="space-y-0 border-t border-lafoi-dark/10 mb-7">
+                        {service.applications.map((a, idx) => (
+                          <div
+                            key={a}
+                            className="flex items-baseline gap-3 py-3 border-b border-lafoi-dark/10"
+                          >
+                            <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium shrink-0">
+                              0{idx + 1}
+                            </span>
+                            <span className="font-body text-sm text-lafoi-dark/85">{a}</span>
+                          </div>
                         ))}
                       </div>
-                      <span className="text-xs text-lafoi-gray font-general">100% Satisfaction</span>
+
+                      <Link
+                        to="/contact"
+                        className="group flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-lafoi-green-light text-white rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
+                      >
+                        Request a quote
+                        <ArrowRight
+                          size={14}
+                          weight="bold"
+                          className="group-hover:translate-x-0.5 transition-transform duration-300"
+                        />
+                      </Link>
                     </div>
-                    <p className="text-xs text-lafoi-gray-medium font-general leading-relaxed">
-                      Backed by 10-year manufacturer warranty. German and Estonian quality standards.
+                  </div>
+
+                  {/* Trust */}
+                  <div className="p-6 rounded-2xl border border-lafoi-dark/10 bg-white">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Trophy size={14} weight="regular" className="text-lafoi-green" />
+                      <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-dark">
+                        Backed by Europe
+                      </p>
+                    </div>
+                    <p className="font-body font-light text-xs text-lafoi-gray leading-relaxed">
+                      15-year manufacturer warranty. German &amp; Estonian quality. Class A1 fire
+                      performance.
                     </p>
                   </div>
                 </div>
               </AnimatedSection>
-            </div>
+            </aside>
           </div>
         </div>
       </section>
