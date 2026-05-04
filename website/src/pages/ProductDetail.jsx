@@ -6,15 +6,16 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Check,
-  ChevronRight,
+  CaretRight,
   Download,
   X as XIcon,
   Globe,
   Shield,
   Clock,
-} from 'lucide-react'
+} from '@phosphor-icons/react'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
 import {
   getProductBySlug,
@@ -33,6 +34,29 @@ export default function ProductDetail() {
   const adjacent = getAdjacentProducts(product.slug)
   const linkedProjects = getProjectsByProduct(product.slug).slice(0, 3)
 
+  // Build a 3-image hero slideshow from product image + gallery, with sane fallbacks
+  const productHeroSlides = useMemo(() => {
+    const seen = new Set()
+    const result = []
+    const push = (src, alt, vision) => {
+      if (!src || seen.has(src)) return
+      seen.add(src)
+      result.push({ src, alt, vision: vision || alt })
+    }
+    push(product.image, product.name, product.vision)
+    ;(product.gallery || []).forEach((g, i) =>
+      push(typeof g === 'string' ? g : g.src, `${product.name} — view ${i + 1}`, product.vision)
+    )
+    // Fill to 3 with verified fallbacks if needed
+    const fallbacks = [
+      'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
+      'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+      'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    ]
+    fallbacks.forEach((f) => push(f, product.name, product.vision))
+    return result.slice(0, 3)
+  }, [product])
+
   const [lightbox, setLightbox] = useState(null)
 
   useSEO({
@@ -43,19 +67,10 @@ export default function ProductDetail() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-      {/* HERO — full bleed product image */}
-      <section className="relative min-h-[60vh] flex items-end overflow-hidden">
-        <div className="absolute inset-0">
-          <OptimizedImage
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover object-center"
-            fill
-            priority
-            vision={product.vision}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/95 via-lafoi-dark/40 to-lafoi-dark/30" />
-        </div>
+      {/* HERO — slideshow */}
+      <section className="relative min-h-[60vh] flex items-end overflow-hidden bg-lafoi-dark">
+        <HeroSlideshow slides={productHeroSlides} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/95 via-lafoi-dark/40 to-lafoi-dark/30 pointer-events-none" />
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-12">
           {/* breadcrumb */}
           <motion.nav
@@ -65,9 +80,9 @@ export default function ProductDetail() {
             transition={{ delay: 0.1 }}
           >
             <Link to="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRight size={11} />
+            <CaretRight size={11} weight="regular" />
             <Link to="/products" className="hover:text-white transition-colors">Products</Link>
-            <ChevronRight size={11} />
+            <CaretRight size={11} weight="regular" />
             <span className="text-white/90 truncate max-w-[180px] sm:max-w-none">{product.name}</span>
           </motion.nav>
 
@@ -84,7 +99,7 @@ export default function ProductDetail() {
                 {product.finish}
               </span>
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora font-semibold tracking-widest uppercase text-white">
-                <Globe size={10} /> {product.origin}
+                <Globe size={10} weight="regular" /> {product.origin}
               </span>
             </div>
             <h1 className="heading-xl text-4xl sm:text-5xl lg:text-6xl text-white max-w-3xl">
@@ -121,7 +136,7 @@ export default function ProductDetail() {
                     {product.highlights.map((h) => (
                       <li key={h} className="flex items-start gap-3">
                         <span className="w-5 h-5 mt-0.5 rounded-full bg-lafoi-green/15 flex items-center justify-center shrink-0">
-                          <Check size={11} className="text-lafoi-green" strokeWidth={3} />
+                          <Check size={11} weight="bold" className="text-lafoi-green" />
                         </span>
                         <span className="text-sm font-general text-lafoi-gray leading-relaxed">{h}</span>
                       </li>
@@ -193,22 +208,22 @@ export default function ProductDetail() {
                         className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-lafoi-green hover:bg-lafoi-green-light text-white rounded-full font-sora text-sm font-medium transition-colors duration-300 group mb-3"
                       >
                         Request a quote
-                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                       </Link>
                       <button
                         type="button"
                         onClick={() => window.print()}
                         className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 rounded-full font-sora text-xs font-medium text-white/85 transition-colors duration-300"
                       >
-                        <Download size={13} /> Download spec sheet
+                        <Download size={13} weight="regular" /> Download spec sheet
                       </button>
                       <div className="grid grid-cols-2 gap-3 mt-6 pt-5 border-t border-white/10">
                         <div className="flex items-center gap-2 text-xs text-white/60 font-general">
-                          <Shield size={13} className="text-lafoi-green-light" />
+                          <Shield size={13} weight="regular" className="text-lafoi-green-light" />
                           <span>{product.specs.Warranty || '15 years'}</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-white/60 font-general">
-                          <Clock size={13} className="text-lafoi-green-light" />
+                          <Clock size={13} weight="regular" className="text-lafoi-green-light" />
                           <span>1-day install</span>
                         </div>
                       </div>
@@ -255,7 +270,7 @@ export default function ProductDetail() {
                     />
                     <div className="absolute inset-0 bg-lafoi-dark/0 group-hover:bg-lafoi-dark/20 transition-colors duration-500" />
                     <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                      <ArrowUpRight size={15} className="text-lafoi-dark" />
+                      <ArrowUpRight size={15} weight="bold" className="text-lafoi-dark" />
                     </div>
                   </button>
                 </AnimatedSection>
@@ -284,7 +299,7 @@ export default function ProductDetail() {
                   className="inline-flex items-center gap-2 text-sm font-sora font-medium text-lafoi-dark hover:text-lafoi-green transition-colors group self-start sm:self-end"
                 >
                   All case studies
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </AnimatedSection>
@@ -378,7 +393,7 @@ export default function ProductDetail() {
               to={`/products/${adjacent.prev.slug}`}
               className="group py-10 lg:py-12 pr-0 sm:pr-8 flex items-center gap-4 hover:bg-lafoi-cream/40 transition-colors duration-300 -mx-4 sm:-mx-6 lg:-mx-10 px-4 sm:px-6 lg:px-10"
             >
-              <ArrowLeft size={18} className="text-lafoi-gray-medium group-hover:text-lafoi-green group-hover:-translate-x-1 transition-all duration-300 shrink-0" />
+              <ArrowLeft size={18} weight="regular" className="text-lafoi-gray-medium group-hover:text-lafoi-green group-hover:-translate-x-1 transition-all duration-300 shrink-0" />
               <div className="flex-1">
                 <p className="text-[10px] font-sora font-semibold tracking-widest uppercase text-lafoi-gray-medium mb-1">
                   Previous product
@@ -400,7 +415,7 @@ export default function ProductDetail() {
                   {adjacent.next.name}
                 </p>
               </div>
-              <ArrowRight size={18} className="text-lafoi-gray-medium group-hover:text-lafoi-green group-hover:translate-x-1 transition-all duration-300 shrink-0" />
+              <ArrowRight size={18} weight="regular" className="text-lafoi-gray-medium group-hover:text-lafoi-green group-hover:translate-x-1 transition-all duration-300 shrink-0" />
             </Link>
           </div>
         </div>
@@ -427,7 +442,7 @@ export default function ProductDetail() {
                 onClick={() => setLightbox(null)}
                 className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition-colors"
               >
-                <XIcon size={18} />
+                <XIcon size={18} weight="bold" />
               </button>
               <img
                 src={lightbox}

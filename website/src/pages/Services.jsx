@@ -2,15 +2,34 @@ import React from 'react';
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowRight, Check, Layers, Lightbulb, Printer, Box, Volume2, Palette, ChevronRight, Sparkles, Star, ArrowUpRight } from 'lucide-react'
+import { ArrowRight, Check, Stack, Lightbulb, Printer, Cube, SpeakerHigh, Palette, CaretRight, Sparkle, Star, ArrowUpRight } from '@phosphor-icons/react'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+
+const SERVICES_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=2200&q=85',
+    alt: 'Modern lobby with marble floors and decorative ceiling',
+    vision: 'Sweeping commercial ceiling',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=2200&q=85',
+    alt: 'Building with dramatic architectural ceiling',
+    vision: 'Sculptural architectural form',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=2200&q=85',
+    alt: 'Open-plan office with acoustic ceiling',
+    vision: 'Acoustic open office',
+  },
+]
 
 const allServices = [
   {
     slug: 'stretch-ceilings',
-    icon: Layers,
+    icon: Stack,
     title: 'Stretch Ceilings',
     subtitle: 'Premium Membrane Systems',
     hero: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1920&q=80',
@@ -55,7 +74,7 @@ const allServices = [
   },
   {
     slug: '3d-ceilings',
-    icon: Box,
+    icon: Cube,
     title: '3D Ceiling Forms',
     subtitle: 'Sculptural Architecture',
     hero: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=1920&q=80',
@@ -70,7 +89,7 @@ const allServices = [
   },
   {
     slug: 'acoustic',
-    icon: Volume2,
+    icon: SpeakerHigh,
     title: 'Acoustic Solutions',
     subtitle: 'Sound Management',
     hero: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1920&q=80',
@@ -135,7 +154,9 @@ export default function Services() {
 function ServicesHero() {
   return (
     <section className="relative min-h-[65vh] flex items-center bg-lafoi-dark overflow-hidden">
-      <div className="absolute inset-0 grid-pattern opacity-20" />
+      <HeroSlideshow slides={SERVICES_HERO_SLIDES} interval={6500} parallax overlay={false} />
+      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/70 to-lafoi-dark/40 pointer-events-none" />
+      <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
       <div className="absolute top-20 right-20 w-96 h-96 bg-lafoi-green/5 rounded-full blur-[120px]" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-lafoi-green/5 rounded-full blur-[100px]" />
 
@@ -190,7 +211,7 @@ function ServicesHero() {
                 to={`/services/${s.slug}`}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/70 text-xs font-sora font-medium hover:bg-lafoi-green/20 hover:border-lafoi-green/30 hover:text-white transition-all duration-300"
               >
-                <s.icon size={12} />
+                <s.icon size={12} weight="regular" />
                 {s.title}
               </Link>
             ))}
@@ -232,11 +253,11 @@ function ServicesGrid() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                   <div className={`absolute top-4 left-4 w-11 h-11 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center shadow-lg`}>
-                    <service.icon size={18} className="text-white" />
+                    <service.icon size={18} weight="regular" className="text-white" />
                   </div>
                   {/* Hover arrow */}
                   <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/0 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-white/20 backdrop-blur-sm transition-all duration-300">
-                    <ArrowUpRight size={16} className="text-white" />
+                    <ArrowUpRight size={16} weight="bold" className="text-white" />
                   </div>
                 </div>
                 <div className="p-6">
@@ -244,7 +265,7 @@ function ServicesGrid() {
                   <h3 className="font-sora text-xl font-bold text-lafoi-dark mb-3 group-hover:text-lafoi-green transition-colors duration-300">{service.title}</h3>
                   <p className="text-sm text-lafoi-gray font-general line-clamp-3 mb-5 leading-relaxed">{service.desc}</p>
                   <span className="inline-flex items-center gap-1.5 text-sm font-sora font-semibold text-lafoi-green group-hover:gap-2.5 transition-all duration-300">
-                    Learn More <ArrowRight size={14} />
+                    Learn More <ArrowRight size={14} weight="bold" />
                   </span>
                 </div>
               </Link>
@@ -300,9 +321,9 @@ function ProcessOverview() {
 function WhyChooseUs() {
   const reasons = [
     { title: 'First in Zimbabwe', desc: 'We pioneered stretch ceilings in Zimbabwe, bringing technology never before seen in the country.', icon: Star },
-    { title: 'International Quality', desc: 'German and Estonian manufactured materials meet the highest European quality and safety standards.', icon: Sparkles },
+    { title: 'International Quality', desc: 'German and Estonian manufactured materials meet the highest European quality and safety standards.', icon: Sparkle },
     { title: 'Expert Installation', desc: 'Our team trained directly with European manufacturers for flawless, fast installations.', icon: Check },
-    { title: 'Full Warranty', desc: 'Every installation is backed by comprehensive manufacturer warranties of 10+ years.', icon: Sparkles },
+    { title: 'Full Warranty', desc: 'Every installation is backed by comprehensive manufacturer warranties of 10+ years.', icon: Sparkle },
   ]
 
   return (
@@ -318,7 +339,7 @@ function WhyChooseUs() {
             <StaggerItem key={r.title}>
               <div className="p-6 rounded-2xl bg-white border border-gray-100 h-full hover:shadow-xl hover:shadow-lafoi-green/[0.05] transition-all duration-500 group">
                 <div className="w-11 h-11 rounded-xl bg-lafoi-green/10 flex items-center justify-center mb-4 group-hover:bg-lafoi-green transition-colors duration-300">
-                  <r.icon size={18} className="text-lafoi-green group-hover:text-white transition-colors" />
+                  <r.icon size={18} weight="regular" className="text-lafoi-green group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="font-sora text-base font-bold text-lafoi-dark mb-2">{r.title}</h3>
                 <p className="text-sm text-lafoi-gray font-general leading-relaxed">{r.desc}</p>
@@ -358,7 +379,7 @@ function ServicesCTA() {
               className="group flex items-center gap-3 px-8 py-4 bg-lafoi-green text-white rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green-light transition-all duration-300 shadow-lg shadow-lafoi-green/25"
             >
               Book Free Consultation
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
               href="tel:+263712326951"
@@ -374,6 +395,13 @@ function ServicesCTA() {
 }
 
 function ServiceDetail({ service }) {
+  // Build 3 slides: service hero + verified fallbacks (skip duplicates)
+  const detailSlides = [
+    { src: service.hero, alt: service.title, vision: service.heroVision },
+    { src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85', alt: 'Luminous lobby ceiling', vision: 'Luminous backlit ceiling' },
+    { src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85', alt: 'Master suite with stretch ceiling', vision: 'Suite ceiling and lighting' },
+  ].filter((s, i, arr) => arr.findIndex(x => x.src === s.src) === i).slice(0, 3)
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -381,27 +409,18 @@ function ServiceDetail({ service }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Hero */}
-      <section className="relative min-h-[65vh] flex items-end overflow-hidden">
-        <div className="absolute inset-0">
-          <OptimizedImage
-            src={service.hero}
-            alt={service.title}
-            className="w-full h-full object-cover"
-            fill
-            priority
-            vision={service.heroVision}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/30" />
-        </div>
+      {/* Hero — slideshow */}
+      <section className="relative min-h-[65vh] flex items-end overflow-hidden bg-lafoi-dark">
+        <HeroSlideshow slides={detailSlides} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/30 pointer-events-none" />
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pb-16 pt-40">
           <Link to="/services" className="inline-flex items-center gap-1.5 text-white/60 text-sm font-general mb-6 hover:text-white transition-colors group">
-            <ArrowRight size={14} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
+            <ArrowRight size={14} weight="regular" className="rotate-180 group-hover:-translate-x-1 transition-transform" />
             Back to Services
           </Link>
           <div className="flex items-center gap-5 mb-4">
             <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center shadow-xl`}>
-              <service.icon size={28} className="text-white" />
+              <service.icon size={28} weight="regular" className="text-white" />
             </div>
             <div>
               <p className="text-lafoi-green text-xs font-sora font-semibold uppercase tracking-wider mb-1">{service.subtitle}</p>
@@ -460,7 +479,7 @@ function ServiceDetail({ service }) {
                     <div className="space-y-3 mb-6">
                       {service.applications.map((a) => (
                         <div key={a} className="flex items-center gap-2.5">
-                          <ChevronRight size={14} className="text-lafoi-green" />
+                          <CaretRight size={14} weight="regular" className="text-lafoi-green" />
                           <span className="text-sm text-lafoi-gray font-general">{a}</span>
                         </div>
                       ))}
@@ -470,7 +489,7 @@ function ServiceDetail({ service }) {
                       className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-lafoi-green text-white rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green-light transition-colors shadow-lg shadow-lafoi-green/20 group"
                     >
                       Get a Free Quote
-                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </div>
 
@@ -479,7 +498,7 @@ function ServiceDetail({ service }) {
                     <div className="flex items-center gap-3 mb-3">
                       <div className="flex -space-x-1">
                         {[1, 2, 3, 4, 5].map((i) => (
-                          <Star key={i} size={14} className="text-lafoi-green fill-lafoi-green" />
+                          <Star key={i} size={14} weight="fill" className="text-lafoi-green" />
                         ))}
                       </div>
                       <span className="text-xs text-lafoi-gray font-general">100% Satisfaction</span>

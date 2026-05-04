@@ -5,13 +5,32 @@ import {
   ArrowRight,
   ArrowUpRight,
   MapPin,
-  CalendarRange,
+  Calendar,
   Ruler,
-} from 'lucide-react'
+} from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
 import { products, projects } from '../data/site'
+
+const HOME_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+    alt: 'Luminous translucent stretch ceiling glowing across a hotel ballroom',
+    vision: 'Single plane of light — translucent stretch ceiling',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
+    alt: 'Master suite with stretch ceiling and warm cove lighting at dusk',
+    vision: 'Master suite with luminous ceiling',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=2200&q=85',
+    alt: 'Modern lobby with marble floors and decorative ceiling',
+    vision: 'Lobby with sculptural ceiling and marble floors',
+  },
+]
 
 /* ============================================================================
    HOME — La Foi Designs
@@ -70,41 +89,50 @@ export default function Home() {
 
 function Hero() {
   const ref = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end start'],
-  })
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120])
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.06])
+  const [mouse, setMouse] = useState({ x: 50, y: 40 })
+  const [hoverable, setHoverable] = useState(false)
+
+  useEffect(() => {
+    setHoverable(window.matchMedia('(hover: hover)').matches)
+  }, [])
+
+  const onMouseMove = (e) => {
+    if (!hoverable || !ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    setMouse({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    })
+  }
 
   return (
     <section
       ref={ref}
+      onMouseMove={onMouseMove}
       className="relative h-[100svh] min-h-[640px] overflow-hidden bg-lafoi-dark"
     >
-      {/* parallax background — luminous translucent ceiling */}
-      <motion.div className="absolute inset-0" style={{ y, scale }}>
-        <OptimizedImage
-          src="https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85"
-          alt="Luminous translucent stretch ceiling glowing across a hotel ballroom"
-          className="w-full h-full object-cover object-center"
-          fill
-          priority
-          vision="Luminous translucent stretch ceiling glowing across a hotel ballroom — single plane of light"
-        />
-      </motion.div>
+      {/* slideshow — 3 cinematic ceiling slides */}
+      <HeroSlideshow slides={HOME_HERO_SLIDES} interval={6500} parallax overlay={false} />
 
-      {/* refined cinematic overlays — preserve the image, deepen the corners */}
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20" />
+      {/* refined cinematic overlays — on top of slideshow, preserve image, deepen corners */}
+      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
       <div
         aria-hidden
-        className="absolute inset-0 opacity-60 pointer-events-none"
+        className="absolute inset-0 opacity-60 pointer-events-none transition-opacity duration-700"
         style={{
-          background:
-            'radial-gradient(ellipse at 50% 35%, rgba(34,197,94,0.10), transparent 55%)',
+          background: hoverable
+            ? `radial-gradient(600px circle at ${mouse.x}% ${mouse.y}%, rgba(34,197,94,0.12), transparent 50%)`
+            : 'radial-gradient(ellipse at 50% 35%, rgba(34,197,94,0.10), transparent 55%)',
         }}
       />
+
+      {/* Volume index — top-right editorial artifact */}
+      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none">
+        <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
+          Vol.&nbsp;01 &mdash; 2026
+        </span>
+      </div>
 
       {/* CONTENT — single viewport, anchored bottom-left */}
       <div className="relative z-10 h-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col">
@@ -167,34 +195,40 @@ function Hero() {
                 className="group inline-flex items-center gap-3 px-7 py-3.5 bg-lafoi-green-light text-white rounded-full font-body text-sm font-medium hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
               >
                 Start your project
-                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight size={15} weight="bold" className="group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
               <Link
                 to="/projects"
                 className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
               >
                 Explore our work
-                <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+                <ArrowUpRight size={14} weight="regular" className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
               </Link>
             </motion.div>
           </motion.div>
 
-          {/* lower-right metadata card — luxury magazine credit */}
+          {/* lower-right metadata card — sculpted asymmetric glass with subtle dot accent */}
           <motion.aside
             className="lg:col-span-4 hidden lg:block"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="ml-auto max-w-[280px] border-l border-white/20 pl-6">
-              <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-green-light mb-4">
-                Studio — Est. 2024
-              </p>
-              <div className="space-y-2 font-body font-light text-[13px] text-white/70 leading-relaxed">
-                <p>Belgravia, Harare</p>
-                <p>German &amp; Estonian engineered</p>
-                <p>15-year manufacturer warranty</p>
-                <p>Class A1 fire performance</p>
+            <div className="ml-auto max-w-[300px] relative bg-white/[0.06] backdrop-blur-md border border-white/15 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-lg rounded-bl-lg p-6 overflow-hidden">
+              <div aria-hidden className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="block w-6 h-px bg-lafoi-green-light/70" />
+                  <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-green-light">
+                    Studio &mdash; Est. 2024
+                  </p>
+                </div>
+                <div className="space-y-2 font-body font-light text-[13px] text-white/75 leading-relaxed">
+                  <p>Belgravia, Harare</p>
+                  <p>German &amp; Estonian engineered</p>
+                  <p>15-year manufacturer warranty</p>
+                  <p>Class A1 fire performance</p>
+                </div>
               </div>
             </div>
           </motion.aside>
@@ -271,15 +305,33 @@ function FinishBand() {
 function Manifesto() {
   return (
     <section className="relative py-24 lg:py-36 bg-lafoi-dark overflow-hidden">
-      <div className="absolute inset-0 dot-pattern opacity-40" />
+      <div className="absolute inset-0 pattern-cross-light opacity-50" />
+      <div className="absolute inset-0 dot-pattern opacity-25" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full mesh-gradient-hero" />
+      {/* Duotone editorial tile — image multiplied over green panel */}
+      <div
+        aria-hidden
+        className="hidden lg:block absolute right-10 top-1/2 -translate-y-1/2 w-[18rem] h-[24rem] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden bg-lafoi-green pointer-events-none opacity-90"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=900&q=80"
+          alt=""
+          className="w-full h-full object-cover"
+          style={{ mixBlendMode: 'multiply', filter: 'grayscale(0.4)' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/40 to-transparent" />
+      </div>
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="max-w-5xl">
+        <div className="max-w-5xl relative z-10">
           <AnimatedSection>
-            <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light mb-8">
-              — Studio manifesto
-            </p>
+            <div className="flex items-center gap-3 mb-8">
+              <span className="block w-12 h-px bg-lafoi-green-light/60" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                Studio manifesto
+              </p>
+              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">01 / 09</span>
+            </div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="heading-lg text-white text-3xl sm:text-4xl lg:text-[3.4rem] leading-[1.15] tracking-[-0.02em]">
@@ -345,9 +397,13 @@ function FinishGallery() {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-14 lg:mb-20">
           <div className="max-w-2xl">
             <AnimatedSection>
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green mb-5">
-                — The membrane library
-              </p>
+              <div className="flex items-center gap-3 mb-5">
+                <span className="block w-10 h-px bg-lafoi-green/60" />
+                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                  The membrane library
+                </p>
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">03 / 09</span>
+              </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
@@ -397,6 +453,7 @@ function FinishGallery() {
                   <span className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center group-hover:border-lafoi-green-light group-hover:bg-lafoi-green-light/10 transition-all duration-500">
                     <ArrowUpRight
                       size={14}
+                      weight="regular"
                       className="text-white/70 group-hover:text-lafoi-green-light group-hover:rotate-45 transition-all duration-500"
                     />
                   </span>
@@ -431,6 +488,7 @@ function FinishGallery() {
             <span className="font-display font-light text-base">Explore the full library</span>
             <ArrowRight
               size={16}
+              weight="bold"
               className="group-hover:translate-x-1 transition-transform duration-300"
             />
           </Link>
@@ -655,7 +713,8 @@ function Stats() {
 
   return (
     <section className="relative bg-lafoi-dark py-24 lg:py-36 overflow-hidden">
-      <div className="absolute inset-0 dot-pattern opacity-30" />
+      <div className="absolute inset-0 pattern-blueprint-light opacity-60" />
+      <div className="absolute inset-0 dot-pattern opacity-15" />
       {/* soft luminous wash, NOT a blob */}
       <div
         className="absolute inset-0 opacity-60"
@@ -747,6 +806,7 @@ function ProjectsBento() {
               <span className="w-10 h-10 rounded-full border border-lafoi-dark/20 group-hover:border-lafoi-green group-hover:bg-lafoi-green flex items-center justify-center transition-all duration-300">
                 <ArrowRight
                   size={14}
+                  weight="bold"
                   className="group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300"
                 />
               </span>
@@ -822,17 +882,17 @@ function BentoProject({ project, large = false }) {
         {/* metadata row — visible compact, expands on hover */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3 text-[11px] font-sora text-white/65 tracking-wide">
           <span className="inline-flex items-center gap-1.5">
-            <MapPin size={11} />
+            <MapPin size={11} weight="regular" />
             {project.location}
           </span>
-          <span className="text-white/30">·</span>
+          <span className="text-white/30">&middot;</span>
           <span className="inline-flex items-center gap-1.5">
-            <CalendarRange size={11} />
+            <Calendar size={11} weight="regular" />
             {project.year}
           </span>
-          <span className="text-white/30">·</span>
+          <span className="text-white/30">&middot;</span>
           <span className="inline-flex items-center gap-1.5">
-            <Ruler size={11} />
+            <Ruler size={11} weight="regular" />
             {project.area}
           </span>
         </div>
@@ -840,7 +900,7 @@ function BentoProject({ project, large = false }) {
         {/* CTA — slides in on hover */}
         <div className="mt-4 flex items-center gap-2 text-lafoi-green-light font-sora text-xs font-semibold tracking-wider uppercase opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
           <span>View case study</span>
-          <ArrowUpRight size={13} />
+          <ArrowUpRight size={13} weight="bold" />
         </div>
       </div>
     </Link>
@@ -1047,6 +1107,7 @@ function CinematicCTA() {
                 Message us on WhatsApp
                 <ArrowUpRight
                   size={16}
+                  weight="bold"
                   className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
                 />
               </a>
@@ -1057,6 +1118,7 @@ function CinematicCTA() {
                 admin@lafoidesigns.co.zw
                 <ArrowRight
                   size={16}
+                  weight="bold"
                   className="group-hover:translate-x-1 transition-transform duration-300"
                 />
               </a>
@@ -1067,6 +1129,7 @@ function CinematicCTA() {
                 Or open a brief
                 <ArrowRight
                   size={14}
+                  weight="bold"
                   className="group-hover:translate-x-1 transition-transform duration-300"
                 />
               </Link>

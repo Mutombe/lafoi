@@ -2,9 +2,28 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronDown, ArrowRight, HelpCircle, MessageCircle } from 'lucide-react'
+import { CaretDown, ArrowRight, Question, ChatCircleDots } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+
+const FAQ_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    alt: 'Calm contemporary living room',
+    vision: 'Reassuring quiet space',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+    alt: 'Luxurious lobby with backlit ceiling',
+    vision: 'Editorial answer space',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=2200&q=85',
+    alt: 'Contemporary architecture interior',
+    vision: 'Architectural confidence',
+  },
+]
 
 const faqCategories = [
   {
@@ -62,9 +81,11 @@ export default function FAQ() {
       transition={{ duration: 0.5 }}
     >
       <section className="relative min-h-[50vh] flex items-center bg-lafoi-dark overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-20" />
-        <div className="absolute top-20 left-20 w-72 h-72 bg-lafoi-green/5 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 right-20 w-64 h-64 bg-lafoi-green/5 rounded-full blur-[80px]" />
+        <HeroSlideshow slides={FAQ_HERO_SLIDES} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/92 via-lafoi-dark/75 to-lafoi-dark/55 pointer-events-none" />
+        <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
+        <div className="absolute top-20 left-20 w-72 h-72 bg-lafoi-green/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 right-20 w-64 h-64 bg-lafoi-green/5 rounded-full blur-[80px] pointer-events-none" />
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-20">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <motion.div
@@ -73,7 +94,7 @@ export default function FAQ() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <HelpCircle size={14} className="text-lafoi-green" />
+              <Question size={14} weight="regular" className="text-lafoi-green" />
               <span className="text-xs font-sora text-white/70 font-medium tracking-wider uppercase">Support</span>
             </motion.div>
             <h1 className="heading-xl text-4xl sm:text-5xl lg:text-6xl text-white mt-4 mb-6">
@@ -124,14 +145,14 @@ export default function FAQ() {
 
           {/* CTA */}
           <AnimatedSection className="mt-16 p-8 rounded-3xl bg-lafoi-green-soft border border-lafoi-green/10 text-center">
-            <MessageCircle size={28} className="text-lafoi-green mx-auto mb-4" />
+            <ChatCircleDots size={28} weight="regular" className="text-lafoi-green mx-auto mb-4" />
             <h3 className="font-sora text-xl font-bold text-lafoi-dark mb-3">Still have questions?</h3>
             <p className="text-sm text-lafoi-gray font-general mb-6">Our team is here to help. Reach out and we'll respond within 24 hours.</p>
             <Link
               to="/contact"
               className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-green text-white rounded-full text-sm font-sora font-semibold hover:bg-lafoi-green-light transition-colors group"
             >
-              Contact Us <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              Contact Us <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </AnimatedSection>
         </div>
@@ -150,11 +171,12 @@ function FAQItem({ item }) {
         className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-gray-50/50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <HelpCircle size={18} className="text-lafoi-green shrink-0" />
+          <Question size={18} weight="regular" className="text-lafoi-green shrink-0" />
           <span className="font-sora text-sm font-semibold text-lafoi-dark">{item.q}</span>
         </div>
-        <ChevronDown
+        <CaretDown
           size={18}
+          weight="regular"
           className={`text-lafoi-gray-medium shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
         />
       </button>

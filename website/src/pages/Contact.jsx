@@ -1,10 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { MapPin, Phone, Mail, Clock, Send, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { MapPin, Phone, Envelope, Clock, PaperPlaneRight, ArrowRight, CheckCircle } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import AnimatedSection from '../components/ui/AnimatedSection'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+
+const CONTACT_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    alt: 'Calm contemporary living room',
+    vision: 'Welcoming residential space',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=2200&q=85',
+    alt: 'Restaurant fine dining interior',
+    vision: 'Warm hospitality space',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=2200&q=85',
+    alt: 'Luxe hotel suite',
+    vision: 'Refined room awaiting brief',
+  },
+]
 
 export default function Contact() {
   useSEO({
@@ -29,35 +48,29 @@ export default function Contact() {
 
 function ContactHero() {
   return (
-    <section className="relative min-h-[50vh] flex items-center overflow-hidden bg-lafoi-cream">
-      <div className="absolute inset-0 mesh-gradient-hero" />
-      <div className="absolute inset-0 dot-pattern opacity-40" />
-      <motion.div
-        className="absolute top-40 right-[10%] w-48 h-48 bg-lafoi-green/8 rounded-full blur-[80px]"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 6, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute bottom-20 left-[5%] w-32 h-32 bg-lafoi-green/5 rounded-full blur-[60px]"
-        animate={{ scale: [1.1, 1, 1.1] }}
-        transition={{ duration: 8, repeat: Infinity }}
-      />
+    <section className="relative min-h-[50vh] flex items-center overflow-hidden bg-lafoi-dark">
+      <HeroSlideshow slides={CONTACT_HERO_SLIDES} interval={6500} parallax overlay={false} />
+      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/85 via-lafoi-dark/65 to-lafoi-dark/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent pointer-events-none" />
       <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-16">
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lafoi-green/5 border border-lafoi-green/10 mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="w-2 h-2 rounded-full bg-lafoi-green animate-pulse" />
-            <span className="text-xs font-sora text-lafoi-green font-medium tracking-wider uppercase">Get in Touch</span>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lafoi-green opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-lafoi-green-light" />
+            </span>
+            <span className="text-xs font-sora text-white/85 font-medium tracking-wider uppercase">Get in touch</span>
           </motion.div>
-          <h1 className="heading-xl text-4xl sm:text-5xl lg:text-6xl text-lafoi-dark mt-4 mb-6">
-            Let's bring your<br /><span className="text-gradient">vision to life</span>
+          <h1 className="heading-xl text-4xl sm:text-5xl lg:text-6xl text-white mt-4 mb-6">
+            Let&rsquo;s bring your<br /><span className="text-gradient">vision to life</span>
           </h1>
-          <p className="body-text text-lg max-w-xl leading-relaxed">
-            Ready to transform your space? Reach out for a free consultation and discover what's possible with stretch ceilings and custom lighting.
+          <p className="text-white/75 font-general text-lg max-w-xl leading-relaxed">
+            Ready to transform your space? Reach out for a free consultation and discover what&rsquo;s possible with stretch ceilings and custom lighting.
           </p>
         </motion.div>
       </div>
@@ -84,7 +97,7 @@ function ContactContent() {
   const contactInfo = [
     { icon: MapPin, label: 'Visit Our Showroom', value: 'Suite 26, 6 Chelmsford Road, Belgravia, Harare, Zimbabwe' },
     { icon: Phone, label: 'Call Us', value: '+263 712 326 951 | +263 782 931 472' },
-    { icon: Mail, label: 'Email Us', value: 'admin@lafoidesigns.co.zw' },
+    { icon: Envelope, label: 'Email Us', value: 'admin@lafoidesigns.co.zw' },
     { icon: Clock, label: 'Business Hours', value: 'Mon – Fri: 8:00 AM – 5:00 PM | Sat: 9:00 AM – 1:00 PM' },
   ]
 
@@ -99,7 +112,7 @@ function ContactContent() {
               {contactInfo.map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex gap-4">
                   <div className="w-11 h-11 rounded-xl bg-lafoi-green/10 flex items-center justify-center shrink-0">
-                    <Icon size={18} className="text-lafoi-green" />
+                    <Icon size={18} weight="regular" className="text-lafoi-green" />
                   </div>
                   <div>
                     <p className="text-sm font-sora font-semibold text-lafoi-dark">{label}</p>
@@ -118,7 +131,7 @@ function ContactContent() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
               >
-                <CheckCircle2 size={48} className="text-lafoi-green mx-auto mb-4" />
+                <CheckCircle size={48} weight="fill" className="text-lafoi-green mx-auto mb-4" />
                 <h3 className="font-sora text-2xl font-bold text-lafoi-dark mb-3">Message Sent!</h3>
                 <p className="text-lafoi-gray font-general mb-6">Thank you for reaching out. Our team will contact you within 24 hours.</p>
                 <button
@@ -197,9 +210,9 @@ function ContactContent() {
                     type="submit"
                     className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-lafoi-green text-white rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green-light transition-colors shadow-lg shadow-lafoi-green/20 group"
                   >
-                    <Send size={16} />
+                    <PaperPlaneRight size={16} weight="regular" />
                     Send Message
-                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                   </button>
                 </form>
               </div>

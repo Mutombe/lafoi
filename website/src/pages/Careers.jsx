@@ -2,11 +2,30 @@ import React from 'react';
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, MapPin, Clock, Briefcase, ChevronDown, Heart, Zap, Globe, Users } from 'lucide-react'
+import { ArrowRight, MapPin, Clock, Briefcase, CaretDown, Heart, Lightning, Globe, Users } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+
+const CAREERS_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1758691736975-9f7f643d178e?w=2200&q=85',
+    alt: 'La Foi Designs Team',
+    vision: 'Team in motion',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=2200&q=85',
+    alt: 'Open-plan office with acoustic ceiling',
+    vision: 'Workspace where craft happens',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=2200&q=85',
+    alt: 'Minimalist gallery space',
+    vision: 'Studio environment',
+  },
+]
 
 const openings = [
   {
@@ -41,7 +60,7 @@ const openings = [
 
 const perks = [
   { icon: Globe, title: 'International Training', desc: 'Get trained by our German and Estonian partners.' },
-  { icon: Zap, title: 'Growth Opportunities', desc: 'Fast-growing company with room to advance quickly.' },
+  { icon: Lightning, title: 'Growth Opportunities', desc: 'Fast-growing company with room to advance quickly.' },
   { icon: Heart, title: 'Team Culture', desc: 'Collaborative, supportive, and creative environment.' },
   { icon: Users, title: 'Diverse Projects', desc: 'Work on exciting residential, commercial, and hospitality projects.' },
 ]
@@ -61,19 +80,9 @@ export default function Careers() {
       transition={{ duration: 0.5 }}
     >
       {/* Hero */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
-          {/* Vision: Team of diverse professionals at work, energetic and collaborative */}
-          <OptimizedImage
-            src="https://images.unsplash.com/photo-1758691736975-9f7f643d178e?w=1920&q=80"
-            alt="La Foi Designs Team"
-            className="w-full h-full object-cover"
-            fill
-            priority
-            vision="Diverse professional team smiling in a modern office setting"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/70 to-lafoi-dark/40" />
-        </div>
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-lafoi-dark">
+        <HeroSlideshow slides={CAREERS_HERO_SLIDES} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/70 to-lafoi-dark/40 pointer-events-none" />
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-16">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <span className="text-lafoi-green font-sora text-sm font-semibold tracking-widest uppercase">Careers</span>
@@ -98,7 +107,7 @@ export default function Careers() {
               <StaggerItem key={p.title}>
                 <div className="p-6 rounded-2xl bg-white border border-gray-100 text-center h-full">
                   <div className="w-12 h-12 rounded-xl bg-lafoi-green/10 flex items-center justify-center mx-auto mb-4">
-                    <p.icon size={22} className="text-lafoi-green" />
+                    <p.icon size={22} weight="regular" className="text-lafoi-green" />
                   </div>
                   <h3 className="font-sora text-base font-bold text-lafoi-dark mb-2">{p.title}</h3>
                   <p className="text-sm text-lafoi-gray font-general">{p.desc}</p>
@@ -139,7 +148,7 @@ export default function Careers() {
               className="inline-flex items-center gap-2 px-7 py-4 bg-lafoi-green text-white rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green-light transition-colors group"
             >
               Send Your CV
-              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
             </a>
           </AnimatedSection>
         </div>
@@ -166,12 +175,12 @@ function JobCard({ job }) {
           <div>
             <h3 className="font-sora text-lg font-bold text-lafoi-dark">{job.title}</h3>
             <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-lafoi-gray font-general">
-              <span className="flex items-center gap-1"><Briefcase size={14} /> {job.department}</span>
-              <span className="flex items-center gap-1"><Clock size={14} /> {job.type}</span>
-              <span className="flex items-center gap-1"><MapPin size={14} /> {job.location}</span>
+              <span className="flex items-center gap-1"><Briefcase size={14} weight="regular" /> {job.department}</span>
+              <span className="flex items-center gap-1"><Clock size={14} weight="regular" /> {job.type}</span>
+              <span className="flex items-center gap-1"><MapPin size={14} weight="regular" /> {job.location}</span>
             </div>
           </div>
-          <ChevronDown size={20} className={`text-lafoi-gray transition-transform ${open ? 'rotate-180' : ''}`} />
+          <CaretDown size={20} weight="regular" className={`text-lafoi-gray transition-transform ${open ? 'rotate-180' : ''}`} />
         </button>
         {open && (
           <motion.div
@@ -184,7 +193,7 @@ function JobCard({ job }) {
               onClick={handleApply}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-lafoi-green text-white rounded-full text-sm font-sora font-medium hover:bg-lafoi-green-light transition-colors"
             >
-              Apply Now <ArrowRight size={14} />
+              Apply Now <ArrowRight size={14} weight="bold" />
             </button>
           </motion.div>
         )}

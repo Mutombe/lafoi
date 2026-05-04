@@ -1,10 +1,29 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-import { ArrowUpRight, X } from 'lucide-react'
+import { ArrowUpRight, X } from '@phosphor-icons/react'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+
+const PORTFOLIO_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+    alt: 'Luxurious lobby with backlit ceiling',
+    vision: 'Editorial portfolio cover',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
+    alt: 'Luxury modern living room with premium ceiling',
+    vision: 'Residential transformation',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=2200&q=85',
+    alt: 'Indoor pool with stone walls and natural light',
+    vision: 'Hospitality wellness',
+  },
+]
 
 const categories = ['All', 'Residential', 'Commercial', 'Hospitality', 'Retail']
 
@@ -40,19 +59,10 @@ export default function Portfolio() {
       transition={{ duration: 0.5 }}
     >
       {/* Hero */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
-          <OptimizedImage
-            src="https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=1920&q=80"
-            alt="Luxury interior showcasing ceiling design"
-            className="w-full h-full object-cover"
-            fill
-            priority
-            vision="Luxurious lobby with modern seating, gold accents, and dramatic ceiling lighting"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/75 to-lafoi-dark/50" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent" />
-        </div>
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-lafoi-dark">
+        <HeroSlideshow slides={PORTFOLIO_HERO_SLIDES} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/75 to-lafoi-dark/50 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-16">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <motion.div
@@ -124,7 +134,7 @@ export default function Portfolio() {
                     <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
                       <p className="text-xs font-sora text-lafoi-green-light font-medium uppercase tracking-wider">{project.category}</p>
                       <h3 className="font-sora text-lg font-bold text-white mt-1 flex items-center gap-2">
-                        {project.title} <ArrowUpRight size={16} />
+                        {project.title} <ArrowUpRight size={16} weight="bold" />
                       </h3>
                     </div>
                   </button>
@@ -155,7 +165,7 @@ export default function Portfolio() {
                 onClick={() => setSelected(null)}
                 className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 transition-colors"
               >
-                <X size={18} />
+                <X size={18} weight="bold" />
               </button>
               <div className="h-80 sm:h-96">
                 <OptimizedImage

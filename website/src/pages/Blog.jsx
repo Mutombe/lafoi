@@ -1,10 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Calendar, Clock, ArrowUpRight } from 'lucide-react'
+import { ArrowRight, Calendar, Clock, ArrowUpRight } from '@phosphor-icons/react'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+
+const BLOG_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    alt: 'Calm contemporary living room',
+    vision: 'Editorial blog cover',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1618259715220-a89a4e4da76b?w=2200&q=85',
+    alt: 'Country hotel interior with elegant design',
+    vision: 'Stories from the field',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=2200&q=85',
+    alt: 'Minimalist gallery space',
+    vision: 'Quiet contemplation',
+  },
+]
 
 const posts = [
   {
@@ -88,16 +107,17 @@ export default function Blog() {
       transition={{ duration: 0.5 }}
     >
       {/* Hero */}
-      <section className="relative min-h-[45vh] flex items-center bg-lafoi-cream overflow-hidden">
-        <div className="absolute inset-0 mesh-gradient-hero" />
-        <div className="absolute inset-0 dot-pattern opacity-40" />
+      <section className="relative min-h-[45vh] flex items-center bg-lafoi-dark overflow-hidden">
+        <HeroSlideshow slides={BLOG_HERO_SLIDES} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/72 to-lafoi-dark/45 pointer-events-none" />
+        <div className="absolute inset-0 dot-pattern opacity-25 pointer-events-none" />
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-16">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <span className="text-lafoi-green font-sora text-sm font-semibold tracking-widest uppercase">Blog</span>
-            <h1 className="heading-xl text-4xl sm:text-5xl text-lafoi-dark mt-4 mb-6">
-              Design insights &<br /><span className="text-gradient">inspiration</span>
+            <span className="text-lafoi-green-light font-sora text-sm font-semibold tracking-widest uppercase">Blog</span>
+            <h1 className="heading-xl text-4xl sm:text-5xl text-white mt-4 mb-6">
+              Design insights &amp;<br /><span className="text-gradient">inspiration</span>
             </h1>
-            <p className="body-text text-lg max-w-xl">
+            <p className="text-white/75 font-general text-lg max-w-xl">
               Expert articles on stretch ceilings, interior design trends, lighting innovation, and the stories behind our transformations.
             </p>
           </motion.div>
@@ -122,13 +142,13 @@ export default function Blog() {
                 <div className="p-8 lg:p-10">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="px-3 py-1 rounded-full bg-lafoi-green/10 text-lafoi-green text-xs font-sora font-semibold">{featured.category}</span>
-                    <span className="text-xs text-lafoi-gray-medium font-general flex items-center gap-1"><Calendar size={12} /> {featured.date}</span>
-                    <span className="text-xs text-lafoi-gray-medium font-general flex items-center gap-1"><Clock size={12} /> {featured.readTime}</span>
+                    <span className="text-xs text-lafoi-gray-medium font-general flex items-center gap-1"><Calendar size={12} weight="regular" /> {featured.date}</span>
+                    <span className="text-xs text-lafoi-gray-medium font-general flex items-center gap-1"><Clock size={12} weight="regular" /> {featured.readTime}</span>
                   </div>
                   <h2 className="font-sora text-2xl lg:text-3xl font-bold text-lafoi-dark mb-4 group-hover:text-lafoi-green transition-colors">{featured.title}</h2>
                   <p className="text-lafoi-gray font-general mb-6">{featured.excerpt}</p>
                   <span className="inline-flex items-center gap-2 text-sm font-sora font-semibold text-lafoi-green">
-                    Read Article <ArrowRight size={14} />
+                    Read Article <ArrowRight size={14} weight="bold" />
                   </span>
                 </div>
               </div>
@@ -161,8 +181,8 @@ export default function Blog() {
                     <h3 className="font-sora text-lg font-bold text-lafoi-dark mb-2 group-hover:text-lafoi-green transition-colors">{post.title}</h3>
                     <p className="text-sm text-lafoi-gray font-general line-clamp-2 flex-1">{post.excerpt}</p>
                     <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                      <span className="text-xs text-lafoi-gray-medium font-general flex items-center gap-1"><Calendar size={12} /> {post.date}</span>
-                      <ArrowUpRight size={16} className="text-lafoi-green opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span className="text-xs text-lafoi-gray-medium font-general flex items-center gap-1"><Calendar size={12} weight="regular" /> {post.date}</span>
+                      <ArrowUpRight size={16} weight="bold" className="text-lafoi-green opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
                 </div>

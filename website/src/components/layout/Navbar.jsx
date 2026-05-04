@@ -3,17 +3,17 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Search, X, Menu, ChevronDown, ArrowRight,
-  Sparkles, Building2, Briefcase, Camera, Phone,
-  HelpCircle, Newspaper, Users, Lightbulb, Palette,
-  LayoutGrid, Zap, Star, Package
-} from 'lucide-react'
+  MagnifyingGlass, X, List, CaretDown, ArrowRight,
+  Sparkle, Buildings, Briefcase, Camera, Phone,
+  Question, Newspaper, Users, Lightbulb, Palette,
+  SquaresFour, Lightning, Star, Package
+} from '@phosphor-icons/react'
 
 const navGroups = [
   {
     label: 'Discover',
     items: [
-      { name: 'Our Story', path: '/about', icon: Sparkles, desc: 'The journey behind La Foi' },
+      { name: 'Our Story', path: '/about', icon: Sparkle, desc: 'The journey behind La Foi' },
       { name: 'Portfolio', path: '/portfolio', icon: Camera, desc: 'Stunning transformations' },
       { name: 'Projects', path: '/projects', icon: Camera, desc: 'Case studies & transformations' },
       { name: 'Blog & Insights', path: '/blog', icon: Newspaper, desc: 'Design trends & tips' },
@@ -23,7 +23,7 @@ const navGroups = [
     label: 'Solutions',
     items: [
       { name: 'Products', path: '/products', icon: Package, desc: 'Membranes, lighting & accessories' },
-      { name: 'Stretch Ceilings', path: '/services/stretch-ceilings', icon: LayoutGrid, desc: 'Premium ceiling systems' },
+      { name: 'Stretch Ceilings', path: '/services/stretch-ceilings', icon: SquaresFour, desc: 'Premium ceiling systems' },
       { name: 'Custom Lighting', path: '/services/custom-lighting', icon: Lightbulb, desc: 'Architectural illumination' },
       { name: 'All Services', path: '/services', icon: Palette, desc: 'Full service catalog' },
     ],
@@ -33,7 +33,7 @@ const navGroups = [
     items: [
       { name: 'Contact Us', path: '/contact', icon: Phone, desc: 'Start your project' },
       { name: 'Careers', path: '/careers', icon: Briefcase, desc: 'Join our team' },
-      { name: 'FAQs', path: '/faq', icon: HelpCircle, desc: 'Common questions' },
+      { name: 'FAQs', path: '/faq', icon: Question, desc: 'Common questions' },
     ],
   },
 ]
@@ -190,7 +190,7 @@ export default function Navbar() {
                 className={`p-2.5 rounded-xl transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
                 aria-label="Search"
               >
-                <Search size={18} className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
+                <MagnifyingGlass size={18} weight="regular" className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
               </button>
 
               <Link
@@ -202,7 +202,7 @@ export default function Navbar() {
                 }`}
               >
                 <span>Get a Quote</span>
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
               </Link>
 
               <button
@@ -210,7 +210,7 @@ export default function Navbar() {
                 className={`lg:hidden p-2.5 rounded-xl transition-colors ${isLightText ? 'text-white hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
                 aria-label="Toggle menu"
               >
-                {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+                {mobileOpen ? <X size={22} weight="regular" /> : <List size={22} weight="regular" />}
               </button>
             </div>
           </div>
@@ -235,7 +235,7 @@ export default function Navbar() {
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
-                <Search size={20} className="text-lafoi-gray-medium shrink-0" />
+                <MagnifyingGlass size={20} weight="regular" className="text-lafoi-gray-medium shrink-0" />
                 <input
                   ref={searchRef}
                   type="text"
@@ -257,13 +257,13 @@ export default function Navbar() {
                       className="w-full flex items-center gap-3 px-5 py-3 hover:bg-lafoi-green/5 transition-colors text-left group"
                     >
                       <div className="w-8 h-8 rounded-lg bg-lafoi-green/10 flex items-center justify-center shrink-0">
-                        <Star size={14} className="text-lafoi-green" />
+                        <Star size={14} weight="fill" className="text-lafoi-green" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-lafoi-dark group-hover:text-lafoi-green transition-colors">{result.title}</p>
                         <p className="text-xs text-lafoi-gray-medium">{result.section}</p>
                       </div>
-                      <ArrowRight size={14} className="ml-auto text-lafoi-gray-medium opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ArrowRight size={14} weight="regular" className="ml-auto text-lafoi-gray-medium opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
                   ))}
                 </div>
@@ -331,7 +331,7 @@ export default function Navbar() {
                         className="flex items-center gap-3 py-2.5 text-lafoi-gray hover:text-lafoi-green transition-colors"
                         onClick={() => setMobileOpen(false)}
                       >
-                        <item.icon size={16} />
+                        <item.icon size={16} weight="regular" />
                         <span className="font-general text-sm">{item.name}</span>
                       </Link>
                     ))}
@@ -343,7 +343,7 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                 >
                   Get a Free Quote
-                  <ArrowRight size={16} />
+                  <ArrowRight size={16} weight="bold" />
                 </Link>
               </div>
             </motion.div>
@@ -402,7 +402,7 @@ function DropdownMenu({ group, active, onOpen, onClose, currentPath, lightText }
         }`}
       >
         {group.label}
-        <ChevronDown size={14} className={`transition-transform duration-200 ${active ? 'rotate-180' : ''}`} />
+        <CaretDown size={14} weight="regular" className={`transition-transform duration-200 ${active ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
         {active && (

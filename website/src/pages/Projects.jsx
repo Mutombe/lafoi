@@ -5,15 +5,34 @@ import {
   ArrowRight,
   ArrowUpRight,
   MapPin,
-  CalendarRange,
+  Calendar,
   Ruler,
   Camera,
-  Sparkles,
-} from 'lucide-react'
+  Sparkle,
+} from '@phosphor-icons/react'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
 import { projects, projectCategories, totalStats } from '../data/site'
+
+const PROJECTS_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+    alt: 'Luminous hotel ballroom ceiling backlit and glowing across full plane',
+    vision: 'Transformation hero — backlit hotel ballroom',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=2200&q=85',
+    alt: 'Building with dramatic architectural ceiling',
+    vision: 'Sculptural ceiling drama',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=2200&q=85',
+    alt: 'Indoor pool with stone walls and natural light',
+    vision: 'Spa hospitality transformation',
+  },
+]
 
 // asymmetric aspect rotation for the editorial grid
 const aspectRotation = ['aspect-[3/4]', 'aspect-[4/3]', 'aspect-[3/4]', 'aspect-square', 'aspect-[3/4]', 'aspect-[4/3]', 'aspect-square', 'aspect-[3/4]', 'aspect-[4/3]']
@@ -45,18 +64,14 @@ export default function Projects() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
       {/* HERO */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
-          <OptimizedImage
-            src="https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=1920&q=85"
-            alt="La Foi case studies — projects archive"
-            className="w-full h-full object-cover"
-            fill
-            priority
-            vision="Luminous hotel ballroom ceiling backlit and glowing across full plane"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/75 to-lafoi-dark/50" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent" />
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-lafoi-dark">
+        <HeroSlideshow slides={PROJECTS_HERO_SLIDES} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/75 to-lafoi-dark/50 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none">
+          <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
+            Vol.&nbsp;01 &mdash; The Archive
+          </span>
         </div>
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-16">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
@@ -98,17 +113,17 @@ export default function Projects() {
           <div className="lg:col-span-5 flex items-center px-6 sm:px-10 lg:px-14 py-14 lg:py-20 relative">
             <AnimatedSection direction="left">
               <p className="text-lafoi-green-light font-sora text-[10px] font-semibold tracking-widest uppercase mb-4 inline-flex items-center gap-2">
-                <Sparkles size={11} /> Featured case study · {featured.category}
+                <Sparkle size={11} weight="fill" /> Featured case study &middot; {featured.category}
               </p>
               <h2 className="heading-xl text-3xl sm:text-4xl lg:text-5xl mb-3">
                 {featured.title}
               </h2>
               <div className="flex flex-wrap items-center gap-3 text-xs font-sora text-white/55 mb-5">
-                <span className="inline-flex items-center gap-1.5"><MapPin size={12} />{featured.location}</span>
-                <span className="text-white/30">·</span>
-                <span className="inline-flex items-center gap-1.5"><CalendarRange size={12} />{featured.year}</span>
-                <span className="text-white/30">·</span>
-                <span className="inline-flex items-center gap-1.5"><Ruler size={12} />{featured.area}</span>
+                <span className="inline-flex items-center gap-1.5"><MapPin size={12} weight="regular" />{featured.location}</span>
+                <span className="text-white/30">&middot;</span>
+                <span className="inline-flex items-center gap-1.5"><Calendar size={12} weight="regular" />{featured.year}</span>
+                <span className="text-white/30">&middot;</span>
+                <span className="inline-flex items-center gap-1.5"><Ruler size={12} weight="regular" />{featured.area}</span>
               </div>
               <p className="font-general text-white/70 text-base leading-relaxed mb-7 max-w-md">
                 {featured.brief}
@@ -118,7 +133,7 @@ export default function Projects() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-green hover:bg-lafoi-green-light text-white rounded-full font-sora text-sm font-medium transition-colors duration-300 group shadow-lg shadow-lafoi-green/20"
               >
                 Read case study
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </AnimatedSection>
           </div>
@@ -132,9 +147,12 @@ export default function Projects() {
           <AnimatedSection>
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
               <div>
-                <p className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase mb-3">
-                  All projects
-                </p>
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="block w-10 h-px bg-lafoi-green/60" />
+                  <p className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase">
+                    All projects
+                  </p>
+                </div>
                 <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark">
                   The complete <span className="font-display font-light text-lafoi-green">archive</span>
                 </h2>
@@ -178,7 +196,7 @@ export default function Projects() {
           ) : (
             <div className="py-24 text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white flex items-center justify-center">
-                <Camera size={20} className="text-lafoi-gray-medium" />
+                <Camera size={20} weight="regular" className="text-lafoi-gray-medium" />
               </div>
               <p className="font-sora text-lafoi-dark font-medium mb-1">No projects in this category yet</p>
               <p className="text-sm text-lafoi-gray-medium font-general">Switch filter or view all.</p>
@@ -189,7 +207,8 @@ export default function Projects() {
 
       {/* STATS BAND */}
       <section className="py-16 lg:py-24 bg-lafoi-dark text-white relative overflow-hidden">
-        <div className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
+        <div className="absolute inset-0 pattern-blueprint-light opacity-50 pointer-events-none" />
+        <div className="absolute inset-0 dot-pattern opacity-15 pointer-events-none" />
         <div className="absolute -top-24 left-1/4 w-96 h-96 bg-lafoi-green/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 relative">
           <AnimatedSection>
@@ -243,7 +262,7 @@ export default function Projects() {
                   className="inline-flex items-center gap-2 px-7 py-3.5 bg-lafoi-green text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/30 group"
                 >
                   Book a site visit
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/products"
@@ -289,7 +308,7 @@ function ProjectCard({ project, large = false, aspect = 'aspect-[3/4]' }) {
 
       {/* corner CTA */}
       <div className="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-        <ArrowUpRight size={14} />
+        <ArrowUpRight size={14} weight="bold" />
       </div>
 
       {/* default bottom info (always visible) */}
@@ -298,7 +317,7 @@ function ProjectCard({ project, large = false, aspect = 'aspect-[3/4]' }) {
           {project.title}
         </h3>
         <p className="text-xs font-sora text-white/65 inline-flex items-center gap-1.5">
-          <MapPin size={11} />
+          <MapPin size={11} weight="regular" />
           {project.location}
         </p>
 

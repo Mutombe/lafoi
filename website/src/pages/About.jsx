@@ -2,10 +2,29 @@ import React from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Award, Globe, Heart, Shield, Target, Users, Zap, CheckCircle2, Sparkles, Star } from 'lucide-react'
+import { ArrowRight, Trophy, Globe, Heart, Shield, Target, Users, Lightning, CheckCircle, Sparkle, Star } from '@phosphor-icons/react'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+
+const ABOUT_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
+    alt: 'Luxury modern living room with premium ceiling',
+    vision: 'Heritage and craft — luxury living',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1618259715220-a89a4e4da76b?w=2200&q=85',
+    alt: 'Country hotel interior with elegant design',
+    vision: 'Studio space with warmth',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=2200&q=85',
+    alt: 'Minimalist gallery space',
+    vision: 'Thoughtful, restrained interior',
+  },
+]
 
 export default function About() {
   useSEO({
@@ -39,20 +58,11 @@ function AboutHero() {
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
 
   return (
-    <section ref={ref} className="relative min-h-[80vh] flex items-center overflow-hidden">
-      {/* Background image with parallax */}
-      <motion.div className="absolute inset-0" style={{ y }}>
-        <OptimizedImage
-          src="https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=1920&q=80"
-          alt="Luxury interior with modern design"
-          className="w-full h-full object-cover"
-          fill
-          priority
-          vision="Luxury modern living room with elegant furnishings and ambient lighting"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/20" />
-      </motion.div>
+    <section ref={ref} className="relative min-h-[80vh] flex items-center overflow-hidden bg-lafoi-dark">
+      {/* Slideshow background */}
+      <HeroSlideshow slides={ABOUT_HERO_SLIDES} interval={6500} parallax overlay={false} />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/20 pointer-events-none" />
 
       {/* Decorative elements */}
       <div className="absolute top-32 right-20 w-72 h-72 rounded-full bg-lafoi-green/10 blur-[100px] animate-float pointer-events-none" />
@@ -114,7 +124,7 @@ function MissionStatement() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <AnimatedSection className="max-w-4xl mx-auto text-center">
           <div className="w-16 h-16 rounded-2xl bg-lafoi-green/10 flex items-center justify-center mx-auto mb-8">
-            <Sparkles size={28} className="text-lafoi-green" />
+            <Sparkle size={28} weight="fill" className="text-lafoi-green" />
           </div>
           <h2 className="heading-lg text-2xl sm:text-3xl lg:text-4xl text-lafoi-dark mb-6">
             Our mission is to bring <span className="text-gradient">world-class ceiling technology</span> to every space in Zimbabwe
@@ -172,7 +182,7 @@ function StoryTimeline() {
                 animate={{ y: [-5, 5, -5] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <Globe size={20} className="text-lafoi-green mb-1" />
+                <Globe size={20} weight="regular" className="text-lafoi-green mb-1" />
                 <span className="text-xs font-sora font-bold text-lafoi-dark">Global</span>
                 <span className="text-[10px] text-lafoi-gray">Standards</span>
               </motion.div>
@@ -222,10 +232,10 @@ function StoryTimeline() {
 
 function ValuesSection() {
   const values = [
-    { icon: Award, title: 'Excellence', desc: 'Every project meets international standards backed by our German and Estonian partners.', color: 'from-emerald-500 to-green-600' },
+    { icon: Trophy, title: 'Excellence', desc: 'Every project meets international standards backed by our German and Estonian partners.', color: 'from-emerald-500 to-green-600' },
     { icon: Heart, title: 'Passion', desc: 'We are driven by a genuine love for transforming spaces and exceeding expectations.', color: 'from-rose-500 to-pink-600' },
     { icon: Shield, title: 'Integrity', desc: 'Transparent pricing, honest timelines, and unwavering commitment to quality.', color: 'from-blue-500 to-indigo-600' },
-    { icon: Zap, title: 'Innovation', desc: 'Constantly adopting the latest technologies and design techniques from around the world.', color: 'from-amber-500 to-orange-600' },
+    { icon: Lightning, title: 'Innovation', desc: 'Constantly adopting the latest technologies and design techniques from around the world.', color: 'from-amber-500 to-orange-600' },
     { icon: Users, title: 'Collaboration', desc: 'We work closely with clients, designers, and architects to bring visions to life.', color: 'from-violet-500 to-purple-600' },
     { icon: Target, title: 'Precision', desc: 'Every measurement, cut, and installation is executed with meticulous attention to detail.', color: 'from-teal-500 to-cyan-600' },
   ]
@@ -252,7 +262,7 @@ function ValuesSection() {
             <StaggerItem key={v.title}>
               <div className="p-8 rounded-3xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.15] transition-all duration-500 h-full group">
                 <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${v.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <v.icon size={22} className="text-white" />
+                  <v.icon size={22} weight="regular" className="text-white" />
                 </div>
                 <h3 className="font-sora text-lg font-bold text-white mb-3">{v.title}</h3>
                 <p className="text-sm text-white/50 font-general leading-relaxed">{v.desc}</p>
@@ -312,7 +322,7 @@ function PartnersSection() {
                 <div className="grid grid-cols-2 gap-3">
                   {partner.features.map((f) => (
                     <div key={f} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-lafoi-green-soft">
-                      <CheckCircle2 size={14} className="text-lafoi-green shrink-0" />
+                      <CheckCircle size={14} weight="fill" className="text-lafoi-green shrink-0" />
                       <span className="text-xs text-lafoi-dark font-medium">{f}</span>
                     </div>
                   ))}
@@ -349,7 +359,7 @@ function TeamSection() {
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-lafoi-green/10 flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={14} className="text-lafoi-green" />
+                    <CheckCircle size={14} weight="fill" className="text-lafoi-green" />
                   </div>
                   <span className="text-sm text-lafoi-dark font-medium">{item}</span>
                 </div>
@@ -360,7 +370,7 @@ function TeamSection() {
               className="inline-flex items-center gap-2 font-sora text-sm font-semibold text-lafoi-green hover:text-lafoi-green-dark transition-colors group"
             >
               Join our team
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </AnimatedSection>
 
@@ -386,7 +396,7 @@ function TeamSection() {
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             >
               <div className="flex items-center gap-2">
-                <Star size={16} className="text-white fill-white" />
+                <Star size={16} weight="fill" className="text-white" />
                 <span className="text-white font-sora text-sm font-bold">100% Satisfaction</span>
               </div>
             </motion.div>
@@ -417,7 +427,7 @@ function AboutCTA() {
             animate={{ rotate: [0, 5, -5, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <Sparkles size={28} className="text-lafoi-green" />
+            <Sparkle size={28} weight="fill" className="text-lafoi-green" />
           </motion.div>
           <h2 className="heading-lg text-3xl sm:text-4xl lg:text-5xl text-white mb-6">
             Ready to work with<br />the best?
@@ -431,7 +441,7 @@ function AboutCTA() {
               className="group flex items-center gap-3 px-8 py-4 bg-lafoi-green text-white rounded-full font-sora text-sm font-semibold hover:bg-lafoi-green-light transition-all duration-300 shadow-lg shadow-lafoi-green/25"
             >
               Get Started Today
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={16} weight="bold" className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
               href="tel:+263712326951"

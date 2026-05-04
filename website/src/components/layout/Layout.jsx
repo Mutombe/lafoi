@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Cookie, Shield, ScrollText } from 'lucide-react'
+import { X, Cookie, Shield, FileText } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import Navbar from './Navbar'
 import Footer from './Footer'
@@ -43,6 +43,19 @@ export default function Layout({ children }) {
         <motion.div
           className="h-full bg-gradient-to-r from-lafoi-green to-lafoi-green-light"
           style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
+      {/* Scroll progress rail — right edge, hairline + dot */}
+      <div className="hidden lg:block fixed top-1/4 right-3 z-[105] h-1/2 w-[2px] pointer-events-none">
+        <div className="absolute inset-0 bg-lafoi-dark/[0.06] rounded-full" />
+        <div
+          className="absolute left-0 right-0 top-0 bg-lafoi-green/40 rounded-full transition-all duration-150"
+          style={{ height: `${Math.max(8, scrollProgress)}%` }}
+        />
+        <div
+          className="absolute left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-lafoi-green shadow-[0_0_8px_rgba(26,138,46,0.5)] transition-all duration-150"
+          style={{ top: `calc(${Math.max(0, Math.min(100, scrollProgress))}% - 3px)` }}
         />
       </div>
 
@@ -104,7 +117,7 @@ export default function Layout({ children }) {
 function PolicyModal({ open, onClose, type }) {
   const isTerms = type === 'terms'
   const title = isTerms ? 'Terms & Conditions' : 'Privacy Policy'
-  const Icon = isTerms ? ScrollText : Shield
+  const Icon = isTerms ? FileText : Shield
 
   return (
     <AnimatePresence>

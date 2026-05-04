@@ -5,18 +5,19 @@ import {
   ArrowRight,
   ArrowLeft,
   ArrowUpRight,
-  ChevronRight,
+  CaretRight,
   Check,
   X as XIcon,
-  Quote,
+  Quotes,
   MapPin,
-  CalendarRange,
+  Calendar,
   Ruler,
   Clock,
   User,
-} from 'lucide-react'
+} from '@phosphor-icons/react'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
 import {
   getProjectBySlug,
@@ -34,6 +35,29 @@ export default function ProjectDetail() {
   const related = getRelatedProjects(project)
   const adjacent = getAdjacentProjects(project.slug)
   const products = (project.productsUsed || []).map(getProductBySlug).filter(Boolean)
+
+  // Build 3-image hero slideshow from hero + gallery + sane fallbacks
+  const projectHeroSlides = React.useMemo(() => {
+    const seen = new Set()
+    const result = []
+    const push = (src, alt, vision) => {
+      if (!src || seen.has(src)) return
+      seen.add(src)
+      result.push({ src, alt, vision: vision || alt })
+    }
+    push(project.hero, project.title, project.vision)
+    ;(project.gallery || []).forEach((g, i) => {
+      const src = typeof g === 'string' ? g : g.src
+      push(src, g.alt || `${project.title} — view ${i + 1}`, g.vision || project.vision)
+    })
+    const fallbacks = [
+      'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+      'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
+      'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    ]
+    fallbacks.forEach((f) => push(f, project.title, project.vision))
+    return result.slice(0, 3)
+  }, [project])
 
   const [lightboxIdx, setLightboxIdx] = useState(null)
 
@@ -64,19 +88,10 @@ export default function ProjectDetail() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-      {/* HERO */}
-      <section className="relative min-h-[75vh] flex items-end overflow-hidden">
-        <div className="absolute inset-0">
-          <OptimizedImage
-            src={project.hero}
-            alt={project.title}
-            className="w-full h-full object-cover object-center"
-            fill
-            priority
-            vision={project.vision}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/95 via-lafoi-dark/30 to-lafoi-dark/40" />
-        </div>
+      {/* HERO — slideshow */}
+      <section className="relative min-h-[75vh] flex items-end overflow-hidden bg-lafoi-dark">
+        <HeroSlideshow slides={projectHeroSlides} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/95 via-lafoi-dark/30 to-lafoi-dark/40 pointer-events-none" />
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-14 lg:pb-20">
           {/* breadcrumb */}
           <motion.nav
@@ -86,9 +101,9 @@ export default function ProjectDetail() {
             transition={{ delay: 0.1 }}
           >
             <Link to="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRight size={11} />
+            <CaretRight size={11} weight="regular" />
             <Link to="/projects" className="hover:text-white transition-colors">Projects</Link>
-            <ChevronRight size={11} />
+            <CaretRight size={11} weight="regular" />
             <span className="text-white/90 truncate max-w-[180px] sm:max-w-none">{project.title}</span>
           </motion.nav>
 
@@ -104,11 +119,11 @@ export default function ProjectDetail() {
               {project.title}
             </h1>
             <div className="flex flex-wrap items-center gap-4 text-sm font-sora text-white/70 mt-6">
-              <span className="inline-flex items-center gap-2"><MapPin size={14} />{project.location}</span>
-              <span className="text-white/30">·</span>
-              <span className="inline-flex items-center gap-2"><CalendarRange size={14} />{project.year}</span>
-              <span className="text-white/30">·</span>
-              <span className="inline-flex items-center gap-2"><Ruler size={14} />{project.area}</span>
+              <span className="inline-flex items-center gap-2"><MapPin size={14} weight="regular" />{project.location}</span>
+              <span className="text-white/30">&middot;</span>
+              <span className="inline-flex items-center gap-2"><Calendar size={14} weight="regular" />{project.year}</span>
+              <span className="text-white/30">&middot;</span>
+              <span className="inline-flex items-center gap-2"><Ruler size={14} weight="regular" />{project.area}</span>
             </div>
           </motion.div>
         </div>
@@ -120,7 +135,7 @@ export default function ProjectDetail() {
           <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
             <Fact icon={User} label="Client" value={project.client} />
             <Fact icon={MapPin} label="Location" value={project.location} />
-            <Fact icon={CalendarRange} label="Year" value={String(project.year)} />
+            <Fact icon={Calendar} label="Year" value={String(project.year)} />
             <Fact icon={Clock} label="Duration" value={project.duration} />
           </div>
         </div>
@@ -180,7 +195,7 @@ export default function ProjectDetail() {
                 <StaggerItem key={h}>
                   <div className="flex items-start gap-4 py-2">
                     <span className="w-8 h-8 mt-0.5 rounded-full bg-lafoi-green/15 flex items-center justify-center shrink-0">
-                      <Check size={14} className="text-lafoi-green" strokeWidth={3} />
+                      <Check size={14} weight="bold" className="text-lafoi-green" />
                     </span>
                     <p className="text-base font-general text-lafoi-gray leading-relaxed">{h}</p>
                   </div>
@@ -269,7 +284,7 @@ export default function ProjectDetail() {
                     </div>
                   )}
                   <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <ArrowUpRight size={13} />
+                    <ArrowUpRight size={13} weight="bold" />
                   </div>
                 </button>
               ))}
@@ -295,7 +310,7 @@ export default function ProjectDetail() {
                   className="inline-flex items-center gap-2 text-sm font-sora font-medium text-lafoi-dark hover:text-lafoi-green transition-colors group self-start sm:self-end"
                 >
                   Full catalogue
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </AnimatedSection>
@@ -341,13 +356,13 @@ export default function ProjectDetail() {
         <section className="py-20 lg:py-28 bg-white">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-10 text-center">
             <AnimatedSection>
-              <Quote size={36} className="text-lafoi-green mx-auto mb-6" />
+              <Quotes size={36} weight="fill" className="text-lafoi-green mx-auto mb-6" />
               <blockquote className="font-display font-light text-2xl sm:text-3xl lg:text-4xl text-lafoi-dark leading-snug tracking-tight">
                 &ldquo;{project.testimonial.quote}&rdquo;
               </blockquote>
               <div className="mt-8 flex items-center justify-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-lafoi-green/15 flex items-center justify-center">
-                  <User size={18} className="text-lafoi-green" />
+                  <User size={18} weight="regular" className="text-lafoi-green" />
                 </div>
                 <div className="text-left">
                   <p className="font-sora text-sm font-bold text-lafoi-dark">{project.testimonial.author}</p>
@@ -437,21 +452,21 @@ export default function ProjectDetail() {
                 onClick={closeLightbox}
                 className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition-colors"
               >
-                <XIcon size={18} />
+                <XIcon size={18} weight="bold" />
               </button>
               <button
                 onClick={prevImg}
                 className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition-colors"
                 aria-label="Previous"
               >
-                <ArrowLeft size={18} />
+                <ArrowLeft size={18} weight="regular" />
               </button>
               <button
                 onClick={nextImg}
                 className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition-colors"
                 aria-label="Next"
               >
-                <ArrowRight size={18} />
+                <ArrowRight size={18} weight="regular" />
               </button>
               <img
                 src={project.gallery[lightboxIdx].src}
@@ -482,7 +497,7 @@ function Fact({ icon: Icon, label, value }) {
   return (
     <div className="flex items-center gap-4 py-6 lg:py-8 px-4 sm:px-8">
       <div className="w-11 h-11 rounded-full bg-lafoi-green/10 flex items-center justify-center shrink-0">
-        <Icon size={16} className="text-lafoi-green" />
+        <Icon size={16} weight="regular" className="text-lafoi-green" />
       </div>
       <div>
         <p className="text-[10px] font-sora font-semibold tracking-widest uppercase text-lafoi-gray-medium mb-0.5">
@@ -534,9 +549,9 @@ function PrevNextLink({ direction, project }) {
       </div>
       <div className={`relative z-10 h-full min-h-[280px] lg:min-h-[340px] flex flex-col justify-center px-8 lg:px-14 py-10 ${isPrev ? 'items-start' : 'items-end text-right'}`}>
         <p className="text-[10px] font-sora font-semibold tracking-widest uppercase text-lafoi-green-light mb-3 inline-flex items-center gap-2">
-          {isPrev && <ArrowLeft size={11} className="group-hover:-translate-x-1 transition-transform" />}
+          {isPrev && <ArrowLeft size={11} weight="regular" className="group-hover:-translate-x-1 transition-transform" />}
           {isPrev ? 'Previous case study' : 'Next case study'}
-          {!isPrev && <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform" />}
+          {!isPrev && <ArrowRight size={11} weight="regular" className="group-hover:translate-x-1 transition-transform" />}
         </p>
         <h3 className="heading-lg text-2xl lg:text-3xl text-white mb-2">{project.title}</h3>
         <p className="font-sora text-xs text-white/60">

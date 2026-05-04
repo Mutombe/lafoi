@@ -4,22 +4,41 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight,
   ArrowUpRight,
-  Search,
-  Filter,
+  MagnifyingGlass,
+  Funnel,
   Package,
-  Sparkles,
-  Layers,
+  Sparkle,
+  Stack,
   Lightbulb,
   Wrench,
   X as XIcon,
-} from 'lucide-react'
+} from '@phosphor-icons/react'
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
+import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
 import { products, productCategories, productApplications } from '../data/site'
 
+const PRODUCTS_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    alt: 'Calm contemporary living room with stretch ceiling',
+    vision: 'Material-first matte ceiling',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=2200&q=85',
+    alt: 'Spa-like bathroom with skylight ceiling',
+    vision: 'Translucent membrane in bathroom',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=2200&q=85',
+    alt: 'Modern interior with ceiling design',
+    vision: 'Surface and light meeting in living space',
+  },
+]
+
 const categoryIcon = {
-  'Stretch Ceilings': Layers,
+  'Stretch Ceilings': Stack,
   Lighting: Lightbulb,
   Accessories: Wrench,
 }
@@ -68,18 +87,15 @@ export default function Products() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
       {/* HERO */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden">
-        <div className="absolute inset-0">
-          <OptimizedImage
-            src="https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1920&q=85"
-            alt="The La Foi product collection"
-            className="w-full h-full object-cover"
-            fill
-            priority
-            vision="Sweeping interior with premium matte stretch ceiling and architectural lighting"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/75 to-lafoi-dark/50" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent" />
+      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-lafoi-dark">
+        <HeroSlideshow slides={PRODUCTS_HERO_SLIDES} interval={6500} parallax overlay={false} />
+        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/75 to-lafoi-dark/50 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent pointer-events-none" />
+        {/* Volume artifact */}
+        <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none">
+          <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
+            Vol.&nbsp;01 &mdash; The Library
+          </span>
         </div>
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-16">
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
@@ -107,7 +123,7 @@ export default function Products() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-green text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/20 group"
               >
                 Browse the catalogue
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
               </a>
               <Link
                 to="/contact"
@@ -128,7 +144,7 @@ export default function Products() {
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
               <div>
                 <p className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase mb-3 flex items-center gap-2">
-                  <Sparkles size={14} /> Editor&rsquo;s pick
+                  <Sparkle size={14} weight="fill" /> Editor&rsquo;s pick
                 </p>
                 <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark max-w-2xl">
                   Four signatures, <span className="font-display font-light text-lafoi-green">always specified</span>.
@@ -175,9 +191,10 @@ export default function Products() {
             </div>
           </AnimatedSection>
 
-          {/* sticky filter bar */}
-          <div className="sticky top-16 lg:top-20 z-30 -mx-4 sm:-mx-6 lg:-mx-10 px-4 sm:px-6 lg:px-10 bg-white/85 backdrop-blur-xl border-y border-gray-100 py-5 mb-10">
-            <div className="flex flex-col gap-4">
+          {/* sticky filter bar — glass + faint blueprint pattern */}
+          <div className="sticky top-16 lg:top-20 z-30 -mx-4 sm:-mx-6 lg:-mx-10 px-4 sm:px-6 lg:px-10 bg-white/70 backdrop-blur-xl border-y border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] py-5 mb-10 relative">
+            <div aria-hidden className="absolute inset-0 pattern-blueprint opacity-30 pointer-events-none" />
+            <div className="relative flex flex-col gap-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* category pills */}
                 <div className="flex flex-wrap gap-2">
@@ -194,7 +211,7 @@ export default function Products() {
                             : 'bg-gray-100 text-lafoi-gray hover:bg-lafoi-green/10 hover:text-lafoi-green'
                         }`}
                       >
-                        {cat !== 'All' && <Icon size={13} />}
+                        {cat !== 'All' && <Icon size={13} weight="regular" />}
                         <span>{cat}</span>
                         <span className={`text-[10px] font-mono ${active ? 'text-white/60' : 'text-lafoi-gray-medium'}`}>
                           {counts[cat] || 0}
@@ -206,7 +223,7 @@ export default function Products() {
 
                 {/* search */}
                 <div className="relative w-full sm:w-72">
-                  <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
+                  <MagnifyingGlass size={14} weight="regular" className="absolute left-4 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
                   <input
                     type="text"
                     value={query}
@@ -220,7 +237,7 @@ export default function Products() {
                       className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-colors"
                       aria-label="Clear search"
                     >
-                      <XIcon size={10} />
+                      <XIcon size={10} weight="bold" />
                     </button>
                   )}
                 </div>
@@ -229,7 +246,7 @@ export default function Products() {
               {/* applications row */}
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-sora font-semibold tracking-widest uppercase text-lafoi-gray-medium pr-2">
-                  <Filter size={11} /> Application
+                  <Funnel size={11} weight="regular" /> Application
                 </span>
                 {productApplications.map((app) => {
                   const active = application === app
@@ -268,7 +285,7 @@ export default function Products() {
                 }}
                 className="text-xs font-sora text-lafoi-gray-medium hover:text-lafoi-green transition-colors inline-flex items-center gap-1"
               >
-                Clear all <XIcon size={11} />
+                Clear all <XIcon size={11} weight="bold" />
               </button>
             )}
           </div>
@@ -285,7 +302,7 @@ export default function Products() {
           ) : (
             <div className="py-24 text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                <Search size={20} className="text-lafoi-gray-medium" />
+                <MagnifyingGlass size={20} weight="regular" className="text-lafoi-gray-medium" />
               </div>
               <p className="font-sora text-lafoi-dark font-medium mb-1">No products match those filters</p>
               <p className="text-sm text-lafoi-gray-medium font-general">Try clearing or broadening your selection.</p>
@@ -334,7 +351,7 @@ export default function Products() {
                     <h3 className="heading-lg text-2xl mb-1">{b.label}</h3>
                     <p className="text-sm font-general text-white/70 mb-4">{b.desc}</p>
                     <span className="inline-flex items-center gap-1.5 text-xs font-sora font-medium text-lafoi-green-light group-hover:gap-3 transition-all duration-300">
-                      Browse range <ArrowUpRight size={13} />
+                      Browse range <ArrowUpRight size={13} weight="bold" />
                     </span>
                   </div>
                 </button>
@@ -375,7 +392,7 @@ export default function Products() {
                   className="inline-flex items-center gap-2 px-7 py-3.5 bg-lafoi-green text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/30 group"
                 >
                   Speak to a specialist
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/projects"
@@ -414,7 +431,7 @@ function FeaturedCardLarge({ product }) {
       </div>
       <div className="relative z-10 h-full min-h-[440px] flex flex-col justify-end p-8 lg:p-10 text-white">
         <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-5">
-          <Sparkles size={11} className="text-lafoi-green-light" />
+          <Sparkle size={11} weight="fill" className="text-lafoi-green-light" />
           <span className="text-[10px] font-sora font-semibold tracking-widest uppercase">Editor&rsquo;s pick</span>
         </div>
         <p className="text-[11px] font-sora font-semibold tracking-widest uppercase text-lafoi-green-light mb-2">
@@ -423,7 +440,7 @@ function FeaturedCardLarge({ product }) {
         <h3 className="heading-lg text-3xl lg:text-4xl mb-3">{product.name}</h3>
         <p className="font-general text-white/75 text-base max-w-lg mb-5">{product.shortDesc}</p>
         <span className="inline-flex items-center gap-2 text-sm font-sora font-medium text-white group-hover:gap-3 transition-all duration-300">
-          View product <ArrowUpRight size={15} />
+          View product <ArrowUpRight size={15} weight="bold" />
         </span>
       </div>
     </Link>
@@ -454,7 +471,7 @@ function FeaturedCardSmall({ product }) {
         </h4>
         <p className="text-xs font-general text-lafoi-gray line-clamp-2 mb-2">{product.shortDesc}</p>
         <span className="inline-flex items-center gap-1 text-[11px] font-sora font-medium text-lafoi-gray-medium group-hover:text-lafoi-green group-hover:gap-2 transition-all duration-300">
-          View <ArrowUpRight size={11} />
+          View <ArrowUpRight size={11} weight="bold" />
         </span>
       </div>
     </Link>
@@ -477,7 +494,7 @@ function ProductCard({ product }) {
         />
         {product.featured && (
           <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
-            <Sparkles size={10} className="text-lafoi-green" /> Featured
+            <Sparkle size={10} weight="fill" className="text-lafoi-green" /> Featured
           </div>
         )}
         <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-lafoi-dark/80 backdrop-blur-md text-[10px] font-sora font-medium tracking-wider uppercase text-white">
@@ -506,7 +523,7 @@ function ProductCard({ product }) {
             )}
           </div>
           <span className="inline-flex items-center gap-1 text-xs font-sora font-medium text-lafoi-dark group-hover:text-lafoi-green group-hover:gap-2 transition-all duration-300">
-            View <ArrowUpRight size={12} />
+            View <ArrowUpRight size={12} weight="bold" />
           </span>
         </div>
       </div>
