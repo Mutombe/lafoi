@@ -4,6 +4,7 @@ import { Briefcase, UsersThree, Receipt as ReceiptIcon, FileText, Identification
 
 import PageHeader from '../components/PageHeader'
 import { fmtMoney, fmtDate, StatusBadge, STATUS_PALETTE_PROJECT, STATUS_PALETTE_DOC } from '../components/DataTable'
+import { SkeletonStat, SkeletonListItems } from '../components/Skeleton'
 import {
   useListCustomersQuery,
   useListProjectsQuery,
@@ -31,11 +32,20 @@ const Stat = ({ label, value, icon: Icon, accent = 'green' }) => {
 }
 
 export default function Overview() {
-  const { data: customers } = useListCustomersQuery({ page_size: 1 })
-  const { data: projects } = useListProjectsQuery({ page_size: 5 })
-  const { data: quotations } = useListQuotationsQuery({ page_size: 5 })
-  const { data: invoices } = useListInvoicesQuery({ page_size: 5 })
-  const { data: employees } = useListEmployeesQuery({ page_size: 1 })
+  const customersQ = useListCustomersQuery({ page_size: 1 })
+  const projectsQ = useListProjectsQuery({ page_size: 5 })
+  const quotationsQ = useListQuotationsQuery({ page_size: 5 })
+  const invoicesQ = useListInvoicesQuery({ page_size: 5 })
+  const employeesQ = useListEmployeesQuery({ page_size: 1 })
+
+  const customers = customersQ.data
+  const projects = projectsQ.data
+  const invoices = invoicesQ.data
+  const employees = employeesQ.data
+
+  const statsLoading = customersQ.isLoading || projectsQ.isLoading || invoicesQ.isLoading || employeesQ.isLoading
+  const projectsLoading = projectsQ.isLoading
+  const invoicesLoading = invoicesQ.isLoading
 
   const outstanding = (invoices?.results || []).reduce((s, i) => s + Number(i.balance_due || 0), 0)
 
@@ -48,10 +58,21 @@ export default function Overview() {
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <Stat label="Customers" value={customers?.count ?? 0} icon={UsersThree} />
-        <Stat label="Projects" value={projects?.count ?? 0} icon={Briefcase} accent="dark" />
-        <Stat label="Outstanding" value={fmtMoney(outstanding)} icon={ReceiptIcon} />
-        <Stat label="Employees" value={employees?.count ?? 0} icon={IdentificationBadge} accent="dark" />
+        {statsLoading ? (
+          <>
+            <SkeletonStat />
+            <SkeletonStat accent="green" />
+            <SkeletonStat />
+            <SkeletonStat accent="green" />
+          </>
+        ) : (
+          <>
+            <Stat label="Customers" value={customers?.count ?? 0} icon={UsersThree} />
+            <Stat label="Projects" value={projects?.count ?? 0} icon={Briefcase} accent="dark" />
+            <Stat label="Outstanding" value={fmtMoney(outstanding)} icon={ReceiptIcon} />
+            <Stat label="Employees" value={employees?.count ?? 0} icon={IdentificationBadge} accent="dark" />
+          </>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -63,20 +84,24 @@ export default function Overview() {
               All <ArrowUpRight size={11} weight="bold" />
             </Link>
           </div>
-          <ul className="divide-y divide-lafoi-dark/[0.06]">
-            {(projects?.results || []).map((p) => (
-              <li key={p.id} className="px-5 py-3 flex items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="font-sora text-sm font-medium truncate">{p.title}</p>
-                  <p className="text-xs text-lafoi-gray-medium truncate">{p.code} · {p.customer_name || '—'}</p>
-                </div>
-                <StatusBadge status={p.status} palette={STATUS_PALETTE_PROJECT} />
-              </li>
-            ))}
-            {(!projects?.results || projects.results.length === 0) && (
-              <li className="px-5 py-8 text-center text-sm text-lafoi-gray-medium">No projects yet.</li>
-            )}
-          </ul>
+          {projectsLoading ? (
+            <SkeletonListItems count={5} />
+          ) : (
+            <ul className="divide-y divide-lafoi-dark/[0.06]">
+              {(projects?.results || []).map((p) => (
+                <li key={p.id} className="px-5 py-3 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-sora text-sm font-medium truncate">{p.title}</p>
+                    <p className="text-xs text-lafoi-gray-medium truncate">{p.code} · {p.customer_name || '—'}</p>
+                  </div>
+                  <StatusBadge status={p.status} palette={STATUS_PALETTE_PROJECT} />
+                </li>
+              ))}
+              {(!projects?.results || projects.results.length === 0) && (
+                <li className="px-5 py-8 text-center text-sm text-lafoi-gray-medium">No projects yet.</li>
+              )}
+            </ul>
+          )}
         </div>
 
         {/* Recent invoices */}
@@ -87,21 +112,25 @@ export default function Overview() {
               All <ArrowUpRight size={11} weight="bold" />
             </Link>
           </div>
-          <ul className="divide-y divide-lafoi-dark/[0.06]">
-            {(invoices?.results || []).map((i) => (
-              <li key={i.id} className="px-5 py-3 flex items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="font-sora text-sm font-medium truncate">{i.number}</p>
-                  <p className="text-xs text-lafoi-gray-medium truncate">{i.customer_name || '—'} · {fmtDate(i.issue_date)}</p>
-                </div>
-                <span className="font-display text-sm">{fmtMoney(i.total, i.currency)}</span>
-                <StatusBadge status={i.status} palette={STATUS_PALETTE_DOC} />
-              </li>
-            ))}
-            {(!invoices?.results || invoices.results.length === 0) && (
-              <li className="px-5 py-8 text-center text-sm text-lafoi-gray-medium">No invoices yet.</li>
-            )}
-          </ul>
+          {invoicesLoading ? (
+            <SkeletonListItems count={5} />
+          ) : (
+            <ul className="divide-y divide-lafoi-dark/[0.06]">
+              {(invoices?.results || []).map((i) => (
+                <li key={i.id} className="px-5 py-3 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-sora text-sm font-medium truncate">{i.number}</p>
+                    <p className="text-xs text-lafoi-gray-medium truncate">{i.customer_name || '—'} · {fmtDate(i.issue_date)}</p>
+                  </div>
+                  <span className="font-display text-sm">{fmtMoney(i.total, i.currency)}</span>
+                  <StatusBadge status={i.status} palette={STATUS_PALETTE_DOC} />
+                </li>
+              ))}
+              {(!invoices?.results || invoices.results.length === 0) && (
+                <li className="px-5 py-8 text-center text-sm text-lafoi-gray-medium">No invoices yet.</li>
+              )}
+            </ul>
+          )}
         </div>
       </div>
     </div>

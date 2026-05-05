@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, Eye } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, Eye, CircleNotch } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_PROJECT } from '../components/DataTable'
@@ -27,7 +28,7 @@ export default function Projects() {
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isFetching } = useListProjectsQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  const { data, isLoading: isFirstLoad, isFetching } = useListProjectsQuery({ page, search: search || undefined, status: statusFilter || undefined })
   const { data: customers } = useListCustomersQuery({ page_size: 200 })
 
   const [createProject, createState] = useCreateProjectMutation()
@@ -54,17 +55,30 @@ export default function Projects() {
       progress: Number(editing.progress) || 0,
     }
     try {
-      if (isNew) await createProject(payload).unwrap()
-      else await updateProject({ id: editing.id, ...payload }).unwrap()
+      if (isNew) {
+        const created = await createProject(payload).unwrap()
+        toast.success('Project created', { description: `${created?.code || ''} — ${created?.title || payload.title}`.trim() })
+      } else {
+        const updated = await updateProject({ id: editing.id, ...payload }).unwrap()
+        toast.success('Project updated', { description: `${updated?.code || ''} — ${updated?.title || payload.title}`.trim() })
+      }
       setEditing(null)
     } catch (err) {
-      setError(err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.')
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
+      setError(msg)
+      toast.error(isNew ? 'Could not create project' : 'Could not update project', { description: msg })
     }
   }
 
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete project ${row.code}? This cannot be undone.`)) return
-    try { await deleteProject(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+    try {
+      await deleteProject(row.id).unwrap()
+      toast.success('Project deleted', { description: row.code })
+    } catch (e) {
+      const msg = e?.data?.detail || 'Delete failed.'
+      toast.error('Could not delete project', { description: msg })
+    }
   }
 
   const columns = [
@@ -127,7 +141,7 @@ export default function Projects() {
       <DataTable
         columns={columns}
         rows={data?.results || []}
-        isLoading={isFetching}
+        isLoading={isFirstLoad}
         empty="No projects yet — start your first."
         pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
       />
@@ -140,7 +154,9 @@ export default function Projects() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="project-form" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</PrimaryButton>
+            <PrimaryButton form="project-form" type="submit" disabled={saving}>
+              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
+            </PrimaryButton>
           </>
         }
       >

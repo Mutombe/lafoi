@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useStore } from 'react-redux'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, CircleNotch } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '../components/DataTable'
@@ -32,7 +33,7 @@ export default function Quotations() {
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isFetching } = useListQuotationsQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  const { data, isLoading: isFirstLoad, isFetching } = useListQuotationsQuery({ page, search: search || undefined, status: statusFilter || undefined })
   const { data: projects } = useListProjectsQuery({ page_size: 200 })
 
   const [createQ, createState] = useCreateQuotationMutation()
@@ -63,27 +64,47 @@ export default function Quotations() {
       })).filter((it) => it.description),
     }
     try {
-      if (isNew) await createQ(payload).unwrap()
-      else await updateQ({ id: editing.id, ...payload }).unwrap()
+      if (isNew) {
+        const created = await createQ(payload).unwrap()
+        toast.success('Quotation drafted', { description: created?.number })
+      } else {
+        const updated = await updateQ({ id: editing.id, ...payload }).unwrap()
+        toast.success('Quotation saved', { description: updated?.number || editing.number })
+      }
       setEditing(null)
     } catch (err) {
-      setError(err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.')
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
+      setError(msg)
+      toast.error(isNew ? 'Could not draft quotation' : 'Could not save quotation', { description: msg })
     }
   }
 
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete quotation ${row.number}?`)) return
-    try { await deleteQ(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+    try {
+      await deleteQ(row.id).unwrap()
+      toast.success('Quotation deleted', { description: row.number })
+    } catch (e) {
+      toast.error('Could not delete quotation', { description: e?.data?.detail || 'Delete failed.' })
+    }
   }
 
   const handlePdf = async (row) => {
-    try { await downloadPdf(`quotations/${row.id}/pdf/`, `${row.number}.pdf`, store.getState) }
-    catch (e) { window.alert('PDF download failed: ' + e.message) }
+    try {
+      await downloadPdf(`quotations/${row.id}/pdf/`, `${row.number}.pdf`, store.getState)
+      toast.success('PDF downloaded', { description: `${row.number}.pdf` })
+    }
+    catch (e) { toast.error('PDF download failed', { description: e.message }) }
   }
 
   const handleConvert = async (row) => {
     if (!window.confirm(`Convert ${row.number} into an invoice?`)) return
-    try { await convert(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Conversion failed.') }
+    try {
+      const invoice = await convert(row.id).unwrap()
+      toast.success('Converted to invoice', { description: invoice?.number })
+    } catch (e) {
+      toast.error('Conversion failed', { description: e?.data?.detail || 'Conversion failed.' })
+    }
   }
 
   const columns = [
@@ -136,7 +157,7 @@ export default function Quotations() {
       <DataTable
         columns={columns}
         rows={data?.results || []}
-        isLoading={isFetching}
+        isLoading={isFirstLoad}
         empty="No quotations yet."
         pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
       />
@@ -149,7 +170,9 @@ export default function Quotations() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="qt-form" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</PrimaryButton>
+            <PrimaryButton form="qt-form" type="submit" disabled={saving}>
+              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
+            </PrimaryButton>
           </>
         }
       >

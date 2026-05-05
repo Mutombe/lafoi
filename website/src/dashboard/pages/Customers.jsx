@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Trash, PencilSimple, MagnifyingGlass } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate } from '../components/DataTable'
@@ -24,7 +25,7 @@ export default function Customers() {
   const [editing, setEditing] = useState(null) // null | {} (for new) | row
   const [error, setError] = useState('')
 
-  const { data, isFetching } = useListCustomersQuery({ page, search: search || undefined })
+  const { data, isLoading: isFirstLoad, isFetching } = useListCustomersQuery({ page, search: search || undefined })
 
   const [createCustomer, createState] = useCreateCustomerMutation()
   const [updateCustomer, updateState] = useUpdateCustomerMutation()
@@ -49,17 +50,30 @@ export default function Customers() {
       notes: editing.notes || '',
     }
     try {
-      if (isNew) await createCustomer(payload).unwrap()
-      else await updateCustomer({ id: editing.id, ...payload }).unwrap()
+      if (isNew) {
+        const created = await createCustomer(payload).unwrap()
+        toast.success('Customer added', { description: created?.name || payload.name })
+      } else {
+        const updated = await updateCustomer({ id: editing.id, ...payload }).unwrap()
+        toast.success('Customer updated', { description: updated?.name || payload.name })
+      }
       setEditing(null)
     } catch (err) {
-      setError(err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.')
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
+      setError(msg)
+      toast.error(isNew ? 'Could not add customer' : 'Could not update customer', { description: msg })
     }
   }
 
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete customer “${row.name}”? This cannot be undone.`)) return
-    try { await deleteCustomer(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+    try {
+      await deleteCustomer(row.id).unwrap()
+      toast.success('Customer removed', { description: row.name })
+    } catch (e) {
+      const msg = e?.data?.detail || 'Delete failed.'
+      toast.error('Could not delete customer', { description: msg })
+    }
   }
 
   const columns = [
@@ -107,7 +121,7 @@ export default function Customers() {
       <DataTable
         columns={columns}
         rows={data?.results || []}
-        isLoading={isFetching}
+        isLoading={isFirstLoad}
         empty="No customers yet — add your first."
         pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
       />
@@ -119,7 +133,9 @@ export default function Customers() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="customer-form" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</PrimaryButton>
+            <PrimaryButton form="customer-form" type="submit" disabled={saving}>
+              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
+            </PrimaryButton>
           </>
         }
       >

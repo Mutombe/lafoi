@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Plus, Trash, PencilSimple, MagnifyingGlass } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney, StatusBadge } from '../components/DataTable'
@@ -34,7 +35,7 @@ export default function Employees() {
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isFetching } = useListEmployeesQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  const { data, isLoading: isFirstLoad, isFetching } = useListEmployeesQuery({ page, search: search || undefined, status: statusFilter || undefined })
 
   const [createE, createState] = useCreateEmployeeMutation()
   const [updateE, updateState] = useUpdateEmployeeMutation()
@@ -62,17 +63,29 @@ export default function Employees() {
       notes: editing.notes || '',
     }
     try {
-      if (isNew) await createE(payload).unwrap()
-      else await updateE({ id: editing.id, ...payload }).unwrap()
+      if (isNew) {
+        const created = await createE(payload).unwrap()
+        toast.success('Employee added', { description: created?.full_name || `${payload.first_name} ${payload.last_name}`.trim() })
+      } else {
+        const updated = await updateE({ id: editing.id, ...payload }).unwrap()
+        toast.success('Employee updated', { description: updated?.full_name || `${payload.first_name} ${payload.last_name}`.trim() })
+      }
       setEditing(null)
     } catch (err) {
-      setError(err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.')
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
+      setError(msg)
+      toast.error(isNew ? 'Could not add employee' : 'Could not update employee', { description: msg })
     }
   }
 
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete employee ${row.full_name}? This cannot be undone.`)) return
-    try { await deleteE(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+    try {
+      await deleteE(row.id).unwrap()
+      toast.success('Employee removed', { description: row.full_name })
+    } catch (e) {
+      toast.error('Could not delete employee', { description: e?.data?.detail || 'Delete failed.' })
+    }
   }
 
   const upsertItem = (key, idx, patch) => {
@@ -132,7 +145,7 @@ export default function Employees() {
       <DataTable
         columns={columns}
         rows={data?.results || []}
-        isLoading={isFetching}
+        isLoading={isFirstLoad}
         empty="No employees yet."
         pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
       />
@@ -145,7 +158,9 @@ export default function Employees() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="emp-form" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</PrimaryButton>
+            <PrimaryButton form="emp-form" type="submit" disabled={saving}>
+              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
+            </PrimaryButton>
           </>
         }
       >

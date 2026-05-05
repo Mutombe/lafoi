@@ -492,9 +492,11 @@ function Manifesto() {
           <span aria-hidden className="hidden lg:block absolute top-0 right-0 w-px h-full bg-lafoi-green/30 z-10" />
         </motion.div>
 
-        {/* RIGHT — full-bleed image, NO overlay */}
+        {/* RIGHT — full-bleed image, NO overlay. Dark fallback bg + overflow-hidden so
+            parallax overscan never reveals cream and the curved dividers above/below
+            blend seamlessly with the image edge. */}
         <motion.div
-          className="relative order-1 lg:order-2 min-h-[420px] lg:min-h-0"
+          className="relative order-1 lg:order-2 min-h-[420px] lg:min-h-0 bg-lafoi-dark overflow-hidden"
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.25 }}
@@ -508,7 +510,7 @@ function Manifesto() {
             loading="lazy"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-center will-change-transform"
-            style={{ y: imageY, scale: 1.06 }}
+            style={{ y: imageY, scale: 1.18 }}
           />
           {/* mobile-only soft bottom gradient for legibility against next section seam (none on desktop — pure brutalism) */}
           <div aria-hidden className="absolute inset-0 lg:hidden bg-gradient-to-t from-lafoi-dark/40 via-transparent to-transparent" />
@@ -803,8 +805,11 @@ function Approach() {
 
       {/* 50/50 mirrored split — image LEFT, text RIGHT (Manifesto is the inverse) */}
       <div className="relative grid lg:grid-cols-2 lg:min-h-[100vh]">
-        {/* LEFT — full-bleed sticky image, fills the entire left half */}
-        <div className="relative order-1 lg:order-1">
+        {/* LEFT — full-bleed sticky image, fills the entire left half.
+            `lg:bg-lafoi-dark` ensures that when the sticky pane releases at the
+            bottom of the section, the column shows dark — which carries the
+            image's tone all the way down into the curved divider below. */}
+        <div className="relative order-1 lg:order-1 lg:bg-lafoi-dark">
           {/* Mobile: simple full-width image, no sticky */}
           <div className="lg:hidden relative aspect-[4/5] bg-lafoi-dark overflow-hidden">
             <AnimatePresence mode="popLayout">
@@ -843,8 +848,32 @@ function Approach() {
             </div>
           </div>
 
-          {/* Desktop: sticky full-bleed pane covering the entire left half */}
-          <div className="hidden lg:block lg:sticky lg:top-0 lg:h-screen overflow-hidden bg-lafoi-dark">
+          {/* Inline SVG defs — clip-path that mirrors the bottom-divider arc.
+              The desktop sticky image references this clip via `clipPathUnits=objectBoundingBox`
+              so its bottom edge bends in step with the SectionDivider below.
+              Path geometry mirrors the divider's `arc` shape (left half: dips from 0,0 to 0.5,0.96;
+              right half: rises back to 1,0). The values are normalised 0-1. */}
+          <svg aria-hidden width="0" height="0" className="absolute pointer-events-none">
+            <defs>
+              <clipPath id="approach-arc-clip" clipPathUnits="objectBoundingBox">
+                <path d="
+                  M 0 0
+                  L 1 0
+                  L 1 1
+                  C 0.75 1, 0.6 0.95, 0.5 0.95
+                  C 0.4 0.95, 0.25 1, 0 1
+                  Z
+                " />
+              </clipPath>
+            </defs>
+          </svg>
+          {/* Desktop: sticky full-bleed pane covering the entire left half.
+              The pane's bottom edge is clipped with the divider's arc so the image
+              bends parallel to the curved white border below. */}
+          <div
+            className="hidden lg:block lg:sticky lg:top-0 lg:h-screen overflow-hidden bg-lafoi-dark z-10"
+            style={{ clipPath: 'url(#approach-arc-clip)' }}
+          >
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={activeStep}

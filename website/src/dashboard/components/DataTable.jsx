@@ -1,5 +1,6 @@
 import React from 'react'
-import { CaretLeft, CaretRight, CircleNotch } from '@phosphor-icons/react'
+import { CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { SkeletonTableRow } from './Skeleton'
 
 /**
  * Compact, restrained data table used across the dashboard.
@@ -38,13 +39,11 @@ export default function DataTable({
           </thead>
           <tbody>
             {isLoading && (
-              <tr>
-                <td colSpan={columns.length} className="px-4 py-12 text-center">
-                  <span className="inline-flex items-center gap-2 text-lafoi-gray-medium">
-                    <CircleNotch size={16} className="animate-spin" /> Loading…
-                  </span>
-                </td>
-              </tr>
+              <>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonTableRow key={`sk-${i}`} columns={columns.length} />
+                ))}
+              </>
             )}
             {!isLoading && rows.length === 0 && (
               <tr>

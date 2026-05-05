@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useStore } from 'react-redux'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Receipt as ReceiptIcon } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Receipt as ReceiptIcon, CircleNotch } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '../components/DataTable'
@@ -33,7 +34,7 @@ export default function Invoices() {
   const [paying, setPaying] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isFetching } = useListInvoicesQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  const { data, isLoading: isFirstLoad, isFetching } = useListInvoicesQuery({ page, search: search || undefined, status: statusFilter || undefined })
   const { data: projects } = useListProjectsQuery({ page_size: 200 })
 
   const [createI, createState] = useCreateInvoiceMutation()
@@ -64,28 +65,43 @@ export default function Invoices() {
       })).filter((it) => it.description),
     }
     try {
-      if (isNew) await createI(payload).unwrap()
-      else await updateI({ id: editing.id, ...payload }).unwrap()
+      if (isNew) {
+        const created = await createI(payload).unwrap()
+        toast.success('Invoice created', { description: created?.number })
+      } else {
+        const updated = await updateI({ id: editing.id, ...payload }).unwrap()
+        toast.success('Invoice updated', { description: updated?.number || editing.number })
+      }
       setEditing(null)
     } catch (err) {
-      setError(err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.')
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
+      setError(msg)
+      toast.error(isNew ? 'Could not create invoice' : 'Could not update invoice', { description: msg })
     }
   }
 
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete invoice ${row.number}?`)) return
-    try { await deleteI(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+    try {
+      await deleteI(row.id).unwrap()
+      toast.success('Invoice deleted', { description: row.number })
+    } catch (e) {
+      toast.error('Could not delete invoice', { description: e?.data?.detail || 'Delete failed.' })
+    }
   }
 
   const handlePdf = async (row) => {
-    try { await downloadPdf(`invoices/${row.id}/pdf/`, `${row.number}.pdf`, store.getState) }
-    catch (e) { window.alert('PDF download failed: ' + e.message) }
+    try {
+      await downloadPdf(`invoices/${row.id}/pdf/`, `${row.number}.pdf`, store.getState)
+      toast.success('PDF downloaded', { description: `${row.number}.pdf` })
+    }
+    catch (e) { toast.error('PDF download failed', { description: e.message }) }
   }
 
   const handleRecordPayment = async (e) => {
     e.preventDefault()
     try {
-      await createReceipt({
+      const receipt = await createReceipt({
         invoice: paying.invoice.id,
         amount: Number(paying.amount),
         method: paying.method,
@@ -93,9 +109,12 @@ export default function Invoices() {
         received_at: paying.received_at,
         notes: paying.notes,
       }).unwrap()
+      const formattedAmount = `${paying.invoice.currency || 'USD'} ${Number(paying.amount).toLocaleString()}`
+      toast.success('Payment recorded', { description: `${receipt?.number || ''} — ${formattedAmount}`.trim() })
       setPaying(null)
     } catch (err) {
-      window.alert(err?.data ? Object.values(err.data).flat().join(' ') : 'Receipt failed.')
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Receipt failed.'
+      toast.error('Could not record payment', { description: msg })
     }
   }
 
@@ -151,7 +170,7 @@ export default function Invoices() {
       <DataTable
         columns={columns}
         rows={data?.results || []}
-        isLoading={isFetching}
+        isLoading={isFirstLoad}
         empty="No invoices yet."
         pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
       />
@@ -164,7 +183,9 @@ export default function Invoices() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="inv-form" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</PrimaryButton>
+            <PrimaryButton form="inv-form" type="submit" disabled={saving}>
+              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
+            </PrimaryButton>
           </>
         }
       >
@@ -238,7 +259,7 @@ export default function Invoices() {
           <>
             <SecondaryButton type="button" onClick={() => setPaying(null)}>Cancel</SecondaryButton>
             <PrimaryButton form="rcp-form" type="submit" disabled={receiptState.isLoading}>
-              {receiptState.isLoading ? 'Recording…' : 'Record payment'}
+              {receiptState.isLoading ? (<><CircleNotch size={14} className="animate-spin" /> Recording…</>) : 'Record payment'}
             </PrimaryButton>
           </>
         }

@@ -7,8 +7,10 @@ import {
   Sparkle, Buildings, Briefcase, Camera, Phone,
   Question, Newspaper, Users, Lightbulb, Palette,
   SquaresFour, Lightning, Star, Package, ShoppingBag,
-  Storefront
+  Storefront, SignIn, UserCircle,
 } from '@phosphor-icons/react'
+import { useSelector } from 'react-redux'
+import { selectIsAuthenticated, selectCurrentUser } from '../../dashboard/store/authSlice'
 import Logo from '../shared/Logo'
 import { useCart } from '../../store/cart'
 
@@ -102,6 +104,8 @@ export default function Navbar() {
   // When not scrolled on a dark hero page, text should be white
   const isLightText = hasDarkHero && !scrolled
   const { count: cartCount, openCart } = useCart()
+  const isAuthed = useSelector(selectIsAuthenticated)
+  const currentUser = useSelector(selectCurrentUser)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -228,6 +232,35 @@ export default function Navbar() {
                   )}
                 </AnimatePresence>
               </button>
+
+              {/* Studio dashboard — direct entry for the team. Shows "Sign in" when
+                  unauthenticated, becomes a "Studio" pill (with the user's initial)
+                  once a JWT is in localStorage so a return visitor goes straight in. */}
+              <Link
+                to={isAuthed ? '/dashboard' : '/dashboard/login'}
+                title={isAuthed ? `Studio · ${currentUser?.display_name || currentUser?.username || 'admin'}` : 'Sign in to the studio dashboard'}
+                className={`hidden lg:inline-flex items-center gap-2 px-4 py-2.5 font-sora text-sm font-medium rounded-full transition-all duration-300 group ${
+                  isLightText
+                    ? 'text-white/85 hover:text-white hover:bg-white/8 border border-white/15'
+                    : 'text-lafoi-dark hover:text-lafoi-green hover:bg-lafoi-green/5 border border-lafoi-dark/15'
+                }`}
+              >
+                {isAuthed ? (
+                  <>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                      isLightText ? 'bg-lafoi-green-light/30 text-white' : 'bg-lafoi-green/15 text-lafoi-green-dark'
+                    }`}>
+                      {(currentUser?.first_name?.[0] || currentUser?.username?.[0] || 'L').toUpperCase()}
+                    </span>
+                    <span>Studio</span>
+                  </>
+                ) : (
+                  <>
+                    <SignIn size={13} weight="bold" />
+                    <span>Sign in</span>
+                  </>
+                )}
+              </Link>
 
               <Link
                 to="/contact"
@@ -382,8 +415,16 @@ export default function Navbar() {
                   </div>
                 ))}
                 <Link
+                  to={isAuthed ? '/dashboard' : '/dashboard/login'}
+                  className="flex items-center justify-center gap-2 w-full mt-6 px-6 py-3 rounded-full border border-lafoi-dark/15 text-lafoi-dark hover:bg-lafoi-green/5 hover:border-lafoi-green transition-colors font-sora text-sm font-medium"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {isAuthed ? <UserCircle size={16} weight="regular" /> : <SignIn size={14} weight="bold" />}
+                  {isAuthed ? 'Studio dashboard' : 'Sign in to studio'}
+                </Link>
+                <Link
                   to="/contact"
-                  className="flex items-center justify-center gap-2 w-full mt-6 px-6 py-3.5 bg-lafoi-dark text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green transition-colors"
+                  className="flex items-center justify-center gap-2 w-full mt-3 px-6 py-3.5 bg-lafoi-dark text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   Get a Free Quote

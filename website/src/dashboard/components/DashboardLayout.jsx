@@ -9,6 +9,7 @@ import {
 
 import Logo from '../../components/shared/Logo'
 import { logout, selectCurrentUser } from '../store/authSlice'
+import { api } from '../store/api'
 
 const NAV = [
   { to: '/dashboard', icon: House, label: 'Overview', end: true },
@@ -29,6 +30,27 @@ export default function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => { setMobileOpen(false) }, [location.pathname])
+
+  // Warm-prefetch every list endpoint as soon as the dashboard mounts so
+  // navigating between sections is genuinely instant. Each prefetch dispatches
+  // through RTK Query and respects the same cache (keepUnusedDataFor: 600s).
+  useEffect(() => {
+    const prefetches = [
+      ['listCustomers', { page: 1 }],
+      ['listProjects', { page: 1 }],
+      ['listQuotations', { page: 1 }],
+      ['listInvoices', { page: 1 }],
+      ['listReceipts', { page: 1 }],
+      ['listEmployees', { page: 1 }],
+      ['listPayrollPeriods', { page: 1 }],
+    ]
+    const promises = prefetches.map(([endpoint, args]) =>
+      dispatch(api.util.prefetch(endpoint, args, { force: false })),
+    )
+    return () => {
+      promises.forEach((p) => { try { p?.abort?.() } catch {} })
+    }
+  }, [dispatch])
 
   const handleLogout = () => {
     dispatch(logout())

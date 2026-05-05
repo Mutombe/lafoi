@@ -42,6 +42,14 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
+  // Aggressive caching — keep results in memory for 10 minutes after last subscriber
+  // unsubscribes. Re-visiting any list returns cached data instantly while a silent
+  // refetch happens in the background.
+  keepUnusedDataFor: 600,
+  // Don't refetch on focus / reconnect during the demo — keeps the perceived UX instant.
+  refetchOnFocus: false,
+  refetchOnReconnect: false,
+  refetchOnMountOrArgChange: false,
   tagTypes: [
     'Auth', 'User',
     'Customer', 'Project', 'ProjectFile', 'ProjectUpdate',

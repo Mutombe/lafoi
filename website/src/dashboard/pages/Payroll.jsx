@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useStore } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, Sparkle } from '@phosphor-icons/react'
+import { ArrowLeft, Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, Sparkle, CircleNotch } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_PAYROLL } from '../components/DataTable'
 import Modal from '../components/Modal'
+import Skeleton, { SkeletonStat, SkeletonPageHeader, SkeletonTableRow } from '../components/Skeleton'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import {
   useListPayrollPeriodsQuery,
@@ -29,7 +31,7 @@ export function PayrollList() {
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isFetching } = useListPayrollPeriodsQuery({ page, search: search || undefined })
+  const { data, isLoading: isFirstLoad, isFetching } = useListPayrollPeriodsQuery({ page, search: search || undefined })
   const [createP, createState] = useCreatePayrollPeriodMutation()
   const [updateP, updateState] = useUpdatePayrollPeriodMutation()
   const [deleteP] = useDeletePayrollPeriodMutation()
@@ -49,17 +51,29 @@ export function PayrollList() {
       notes: editing.notes || '',
     }
     try {
-      if (isNew) await createP(payload).unwrap()
-      else await updateP({ id: editing.id, ...payload }).unwrap()
+      if (isNew) {
+        const created = await createP(payload).unwrap()
+        toast.success('Period created', { description: created?.name || payload.name })
+      } else {
+        const updated = await updateP({ id: editing.id, ...payload }).unwrap()
+        toast.success('Period updated', { description: updated?.name || payload.name })
+      }
       setEditing(null)
     } catch (err) {
-      setError(err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.')
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
+      setError(msg)
+      toast.error(isNew ? 'Could not create period' : 'Could not update period', { description: msg })
     }
   }
 
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete payroll period "${row.name}"? Entries will be removed too.`)) return
-    try { await deleteP(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+    try {
+      await deleteP(row.id).unwrap()
+      toast.success('Period deleted', { description: row.name })
+    } catch (e) {
+      toast.error('Could not delete period', { description: e?.data?.detail || 'Delete failed.' })
+    }
   }
 
   const columns = [
@@ -107,7 +121,7 @@ export function PayrollList() {
       <DataTable
         columns={columns}
         rows={data?.results || []}
-        isLoading={isFetching}
+        isLoading={isFirstLoad}
         empty="No payroll periods yet."
         pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
       />
@@ -119,7 +133,9 @@ export function PayrollList() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="period-form" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</PrimaryButton>
+            <PrimaryButton form="period-form" type="submit" disabled={saving}>
+              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
+            </PrimaryButton>
           </>
         }
       >
@@ -158,14 +174,50 @@ export function PayrollDetail() {
   const store = useStore()
   const { data: period, isLoading, refetch } = useGetPayrollPeriodQuery(id)
   const [generate, genState] = useGeneratePayrollEntriesMutation()
-  const [updateEntry] = useUpdatePayrollEntryMutation()
+  const [updateEntry, updateEntryState] = useUpdatePayrollEntryMutation()
   const [editingEntry, setEditingEntry] = useState(null)
 
-  if (isLoading || !period) return <div className="p-8 text-lafoi-gray-medium">Loading period…</div>
+  if (isLoading || !period) {
+    return (
+      <div>
+        <Skeleton className="h-3 w-24 mb-4" />
+        <SkeletonPageHeader />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <SkeletonStat />
+          <SkeletonStat />
+          <SkeletonStat />
+          <SkeletonStat accent="green" />
+        </div>
+        <div className="rounded-2xl border border-lafoi-dark/10 bg-white overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-lafoi-cream border-b border-lafoi-dark/10">
+                {['Code', 'Employee', 'Base', 'Allowances', 'Deductions', 'Gross', 'Net', ''].map((h) => (
+                  <th key={h} className="px-3 py-2.5 text-left font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonTableRow key={i} columns={8} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )
+  }
 
   const handleGenerate = async () => {
     if (!window.confirm(`Generate draft entries for every active employee not already in this period?`)) return
-    try { await generate(period.id).unwrap(); refetch() } catch (e) { window.alert(e?.data?.detail || 'Generation failed.') }
+    try {
+      const response = await generate(period.id).unwrap()
+      const created = response?.created ?? response?.count ?? 0
+      toast.success('Entries generated', { description: `${created} new draft entries` })
+      refetch()
+    } catch (e) {
+      toast.error('Generation failed', { description: e?.data?.detail || 'Generation failed.' })
+    }
   }
 
   const handleSaveEntry = async (e) => {
@@ -181,14 +233,20 @@ export function PayrollDetail() {
         notes: editingEntry.notes || '',
         paid_on: editingEntry.paid_on || null,
       }).unwrap()
+      toast.success('Payslip saved', { description: editingEntry.employee_name })
       refetch()
       setEditingEntry(null)
-    } catch (e) { window.alert(e?.data?.detail || 'Save failed.') }
+    } catch (e) {
+      toast.error('Could not save payslip', { description: e?.data?.detail || 'Save failed.' })
+    }
   }
 
   const handlePayslip = async (entryId, code, periodId) => {
-    try { await downloadPdf(`payroll-entries/${entryId}/payslip/`, `payslip-${code}-${periodId}.pdf`, store.getState) }
-    catch (e) { window.alert('Payslip download failed: ' + e.message) }
+    try {
+      await downloadPdf(`payroll-entries/${entryId}/payslip/`, `payslip-${code}-${periodId}.pdf`, store.getState)
+      toast.success('Payslip downloaded', { description: `payslip-${code}-${periodId}.pdf` })
+    }
+    catch (e) { toast.error('Payslip download failed', { description: e.message }) }
   }
 
   const upsertItem = (key, idx, patch) => {
@@ -212,7 +270,7 @@ export function PayrollDetail() {
         actions={
           <>
             <SecondaryButton onClick={handleGenerate} disabled={genState.isLoading}>
-              <Sparkle size={14} weight="bold" /> {genState.isLoading ? 'Generating…' : 'Generate from active employees'}
+              {genState.isLoading ? (<><CircleNotch size={14} className="animate-spin" /> Generating…</>) : (<><Sparkle size={14} weight="bold" /> Generate from active employees</>)}
             </SecondaryButton>
             <StatusBadge status={period.status} palette={STATUS_PALETTE_PAYROLL} />
           </>
@@ -270,7 +328,9 @@ export function PayrollDetail() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditingEntry(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="entry-form" type="submit">Save</PrimaryButton>
+            <PrimaryButton form="entry-form" type="submit" disabled={updateEntryState.isLoading}>
+              {updateEntryState.isLoading ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
+            </PrimaryButton>
           </>
         }
       >

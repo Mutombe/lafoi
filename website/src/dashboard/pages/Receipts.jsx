@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useStore } from 'react-redux'
 import { Trash, MagnifyingGlass, DownloadSimple } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney } from '../components/DataTable'
@@ -13,17 +14,25 @@ export default function Receipts() {
   const [search, setSearch] = useState('')
   const [methodFilter, setMethodFilter] = useState('')
 
-  const { data, isFetching } = useListReceiptsQuery({ page, search: search || undefined, method: methodFilter || undefined })
+  const { data, isLoading: isFirstLoad, isFetching } = useListReceiptsQuery({ page, search: search || undefined, method: methodFilter || undefined })
   const [deleteReceipt] = useDeleteReceiptMutation()
 
   const handlePdf = async (row) => {
-    try { await downloadPdf(`receipts/${row.id}/pdf/`, `${row.number}.pdf`, store.getState) }
-    catch (e) { window.alert('PDF download failed: ' + e.message) }
+    try {
+      await downloadPdf(`receipts/${row.id}/pdf/`, `${row.number}.pdf`, store.getState)
+      toast.success('PDF downloaded', { description: `${row.number}.pdf` })
+    }
+    catch (e) { toast.error('PDF download failed', { description: e.message }) }
   }
 
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete receipt ${row.number}? The invoice balance will be recalculated.`)) return
-    try { await deleteReceipt(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+    try {
+      await deleteReceipt(row.id).unwrap()
+      toast.success('Receipt removed', { description: row.number })
+    } catch (e) {
+      toast.error('Could not delete receipt', { description: e?.data?.detail || 'Delete failed.' })
+    }
   }
 
   const columns = [
@@ -69,7 +78,7 @@ export default function Receipts() {
       <DataTable
         columns={columns}
         rows={data?.results || []}
-        isLoading={isFetching}
+        isLoading={isFirstLoad}
         empty="No receipts yet — record an invoice payment to start."
         pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
       />
