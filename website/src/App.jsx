@@ -5,7 +5,11 @@ import { lazy, Suspense } from 'react'
 import Layout from './components/layout/Layout'
 import ScrollToTop from './components/shared/ScrollToTop'
 import LoadingScreen from './components/shared/LoadingScreen'
+import { CartProvider } from './store/cart'
+import CartDrawer from './components/shop/CartDrawer'
+import RequireAuth from './dashboard/components/RequireAuth'
 
+// Public pages
 const Home = lazy(() => import('./pages/Home'))
 const About = lazy(() => import('./pages/About'))
 const Services = lazy(() => import('./pages/Services'))
@@ -18,12 +22,62 @@ const Contact = lazy(() => import('./pages/Contact'))
 const Careers = lazy(() => import('./pages/Careers'))
 const FAQ = lazy(() => import('./pages/FAQ'))
 const Blog = lazy(() => import('./pages/Blog'))
+const Shop = lazy(() => import('./pages/Shop'))
+
+// Dashboard
+const DashboardLayout = lazy(() => import('./dashboard/components/DashboardLayout'))
+const Login = lazy(() => import('./dashboard/pages/Login'))
+const Overview = lazy(() => import('./dashboard/pages/Overview'))
+const DashCustomers = lazy(() => import('./dashboard/pages/Customers'))
+const DashProjects = lazy(() => import('./dashboard/pages/Projects'))
+const DashProjectDetail = lazy(() => import('./dashboard/pages/ProjectDetail'))
+const DashQuotations = lazy(() => import('./dashboard/pages/Quotations'))
+const DashInvoices = lazy(() => import('./dashboard/pages/Invoices'))
+const DashReceipts = lazy(() => import('./dashboard/pages/Receipts'))
+const DashEmployees = lazy(() => import('./dashboard/pages/Employees'))
+const DashPayrollList = lazy(() =>
+  import('./dashboard/pages/Payroll').then((m) => ({ default: m.PayrollList })),
+)
+const DashPayrollDetail = lazy(() =>
+  import('./dashboard/pages/Payroll').then((m) => ({ default: m.PayrollDetail })),
+)
 
 export default function App() {
   const location = useLocation()
+  const isDashboard = location.pathname.startsWith('/dashboard')
+
+  // Dashboard runs OUTSIDE the public Layout so it has its own chrome.
+  if (isDashboard) {
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          <Route path="/dashboard/login" element={<Login />} />
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <DashboardLayout />
+              </RequireAuth>
+            }
+          >
+            <Route index element={<Overview />} />
+            <Route path="customers" element={<DashCustomers />} />
+            <Route path="projects" element={<DashProjects />} />
+            <Route path="projects/:id" element={<DashProjectDetail />} />
+            <Route path="quotations" element={<DashQuotations />} />
+            <Route path="invoices" element={<DashInvoices />} />
+            <Route path="receipts" element={<DashReceipts />} />
+            <Route path="employees" element={<DashEmployees />} />
+            <Route path="payroll" element={<DashPayrollList />} />
+            <Route path="payroll/:id" element={<DashPayrollDetail />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    )
+  }
 
   return (
-    <>
+    <CartProvider>
       <ScrollToTop />
       <Layout>
         <AnimatePresence mode="wait">
@@ -42,10 +96,12 @@ export default function App() {
               <Route path="/careers" element={<Careers />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/shop" element={<Shop />} />
             </Routes>
           </Suspense>
         </AnimatePresence>
       </Layout>
-    </>
+      <CartDrawer />
+    </CartProvider>
   )
 }

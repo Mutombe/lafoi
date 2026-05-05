@@ -15,6 +15,7 @@ import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
 import { projects, projectCategories, totalStats } from '../data/site'
+import { linkifyProse } from '../utils/linkify.jsx'
 
 const PROJECTS_HERO_SLIDES = [
   {
@@ -63,35 +64,79 @@ export default function Projects() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-      {/* HERO */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-lafoi-dark">
-        <HeroSlideshow slides={PROJECTS_HERO_SLIDES} interval={6500} parallax overlay={false} />
-        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/75 to-lafoi-dark/50 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none">
-          <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
-            Vol.&nbsp;01 &mdash; The Archive
-          </span>
+      {/* HERO — Dark Masonry: three vertical strips with overlaid centre headline */}
+      <section className="relative bg-lafoi-dark overflow-hidden">
+        {/* Volume artifact */}
+        <div className="absolute inset-x-0 top-28 lg:top-32 z-30 pointer-events-none">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex justify-end">
+            <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
+              Vol.&nbsp;09 &mdash; The Archive
+            </span>
+          </div>
         </div>
-        <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-16">
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+
+        <div className="relative grid grid-cols-3 h-[88vh] min-h-[640px]">
+          {/* Three image strips, hairline-separated. Different images from those used on Home. */}
+          {[
+            { src: '/brand/images/55.png', alt: 'Spa pool with photographic sky ceiling' },
+            { src: '/brand/images/13.png', alt: 'Kitchen with framed black gloss panel' },
+            { src: '/brand/images/29.png', alt: 'Home theatre with starfield ceiling' },
+          ].map((s, i) => (
             <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-6"
-              initial={{ opacity: 0, y: 20 }}
+              key={i}
+              className="relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ duration: 1.0, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="w-2 h-2 rounded-full bg-lafoi-green animate-pulse" />
-              <span className="text-xs font-sora text-white/80 font-medium tracking-wider uppercase">Case studies</span>
+              <OptimizedImage
+                src={s.src}
+                alt={s.alt}
+                className="w-full h-full object-cover object-center"
+                fill
+                vision={s.alt}
+              />
+              <div className="absolute inset-0 bg-lafoi-dark/45" />
+              {i < 2 && (
+                <span aria-hidden className="absolute right-0 top-0 bottom-0 w-px bg-white/8" />
+              )}
             </motion.div>
-            <h1 className="heading-xl text-4xl sm:text-5xl lg:text-6xl text-white mt-4 mb-6">
-              Case studies in<br />
-              <span className="text-gradient">transformation</span>
-            </h1>
-            <p className="text-white/70 font-general text-lg max-w-xl">
-              Nine deep case studies across residence, hospitality, commercial and retail. Each project documented with brief, approach, outcome and the products specified.
-            </p>
-          </motion.div>
+          ))}
+        </div>
+
+        {/* Overlaid centre — massive headline + tags */}
+        <div className="absolute inset-0 z-20 flex items-center pointer-events-none">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full">
+            <motion.div
+              className="max-w-3xl mx-auto text-center"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="flex items-center justify-center gap-3 mb-6 pointer-events-auto">
+                <span className="block w-10 h-px bg-lafoi-green-light/70" />
+                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                  The Archive &middot; {projects.length} case studies
+                </p>
+                <span className="block w-10 h-px bg-lafoi-green-light/70" />
+              </div>
+
+              <h1
+                className="font-display font-light text-white tracking-[-0.04em] leading-[0.92]"
+                style={{ fontSize: 'clamp(3.5rem, 9vw, 8rem)', fontVariationSettings: '"opsz" 144' }}
+              >
+                Case studies in
+                <span className="block italic text-lafoi-green-light">transformation.</span>
+              </h1>
+
+              <p className="mt-8 max-w-lg mx-auto text-base lg:text-lg text-white/75 font-body font-light leading-[1.65]">
+                {linkifyProse(
+                  'Deep case studies across residence, hospitality, commercial and retail. Brief, approach, outcome — and the stretch ceiling and lighting solutions specified for each project.',
+                  { variant: 'dark' }
+                )}
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -126,7 +171,7 @@ export default function Projects() {
                 <span className="inline-flex items-center gap-1.5"><Ruler size={12} weight="regular" />{featured.area}</span>
               </div>
               <p className="font-general text-white/70 text-base leading-relaxed mb-7 max-w-md">
-                {featured.brief}
+                {linkifyProse(featured.brief, { variant: 'dark' })}
               </p>
               <Link
                 to={`/projects/${featured.slug}`}
@@ -223,10 +268,10 @@ export default function Projects() {
           </AnimatedSection>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-10">
-            <StatItem value={totalStats.totalArea} suffix=" m²" label="Ceiling area installed" />
-            <StatItem value={totalStats.totalProjects} suffix="+" label="Documented case studies" />
-            <StatItem value={totalStats.totalRooms} suffix="+" label="Rooms transformed" />
-            <StatItem value={totalStats.repeatClients} suffix="+" label="Repeat clients" />
+            <StatItem value={1} suffix="st" label="Stretch ceiling studio in Zimbabwe" />
+            <StatItem value={totalStats.servicesOffered} suffix="" label="Core service lines" />
+            <StatItem value={totalStats.totalProjects} suffix="" label="Case studies on record" />
+            <StatItem value={totalStats.warrantyYears} suffix="yr" label="Manufacturer warranty" />
           </div>
         </div>
       </section>

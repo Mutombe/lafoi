@@ -48,7 +48,7 @@ export default function HeroSlideshow({
       ref={containerRef}
       className={`absolute inset-0 overflow-hidden ${className}`}
     >
-      {/* Slides */}
+      {/* Slides — soft seamless crossfade with subtle scale + blur on the outgoing layer */}
       {slides.map((slide, i) => {
         const isActive = i === active
         return (
@@ -57,8 +57,11 @@ export default function HeroSlideshow({
             className="absolute inset-0"
             style={{
               opacity: isActive ? 1 : 0,
-              transition: 'opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)',
-              willChange: 'opacity',
+              filter: isActive ? 'blur(0px)' : 'blur(6px)',
+              transform: isActive ? 'scale(1)' : 'scale(1.04)',
+              transition:
+                'opacity 2.2s cubic-bezier(0.22, 1, 0.36, 1), filter 2.2s cubic-bezier(0.22, 1, 0.36, 1), transform 2.2s cubic-bezier(0.22, 1, 0.36, 1)',
+              willChange: 'opacity, filter, transform',
             }}
             aria-hidden={!isActive}
           >
@@ -69,8 +72,8 @@ export default function HeroSlideshow({
               <motion.div
                 key={`kb-${i}-${active}`}
                 className="absolute inset-0"
-                initial={{ scale: isActive ? 1.0 : 1.0 }}
-                animate={isActive ? { scale: 1.05 } : { scale: 1.0 }}
+                initial={{ scale: 1.0 }}
+                animate={isActive ? { scale: 1.06 } : { scale: 1.0 }}
                 transition={{ duration: interval / 1000, ease: 'linear' }}
               >
                 <OptimizedImage

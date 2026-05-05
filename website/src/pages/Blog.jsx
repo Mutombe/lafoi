@@ -10,6 +10,7 @@ import {
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import AnimatedSection from '../components/ui/AnimatedSection'
+import { linkifyProse } from '../utils/linkify.jsx'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
@@ -80,7 +81,7 @@ const posts = [
   },
   {
     id: 5,
-    title: 'Our German Partners: Inside the Manufacturing Process',
+    title: 'Inside the Stretch Membrane Manufacturing Process',
     excerpt:
       'A behind-the-scenes look at how our premium PVC membranes are manufactured to exacting European quality standards.',
     category: 'Behind the Scenes',
@@ -143,87 +144,99 @@ export default function Blog() {
 }
 
 function BlogHero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
+  // Magazine Cover. Cream BG. LEFT — magazine stamp + headline + subtitle. RIGHT — 3x2 thumb grid.
+  const thumbs = [
+    'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=600&q=80',
+    'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=600&q=80',
+    'https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=600&q=80',
+    'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=600&q=80',
+    'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=600&q=80',
+    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&q=80',
+  ]
 
   return (
-    <section
-      ref={ref}
-      className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark"
-    >
-      <HeroSlideshow slides={BLOG_HERO_SLIDES} interval={6500} parallax overlay={false} />
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+    <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-16 lg:pb-24 overflow-hidden">
+      <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-40 pointer-events-none" />
 
-      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
-        <span className="hidden sm:block w-8 h-px bg-white/30" />
-        <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-          Vol.&nbsp;08 &mdash; 2026 &middot; Field notes
-        </span>
+      {/* Volume artifact */}
+      <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
+          <span className="hidden sm:block w-8 h-px bg-lafoi-dark/20" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/65">
+            Vol.&nbsp;08 &mdash; 2026 &middot; Field notes
+          </span>
+        </div>
       </div>
 
-      <motion.div
-        className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full"
-        style={{ opacity }}
-      >
-        <motion.div
-          className="pt-28 lg:pt-32"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
-            <Newspaper size={13} weight="regular" className="text-lafoi-green-light" />
-            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              The journal &middot; {posts.length} entries
-            </span>
-          </span>
-        </motion.div>
-
-        <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* LEFT — magazine masthead */}
           <motion.div
-            className="lg:col-span-9"
+            className="lg:col-span-7"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Stamp */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-lafoi-dark/15 bg-white/70 mb-7">
+              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-dark font-semibold">
+                Field notes
+              </span>
+              <span className="text-lafoi-dark/30">/</span>
+              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
+                Vol. 08
+              </span>
+              <span className="text-lafoi-dark/30">/</span>
+              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
+                2026
+              </span>
+            </div>
+
+            <h1
+              className="font-display text-lafoi-dark tracking-[-0.035em] leading-[0.95] text-[3rem] sm:text-[4.5rem] lg:text-[6rem] xl:text-[6.8rem]"
+              style={{ fontVariationSettings: '"opsz" 144' }}
+            >
+              <span className="block font-light">Notes from</span>
+              <span className="block italic font-light text-lafoi-green">the studio.</span>
+            </h1>
+
+            <p className="mt-7 max-w-xl text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
+              {linkifyProse(
+                'Essays on stretch ceilings, architectural lighting and the small craft decisions that change a room. Written between projects, edited slowly — and cross-linked to our portfolio where the ideas were tested in practice.'
+              )}
+            </p>
+
+            <p className="mt-8 font-sora text-[11px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
+              {posts.length} entries &middot; Curated journal
+            </p>
+          </motion.div>
+
+          {/* RIGHT — 3x2 thumb grid */}
+          <motion.div
+            className="lg:col-span-5"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1
-              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.4rem] xl:text-[7rem]"
-              style={{ fontVariationSettings: '"opsz" 144' }}
-            >
-              <span className="block font-light text-white/95">Notes from</span>
-              <span className="block">
-                <span className="font-normal text-white">the </span>
-                <span className="font-normal text-lafoi-green-light">studio</span>
-                <span className="text-lafoi-green-light">.</span>
-              </span>
-            </h1>
-
-            <motion.p
-              className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              Essays on ceilings, lighting and the small craft decisions that change a room. Written
-              between projects, edited slowly.
-            </motion.p>
+            <div className="grid grid-cols-3 grid-rows-2 gap-2 lg:gap-3 max-w-[420px] ml-auto">
+              {thumbs.map((src, i) => (
+                <div
+                  key={i}
+                  className="relative aspect-square rounded-md overflow-hidden bg-lafoi-dark/10"
+                >
+                  <OptimizedImage
+                    src={src}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    fill
+                    vision="Field notes thumbnail"
+                  />
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.1 }}
-      >
-        <span className="text-[9px] font-sora tracking-[0.35em] uppercase text-white/45">
-          Scroll
-        </span>
-        <span className="block w-px h-8 bg-gradient-to-b from-white/45 to-transparent" />
-      </motion.div>
+      </div>
     </section>
   )
 }
@@ -491,7 +504,7 @@ function PostCard({ post, index }) {
         </h3>
 
         <p className="font-body font-light text-sm lg:text-[15px] text-lafoi-gray leading-[1.65] mb-5 line-clamp-2">
-          {post.excerpt}
+          {linkifyProse(post.excerpt)}
         </p>
 
         <div className="flex items-center justify-between pt-4 border-t border-lafoi-dark/10">
@@ -556,8 +569,9 @@ function NewsletterBand() {
               <span className="text-lafoi-green">conversation</span>.
             </h2>
             <p className="mt-6 font-body font-light text-base lg:text-lg text-lafoi-gray leading-[1.7] max-w-lg">
-              An essay every other Friday — on craft, light, materials and the small studio
-              decisions that shape a room. No promotions, just thinking out loud.
+              {linkifyProse(
+                'An essay every other Friday — on craft, architectural lighting, materials and the small studio decisions that shape a room. No promotions, just thinking out loud, with the occasional link to our portfolio.'
+              )}
             </p>
           </AnimatedSection>
 

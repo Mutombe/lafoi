@@ -11,28 +11,27 @@ import {
   CheckCircle,
   Sparkle,
   WhatsappLogo,
+  DownloadSimple,
+  FilePdf,
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import AnimatedSection from '../components/ui/AnimatedSection'
+import { linkifyProse } from '../utils/linkify.jsx'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
+import SectionDivider from '../components/ui/SectionDivider'
 import { useSEO } from '../utils/seo'
 
 const CONTACT_HERO_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
-    alt: 'Calm contemporary living room',
-    vision: 'Welcoming residential space',
+    src: '/brand/images/16.png',
+    alt: 'Home theatre with a starry stretch ceiling and warm cove lighting',
+    vision: 'Home theatre with starfield ceiling and soft warm cove — invitation to converse',
   },
   {
-    src: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=2200&q=85',
-    alt: 'Restaurant fine dining interior',
-    vision: 'Warm hospitality space',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=2200&q=85',
-    alt: 'Luxe hotel suite',
-    vision: 'Refined room awaiting brief',
+    src: '/brand/images/14.png',
+    alt: 'Commercial kitchen with continuous linear LED tracks',
+    vision: 'Commercial kitchen with linear LED tracks — precision install',
   },
 ]
 
@@ -53,8 +52,11 @@ export default function Contact() {
     >
       <ContactHero />
       <ContactBento />
+      <SectionDivider shape="organic-blob" from="cream" to="cream" />
       <ContactForm />
+      <SectionDivider shape="s-curve" from="cream" to="cream" />
       <WhatsAppCallout />
+      <SectionDivider shape="subtle-wave" from="cream" to="cream" />
       <MapSection />
     </motion.div>
   )
@@ -65,112 +67,93 @@ export default function Contact() {
    ============================================================================ */
 
 function ContactHero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
-
+  // Split-Screen Brutalist. 50/50 split.
+  // LEFT — dark plate + massive headline + 3 stacked contact info blocks with serif arrow.
+  // RIGHT — single full-bleed image, no overlay.
   return (
-    <section
-      ref={ref}
-      className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark"
-    >
-      <HeroSlideshow slides={CONTACT_HERO_SLIDES} interval={6500} parallax overlay={false} />
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
-
-      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
-        <span className="hidden sm:block w-8 h-px bg-white/30" />
-        <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-          Vol.&nbsp;05 &mdash; 2026 &middot; Conversations begin here
-        </span>
+    <section className="relative grid lg:grid-cols-2 min-h-[100svh] lg:min-h-[88vh]">
+      {/* Volume artifact — spans both columns */}
+      <div className="absolute inset-x-0 top-28 lg:top-32 z-20 pointer-events-none">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
+          <span className="hidden sm:block w-8 h-px bg-white/30" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
+            Vol.&nbsp;05 &mdash; 2026 &middot; Conversations begin here
+          </span>
+        </div>
       </div>
 
+      {/* LEFT — dark plate */}
       <motion.div
-        className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full"
-        style={{ opacity }}
+        className="relative bg-lafoi-dark text-white flex items-center order-2 lg:order-1 px-6 sm:px-10 lg:px-16 py-24 lg:py-0 overflow-hidden"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
       >
-        <motion.div
-          className="pt-28 lg:pt-32"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
-            <PaperPlaneRight size={12} weight="regular" className="text-lafoi-green-light" />
-            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              Belgravia, Harare &middot; Open today
-            </span>
-          </span>
-        </motion.div>
+        <div aria-hidden className="absolute inset-0 dot-pattern opacity-15 pointer-events-none" />
+        <div aria-hidden className="absolute inset-0 aurora-mesh" />
+        <div className="relative w-full max-w-xl ml-auto">
+          <div className="flex items-center gap-3 mb-7">
+            <span className="block w-12 h-px bg-lafoi-green-light/70" />
+            <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              Begin a conversation
+            </p>
+          </div>
 
-        <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-          <motion.div
-            className="lg:col-span-8"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          <h1
+            className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[5rem] xl:text-[5.6rem]"
+            style={{ fontVariationSettings: '"opsz" 144' }}
           >
-            <h1
-              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.2rem] xl:text-[6.8rem]"
-              style={{ fontVariationSettings: '"opsz" 144' }}
-            >
-              <span className="block font-light text-white/95">Begin with</span>
-              <span className="block">
-                <span className="font-normal text-white">a </span>
-                <span className="font-normal text-lafoi-green-light">conversation</span>
-                <span className="text-lafoi-green-light">.</span>
-              </span>
-            </h1>
+            <span className="block font-light">Begin with</span>
+            <span className="block italic font-light text-lafoi-green-light">a conversation.</span>
+          </h1>
 
-            <motion.p
-              className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              We visit, we measure, we listen. The first conversation costs nothing — and tends to
-              clarify even the briefs that arrive uncertain.
-            </motion.p>
-          </motion.div>
-
-          {/* duotone metadata card */}
-          <motion.aside
-            className="lg:col-span-4 hidden lg:block"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="ml-auto max-w-[300px] relative bg-white/[0.06] backdrop-blur-md border border-white/15 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-lg rounded-bl-lg p-6 overflow-hidden">
-              <div aria-hidden className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="block w-6 h-px bg-lafoi-green-light/70" />
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-green-light">
-                    Studio
+          {/* Three contact blocks — large serif → glyph */}
+          <div className="mt-10 lg:mt-12 space-y-6 border-t border-white/10 pt-8">
+            {[
+              { k: 'Studio', v: 'Suite 26, 6 Chelmsford Rd', extra: 'Belgravia, Harare', href: 'https://maps.google.com/?q=Suite+26+6+Chelmsford+Rd+Belgravia+Harare' },
+              { k: 'Phone', v: '+263 712 326 951', extra: '+263 782 931 472', href: 'tel:+263712326951' },
+              { k: 'Email', v: 'admin@lafoidesigns.co.zw', extra: 'Mon–Fri · 08:00–17:00', href: 'mailto:admin@lafoidesigns.co.zw' },
+            ].map((c) => (
+              <a
+                key={c.k}
+                href={c.href}
+                className="group flex items-start justify-between gap-6 py-2 border-b border-white/10 hover:border-lafoi-green-light/40 transition-colors duration-300"
+              >
+                <div>
+                  <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/45 mb-1.5">
+                    {c.k}
                   </p>
+                  <p className="font-body text-base text-white">{c.v}</p>
+                  <p className="font-body text-xs text-white/55 mt-0.5">{c.extra}</p>
                 </div>
-                <div className="space-y-3 font-body font-light text-[13px] text-white/75 leading-relaxed">
-                  <p className="text-white">Suite 26, 6 Chelmsford Road</p>
-                  <p className="text-white/60">Belgravia, Harare</p>
-                  <p className="text-white/60 pt-2 border-t border-white/10">
-                    Mon–Fri &middot; 08:00 – 17:00
-                  </p>
-                  <p className="text-white/60">Sat &middot; 09:00 – 13:00</p>
-                </div>
-              </div>
-            </div>
-          </motion.aside>
+                <span
+                  aria-hidden
+                  className="font-display font-light text-3xl lg:text-4xl text-lafoi-green-light group-hover:translate-x-1 transition-transform duration-300 leading-none pt-1"
+                >
+                  &rarr;
+                </span>
+              </a>
+            ))}
+          </div>
         </div>
       </motion.div>
 
+      {/* RIGHT — full-bleed image, no overlay */}
       <motion.div
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.1 }}
+        className="relative order-1 lg:order-2 min-h-[420px] lg:min-h-0"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
       >
-        <span className="text-[9px] font-sora tracking-[0.35em] uppercase text-white/45">Scroll</span>
-        <span className="block w-px h-8 bg-gradient-to-b from-white/45 to-transparent" />
+        <OptimizedImage
+          src="/brand/images/16.png"
+          alt="Home theatre with starry stretch ceiling and warm cove lighting"
+          className="w-full h-full object-cover object-center"
+          fill
+          vision="Home theatre with starfield ceiling — invitation to converse"
+        />
+        {/* mobile-only soft gradient for readability of any overlay (none on desktop) */}
+        <div aria-hidden className="absolute inset-0 lg:hidden bg-gradient-to-t from-lafoi-dark/40 via-transparent to-transparent" />
       </motion.div>
     </section>
   )
@@ -429,10 +412,11 @@ function ContactForm() {
                 <span className="text-lafoi-green">your space</span>.
               </h2>
             </AnimatedSection>
-            <AnimatedSection delay={0.2}>
+            <AnimatedSection delay={0.2} direction="left">
               <p className="font-body font-light text-base text-lafoi-gray leading-[1.7] mb-8">
-                Fill in the details below — we'll review the brief and reach out within 24 hours
-                with next steps. Free of charge, no obligation.
+                {linkifyProse(
+                  "Fill in the details below — we'll review the brief and reach out within 24 hours with next steps. Free of charge, no obligation. Browse our portfolio first if you'd prefer some context."
+                )}
               </p>
             </AnimatedSection>
             <AnimatedSection delay={0.3}>
@@ -454,6 +438,26 @@ function ContactForm() {
                     </span>
                   </div>
                 ))}
+              </div>
+            </AnimatedSection>
+
+            {/* Subtle "read up first" row — non-competing with form CTAs */}
+            <AnimatedSection delay={0.4}>
+              <div className="mt-8 flex items-center gap-3">
+                <FilePdf size={14} weight="duotone" className="text-lafoi-green shrink-0" />
+                <p className="font-body text-sm text-lafoi-gray leading-relaxed">
+                  Want to read up first?{' '}
+                  <a
+                    href="/brand/docs/company-profile.pdf"
+                    target="_blank"
+                    rel="noopener"
+                    download
+                    className="group inline-flex items-baseline gap-1 text-lafoi-dark hover:text-lafoi-green transition-colors duration-300 border-b border-lafoi-dark/20 hover:border-lafoi-green pb-0.5"
+                  >
+                    Download our profile
+                    <DownloadSimple size={12} weight="bold" className="opacity-70 group-hover:opacity-100 self-center" />
+                  </a>
+                </p>
               </div>
             </AnimatedSection>
           </div>
@@ -666,8 +670,9 @@ function WhatsAppCallout() {
                 </h2>
 
                 <p className="font-body font-light text-base lg:text-lg text-lafoi-gray leading-[1.75] mb-8 max-w-lg">
-                  Send a photo of your space, a sketch, or just a brief message. Most enquiries get
-                  a personal reply within the hour during business days.
+                  {linkifyProse(
+                    'Send a photo of your space, a sketch, or just a brief message. Most enquiries get a personal reply within the hour during business days — followed by a free design consultation if you want one.'
+                  )}
                 </p>
 
                 <a
@@ -741,9 +746,35 @@ function MapSection() {
               </h2>
             </div>
             <p className="font-body font-light text-sm text-lafoi-gray max-w-md">
-              By appointment between Monday and Saturday. Coffee and a tour of the membrane library
-              included.
+              {linkifyProse(
+                'By appointment between Monday and Saturday. Coffee and a tour of the membrane library at our studio in Belgravia, Harare included.'
+              )}
             </p>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection delay={0.05}>
+          <div className="relative mb-6 lg:mb-8 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden h-44 lg:h-56 bg-lafoi-dark">
+            <OptimizedImage
+              src="/brand/images/24.png"
+              alt="Hallway with crossing linear LED light pattern on a dark stretch ceiling"
+              className="w-full h-full object-cover object-center"
+              fill
+              vision="Editorial hallway — crossing linear LEDs on dark ceiling, the path to the studio"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/80 via-lafoi-dark/30 to-transparent" />
+            <div className="absolute inset-0 flex items-center px-8 lg:px-12">
+              <div>
+                <span className="block w-10 h-px bg-lafoi-green-light/70 mb-3" />
+                <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light/90 mb-2">
+                  The route in
+                </p>
+                <p className="font-display font-light text-white text-2xl lg:text-3xl leading-tight tracking-[-0.01em]">
+                  Off Chelmsford Road,
+                  <br className="hidden sm:block" /> a short hallway from the lift.
+                </p>
+              </div>
+            </div>
           </div>
         </AnimatedSection>
 

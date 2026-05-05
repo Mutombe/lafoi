@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
@@ -10,31 +10,15 @@ import {
   Target,
   Users,
   Lightbulb,
-  Sparkle,
-  Buildings,
+  DownloadSimple,
+  FilePdf,
+  Compass,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
-import HeroSlideshow from '../components/ui/HeroSlideshow'
+import SectionDivider from '../components/ui/SectionDivider'
 import { useSEO } from '../utils/seo'
-
-const ABOUT_HERO_SLIDES = [
-  {
-    src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
-    alt: 'Master suite with luminous stretch ceiling',
-    vision: 'Heritage room — quiet light',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1618259715220-a89a4e4da76b?w=2200&q=85',
-    alt: 'Country hotel interior with elegant design',
-    vision: 'Studio warmth and craft',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=2200&q=85',
-    alt: 'Minimalist gallery space',
-    vision: 'Restraint as a discipline',
-  },
-]
+import { linkifyProse } from '../utils/linkify.jsx'
 
 export default function About() {
   useSEO({
@@ -52,10 +36,14 @@ export default function About() {
       transition={{ duration: 0.5 }}
     >
       <AboutHero />
+      <SectionDivider shape="angular" from="cream" to="dark" />
       <Mission />
       <StoryTimeline />
+      <SectionDivider shape="organic-blob" from="dark" to="cream" />
       <Values />
+      <SectionDivider shape="s-curve" from="cream" to="cream" />
       <Partners />
+      <SectionDivider shape="big-wave" from="cream" to="dark" />
       <Team />
       <AboutCTA />
     </motion.div>
@@ -67,127 +55,186 @@ export default function About() {
    ============================================================================ */
 
 function AboutHero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
-
+  // Editorial / Typography-First. Cream BG. Asymmetric 5/7 split.
+  // LEFT — massive serif headline, two paragraphs, stat strip.
+  // RIGHT — single full-bleed team photo, no slideshow.
   return (
-    <section
-      ref={ref}
-      className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark"
-    >
-      <HeroSlideshow slides={ABOUT_HERO_SLIDES} interval={6500} parallax overlay={false} />
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+    <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-20 lg:pb-28 overflow-hidden">
+      <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-50 pointer-events-none" />
 
-      {/* Volume artifact — top right */}
-      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
-        <span className="hidden sm:block w-8 h-px bg-white/30" />
-        <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-          Vol.&nbsp;02 &mdash; 2026 &middot; Heritage
-        </span>
+      {/* Volume artifact — respects content margin */}
+      <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
+          <span className="hidden sm:block w-8 h-px bg-lafoi-dark/20" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/65">
+            Vol.&nbsp;02 &mdash; 2026 &middot; Heritage
+          </span>
+        </div>
       </div>
 
-      <motion.div
-        className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full"
-        style={{ opacity }}
-      >
-        {/* Eyebrow at top */}
-        <motion.div
-          className="pt-28 lg:pt-32"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
-            <Sparkle size={12} weight="fill" className="text-lafoi-green-light" />
-            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              The studio &middot; Founded January 2024
-            </span>
-          </span>
-        </motion.div>
-
-        {/* Headline anchored bottom */}
-        <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
+          {/* LEFT 5 cols — typography-first */}
           <motion.div
-            className="lg:col-span-8"
+            className="lg:col-span-5"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
+            <div className="flex items-center gap-3 mb-7">
+              <span className="block w-12 h-px bg-lafoi-green/60" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Who we are
+              </p>
+            </div>
+
             <h1
-              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.2rem] xl:text-[6.8rem]"
+              className="font-display text-lafoi-dark tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem] xl:text-[6rem]"
               style={{ fontVariationSettings: '"opsz" 144' }}
             >
-              <span className="block font-light text-white/95">A studio</span>
-              <span className="block">
-                <span className="font-normal text-white">of </span>
-                <span className="font-normal text-lafoi-green-light">attention</span>
-                <span className="text-lafoi-green-light">.</span>
-              </span>
+              <span className="block font-light">A studio of</span>
+              <span className="block italic font-light text-lafoi-green">attention.</span>
             </h1>
 
-            <motion.p
-              className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              Founded January 2024 in Belgravia, Harare. Built around a single conviction —
-              the ceiling deserves the same care as the floor it sits above.
-            </motion.p>
+            <div className="mt-8 space-y-5 font-body font-light text-base lg:text-[17px] text-lafoi-gray leading-[1.7] max-w-md">
+              <p>
+                {linkifyProse(
+                  'Founded January 2024 in Belgravia, Harare — Zimbabwe’s first dedicated stretch ceiling and architectural lighting studio.'
+                )}
+              </p>
+              <p className="text-lafoi-gray/85">
+                {linkifyProse(
+                  'Built around a single conviction: the ceiling deserves the same care as the floor it sits above. Premium PVC and fabric stretch membranes, paired with bespoke lighting solutions, installed in one to two days per room.'
+                )}
+              </p>
+            </div>
+
+            {/* Stat strip — 3 hairline-divided cells with cascade reveal */}
+            <div className="mt-10 pt-7 border-t border-lafoi-dark/10 grid grid-cols-3 gap-x-4">
+              {[
+                { k: 'Founded', v: '2024' },
+                { k: 'Studio', v: 'Belgravia' },
+                { k: 'Origin', v: 'Regional first' },
+              ].map((s, i) => (
+                <AnimatedSection key={s.k} direction="up" delay={i * 0.08}>
+                  <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium mb-2">
+                    {s.k}
+                  </p>
+                  <p className="font-display font-light text-lafoi-dark text-lg lg:text-xl leading-tight">
+                    {s.v}
+                  </p>
+                </AnimatedSection>
+              ))}
+            </div>
           </motion.div>
 
-          {/* Asymmetric metadata card */}
-          <motion.aside
-            className="lg:col-span-4 hidden lg:block"
-            initial={{ opacity: 0, y: 30 }}
+          {/* RIGHT 7 cols — editorial pattern + artifacts (no image) */}
+          <motion.div
+            className="lg:col-span-7"
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="ml-auto max-w-[300px] relative bg-white/[0.06] backdrop-blur-md border border-white/15 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-lg rounded-bl-lg p-6 overflow-hidden">
-              <div aria-hidden className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="block w-6 h-px bg-lafoi-green-light/70" />
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-green-light">
-                    The numbers
-                  </p>
-                </div>
-                <div className="space-y-3 font-body font-light text-[13px] text-white/75 leading-relaxed">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-white/50">Founded</span>
-                    <span className="text-white">Jan 2024</span>
-                  </div>
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-white/50">Projects</span>
-                    <span className="text-white">200+</span>
-                  </div>
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-white/50">Partners</span>
-                    <span className="text-white">DE &middot; EE</span>
-                  </div>
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-white/50">Warranty</span>
-                    <span className="text-white">15 years</span>
-                  </div>
-                </div>
+            <div className="relative h-full min-h-[600px] lg:min-h-[640px] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden bg-lafoi-cream border border-lafoi-dark/10">
+              {/* Layer 1 — grid pattern (30%) */}
+              <div aria-hidden className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
+              {/* Layer 2 — soft mesh gradient (60%) */}
+              <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-60 pointer-events-none" />
+
+              {/* Massive ghost numeral "01" — chapter mark */}
+              <div
+                aria-hidden
+                className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+              >
+                <span
+                  className="font-display font-light text-lafoi-dark/[0.05] leading-none tracking-[-0.06em]"
+                  style={{
+                    fontSize: 'clamp(14rem, 22vw, 22rem)',
+                    fontVariationSettings: '"opsz" 144',
+                  }}
+                >
+                  01
+                </span>
+              </div>
+
+              {/* Organic blob — top-left */}
+              <div
+                aria-hidden
+                className="absolute -top-10 -left-10 w-[200px] h-[200px] blob bg-lafoi-green/[0.08] animate-float pointer-events-none"
+              />
+
+              {/* Outlined circle — top-right */}
+              <div
+                aria-hidden
+                className="absolute top-12 right-10 w-[120px] h-[120px] rounded-full border-2 border-lafoi-green/30 animate-float-delayed pointer-events-none"
+              />
+
+              {/* Filled square (rotated) — mid-left */}
+              <div
+                aria-hidden
+                className="absolute top-1/2 left-12 w-16 h-16 bg-lafoi-green/15 animate-float pointer-events-none"
+                style={{ transform: 'translateY(-50%) rotate(12deg)' }}
+              />
+
+              {/* Outlined triangle — bottom-right area */}
+              <svg
+                aria-hidden
+                viewBox="0 0 80 80"
+                width="80"
+                height="80"
+                className="absolute bottom-24 right-20 text-lafoi-dark/15 animate-float-delayed pointer-events-none"
+              >
+                <polygon
+                  points="40,6 76,72 4,72"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+              </svg>
+
+              {/* Hairline cross-rules — top horizontal + right vertical */}
+              <span
+                aria-hidden
+                className="absolute top-16 left-0 h-px bg-lafoi-green/20 pointer-events-none"
+                style={{ width: '60%' }}
+              />
+              <span
+                aria-hidden
+                className="absolute top-0 right-10 w-px bg-lafoi-green/20 pointer-events-none"
+                style={{ height: '60%' }}
+              />
+
+              {/* Top-right stamp */}
+              <div className="absolute top-6 right-7 flex items-center gap-2 pointer-events-none">
+                <span className="block w-6 h-px bg-lafoi-green-dark/40" />
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-dark">
+                  Vol.&nbsp;02
+                </span>
+              </div>
+
+              {/* Center-right pull-quote */}
+              <div className="absolute inset-y-0 right-0 w-full max-w-[280px] lg:max-w-[320px] flex items-center justify-end pr-7 lg:pr-10 pointer-events-none">
+                <p className="font-display italic font-light text-lafoi-dark/65 text-[17px] lg:text-[18px] leading-[1.45] text-right">
+                  &ldquo;Six surfaces. The ceiling deserves all of them.&rdquo;
+                </p>
+              </div>
+
+              {/* Bottom-left signature */}
+              <div className="absolute bottom-6 left-7 flex items-center gap-2 pointer-events-none">
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-dark/40">
+                  Est. 2024 &mdash; Belgravia, Harare
+                </span>
+              </div>
+
+              {/* Bottom-right brand mark icon */}
+              <div className="absolute bottom-6 right-7 pointer-events-none">
+                <Compass size={18} weight="regular" className="text-lafoi-green" />
               </div>
             </div>
-          </motion.aside>
+          </motion.div>
         </div>
-      </motion.div>
-
-      {/* scroll cue */}
-      <motion.div
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.1 }}
-      >
-        <span className="text-[9px] font-sora tracking-[0.35em] uppercase text-white/45">Scroll</span>
-        <span className="block w-px h-8 bg-gradient-to-b from-white/45 to-transparent" />
-      </motion.div>
+      </div>
     </section>
   )
 }
@@ -197,111 +244,169 @@ function AboutHero() {
    ============================================================================ */
 
 function Mission() {
+  // Brutalist split-screen — full-bleed, dark plate (left) + raw image (right).
+  // SUBTLE PARALLAX on the right photo — drifts ~50px down as the section
+  // scrolls past, while the dark text plate stays still.
+  const sectionRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  })
+  const photoY = useTransform(scrollYProgress, [0, 1], [-30, 60])
+
   return (
-    <section className="relative py-20 lg:py-32 bg-lafoi-cream overflow-hidden">
-      <div className="absolute inset-0 pattern-cross-light opacity-50 pointer-events-none" />
-      <div className="absolute inset-0 mesh-gradient-1 pointer-events-none" />
+    <section ref={sectionRef} className="relative bg-lafoi-dark overflow-hidden">
+      <div className="grid lg:grid-cols-2 lg:min-h-[88vh]">
+        {/* LEFT — dark plate with mission copy */}
+        <div className="relative bg-lafoi-dark order-2 lg:order-1">
+          <div aria-hidden className="absolute inset-0 aurora-mesh pointer-events-none" />
 
-      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-          {/* Text column */}
-          <AnimatedSection direction="left" className="lg:col-span-6">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="block w-12 h-px bg-lafoi-green/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                Our mission
-              </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                01 / 06
-              </span>
-            </div>
+          {/* Hairline green seam — right edge of dark plate (desktop only) */}
+          <span
+            aria-hidden
+            className="hidden lg:block absolute top-0 right-0 w-px h-full bg-lafoi-green/30 pointer-events-none z-10"
+          />
 
-            <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em] mb-8">
-              World-class ceiling technology,{' '}
-              <span className="text-lafoi-green">brought home</span>{' '}
-              to Zimbabwe.
-            </h2>
+          <div className="relative h-full p-8 lg:p-16 xl:p-24 flex flex-col justify-center">
+            <AnimatedSection>
+              <div className="flex items-center gap-3 mb-7">
+                <span className="block w-12 h-px bg-lafoi-green-light/60" />
+                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                  Our mission
+                </p>
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
+                  01 / 06
+                </span>
+              </div>
+            </AnimatedSection>
 
-            <div className="space-y-5 font-body font-light text-base lg:text-[17px] text-lafoi-gray leading-[1.7] max-w-xl">
-              <p>
-                We believe every room deserves to be extraordinary. By partnering with the finest
-                European manufacturers and investing deeply in our team's expertise, we deliver
-                ceiling solutions that transform ordinary spaces into experiences.
-              </p>
-              <p className="text-lafoi-gray/85">
-                Founded in January 2024 to bring a technology Zimbabwe had never seen — and built
-                around the conviction that the ceiling, not the floor, is where a room begins.
-              </p>
-            </div>
+            <AnimatedSection delay={0.1}>
+              <h2 className="font-display font-light text-white text-3xl sm:text-4xl lg:text-[3.2rem] xl:text-[3.6rem] leading-[1.08] tracking-[-0.02em] mb-8 max-w-xl">
+                World-class ceiling technology,{' '}
+                <span className="italic text-lafoi-green-light">brought home</span>{' '}
+                to Zimbabwe.
+              </h2>
+            </AnimatedSection>
 
-            <div className="mt-10 pt-8 border-t border-lafoi-dark/10 flex items-center gap-6">
-              <div>
-                <p className="font-display font-light text-3xl text-lafoi-dark leading-none">200+</p>
-                <p className="text-[11px] font-sora tracking-[0.2em] uppercase text-lafoi-gray-medium mt-2">
-                  Rooms transformed
+            <AnimatedSection delay={0.18} direction="left">
+              <div className="space-y-5 font-body font-light text-base lg:text-[17px] text-white/70 leading-[1.7] max-w-lg">
+                <p>
+                  {linkifyProse(
+                    'We transform interior spaces with durable, visually stunning, and versatile stretch ceilings that meet the highest standards of quality and design — pioneering a finish that, until 2024, no studio in Zimbabwe could specify.',
+                    { variant: 'dark' }
+                  )}
+                </p>
+                <p className="text-white/55">
+                  {linkifyProse(
+                    'Founded in 2024 in Belgravia, Harare, around a single conviction: the ceiling, not the floor, is where a room begins. Read the full company profile or browse our portfolio to see the work.',
+                    { variant: 'dark' }
+                  )}
                 </p>
               </div>
-              <span className="block w-px h-12 bg-lafoi-dark/15" />
-              <div>
-                <p className="font-display font-light text-3xl text-lafoi-dark leading-none">2</p>
-                <p className="text-[11px] font-sora tracking-[0.2em] uppercase text-lafoi-gray-medium mt-2">
-                  European partners
-                </p>
-              </div>
-              <span className="block w-px h-12 bg-lafoi-dark/15" />
-              <div>
-                <p className="font-display font-light text-3xl text-lafoi-dark leading-none">15<span className="text-xl">y</span></p>
-                <p className="text-[11px] font-sora tracking-[0.2em] uppercase text-lafoi-gray-medium mt-2">
-                  Warranty
-                </p>
-              </div>
-            </div>
-          </AnimatedSection>
+            </AnimatedSection>
 
-          {/* Image column — duotone + offset */}
-          <AnimatedSection direction="right" className="lg:col-span-6 relative">
-            <div className="relative h-[440px] lg:h-[560px]">
-              {/* Back image — rotated, low opacity */}
-              <div
-                className="absolute -top-4 -left-4 w-[60%] h-[55%] rounded-3xl overflow-hidden opacity-60 hidden lg:block"
-                style={{ transform: 'rotate(-3deg)' }}
-              >
-                <OptimizedImage
-                  src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=900&q=80"
-                  alt=""
-                  className="w-full h-full object-cover grayscale"
-                  fill
-                  vision="Calm gallery space — secondary frame"
-                />
-              </div>
-
-              {/* Front — duotone over green panel */}
-              <div className="absolute top-0 right-0 w-full lg:w-[80%] h-full rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden bg-lafoi-green">
-                <OptimizedImage
-                  src="https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1200&q=80"
-                  alt="La Foi Designs studio scene"
-                  className="w-full h-full object-cover object-center"
-                  fill
-                  vision="Calm contemporary living room — duotone studio scene"
-                />
-                <div
-                  aria-hidden
-                  className="absolute inset-0 bg-lafoi-green mix-blend-multiply"
-                  style={{ opacity: 0.55 }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/30 via-transparent to-transparent" />
-
-                {/* Caption — bottom left */}
-                <div className="absolute bottom-6 left-6 right-6">
-                  <span className="block w-8 h-px bg-white/60 mb-3" />
-                  <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/85">
-                    Belgravia, Harare &middot; The studio
+            {/* Slim metric strip — hairline divided */}
+            <AnimatedSection delay={0.25}>
+              <div className="mt-10 pt-7 border-t border-white/15 grid grid-cols-3 gap-x-4 max-w-lg">
+                <div>
+                  <p className="font-display font-light text-2xl lg:text-3xl text-white leading-none">
+                    1<span className="text-base lg:text-lg">st</span>
+                  </p>
+                  <p className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
+                    In Zimbabwe
+                  </p>
+                </div>
+                <div className="border-l border-white/10 pl-4">
+                  <p className="font-display font-light text-2xl lg:text-3xl text-white leading-none">
+                    1&ndash;2<span className="text-base lg:text-lg">d</span>
+                  </p>
+                  <p className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
+                    Typical install
+                  </p>
+                </div>
+                <div className="border-l border-white/10 pl-4">
+                  <p className="font-display font-light text-2xl lg:text-3xl text-white leading-none">
+                    15<span className="text-base lg:text-lg">yr</span>
+                  </p>
+                  <p className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
+                    Mfr. warranty
                   </p>
                 </div>
               </div>
-            </div>
-          </AnimatedSection>
+            </AnimatedSection>
+
+            {/* Downloads — restyled for dark BG: transparent card, green accent border */}
+            <AnimatedSection delay={0.32}>
+              <div className="mt-10 relative rounded-tl-[1.6rem] rounded-br-[1.6rem] rounded-tr-2xl rounded-bl-2xl bg-white/[0.04] backdrop-blur-sm border border-lafoi-green-light/25 overflow-hidden max-w-lg">
+                <span
+                  aria-hidden
+                  className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-lafoi-green-light via-lafoi-green-light/70 to-lafoi-green-light/30"
+                />
+                <div className="p-6 lg:p-7">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="w-9 h-9 rounded-xl bg-lafoi-green-light/15 border border-lafoi-green-light/30 flex items-center justify-center">
+                      <FilePdf size={16} weight="duotone" className="text-lafoi-green-light" />
+                    </span>
+                    <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light font-semibold">
+                      Resources &middot; PDF
+                    </p>
+                  </div>
+                  <h3 className="font-display font-light text-xl lg:text-2xl text-white leading-tight tracking-tight mb-4">
+                    Take the studio with you.
+                  </h3>
+                  <a
+                    href="/brand/docs/company-profile.pdf"
+                    target="_blank"
+                    rel="noopener"
+                    download
+                    className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-lafoi-green-light text-lafoi-dark font-sora text-sm font-semibold hover:bg-white transition-all duration-300 shadow-[0_8px_24px_-8px_rgba(34,197,94,0.45)]"
+                  >
+                    <DownloadSimple size={15} weight="bold" />
+                    Download our Company Profile
+                  </a>
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <a
+                      href="/brand/docs/stretch-ceilings-guide.pdf"
+                      target="_blank"
+                      rel="noopener"
+                      download
+                      className="group inline-flex items-center gap-2 text-sm font-sora text-white/65 hover:text-lafoi-green-light transition-colors duration-300"
+                    >
+                      <DownloadSimple
+                        size={13}
+                        weight="regular"
+                        className="opacity-70 group-hover:opacity-100"
+                      />
+                      <span className="font-display font-light text-base">
+                        Read the Stretch Ceilings Guide
+                      </span>
+                      <ArrowUpRight
+                        size={13}
+                        weight="bold"
+                        className="opacity-60 group-hover:translate-x-0.5 group-hover:opacity-100 transition-all"
+                      />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          </div>
         </div>
+
+        {/* RIGHT — raw image (the original hero photo), full-bleed, no overlay.
+            Restrained parallax: drifts ~90px while the left dark plate stays still. */}
+        <motion.div
+          className="relative order-1 lg:order-2 aspect-[4/3] lg:aspect-auto lg:min-h-full will-change-transform"
+          style={{ y: photoY, scale: 1.06 }}
+        >
+          <OptimizedImage
+            src="/brand/images/30.png"
+            alt="La Foi Designs team at a branded event in Harare"
+            className="w-full h-full object-cover object-center"
+            fill
+            vision="The team behind every install — Belgravia, Harare"
+          />
+        </motion.div>
       </div>
     </section>
   )
@@ -320,29 +425,35 @@ function StoryTimeline() {
       copy: 'La Foi Designs is founded with a single bold mission — to bring world-class stretch ceiling technology to Zimbabwe for the very first time.',
     },
     {
-      year: 'Q1',
-      sub: '2024',
-      title: 'European partnerships',
-      copy: 'We partnered with top-tier suppliers from Germany and Estonia, gaining access to the highest quality materials and most advanced ceiling technologies in the world.',
+      year: '01',
+      sub: 'Pioneer',
+      title: 'A regional first',
+      copy: 'We become Zimbabwe’s first dedicated stretch ceiling installer — introducing a finish that, until then, no one in the country could specify or build.',
     },
     {
-      year: 'Q2',
-      sub: '2024',
-      title: 'Expert training',
-      copy: 'Our team underwent intensive hands-on training with our European partners, mastering installation techniques, design principles, and quality standards.',
+      year: '02',
+      sub: 'Studio',
+      title: 'A home in Belgravia',
+      copy: 'The studio settles at Suite 26, 6 Chelmsford Road — a quiet office in Belgravia, central enough to drive a same-day site visit anywhere in Harare.',
     },
     {
-      year: '200+',
-      sub: 'Rooms',
+      year: '03',
+      sub: 'Craft',
+      title: 'A team trained for the work',
+      copy: 'Four leads — managing, operations, projects, marketing — and a trained installation crew. Every membrane goes up under the eyes of someone who has done it before.',
+    },
+    {
+      year: '04',
+      sub: 'Today',
       title: 'Transforming Zimbabwe',
-      copy: "With over 200 projects completed, we've become the trusted name in stretch ceilings across residential, commercial, and hospitality sectors.",
+      copy: 'Bedrooms, kitchens, spas, offices, conference rooms — the kind of work where the ceiling is now the first thing the room is photographed for.',
     },
   ]
 
   return (
     <section className="relative py-24 lg:py-36 bg-lafoi-dark overflow-hidden">
-      <div className="absolute inset-0 pattern-blueprint-light opacity-50 pointer-events-none" />
-      <div className="absolute inset-0 dot-pattern opacity-15 pointer-events-none" />
+      <div className="aurora-mesh" />
+      <div className="absolute inset-0 dot-pattern opacity-12 pointer-events-none" />
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         {/* Section header */}
@@ -389,6 +500,8 @@ function StoryTimeline() {
 function Milestone({ m, index, total, align }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, amount: 0.3 })
+  // Alternate the entry direction: even rows enter from LEFT, odd from RIGHT.
+  const initialX = align === 'right' ? 80 : -80
 
   return (
     <motion.div
@@ -396,9 +509,9 @@ function Milestone({ m, index, total, align }) {
       className={`grid lg:grid-cols-12 gap-8 lg:gap-12 items-center ${
         align === 'right' ? 'lg:[&>*:first-child]:order-2' : ''
       }`}
-      initial={{ opacity: 0, y: 60 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
-      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0, x: initialX, y: 30 }}
+      animate={inView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: initialX, y: 30 }}
+      transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Massive year numeral */}
       <div className={`lg:col-span-5 ${align === 'right' ? 'lg:text-right' : ''}`}>
@@ -426,7 +539,7 @@ function Milestone({ m, index, total, align }) {
           {m.title}
         </h3>
         <p className="font-body font-light text-white/65 text-base lg:text-lg leading-[1.7] max-w-2xl">
-          {m.copy}
+          {linkifyProse(m.copy, { variant: 'dark' })}
         </p>
       </div>
     </motion.div>
@@ -442,9 +555,9 @@ function Values() {
     {
       key: 'excellence',
       title: 'Excellence',
-      desc: 'Every project meets international standards backed by our German and Estonian partners.',
-      image: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1200&q=80',
-      vision: 'Excellence — refined retail showroom ceiling',
+      desc: 'Premium PVC and fabric stretch membranes, clean edge details, and finishes that read calm — not loud.',
+      image: '/brand/images/9.png',
+      vision: 'Excellence — La Foi installer in branded uniform on a ladder',
       icon: Trophy,
       feature: true,
     },
@@ -463,9 +576,9 @@ function Values() {
     {
       key: 'innovation',
       title: 'Innovation',
-      desc: 'Constantly adopting the latest technologies and design techniques from around the world.',
-      image: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=1200&q=80',
-      vision: 'Innovation — luminous translucent ceiling installation',
+      desc: 'Starfields, translucent backlit panels, custom photographic prints — finishes Zimbabwe simply could not specify before.',
+      image: '/brand/images/44.png',
+      vision: 'Innovation — installers mounting an LED frame in branded shirts',
       icon: Lightbulb,
       feature: true,
     },
@@ -508,10 +621,11 @@ function Values() {
               </h2>
             </AnimatedSection>
           </div>
-          <AnimatedSection delay={0.2}>
+          <AnimatedSection delay={0.2} direction="right">
             <p className="font-body text-lafoi-gray max-w-sm leading-relaxed">
-              More than a company — a team united by shared values that inform every decision and
-              every project we accept.
+              {linkifyProse(
+                'More than a company — a team united by shared values that inform every project we accept. See our portfolio for projects that show how those values play out in finished work.'
+              )}
             </p>
           </AnimatedSection>
         </div>
@@ -585,7 +699,7 @@ function ValueImageCard({ v, index, wide = false }) {
           {v.title}
         </h3>
         <p className="font-body font-light text-white/70 text-sm lg:text-base leading-relaxed max-w-md">
-          {v.desc}
+          {linkifyProse(v.desc, { variant: 'dark' })}
         </p>
       </div>
     </div>
@@ -605,7 +719,7 @@ function ValueTypoCard({ v, index }) {
       <h3 className="font-display font-light text-lafoi-dark text-2xl lg:text-3xl mb-4 leading-[1.1]">
         {v.title}
       </h3>
-      <p className="font-body font-light text-sm text-lafoi-gray leading-[1.7]">{v.desc}</p>
+      <p className="font-body font-light text-sm text-lafoi-gray leading-[1.7]">{linkifyProse(v.desc)}</p>
     </div>
   )
 }
@@ -617,28 +731,28 @@ function ValueTypoCard({ v, index }) {
 function Partners() {
   const partners = [
     {
-      country: 'Germany',
-      role: 'Membrane engineering',
-      title: 'German Engineering',
-      desc: 'Precision-manufactured PVC and fabric membranes meeting strict EU quality and fire safety standards. Our German partners bring decades of stretch ceiling expertise.',
+      country: 'Pioneer',
+      role: 'A regional first',
+      title: 'Southern Africa’s first',
+      desc: 'La Foi Designs introduced stretch ceilings to Zimbabwe — and remains the country’s leading installer. The finish is everywhere in Europe; we made it specifiable here.',
       features: [
-        { label: 'Fire-rated', detail: 'Class B-s1, d0 — self-extinguishing' },
-        { label: 'UV-resistant', detail: 'Pigment-locked, colour-stable' },
-        { label: 'Eco-friendly', detail: 'REACH-compliant production' },
-        { label: 'Warranty', detail: '15-year manufacturer backing' },
+        { label: 'Fast', detail: '1–2 days to install vs. days for gypsum' },
+        { label: 'Clean', detail: 'No demolition, no plaster dust, no painting' },
+        { label: 'Flexible', detail: 'A wide colour range, matte to mirror gloss' },
+        { label: 'Backed', detail: 'Manufacturer-warranted PVC membrane' },
       ],
       pattern: true,
     },
     {
-      country: 'Estonia',
-      role: 'Photographic print',
-      title: 'Estonian Innovation',
-      desc: "Cutting-edge printing technology and LED integration systems from one of Europe's most innovative ceiling technology companies.",
+      country: 'Engineered',
+      role: 'PVC & fabric membrane',
+      title: 'Built to last',
+      desc: 'Stretch ceilings are tensioned PVC or fabric membranes — fire-rated, water-resistant, 100% washable, and engineered to outlast the room beneath them.',
       features: [
-        { label: 'HD printing', detail: '1440 dpi UV pigment, large format' },
-        { label: 'Smart LED', detail: 'DMX, DALI and home-system ready' },
-        { label: 'Acoustic', detail: 'Micro-perforated, NRC up to 0.90' },
-        { label: 'Custom', detail: 'Bespoke runs from a single panel' },
+        { label: 'Fire-rated', detail: 'B-s1, d0 self-extinguishing membrane' },
+        { label: 'Water-tight', detail: 'Holds water in a leak — protects below' },
+        { label: 'Acoustic', detail: 'Perforated options for sound absorption' },
+        { label: 'Eco', detail: 'Recyclable membrane, low-VOC install' },
       ],
     },
   ]
@@ -660,8 +774,8 @@ function Partners() {
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
-              Engineered in Europe,{' '}
-              <span className="text-lafoi-green">installed in Zimbabwe</span>.
+              Pioneers,{' '}
+              <span className="text-lafoi-green">in our own light</span>.
             </h2>
           </AnimatedSection>
         </div>
@@ -700,7 +814,7 @@ function PartnerCard({ p }) {
         </h3>
 
         <p className="font-body font-light text-base text-lafoi-gray leading-relaxed mb-10 max-w-md">
-          {p.desc}
+          {linkifyProse(p.desc)}
         </p>
 
         {/* Features as hairline-divided rows, alternating em-dash / hairline */}
@@ -733,22 +847,23 @@ function PartnerCard({ p }) {
 
 function Team() {
   const credentials = [
-    'Certified by European manufacturing partners',
-    'Specialised in residential and commercial installations',
-    'Ongoing training in latest ceiling technologies',
-    'Dedicated project managers for every job',
+    '5+ years combined construction & interior design experience',
+    'In-house project management, logistics & quality control',
+    'Same-day site visits across greater Harare',
+    'A trained installation crew on every job',
+  ]
+
+  const leads = [
+    { name: 'Takudzwa Mhembere', role: 'Managing Director' },
+    { name: 'Ashley Tafirenyika', role: 'Operations Manager' },
+    { name: 'Tendekayi K. Mavunga', role: 'Projects Director' },
+    { name: 'Charmaine Mumbamarwo', role: 'Marketing Manager' },
   ]
 
   return (
     <section className="relative py-24 lg:py-32 bg-lafoi-dark overflow-hidden">
-      <div className="absolute inset-0 dot-pattern opacity-15 pointer-events-none" />
-      <div
-        className="absolute inset-0 opacity-50 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse at 100% 0%, rgba(34,197,94,0.08), transparent 50%), radial-gradient(ellipse at 0% 100%, rgba(26,138,46,0.06), transparent 50%)',
-        }}
-      />
+      <div className="aurora-mesh-cool" />
+      <div className="absolute inset-0 dot-pattern opacity-10 pointer-events-none" />
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
@@ -768,17 +883,37 @@ function Team() {
 
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-white text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em] mb-7">
-                Trained in Europe.{' '}
-                <span className="text-lafoi-green-light">Patient at home.</span>
+                Four leads.{' '}
+                <span className="text-lafoi-green-light">One studio.</span>
               </h2>
             </AnimatedSection>
 
             <AnimatedSection delay={0.2}>
               <p className="font-body font-light text-base lg:text-lg text-white/65 leading-[1.75] mb-10 max-w-xl">
-                Our team underwent extensive training with our German and Estonian partners,
-                mastering the art and science of stretch ceiling installation. Every member brings
-                dedication, skill, and an unwavering eye for detail.
+                A small, deliberate team. Managing Director, Operations, Projects, Marketing —
+                each one client-facing, each one accountable. Plus a trained install crew that
+                shows up on time, in branded shirts, and finishes the room by sundown.
               </p>
+            </AnimatedSection>
+
+            <AnimatedSection delay={0.25}>
+              <div className="grid sm:grid-cols-2 gap-x-6 gap-y-5 mb-10">
+                {leads.map((lead, i) => (
+                  <div key={lead.name} className="flex items-baseline gap-3">
+                    <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light/70 shrink-0 pt-1">
+                      0{i + 1}
+                    </span>
+                    <div>
+                      <p className="font-display font-normal text-white text-lg lg:text-xl leading-tight">
+                        {lead.name}
+                      </p>
+                      <p className="font-sora text-[11px] tracking-[0.18em] uppercase text-white/55 mt-1">
+                        {lead.role}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </AnimatedSection>
 
             <AnimatedSection delay={0.3}>
@@ -814,27 +949,53 @@ function Team() {
             </AnimatedSection>
           </div>
 
-          {/* Right — single team frame, glass border + asymmetric corners */}
+          {/* Right — typographic leadership plate (no portrait) */}
           <AnimatedSection direction="right" className="lg:col-span-6 relative">
-            <div className="relative aspect-[4/5] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden border border-white/10">
-              <OptimizedImage
-                src="https://images.unsplash.com/photo-1758691736975-9f7f643d178e?w=1200&q=80"
-                alt="La Foi Designs team"
-                className="w-full h-full object-cover object-center"
-                fill
-                vision="Internationally trained team — locally dedicated"
+            <div className="relative aspect-[4/5] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden border border-white/10 bg-lafoi-green">
+              <div aria-hidden className="absolute inset-0 dot-pattern opacity-25 pointer-events-none" />
+              <div
+                aria-hidden
+                className="absolute inset-0 opacity-70 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at 80% 0%, rgba(255,255,255,0.18), transparent 55%), radial-gradient(ellipse at 0% 100%, rgba(0,0,0,0.35), transparent 55%)',
+                }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/85 via-lafoi-dark/15 to-transparent" />
 
-              {/* metadata strip — bottom */}
-              <div className="absolute bottom-0 left-0 right-0 p-7 lg:p-9">
-                <span className="block w-10 h-px bg-lafoi-green-light/70 mb-4" />
-                <p className="font-display font-normal text-white text-2xl lg:text-3xl leading-tight mb-2">
-                  Internationally trained.
-                </p>
-                <p className="font-display font-light text-white/85 text-2xl lg:text-3xl leading-tight">
-                  Locally dedicated.
-                </p>
+              <div className="relative z-10 h-full flex flex-col p-8 lg:p-10">
+                <div className="flex items-center gap-3 mb-8">
+                  <span className="block w-10 h-px bg-white/70" />
+                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-white/85">
+                    Leadership
+                  </p>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center space-y-7">
+                  {leads.map((lead, i) => (
+                    <div key={lead.name} className="flex items-baseline gap-4">
+                      <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/55 shrink-0 pt-1">
+                        0{i + 1}
+                      </span>
+                      <div>
+                        <p className="font-display font-light text-white text-2xl lg:text-[1.75rem] leading-[1.1]">
+                          {lead.name}
+                        </p>
+                        <p className="font-sora text-[11px] tracking-[0.18em] uppercase text-white/70 mt-1.5">
+                          {lead.role}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pt-6 mt-8 border-t border-white/20">
+                  <p className="font-display font-normal text-white text-xl lg:text-2xl leading-tight mb-1">
+                    Locally dedicated.
+                  </p>
+                  <p className="font-display font-light text-white/80 text-xl lg:text-2xl leading-tight">
+                    Belgravia, Harare.
+                  </p>
+                </div>
               </div>
             </div>
           </AnimatedSection>
@@ -853,11 +1014,11 @@ function AboutCTA() {
     <section className="relative min-h-[80vh] lg:min-h-[88vh] flex items-center overflow-hidden bg-lafoi-dark">
       <div className="absolute inset-0">
         <OptimizedImage
-          src="https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2000&q=85"
-          alt="Luxury interior with luminous ceiling"
+          src="/brand/images/29.png"
+          alt="Home theatre with deep recliners and a starfield stretch ceiling"
           className="w-full h-full object-cover object-center"
           fill
-          vision="Luminous translucent ceiling — invitation to begin"
+          vision="Home theatre with starfield ceiling — invitation to begin"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/85 via-lafoi-dark/30 to-lafoi-dark/55" />
         <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/30" />
@@ -884,10 +1045,12 @@ function AboutCTA() {
             </h2>
           </AnimatedSection>
 
-          <AnimatedSection delay={0.25}>
+          <AnimatedSection delay={0.25} direction="left">
             <p className="mt-8 max-w-xl text-base lg:text-lg text-white/70 font-body font-light leading-relaxed">
-              Experience the La Foi difference. Book a free consultation and let us show you what's
-              possible — at no cost, no obligation, no rush.
+              {linkifyProse(
+                "Experience the La Foi difference. Book a free design consultation and let us show you what's possible — at no cost, no obligation, no rush. Browse our portfolio first, or read the technical guide.",
+                { variant: 'dark' }
+              )}
             </p>
           </AnimatedSection>
 

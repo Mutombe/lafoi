@@ -11,7 +11,9 @@ import {
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
+import VideoShowcase from '../components/ui/VideoShowcase'
 import { useSEO } from '../utils/seo'
+import { linkifyProse } from '../utils/linkify.jsx'
 
 const PORTFOLIO_HERO_SLIDES = [
   {
@@ -47,7 +49,7 @@ const projects = [
   },
   {
     id: 2,
-    title: 'Meikles Hotel Ballroom',
+    title: 'Hospitality Ballroom',
     category: 'Hospitality',
     location: 'CBD, Harare',
     year: '2024',
@@ -57,7 +59,7 @@ const projects = [
   },
   {
     id: 3,
-    title: 'TechHub Office',
+    title: 'Belgravia Commercial Office',
     category: 'Commercial',
     location: 'Belgravia',
     year: '2024',
@@ -67,7 +69,7 @@ const projects = [
   },
   {
     id: 4,
-    title: 'Garden City Mall',
+    title: 'Borrowdale Mall Atrium',
     category: 'Retail',
     location: 'Harare',
     year: '2024',
@@ -88,7 +90,7 @@ const projects = [
   },
   {
     id: 6,
-    title: 'The Ivy Restaurant',
+    title: 'Borrowdale Fine Dining',
     category: 'Hospitality',
     location: 'Avondale',
     year: '2025',
@@ -98,7 +100,7 @@ const projects = [
   },
   {
     id: 7,
-    title: 'Pearl Spa & Wellness',
+    title: 'Highlands Spa & Wellness',
     category: 'Hospitality',
     location: 'Harare',
     year: '2025',
@@ -109,7 +111,7 @@ const projects = [
   },
   {
     id: 8,
-    title: "Sam Levy's Village",
+    title: 'Borrowdale Flagship Showroom',
     category: 'Retail',
     location: 'Borrowdale',
     year: '2025',
@@ -165,6 +167,8 @@ export default function Portfolio() {
       transition={{ duration: 0.5 }}
     >
       <PortfolioHero />
+
+      <VideoGallery />
 
       {/* Filter & Gallery */}
       <section className="relative py-20 lg:py-28 bg-lafoi-cream overflow-hidden">
@@ -339,7 +343,7 @@ export default function Portfolio() {
                   </h3>
 
                   <p className="font-body font-light text-sm lg:text-base text-lafoi-gray leading-relaxed mb-8">
-                    {selected.desc}
+                    {linkifyProse(selected.desc)}
                   </p>
 
                   <div className="space-y-0 border-t border-lafoi-dark/10 mt-auto">
@@ -392,89 +396,156 @@ export default function Portfolio() {
 }
 
 /* ============================================================================
+   VIDEO GALLERY — 4×2 row of in-motion captures, modal player
+   ============================================================================ */
+
+function VideoGallery() {
+  // Eight studio captures. Generic, category-level captions — no fabricated clients.
+  const videos = [
+    { src: '/brand/videos/7.mp4',  title: 'Studio in motion',         caption: 'Stretch membrane install · Residential' },
+    { src: '/brand/videos/8.mp4',  title: 'Membrane tensioning',      caption: 'Live install · Harare studio' },
+    { src: '/brand/videos/12.mp4', title: 'Linear lighting reveal',   caption: 'Architectural lighting · Office' },
+    { src: '/brand/videos/14.mp4', title: 'Print ceiling installation', caption: 'Custom design · Hospitality' },
+    { src: '/brand/videos/17.mp4', title: 'Translucent backlit panel', caption: 'Backlit membrane · Feature install' },
+    { src: '/brand/videos/27.mp4', title: 'Magnetic track install',   caption: 'Lighting fit-out · Retail' },
+    { src: '/brand/videos/36.mp4', title: 'Mirror finish reveal',     caption: 'Gloss lacquer · Commercial' },
+    { src: '/brand/videos/47.mp4', title: 'Acoustic ceiling',         caption: 'Acoustic membrane · Office space' },
+  ]
+
+  return (
+    <section className="relative py-20 lg:py-28 bg-lafoi-cream overflow-hidden">
+      <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-40 pointer-events-none" />
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12 lg:mb-16">
+          <div className="max-w-2xl">
+            <AnimatedSection>
+              <div className="flex items-center gap-3 mb-5">
+                <span className="block w-10 h-px bg-lafoi-green/60" />
+                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                  Video gallery
+                </p>
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
+                  {videos.length} clips
+                </span>
+              </div>
+            </AnimatedSection>
+            <AnimatedSection delay={0.1}>
+              <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-5xl leading-[1.1] tracking-[-0.02em]">
+                The work, in{' '}
+                <span className="text-lafoi-green italic">motion</span>.
+              </h2>
+            </AnimatedSection>
+            <AnimatedSection delay={0.2}>
+              <p className="mt-5 max-w-xl font-body font-light text-sm lg:text-base text-lafoi-gray leading-relaxed">
+                {linkifyProse(
+                  'Captures from the studio floor — installations underway, lighting solutions calibrated, photographic membranes finished. Click any tile for the full clip.'
+                )}
+              </p>
+            </AnimatedSection>
+          </div>
+        </div>
+
+        <VideoShowcase videos={videos} layout="row" />
+      </div>
+    </section>
+  )
+}
+
+/* ============================================================================
    HERO
    ============================================================================ */
 
 function PortfolioHero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
-
+  // Full-bleed cinematic + kinetic counter. Single still image, no slideshow.
   return (
-    <section
-      ref={ref}
-      className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark"
-    >
-      <HeroSlideshow slides={PORTFOLIO_HERO_SLIDES} interval={6500} parallax overlay={false} />
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+    <section className="relative h-[100svh] min-h-[640px] overflow-hidden bg-lafoi-dark">
+      {/* Background image — wrapped in an absolute container so it doesn't push
+          the content off-screen via normal flow (OptimizedImage's fill wrapper
+          is position:relative). */}
+      <div className="absolute inset-0">
+        <OptimizedImage
+          src="/brand/images/14.png"
+          alt="Commercial kitchen with continuous linear LED tracks"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          fill
+          priority
+          vision="Commercial kitchen with linear LED tracks — single still cinematic frame"
+        />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/30 to-lafoi-dark/60" />
+      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/40 via-transparent to-transparent" />
 
       {/* Volume artifact */}
-      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
-        <span className="hidden sm:block w-8 h-px bg-white/30" />
-        <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-          Vol.&nbsp;04 &mdash; 2026 &middot; The Gallery
-        </span>
+      <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
+          <span className="hidden sm:block w-8 h-px bg-white/30" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
+            Vol.&nbsp;04 &mdash; 2026 &middot; The Gallery
+          </span>
+        </div>
       </div>
 
-      <motion.div
-        className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full"
-        style={{ opacity }}
-      >
-        <motion.div
-          className="pt-28 lg:pt-32"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
-            <Sparkle size={12} weight="fill" className="text-lafoi-green-light" />
-            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              {projects.length} frames &middot; Across Zimbabwe
-            </span>
-          </span>
-        </motion.div>
-
-        <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 items-end">
+      <div className="relative z-10 h-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-col">
+        <div className="mt-auto pb-12 lg:pb-20 grid lg:grid-cols-12 gap-8 items-end">
           <motion.div
-            className="lg:col-span-9"
+            className="lg:col-span-7"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
+            <div className="flex items-center gap-3 mb-6">
+              <span className="block w-12 h-px bg-lafoi-green-light/70" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                The Gallery
+              </p>
+            </div>
             <h1
-              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.4rem] xl:text-[7rem]"
+              className="font-display text-white tracking-[-0.035em] leading-[0.95] text-[3rem] sm:text-[4.5rem] lg:text-[6rem] xl:text-[6.6rem]"
               style={{ fontVariationSettings: '"opsz" 144' }}
             >
               <span className="block font-light text-white/95">Spaces, in</span>
-              <span className="block">
-                <span className="font-normal text-lafoi-green-light">fragments</span>
-                <span className="text-lafoi-green-light">.</span>
-              </span>
+              <span className="block italic font-light text-lafoi-green-light">fragments.</span>
             </h1>
-
-            <motion.p
-              className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              Every project tells a story of transformation. A curated collection of frames from
-              residential, commercial, hospitality and retail installations across Zimbabwe.
-            </motion.p>
+            <p className="mt-6 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]">
+              {linkifyProse(
+                'A curated collection of frames from residential, commercial, hospitality and retail installations across Zimbabwe — every one a real stretch ceiling project drawn from our portfolio.',
+                { variant: 'dark' }
+              )}
+            </p>
           </motion.div>
-        </div>
-      </motion.div>
 
-      <motion.div
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.1 }}
-      >
-        <span className="text-[9px] font-sora tracking-[0.35em] uppercase text-white/45">Scroll</span>
-        <span className="block w-px h-8 bg-gradient-to-b from-white/45 to-transparent" />
-      </motion.div>
+          {/* Kinetic counter — right column */}
+          <motion.aside
+            className="lg:col-span-5 lg:pl-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="ml-auto max-w-[340px] grid grid-cols-3 gap-x-4 gap-y-3 border-t border-white/15 pt-7">
+              {[
+                { v: projects.length, k: 'Frames' },
+                { v: 8, k: 'Finishes' },
+                { v: 4, k: 'Services' },
+              ].map((s) => (
+                <div key={s.k}>
+                  <p
+                    className="font-display font-light text-white text-4xl lg:text-5xl leading-none tabular-nums"
+                    style={{ fontVariationSettings: '"opsz" 144' }}
+                  >
+                    {String(s.v).padStart(2, '0')}
+                  </p>
+                  <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/55 mt-2">
+                    {s.k}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 max-w-[340px] ml-auto text-[11px] font-sora tracking-[0.18em] uppercase text-white/55">
+              One studio &middot; One vision
+            </p>
+          </motion.aside>
+        </div>
+      </div>
     </section>
   )
 }

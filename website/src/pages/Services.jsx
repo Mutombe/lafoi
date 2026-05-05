@@ -7,18 +7,19 @@ import {
   ArrowLeft,
   Stack,
   Lightbulb,
-  Printer,
-  Cube,
-  SpeakerHigh,
   Palette,
+  Wrench,
   Sparkle,
   Trophy,
   CheckCircle,
+  DownloadSimple,
+  FilePdf,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+import { linkifyProse } from '../utils/linkify.jsx'
 
 const SERVICES_HERO_SLIDES = [
   {
@@ -40,20 +41,20 @@ const SERVICES_HERO_SLIDES = [
 
 const allServices = [
   {
-    slug: 'stretch-ceilings',
+    slug: 'stretch-ceiling-installation',
     icon: Stack,
-    title: 'Stretch Ceilings',
+    title: 'Stretch Ceiling Installation',
     subtitle: 'Premium membrane systems',
     hero: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1920&q=80',
     heroVision: 'Living room with premium stretch ceiling and warm lighting',
-    desc: 'Stretch ceilings manufactured from premium PVC and fabric membranes sourced from Germany and Estonia. Available in over 200 colours and multiple finishes — engineered to disappear into great architecture.',
+    desc: 'Tensioned PVC and fabric stretch ceilings — matte, satin, gloss, translucent backlit, printed photographic, sculptural 3D and acoustic perforated. Available across a wide colour range, engineered to disappear into great architecture.',
     features: [
-      { label: 'Finish library', detail: 'Matte, satin, gloss, translucent, printed' },
-      { label: 'Colour matches', detail: '220+ pigment-locked options' },
-      { label: 'Class A1 fire', detail: 'B-s1, d0 — self-extinguishing' },
+      { label: 'Finish library', detail: 'Matte, satin, gloss, translucent, printed, 3D, acoustic' },
+      { label: 'Colour range', detail: 'A wide custom colour range' },
+      { label: 'Fire rating', detail: 'B-s1, d0 — self-extinguishing' },
       { label: 'Moisture proof', detail: 'Bathroom and kitchen rated' },
-      { label: 'Installation', detail: 'One working day per room' },
-      { label: 'Warranty', detail: '15-year manufacturer backing' },
+      { label: 'Installation', detail: '1–2 working days per room' },
+      { label: 'Warranty', detail: 'Manufacturer warranty up to 15 years' },
     ],
     applications: [
       'Living rooms & bedrooms',
@@ -67,19 +68,19 @@ const allServices = [
     imageVision: 'Modern home interior with stretch ceiling',
   },
   {
-    slug: 'custom-lighting',
+    slug: 'lighting-solutions',
     icon: Lightbulb,
-    title: 'Custom Lighting',
+    title: 'Lighting Solutions',
     subtitle: 'Architectural illumination',
     hero: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1920&q=80',
     heroVision: 'Architectural lighting throughout a hospitality lobby',
-    desc: 'From fibre-optic starry skies to programmable LED arrays, our lighting solutions create atmosphere and ambiance that elevate any interior to new heights.',
+    desc: 'From fibre-optic starry skies to programmable LED arrays, our lighting solutions create atmosphere that elevates any interior. Designed alongside the ceiling — never bolted on after.',
     features: [
       { label: 'LED systems', detail: 'Strip, panel and linear integration' },
       { label: 'Fibre optic', detail: 'Starry skies and edge accents' },
       { label: 'Backlit panels', detail: 'Translucent membrane lighting' },
       { label: 'RGB & tunable', detail: 'Colour-changing and white-tunable' },
-      { label: 'Smart control', detail: 'Home-system and DMX-ready' },
+      { label: 'Scene control', detail: 'Wall plate, app or BMS triggering' },
       { label: 'Energy', detail: 'Dimmable, low-power architecture' },
     ],
     applications: [
@@ -87,106 +88,25 @@ const allServices = [
       'Home cinemas',
       'Spa & wellness centres',
       'Restaurant ambiance',
-      'Lounge & nightclub design',
-      "Children's rooms",
+      'Hospitality lobbies',
+      'Retail showrooms',
     ],
     image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=1400&q=80',
     imageVision: 'Spa-like room with translucent backlit ceiling',
   },
   {
-    slug: 'printed-ceilings',
-    icon: Printer,
-    title: 'Printed Ceilings',
-    subtitle: 'Custom visual expressions',
-    hero: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=1920&q=80',
-    heroVision: 'Quiet gallery space awaiting a printed ceiling installation',
-    desc: 'Transform your ceiling into a canvas with high-resolution UV-printed designs. From photorealistic skies and custom artwork to brand logos — the possibilities are limitless, the resolution exact.',
-    features: [
-      { label: 'Resolution', detail: '1440 dpi UV pigment' },
-      { label: 'Format', detail: 'Seamless large-format' },
-      { label: 'Durability', detail: 'UV-resistant, washable' },
-      { label: 'Custom artwork', detail: 'Photographs, illustration, brand' },
-      { label: 'Themes', detail: 'Sky, geometry, nature, abstraction' },
-      { label: 'Colour accuracy', detail: 'Calibrated proofing' },
-    ],
-    applications: [
-      'Swimming pools & spas',
-      "Children's rooms & nurseries",
-      'Themed restaurants',
-      'Corporate branding',
-      'Retail environments',
-      'Medical & dental clinics',
-    ],
-    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400&q=80',
-    imageVision: 'Contemporary architecture interior with photographic feature',
-  },
-  {
-    slug: '3d-ceilings',
-    icon: Cube,
-    title: '3D Ceiling Forms',
-    subtitle: 'Sculptural architecture',
-    hero: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=1920&q=80',
-    heroVision: 'Building with dramatic architectural ceiling',
-    desc: 'Push the boundaries of interior design with three-dimensional ceiling installations. Waves, cones, domes, and custom organic forms that make spaces unforgettable.',
-    features: [
-      { label: 'Forms', detail: 'Waves, curves, cones, domes' },
-      { label: 'Custom geometry', detail: 'Organic and parametric' },
-      { label: 'Multi-level', detail: 'Stepped and stratified installs' },
-      { label: 'Lighting', detail: 'Integrated cove and accent' },
-      { label: 'Construction', detail: 'Lightweight subframe systems' },
-      { label: 'Focal points', detail: 'Architectural centrepieces' },
-    ],
-    applications: [
-      'Hotel lobbies',
-      'Corporate reception areas',
-      'Event venues',
-      'Exhibition spaces',
-      'Luxury residences',
-      'Architectural features',
-    ],
-    image: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=1400&q=80',
-    imageVision: 'Dramatic architectural ceiling with skylight',
-  },
-  {
-    slug: 'acoustic',
-    icon: SpeakerHigh,
-    title: 'Acoustic Solutions',
-    subtitle: 'Sound management',
-    hero: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1920&q=80',
-    heroVision: 'Open-plan office with acoustic ceiling treatment',
-    desc: 'Micro-perforated stretch ceilings that combine visual elegance with superior sound absorption. For spaces where both aesthetics and acoustics matter equally.',
-    features: [
-      { label: 'Perforation', detail: 'Micro-perforated membrane' },
-      { label: 'NRC rating', detail: 'Up to 0.90 sound absorption' },
-      { label: 'Backing', detail: 'Hidden acoustic substrate' },
-      { label: 'Appearance', detail: 'Seamless, no visible joints' },
-      { label: 'Finishes', detail: 'Available across all colour matches' },
-      { label: 'Standards', detail: 'Meets EU acoustic regulations' },
-    ],
-    applications: [
-      'Recording studios',
-      'Conference rooms',
-      'Open-plan offices',
-      'Restaurants & cafes',
-      'Cinemas & theatres',
-      'Educational facilities',
-    ],
-    image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1400&q=80',
-    imageVision: 'Acoustic office space with treated ceiling',
-  },
-  {
-    slug: 'consulting',
+    slug: 'design-consultation',
     icon: Palette,
-    title: 'Design Consulting',
+    title: 'Design Consultation & Customisation',
     subtitle: 'Vision to reality',
     hero: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1920&q=80',
     heroVision: 'Lobby in design — finishes being specified',
-    desc: 'Our trained design consultants guide you through every step — from material selection and colour matching to lighting design and 3D visualisation of your finished space.',
+    desc: 'A trained consultant guides you through every step — from material selection and colour matching to lighting layout and visualisation of the finished space. The first conversation costs nothing.',
     features: [
       { label: 'Free consult', detail: 'Initial brief and site visit' },
       { label: 'Site assessment', detail: 'Measured drawings, samples' },
-      { label: '3D visualisation', detail: 'Render before fabrication' },
-      { label: 'Material sampling', detail: 'In your light, not ours' },
+      { label: 'Visualisation', detail: 'Sampled in your light, not ours' },
+      { label: 'Material sampling', detail: 'PVC, fabric, finishes, colours' },
       { label: 'Lighting design', detail: 'Layout, control logic, scenes' },
       { label: 'Project management', detail: 'Single point of contact' },
     ],
@@ -195,11 +115,38 @@ const allServices = [
       'Renovations',
       'Commercial fit-outs',
       'Interior redesigns',
-      'Event installations',
+      'Hospitality refits',
       'Architectural projects',
     ],
     image: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1400&q=80',
     imageVision: 'Design consulting — lobby fit-out in progress',
+  },
+  {
+    slug: 'maintenance-support',
+    icon: Wrench,
+    title: 'Maintenance & Support',
+    subtitle: 'Care after handover',
+    hero: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1920&q=80',
+    heroVision: 'Studio team servicing an installed stretch ceiling',
+    desc: 'Stretch ceilings are designed to be removable and serviceable. We support every install with cleaning guidance, on-site care and a clear warranty path — for as long as the ceiling is yours.',
+    features: [
+      { label: 'Cleaning', detail: 'Damp-wipe / microfibre, neutral pH' },
+      { label: 'Service access', detail: 'Membrane removable, services preserved' },
+      { label: 'Warranty', detail: 'Manufacturer warranty up to 15 years' },
+      { label: 'Repair', detail: 'Localised re-stretch, panel swap' },
+      { label: 'Lighting', detail: 'Driver and fixture replacement' },
+      { label: 'Response', detail: 'Same-week site visit across Harare' },
+    ],
+    applications: [
+      'Residential aftercare',
+      'Hospitality refits',
+      'Office renovations',
+      'Retail seasonal restages',
+      'Insurance claims',
+      'Warranty enquiries',
+    ],
+    image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1400&q=80',
+    imageVision: 'Installer servicing a stretch membrane ceiling',
   },
 ]
 
@@ -226,6 +173,7 @@ export default function Services() {
     >
       <ServicesHero />
       <ServicesEditorial />
+      <TechnicalGuideBand />
       <Process />
       <WhyChooseUs />
       <ServicesCTA />
@@ -238,117 +186,138 @@ export default function Services() {
    ============================================================================ */
 
 function ServicesHero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
+  // Bento Hero — symmetric 6/6 split.
+  // LEFT — heading + intro + 4-bullet service list.
+  // RIGHT — 2x2 image bento (4 tiles) showing each service capability.
+  const bentoTiles = [
+    { src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=900&q=80', label: 'Stretch ceilings', vision: 'Stretch membrane install' },
+    { src: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=900&q=80', label: 'Lighting', vision: 'Architectural lighting' },
+    { src: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=900&q=80', label: 'Consultation', vision: 'Design consultation' },
+    { src: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=900&q=80', label: 'Maintenance', vision: 'Maintenance & support' },
+  ]
 
   return (
-    <section
-      ref={ref}
-      className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark"
-    >
-      <HeroSlideshow slides={SERVICES_HERO_SLIDES} interval={6500} parallax overlay={false} />
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+    <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-16 lg:pb-24 overflow-hidden">
+      <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-40 pointer-events-none" />
 
       {/* Volume artifact */}
-      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
-        <span className="hidden sm:block w-8 h-px bg-white/30" />
-        <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-          Vol.&nbsp;03 &mdash; 2026 &middot; The Catalogue
-        </span>
+      <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
+          <span className="hidden sm:block w-8 h-px bg-lafoi-dark/20" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/65">
+            Vol.&nbsp;03 &mdash; 2026 &middot; The Catalogue
+          </span>
+        </div>
       </div>
 
-      <motion.div
-        className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full"
-        style={{ opacity }}
-      >
-        <motion.div
-          className="pt-28 lg:pt-32"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
-            <Sparkle size={12} weight="fill" className="text-lafoi-green-light" />
-            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              Six services &middot; One studio
-            </span>
-          </span>
-        </motion.div>
-
-        <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          {/* LEFT 6 cols — heading + bullet list */}
           <motion.div
-            className="lg:col-span-9"
+            className="lg:col-span-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
+            <div className="flex items-center gap-3 mb-7">
+              <span className="block w-12 h-px bg-lafoi-green/60" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Four services &middot; One studio
+              </p>
+            </div>
+
             <h1
-              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.4rem] xl:text-[7rem]"
+              className="font-display text-lafoi-dark tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[5.4rem] xl:text-[5.8rem]"
               style={{ fontVariationSettings: '"opsz" 144' }}
             >
               <span className="block font-light">Ceilings, light,</span>
-              <span className="block">
-                <span className="font-normal text-white">and the </span>
-                <span className="font-normal text-lafoi-green-light">craft</span>
-                <span className="text-lafoi-green-light"> between</span>
-                <span className="text-lafoi-green-light">.</span>
-              </span>
+              <span className="block italic font-light text-lafoi-green">and the craft between.</span>
             </h1>
 
-            <motion.p
-              className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              Six services, each engineered to stand alone — and designed to work together. From
-              the membrane overhead to the fibre-optic stars within it.
-            </motion.p>
+            <p className="mt-7 max-w-md text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
+              {linkifyProse(
+                'Four services, each engineered to stand alone — and designed to work together. From the stretch membrane overhead to the architectural lighting calibrated within it.'
+              )}
+            </p>
 
-            <motion.div
-              className="mt-8 lg:mt-10 flex flex-wrap items-center gap-x-5 gap-y-3"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            >
+            {/* Bullet list of the 4 real services — each links to its detail page */}
+            <ul className="mt-8 space-y-3 border-t border-lafoi-dark/10 pt-7">
+              {[
+                { name: 'Stretch Ceiling Installation', slug: 'stretch-ceiling-installation' },
+                { name: 'Lighting Solutions', slug: 'lighting-solutions' },
+                { name: 'Design Consultation & Customisation', slug: 'design-consultation' },
+                { name: 'Maintenance & Support', slug: 'maintenance-support' },
+              ].map((s, i) => (
+                <li key={s.slug} className="flex items-baseline gap-4 py-2 border-b border-lafoi-dark/8">
+                  <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium shrink-0 w-6">
+                    0{i + 1}
+                  </span>
+                  <Link
+                    to={`/services/${s.slug}`}
+                    className="font-display font-normal text-lafoi-dark text-lg lg:text-xl prose-link prose-link-arrow"
+                  >
+                    {s.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
               <a
                 href="#catalogue"
-                className="group inline-flex items-center gap-3 px-7 py-3.5 bg-lafoi-green-light text-white rounded-full font-body text-sm font-medium hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
+                className="group inline-flex items-center gap-3 px-6 py-3 bg-lafoi-dark text-white rounded-full font-body text-sm font-medium hover:bg-lafoi-green-light transition-all duration-500"
               >
                 Browse the catalogue
-                <ArrowRight
-                  size={15}
-                  weight="bold"
-                  className="group-hover:translate-x-1 transition-transform duration-300"
-                />
+                <ArrowRight size={15} weight="bold" className="group-hover:translate-x-1 transition-transform duration-300" />
               </a>
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full border border-lafoi-dark/15 bg-white text-lafoi-dark font-body text-sm font-medium hover:border-lafoi-green/40 hover:text-lafoi-green transition-all duration-500"
               >
                 Request samples
-                <ArrowUpRight
-                  size={14}
-                  weight="regular"
-                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300"
-                />
+                <ArrowUpRight size={14} weight="regular" className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
               </Link>
-            </motion.div>
+            </div>
+          </motion.div>
+
+          {/* RIGHT 6 cols — 2x2 bento */}
+          <motion.div
+            className="lg:col-span-6"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="grid grid-cols-2 grid-rows-2 gap-3 lg:gap-4 aspect-square max-w-[560px] mx-auto">
+              {bentoTiles.map((t, i) => (
+                <div
+                  key={t.label}
+                  className={`relative overflow-hidden bg-lafoi-dark group ${
+                    i === 0
+                      ? 'rounded-tl-[2rem] rounded-tr-md rounded-bl-md rounded-br-md'
+                      : i === 1
+                      ? 'rounded-tr-[2rem] rounded-tl-md rounded-bl-md rounded-br-md'
+                      : i === 2
+                      ? 'rounded-bl-[2rem] rounded-tl-md rounded-tr-md rounded-br-md'
+                      : 'rounded-br-[2rem] rounded-tl-md rounded-tr-md rounded-bl-md'
+                  }`}
+                >
+                  <OptimizedImage
+                    src={t.src}
+                    alt={t.label}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                    fill
+                    vision={t.vision}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/75 via-lafoi-dark/15 to-transparent" />
+                  <span className="absolute bottom-3 left-4 right-4 font-sora text-[10px] tracking-[0.25em] uppercase text-white/95">
+                    {t.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
-      </motion.div>
-
-      <motion.div
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.1 }}
-      >
-        <span className="text-[9px] font-sora tracking-[0.35em] uppercase text-white/45">Scroll</span>
-        <span className="block w-px h-8 bg-gradient-to-b from-white/45 to-transparent" />
-      </motion.div>
+      </div>
     </section>
   )
 }
@@ -379,15 +348,16 @@ function ServicesEditorial() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
-                Six services.{' '}
+                Four services.{' '}
                 <span className="text-lafoi-green">Read like a magazine.</span>
               </h2>
             </AnimatedSection>
           </div>
-          <AnimatedSection delay={0.2}>
+          <AnimatedSection delay={0.2} direction="right">
             <p className="font-body text-lafoi-gray max-w-sm leading-relaxed">
-              Each entry below is a complete service. Click through for specifications, applications,
-              and a request-quote sidebar.
+              {linkifyProse(
+                'Each entry below is a complete service — from stretch ceiling installation to lighting solutions, design consultation and maintenance and support. Click through for specifications, applications, and a request-quote sidebar.'
+              )}
             </p>
           </AnimatedSection>
         </div>
@@ -408,6 +378,8 @@ function ServiceRow({ service, index, total }) {
   const inView = useInView(ref, { once: true, amount: 0.25 })
   const isLeft = index % 2 === 0
   const Icon = service.icon
+  // Image-side enters from its outer edge: image-on-left → -X, image-on-right → +X.
+  const initialX = isLeft ? -80 : 80
 
   return (
     <motion.div
@@ -415,9 +387,9 @@ function ServiceRow({ service, index, total }) {
       className={`grid lg:grid-cols-12 gap-8 lg:gap-16 items-center ${
         !isLeft ? 'lg:[&>*:first-child]:order-2' : ''
       }`}
-      initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0, x: initialX, y: 30 }}
+      animate={inView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, x: initialX, y: 30 }}
+      transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* image column */}
       <div className="lg:col-span-7">
@@ -457,7 +429,7 @@ function ServiceRow({ service, index, total }) {
         </h3>
 
         <p className="font-body font-light text-base lg:text-[17px] text-lafoi-gray leading-[1.7] mb-8 max-w-md">
-          {service.desc}
+          {linkifyProse(service.desc)}
         </p>
 
         {/* applications — hairline-divided rows */}
@@ -492,6 +464,63 @@ function ServiceRow({ service, index, total }) {
 }
 
 /* ============================================================================
+   2.5 TECHNICAL GUIDE BAND — downloadable PDF callout
+   ============================================================================ */
+
+function TechnicalGuideBand() {
+  return (
+    <section className="relative py-16 lg:py-24 bg-lafoi-cream overflow-hidden">
+      <div className="absolute inset-0 mesh-gradient-1 opacity-50 pointer-events-none" />
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <AnimatedSection>
+          <div className="relative rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-2xl rounded-bl-2xl bg-lafoi-dark text-white overflow-hidden">
+            <div aria-hidden className="absolute inset-0 dot-pattern opacity-15 pointer-events-none" />
+            <div aria-hidden className="absolute -top-24 -right-12 w-[420px] h-[420px] rounded-full bg-lafoi-green/15 blur-[120px] pointer-events-none" />
+            <div aria-hidden className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-lafoi-green-light via-lafoi-green to-lafoi-green/40" />
+
+            <div className="relative grid lg:grid-cols-12 gap-8 lg:gap-12 items-center p-8 lg:p-14">
+              <div className="lg:col-span-8">
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="block w-10 h-px bg-lafoi-green-light/60" />
+                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                    Technical guide &middot; PDF
+                  </p>
+                </div>
+                <h2 className="font-display font-light text-white text-3xl sm:text-4xl lg:text-[2.8rem] leading-[1.1] tracking-[-0.02em] mb-5">
+                  What are stretch ceilings?{' '}
+                  <span className="font-light italic text-lafoi-green-light">A primer.</span>
+                </h2>
+                <p className="font-body font-light text-base lg:text-lg text-white/70 leading-[1.7] max-w-xl">
+                  A short, illustrated technical guide — covering membranes, edge details, lighting integration,
+                  fire ratings, and what to expect on install day. Useful before a brief, indispensable during one.
+                </p>
+              </div>
+              <div className="lg:col-span-4 flex lg:justify-end">
+                <a
+                  href="/brand/docs/stretch-ceilings-guide.pdf"
+                  target="_blank"
+                  rel="noopener"
+                  download
+                  className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_12px_38px_-10px_rgba(34,197,94,0.55)]"
+                >
+                  <FilePdf size={17} weight="duotone" />
+                  Download the guide
+                  <DownloadSimple
+                    size={14}
+                    weight="bold"
+                    className="group-hover:translate-y-0.5 transition-transform duration-300"
+                  />
+                </a>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+/* ============================================================================
    3. PROCESS — Numbered editorial sequence
    ============================================================================ */
 
@@ -499,7 +528,7 @@ function Process() {
   const steps = [
     { num: '01', title: 'Free consultation', desc: 'We assess your space, listen to the brief, and discuss design possibilities. The first conversation costs nothing.' },
     { num: '02', title: 'Custom design', desc: 'Detailed plans with material, lighting and edge-detail selections. Sampled in your light, not ours.' },
-    { num: '03', title: 'Manufacturing', desc: 'Your ceiling is custom-made by our German and Estonian partners using premium European materials.' },
+    { num: '03', title: 'Manufacturing', desc: 'Your ceiling is custom-made to your exact dimensions using premium PVC or fabric membrane.' },
     { num: '04', title: 'Installation', desc: 'Expert installation, typically completed in a single working day per room — no demolition needed.' },
   ]
 
@@ -546,7 +575,7 @@ function Process() {
                   {step.title}
                 </h3>
                 <p className="font-body font-light text-sm text-white/55 leading-relaxed">
-                  {step.desc}
+                  {linkifyProse(step.desc, { variant: 'dark' })}
                 </p>
               </div>
             </AnimatedSection>
@@ -569,8 +598,8 @@ function WhyChooseUs() {
       icon: Trophy,
     },
     {
-      title: 'European quality',
-      desc: 'German and Estonian manufactured materials meet the highest EU quality and safety standards.',
+      title: 'Premium membrane',
+      desc: 'Premium PVC and fabric membranes meet the highest international quality and safety standards.',
       icon: Sparkle,
     },
     {
@@ -624,7 +653,7 @@ function WhyChooseUs() {
                   {r.title}
                 </h3>
                 <p className="font-body font-light text-sm text-lafoi-gray leading-[1.7]">
-                  {r.desc}
+                  {linkifyProse(r.desc)}
                 </p>
               </div>
             </AnimatedSection>
@@ -675,10 +704,12 @@ function ServicesCTA() {
             </h2>
           </AnimatedSection>
 
-          <AnimatedSection delay={0.25}>
+          <AnimatedSection delay={0.25} direction="left">
             <p className="mt-8 max-w-xl text-base lg:text-lg text-white/70 font-body font-light leading-relaxed">
-              Our consultants walk you through finishes, lighting compatibility and on-site samples
-              — at no charge. WhatsApp is the fastest channel; email if you'd rather attach drawings.
+              {linkifyProse(
+                "Our consultants walk you through stretch ceiling finishes, lighting solutions compatibility and on-site samples — at no charge. WhatsApp is the fastest channel; email if you'd rather attach drawings, or browse our portfolio first.",
+                { variant: 'dark' }
+              )}
             </p>
           </AnimatedSection>
 
@@ -755,12 +786,14 @@ function ServiceDetail({ service }) {
         <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
 
-        {/* Volume artifact */}
-        <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
-          <span className="hidden sm:block w-8 h-px bg-white/30" />
-          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-            Service 0{idx + 1} / 0{allServices.length} &middot; {service.subtitle}
-          </span>
+        {/* Volume artifact — respects content margin */}
+        <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
+            <span className="hidden sm:block w-8 h-px bg-white/30" />
+            <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
+              Service 0{idx + 1} / 0{allServices.length} &middot; {service.subtitle}
+            </span>
+          </div>
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full">
@@ -800,7 +833,7 @@ function ServiceDetail({ service }) {
                 <span className="block font-light text-white/95">{service.title}</span>
               </h1>
               <p className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]">
-                {service.desc}
+                {linkifyProse(service.desc, { variant: 'dark' })}
               </p>
             </motion.div>
 
@@ -854,7 +887,7 @@ function ServiceDetail({ service }) {
                   Features &amp; benefits
                 </h2>
                 <p className="font-body font-light text-base lg:text-lg text-lafoi-gray leading-[1.75] mb-12 max-w-2xl">
-                  {service.desc}
+                  {linkifyProse(service.desc)}
                 </p>
               </AnimatedSection>
 
@@ -982,11 +1015,11 @@ function ServiceDetail({ service }) {
                     <div className="flex items-center gap-3 mb-3">
                       <Trophy size={14} weight="regular" className="text-lafoi-green" />
                       <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-dark">
-                        Backed by Europe
+                        Backed by warranty
                       </p>
                     </div>
                     <p className="font-body font-light text-xs text-lafoi-gray leading-relaxed">
-                      15-year manufacturer warranty. German &amp; Estonian quality. Class A1 fire
+                      Manufacturer warranty up to 15 years. Premium PVC and fabric membrane. Class B fire
                       performance.
                     </p>
                   </div>

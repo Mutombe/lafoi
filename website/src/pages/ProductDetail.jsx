@@ -23,6 +23,7 @@ import {
   getAdjacentProducts,
   getProjectsByProduct,
 } from '../data/site'
+import { linkifyProse } from '../utils/linkify.jsx'
 
 export default function ProductDetail() {
   const { slug } = useParams()
@@ -105,7 +106,7 @@ export default function ProductDetail() {
             <h1 className="heading-xl text-4xl sm:text-5xl lg:text-6xl text-white max-w-3xl">
               {product.name}
             </h1>
-            <p className="font-general text-white/75 text-lg max-w-xl mt-5">{product.shortDesc}</p>
+            <p className="font-general text-white/75 text-lg max-w-xl mt-5">{linkifyProse(product.shortDesc, { variant: 'dark' })}</p>
           </motion.div>
         </div>
       </section>
@@ -122,7 +123,7 @@ export default function ProductDetail() {
                 </p>
                 <div className="font-general text-lafoi-gray text-base lg:text-lg leading-[1.8] space-y-5">
                   {product.longDesc.split('\n\n').map((para, i) => (
-                    <p key={i}>{para}</p>
+                    <p key={i}>{linkifyProse(para)}</p>
                   ))}
                 </div>
               </AnimatedSection>
@@ -201,7 +202,10 @@ export default function ProductDetail() {
                       </p>
                       <h4 className="heading-lg text-xl mb-2">Request a quote</h4>
                       <p className="text-sm text-white/65 font-general mb-6">
-                        Free site assessment, sample swatches and a written specification within 5 working days.
+                        {linkifyProse(
+                          'Free site assessment via design consultation, sample swatches and a written specification within 5 working days.',
+                          { variant: 'dark' }
+                        )}
                       </p>
                       <Link
                         to="/contact"
@@ -249,7 +253,9 @@ export default function ProductDetail() {
                   <h2 className="heading-lg text-3xl lg:text-4xl text-lafoi-dark">Seen in <span className="font-display font-light text-lafoi-green">the field</span></h2>
                 </div>
                 <p className="text-sm font-general text-lafoi-gray-medium max-w-xs">
-                  Click any image to view at full size. Real installations from the La Foi project archive.
+                  {linkifyProse(
+                    'Click any image to view at full size. Real installations drawn from our portfolio of completed projects.'
+                  )}
                 </p>
               </div>
             </AnimatedSection>

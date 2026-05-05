@@ -6,8 +6,11 @@ import {
   MagnifyingGlass, X, List, CaretDown, ArrowRight,
   Sparkle, Buildings, Briefcase, Camera, Phone,
   Question, Newspaper, Users, Lightbulb, Palette,
-  SquaresFour, Lightning, Star, Package
+  SquaresFour, Lightning, Star, Package, ShoppingBag,
+  Storefront
 } from '@phosphor-icons/react'
+import Logo from '../shared/Logo'
+import { useCart } from '../../store/cart'
 
 const navGroups = [
   {
@@ -39,40 +42,45 @@ const navGroups = [
 ]
 
 const searchableContent = [
-  { title: 'Stretch Ceilings', path: '/services/stretch-ceilings', section: 'Services', keywords: 'stretch ceiling pvc fabric membrane' },
-  { title: 'Custom Lighting Solutions', path: '/services/custom-lighting', section: 'Services', keywords: 'led lighting custom lights backlit' },
-  { title: 'Printed Ceilings', path: '/services/printed-ceilings', section: 'Services', keywords: 'printed ceiling design custom print' },
-  { title: '3D Stretch Ceilings', path: '/services/3d-ceilings', section: 'Services', keywords: '3d ceiling three dimensional' },
-  { title: 'Acoustic Solutions', path: '/services/acoustic', section: 'Services', keywords: 'acoustic sound noise reduction' },
+  { title: 'Stretch Ceiling Installation', path: '/services/stretch-ceiling-installation', section: 'Services', keywords: 'stretch ceiling pvc fabric membrane install' },
+  { title: 'Lighting Solutions', path: '/services/lighting-solutions', section: 'Services', keywords: 'led lighting custom lights backlit fibre optic' },
+  { title: 'Design Consultation & Customisation', path: '/services/design-consultation', section: 'Services', keywords: 'design consultation custom site visit sampling' },
+  { title: 'Maintenance & Support', path: '/services/maintenance-support', section: 'Services', keywords: 'maintenance support warranty cleaning repair' },
   { title: 'About La Foi Designs', path: '/about', section: 'Company', keywords: 'about company history story team' },
   { title: 'Our Portfolio', path: '/portfolio', section: 'Projects', keywords: 'portfolio gallery projects work showcase' },
   { title: 'Contact Us', path: '/contact', section: 'Connect', keywords: 'contact reach phone email address' },
   { title: 'Career Opportunities', path: '/careers', section: 'Connect', keywords: 'careers jobs hiring work opportunities' },
   { title: 'Frequently Asked Questions', path: '/faq', section: 'Support', keywords: 'faq questions help support answers' },
   { title: 'Blog & Design Insights', path: '/blog', section: 'Content', keywords: 'blog articles news design trends' },
-  { title: 'German Engineered Quality', path: '/about', section: 'Company', keywords: 'german quality engineering standards' },
-  { title: 'Estonian Innovation', path: '/about', section: 'Company', keywords: 'estonian innovation partner supplier' },
+  { title: 'Why La Foi Designs', path: '/about', section: 'Company', keywords: 'why pioneer first stretch ceiling zimbabwe' },
+  { title: 'Stretch Ceiling Technical Guide', path: '/brand/docs/stretch-ceilings-guide.pdf', section: 'Resources', keywords: 'pdf technical guide pvc fabric membrane fire rating' },
   { title: 'Residential Projects', path: '/portfolio', section: 'Projects', keywords: 'residential home house living room bedroom' },
   { title: 'Commercial Installations', path: '/portfolio', section: 'Projects', keywords: 'commercial office hotel restaurant retail' },
   { title: 'Free Consultation', path: '/contact', section: 'Connect', keywords: 'consultation free quote estimate' },
   // Products
   { title: 'All Products & Materials', path: '/products', section: 'Products', keywords: 'products catalog catalogue range materials membrane' },
-  { title: 'Matte Stretch Membrane', path: '/products/matte-stretch-membrane', section: 'Products', keywords: 'matte ceiling membrane german' },
+  { title: 'Matte Stretch Membrane', path: '/products/matte-stretch-membrane', section: 'Products', keywords: 'matte ceiling membrane pvc' },
   { title: 'Gloss Lacquer Membrane', path: '/products/gloss-lacquer-membrane', section: 'Products', keywords: 'gloss lacquer mirror reflective ceiling' },
   { title: 'Translucent Backlit Membrane', path: '/products/translucent-backlit-membrane', section: 'Products', keywords: 'translucent backlit luminous ceiling' },
-  { title: 'Printed Photographic Membrane', path: '/products/printed-photographic-membrane', section: 'Products', keywords: 'printed photographic custom artwork ceiling estonia' },
+  { title: 'Printed Photographic Membrane', path: '/products/printed-photographic-membrane', section: 'Products', keywords: 'printed photographic custom artwork ceiling' },
   { title: '3D Sculptural Membrane', path: '/products/3d-sculptural-membrane', section: 'Products', keywords: '3d three dimensional sculptural wave dome ceiling' },
   { title: 'Fibre-Optic Starfield Kit', path: '/products/fiber-optic-starfield', section: 'Products', keywords: 'fibre fiber optic star starry sky ceiling lighting' },
   { title: 'Linear LED Cove System', path: '/products/linear-led-cove', section: 'Products', keywords: 'led cove perimeter lighting strip linear' },
   // Projects
   { title: 'Project Case Studies', path: '/projects', section: 'Projects', keywords: 'projects case studies transformations archive' },
   { title: 'Borrowdale Private Residence', path: '/projects/borrowdale-private-residence', section: 'Projects', keywords: 'borrowdale residence home residential case study' },
-  { title: 'Meikles Grand Ballroom', path: '/projects/meikles-grand-ballroom', section: 'Projects', keywords: 'meikles hotel ballroom hospitality case study' },
-  { title: 'TechHub Belgravia Office', path: '/projects/techhub-belgravia-office', section: 'Projects', keywords: 'techhub office commercial acoustic case study' },
+  { title: 'Hospitality Ballroom Refit', path: '/projects/hospitality-ballroom-refit', section: 'Projects', keywords: 'ballroom hospitality refit translucent case study' },
+  { title: 'Belgravia Commercial Office', path: '/projects/belgravia-commercial-office', section: 'Projects', keywords: 'belgravia office commercial acoustic case study' },
+  // Shop
+  { title: 'Shop — Companion Pieces', path: '/shop', section: 'Shop', keywords: 'shop store buy purchase order lamp humidifier accessories cart whatsapp' },
+  { title: 'Lamps — Pendants, Sconces, Floor Lamps', path: '/shop', section: 'Shop', keywords: 'lamps pendant sconce floor table ceiling brass onyx light' },
+  { title: 'Humidifiers', path: '/shop', section: 'Shop', keywords: 'humidifier mist ceramic tower smart compact dry climate' },
+  { title: 'Lighting Accessories', path: '/shop', section: 'Shop', keywords: 'dimmer led module magnetic track adapter accessory' },
+  { title: 'Care Kits — Membrane & LED Polish', path: '/shop', section: 'Shop', keywords: 'care kit cleaning microfibre polish membrane stretch ceiling maintenance' },
 ]
 
 // Pages with dark hero backgrounds where navbar text must be white
-const darkHeroPages = ['/', '/portfolio', '/services', '/faq', '/careers', '/products', '/projects']
+const darkHeroPages = ['/', '/portfolio', '/careers', '/projects']
 // Pages with sub-routes that also have dark heroes
 const darkHeroPrefixes = ['/services/', '/products/', '/projects/']
 
@@ -93,6 +101,7 @@ export default function Navbar() {
   const hasDarkHero = useHasDarkHero(location.pathname)
   // When not scrolled on a dark hero page, text should be white
   const isLightText = hasDarkHero && !scrolled
+  const { count: cartCount, openCart } = useCart()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -164,7 +173,11 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center group relative z-10">
-              <img src="/logo.png" alt="La Foi Designs" className="h-20 sm:h-24 lg:h-28 w-auto group-hover:scale-105 transition-transform duration-300" />
+              <Logo
+                tone={isLightText ? 'light' : 'dark'}
+                variant="wordmark"
+                imgClassName="h-9 sm:h-10 lg:h-11 w-auto group-hover:scale-105 transition-transform duration-300"
+              />
             </Link>
 
             {/* Desktop Nav */}
@@ -181,6 +194,7 @@ export default function Navbar() {
                   lightText={isLightText}
                 />
               ))}
+              <NavLink to="/shop" label="Shop" active={location.pathname === '/shop'} lightText={isLightText} />
             </nav>
 
             {/* Right actions */}
@@ -191,6 +205,28 @@ export default function Navbar() {
                 aria-label="Search"
               >
                 <MagnifyingGlass size={18} weight="regular" className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
+              </button>
+
+              <button
+                onClick={openCart}
+                className={`relative p-2.5 rounded-xl transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
+                aria-label={`Open cart${cartCount > 0 ? ` — ${cartCount} item${cartCount === 1 ? '' : 's'}` : ''}`}
+              >
+                <ShoppingBag size={18} weight="regular" className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
+                <AnimatePresence>
+                  {cartCount > 0 && (
+                    <motion.span
+                      key={cartCount}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      transition={{ type: 'spring', damping: 12, stiffness: 400 }}
+                      className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-lafoi-green text-white text-[10px] font-sora font-semibold flex items-center justify-center shadow-md shadow-lafoi-green/30 ring-2 ring-white"
+                    >
+                      {cartCount > 9 ? '9+' : cartCount}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </button>
 
               <Link
@@ -318,6 +354,14 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                 >
                   Home
+                </Link>
+                <Link
+                  to="/shop"
+                  className="flex items-center gap-2 py-3 text-lg font-sora font-semibold text-lafoi-dark hover:text-lafoi-green transition-colors border-t border-gray-100"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <Storefront size={18} weight="regular" className="text-lafoi-green" />
+                  Shop
                 </Link>
                 {navGroups.map((group) => (
                   <div key={group.label} className="py-4 border-t border-gray-100">

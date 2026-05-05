@@ -30,13 +30,21 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) prevents horizontal scroll without creating a scroll
+     container — preserves position:sticky on descendant elements. */
+  overflow-x: clip;
   background: #FAFAF8;
 }
 
 ::selection {
   background: #1A8A2E;
   color: white;
+}
+
+/* Logo white-silhouette variant for dark surfaces — single source of truth.
+   No plates, no backdrops; matches the approach of Apple/Nike/Tesla on dark. */
+.logo-on-dark {
+  filter: brightness(0) invert(1);
 }
 
 ::-webkit-scrollbar {
@@ -404,4 +412,322 @@ img {
 
 .card-shine:hover::before {
   left: 100%;
+}
+
+/* ============================================================================
+   WORLD-CLASS UI ELEVATION TOKENS — added for the design pass
+   ============================================================================ */
+
+/* AURORA — slow drifting radial blooms used on dark sections (Manifesto, Stats) */
+@keyframes aurora-drift {
+  0%   { transform: translate3d(-4%, 2%, 0) rotate(0deg); }
+  50%  { transform: translate3d(4%, -2%, 0) rotate(8deg); }
+  100% { transform: translate3d(-4%, 2%, 0) rotate(0deg); }
+}
+
+.aurora-mesh {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 22% 30%, rgba(34, 197, 94, 0.10), transparent 60%),
+    radial-gradient(ellipse 50% 50% at 78% 70%, rgba(26, 138, 46, 0.10), transparent 60%),
+    radial-gradient(ellipse 40% 60% at 50% 95%, rgba(200, 230, 201, 0.06), transparent 70%);
+  animation: aurora-drift 32s ease-in-out infinite;
+  will-change: transform;
+}
+
+.aurora-mesh-cool {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 45% at 18% 28%, rgba(21, 87, 46, 0.16), transparent 60%),
+    radial-gradient(ellipse 50% 55% at 82% 72%, rgba(13, 148, 136, 0.10), transparent 60%),
+    radial-gradient(ellipse 45% 55% at 50% 100%, rgba(34, 197, 94, 0.08), transparent 70%);
+  animation: aurora-drift 38s ease-in-out infinite reverse;
+  will-change: transform;
+}
+
+/* KINETIC TYPOGRAPHY shimmer — for the word "surface" in the hero */
+@keyframes word-shimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.word-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    rgba(200, 230, 201, 0.95) 0%,
+    rgba(255, 255, 255, 1) 30%,
+    rgba(34, 197, 94, 0.92) 50%,
+    rgba(200, 230, 201, 0.95) 70%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: word-shimmer 7s ease-in-out infinite;
+}
+
+/* LAYERED GLASS — outer frosted ring + inner darker plate. Used in hero card. */
+.glass-layered {
+  position: relative;
+  background: rgba(17, 17, 17, 0.32);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.glass-layered::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 0%, rgba(34, 197, 94, 0.10), transparent 70%),
+    radial-gradient(ellipse 80% 60% at 100% 100%, rgba(255, 255, 255, 0.04), transparent 70%);
+}
+
+/* NEUMORPHIC GLASS TILE — used in Stats. Single inner highlight + outer falloff. */
+.neumorph-glass {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 30px 60px -30px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* CONIC GRADIENT RING — slowly rotating border. Triggered on hover. */
+@keyframes conic-spin {
+  to { transform: rotate(360deg); }
+}
+
+.conic-ring {
+  position: relative;
+  isolation: isolate;
+}
+
+.conic-ring::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(34, 197, 94, 0.5) 60deg,
+    transparent 180deg,
+    rgba(200, 230, 201, 0.4) 240deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: -1;
+}
+
+.conic-ring:hover::before {
+  opacity: 1;
+  animation: conic-spin 6s linear infinite;
+}
+
+/* MARQUEE — slow continuous scroll, paused on hover */
+@keyframes marquee-slow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee-slow 38s linear infinite;
+}
+
+.marquee-pause:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* CLAYMORPHIC LIFT — used on Why La Foi pillar tiles */
+.clay-lift {
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.5s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 18px 40px -28px rgba(17, 17, 17, 0.18);
+}
+
+.clay-lift:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 28px 60px -30px rgba(26, 138, 46, 0.25);
+}
+
+/* FINISH-BAND HAIRLINE — underline grows from centre on hover */
+.finish-link {
+  position: relative;
+  display: inline-block;
+}
+
+.finish-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 0;
+  height: 1px;
+  background: var(--color-lafoi-green);
+  transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1), left 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.finish-link:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* BRUTALIST CORNER MARK — diagonal flag in bento project corners */
+.corner-mark {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 64px;
+  height: 64px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(8px, 8px);
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .corner-mark {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* PULSE DOT — limited slots indicator */
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.5); opacity: 0.65; }
+}
+
+.pulse-dot {
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+
+/* SCROLLBAR HIDE — used in finish band */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* WIKIPEDIA-STYLE PROSE LINK — thin underline that thickens on hover.
+   Inherits colour so it sits inside body text without stealing rhythm.
+   Hover lifts to brand green and doubles the underline weight. */
+.prose-link {
+  color: inherit;
+  text-decoration: underline dotted;
+  text-decoration-color: rgba(26, 138, 46, 0.65);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition:
+    text-decoration-color 0.3s ease,
+    text-decoration-thickness 0.3s ease,
+    color 0.3s ease,
+    text-decoration-style 0.3s ease;
+}
+.prose-link:hover {
+  color: var(--color-lafoi-green);
+  text-decoration-color: var(--color-lafoi-green);
+  text-decoration-style: solid;
+  text-decoration-thickness: 2.5px;
+}
+/* On dark surfaces — light-green dotted underline. */
+.prose-link-dark {
+  color: inherit;
+  text-decoration: underline dotted;
+  text-decoration-color: rgba(200, 230, 201, 0.70);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition:
+    text-decoration-color 0.3s ease,
+    text-decoration-thickness 0.3s ease,
+    color 0.3s ease,
+    text-decoration-style 0.3s ease;
+}
+.prose-link-dark:hover {
+  color: var(--color-lafoi-green-light);
+  text-decoration-color: var(--color-lafoi-green-light);
+  text-decoration-style: solid;
+  text-decoration-thickness: 2.5px;
+}
+/* External-link arrow variant — appended to titles/names that link out.
+   Use as: <Link className="prose-link prose-link-arrow">Project name</Link> */
+.prose-link-arrow::after {
+  content: '↗';
+  display: inline-block;
+  margin-left: 0.18em;
+  font-size: 0.78em;
+  vertical-align: 0.05em;
+  transition: transform 0.3s ease;
+}
+.prose-link-arrow:hover::after {
+  transform: translate(2px, -2px);
+}
+
+/* SLIDE-UP GLASS PLATE — bento gallery hover plate */
+.glass-slide-plate {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 1.5rem;
+  background: rgba(17, 17, 17, 0.55);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  transform: translateY(38%);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.group:hover .glass-slide-plate {
+  transform: translateY(0%);
+}
+
+/* VERTICAL PROGRESS RAIL — Approach section */
+.progress-rail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(26, 138, 46, 0.18) 8%,
+    rgba(26, 138, 46, 0.18) 92%,
+    transparent
+  );
+}
+
+.progress-rail-dot {
+  position: absolute;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--color-lafoi-green);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 4px rgba(26, 138, 46, 0.18), 0 0 20px rgba(26, 138, 46, 0.55);
+  transition: top 0.18s ease-out;
 }

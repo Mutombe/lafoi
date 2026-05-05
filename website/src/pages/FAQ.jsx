@@ -14,6 +14,7 @@ import {
 import AnimatedSection from '../components/ui/AnimatedSection'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
+import { linkifyProse } from '../utils/linkify.jsx'
 
 const FAQ_HERO_SLIDES = [
   {
@@ -43,7 +44,7 @@ const faqCategories = [
       },
       {
         q: 'Is La Foi Designs the first stretch ceiling company in Zimbabwe?',
-        a: "Yes. Founded in January 2024, La Foi Designs is proud to be Zimbabwe's first and leading provider of stretch ceiling solutions. We pioneered this technology in the country through our partnerships with top manufacturers in Germany and Estonia.",
+        a: "Yes. Founded in January 2024, La Foi Designs is proud to be Zimbabwe's first and leading provider of stretch ceiling solutions. We pioneered this technology in the country through our work introducing premium membrane technology to the country.",
       },
       {
         q: 'What areas do you service?',
@@ -68,7 +69,7 @@ const faqCategories = [
       },
       {
         q: 'How long do stretch ceilings last?',
-        a: 'With proper care, stretch ceilings last 15–25 years. Our products come with a 10-year manufacturer warranty backed by our German and Estonian partners.',
+        a: 'With proper care, stretch ceilings can last 15–25 years. Our products come with a manufacturer warranty up to 15 years on the membrane and a workmanship cover from La Foi Designs.',
       },
     ],
   },
@@ -106,7 +107,7 @@ const faqCategories = [
       },
       {
         q: 'What is your warranty policy?',
-        a: 'All installations come with a 10-year manufacturer warranty on materials and a 2-year warranty on installation workmanship. Our German and Estonian partners stand behind every product.',
+        a: 'All installations come with a manufacturer warranty up to 15 years on the membrane and a 2-year warranty on installation workmanship. The manufacturer warranty stands behind every product.',
       },
     ],
   },
@@ -154,87 +155,93 @@ export default function FAQ() {
 }
 
 function FAQHero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
-
+  // Brutalist / Memphis-light. Cream BG. Big serif "?" glyph + floating geometric shapes.
   return (
-    <section
-      ref={ref}
-      className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark"
-    >
-      <HeroSlideshow slides={FAQ_HERO_SLIDES} interval={6500} parallax overlay={false} />
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+    <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-20 lg:pb-28 overflow-hidden">
+      <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-40 pointer-events-none" />
 
-      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
-        <span className="hidden sm:block w-8 h-px bg-white/30" />
-        <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-          Vol.&nbsp;07 &mdash; 2026 &middot; Questions answered
-        </span>
+      {/* Volume artifact */}
+      <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
+          <span className="hidden sm:block w-8 h-px bg-lafoi-dark/20" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/65">
+            Vol.&nbsp;07 &mdash; 2026 &middot; Questions answered
+          </span>
+        </div>
       </div>
 
-      <motion.div
-        className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full"
-        style={{ opacity }}
+      {/* Massive ghost "?" glyph — upper-right */}
+      <span
+        aria-hidden
+        className="absolute right-[-2vw] top-12 lg:top-20 font-display font-light italic text-lafoi-green/10 leading-none pointer-events-none select-none"
+        style={{ fontSize: 'clamp(14rem, 32vw, 32rem)' }}
       >
-        <motion.div
-          className="pt-28 lg:pt-32"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
-            <Question size={13} weight="regular" className="text-lafoi-green-light" />
-            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              Support &middot; Frequently asked
-            </span>
-          </span>
-        </motion.div>
+        ?
+      </span>
 
-        <div className="mt-auto pb-10 lg:pb-16 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+      {/* Floating geometric shapes — Memphis */}
+      <motion.span
+        aria-hidden
+        className="absolute hidden lg:block top-[16rem] left-[6vw] w-12 h-12 rounded-full bg-lafoi-green/20 pointer-events-none"
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.span
+        aria-hidden
+        className="absolute hidden lg:block top-[24rem] right-[34vw] w-10 h-10 bg-lafoi-green/15 pointer-events-none rotate-12"
+        animate={{ rotate: [12, 22, 12] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.span
+        aria-hidden
+        className="absolute hidden lg:block bottom-[6rem] left-[28vw] w-0 h-0 pointer-events-none"
+        style={{
+          borderLeft: '24px solid transparent',
+          borderRight: '24px solid transparent',
+          borderBottom: '40px solid rgba(26, 138, 46, 0.18)',
+        }}
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="max-w-3xl">
           <motion.div
-            className="lg:col-span-9"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1
-              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.2rem] xl:text-[6.8rem]"
-              style={{ fontVariationSettings: '"opsz" 144' }}
-            >
-              <span className="block font-normal text-white">Questions,</span>
-              <span className="block">
-                <span className="font-light text-white/95">honest </span>
-                <span className="font-light text-lafoi-green-light">answers</span>
-                <span className="text-lafoi-green-light">.</span>
-              </span>
-            </h1>
-
-            <motion.p
-              className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              Everything we are usually asked, gathered in one quiet room. If yours is missing,
-              the studio is one message away.
-            </motion.p>
+            <div className="flex items-center gap-3 mb-7">
+              <span className="block w-12 h-px bg-lafoi-green/60" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Support &middot; Frequently asked
+              </p>
+            </div>
           </motion.div>
-        </div>
-      </motion.div>
 
-      <motion.div
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.1 }}
-      >
-        <span className="text-[9px] font-sora tracking-[0.35em] uppercase text-white/45">
-          Scroll
-        </span>
-        <span className="block w-px h-8 bg-gradient-to-b from-white/45 to-transparent" />
-      </motion.div>
+          <motion.h1
+            className="font-display text-lafoi-dark tracking-[-0.035em] leading-[0.98] text-[3.2rem] sm:text-[5rem] lg:text-[7rem] xl:text-[8rem]"
+            style={{ fontVariationSettings: '"opsz" 144' }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="block font-normal">Questions,</span>
+            <span className="block italic font-light text-lafoi-green">answered.</span>
+          </motion.h1>
+
+          <motion.p
+            className="mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {linkifyProse(
+              'Everything we are usually asked about stretch ceilings and lighting solutions, gathered in one quiet room. If yours is missing, our studio is one message away — or browse our portfolio for context.'
+            )}
+          </motion.p>
+        </div>
+      </div>
     </section>
   )
 }
@@ -268,10 +275,11 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
               </h2>
             </AnimatedSection>
           </div>
-          <AnimatedSection delay={0.2}>
+          <AnimatedSection delay={0.2} direction="right">
             <p className="font-body font-light text-lafoi-gray max-w-sm leading-relaxed">
-              Pick a category, search by phrase, or scroll through. The longer answers tend to be
-              the ones worth reading twice.
+              {linkifyProse(
+                'Pick a category, search by phrase, or scroll through. The longer answers tend to be the ones worth reading twice — and link out to the technical guide where appropriate.'
+              )}
             </p>
           </AnimatedSection>
         </div>
@@ -416,7 +424,7 @@ function FAQItem({ item, index }) {
             <div className="pb-9 lg:pb-10 sm:pl-[calc(2.5rem+1.25rem)] lg:pl-[calc(2.5rem+1.75rem)] pr-12 lg:pr-16">
               <span className="block w-10 h-px bg-lafoi-green/60 mb-5" />
               <p className="font-body font-light text-base lg:text-[17px] text-lafoi-gray leading-[1.7] max-w-3xl">
-                {item.a}
+                {linkifyProse(item.a)}
               </p>
             </div>
           </motion.div>

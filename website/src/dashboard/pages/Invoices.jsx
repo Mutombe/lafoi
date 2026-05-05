@@ -1,0 +1,274 @@
+import React, { useState } from 'react'
+import { useStore } from 'react-redux'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Receipt as ReceiptIcon } from '@phosphor-icons/react'
+
+import PageHeader from '../components/PageHeader'
+import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '../components/DataTable'
+import Modal from '../components/Modal'
+import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
+import LineItemEditor from '../components/LineItemEditor'
+import {
+  useListInvoicesQuery,
+  useCreateInvoiceMutation,
+  useUpdateInvoiceMutation,
+  useDeleteInvoiceMutation,
+  useListProjectsQuery,
+  useCreateReceiptMutation,
+  downloadPdf,
+} from '../store/api'
+
+const empty = () => ({
+  project: '', subject: '', issue_date: new Date().toISOString().slice(0, 10),
+  due_date: '', status: 'draft', currency: 'USD',
+  tax_rate: 0, discount_amount: 0, notes: '', terms: '',
+  items: [{ description: '', quantity: 1, unit: 'unit', unit_price: 0 }],
+})
+
+export default function Invoices() {
+  const store = useStore()
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [editing, setEditing] = useState(null)
+  const [paying, setPaying] = useState(null)
+  const [error, setError] = useState('')
+
+  const { data, isFetching } = useListInvoicesQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  const { data: projects } = useListProjectsQuery({ page_size: 200 })
+
+  const [createI, createState] = useCreateInvoiceMutation()
+  const [updateI, updateState] = useUpdateInvoiceMutation()
+  const [deleteI] = useDeleteInvoiceMutation()
+  const [createReceipt, receiptState] = useCreateReceiptMutation()
+
+  const isNew = editing && !editing.id
+  const saving = createState.isLoading || updateState.isLoading
+
+  const handleSave = async (e) => {
+    e.preventDefault()
+    setError('')
+    const payload = {
+      project: Number(editing.project),
+      subject: editing.subject || '',
+      issue_date: editing.issue_date,
+      due_date: editing.due_date || null,
+      status: editing.status,
+      currency: editing.currency || 'USD',
+      tax_rate: Number(editing.tax_rate) || 0,
+      discount_amount: Number(editing.discount_amount) || 0,
+      notes: editing.notes || '',
+      terms: editing.terms || '',
+      items: (editing.items || []).map((it) => ({
+        description: it.description, quantity: Number(it.quantity) || 0,
+        unit: it.unit || 'unit', unit_price: Number(it.unit_price) || 0,
+      })).filter((it) => it.description),
+    }
+    try {
+      if (isNew) await createI(payload).unwrap()
+      else await updateI({ id: editing.id, ...payload }).unwrap()
+      setEditing(null)
+    } catch (err) {
+      setError(err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.')
+    }
+  }
+
+  const handleDelete = async (row) => {
+    if (!window.confirm(`Delete invoice ${row.number}?`)) return
+    try { await deleteI(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+  }
+
+  const handlePdf = async (row) => {
+    try { await downloadPdf(`invoices/${row.id}/pdf/`, `${row.number}.pdf`, store.getState) }
+    catch (e) { window.alert('PDF download failed: ' + e.message) }
+  }
+
+  const handleRecordPayment = async (e) => {
+    e.preventDefault()
+    try {
+      await createReceipt({
+        invoice: paying.invoice.id,
+        amount: Number(paying.amount),
+        method: paying.method,
+        reference: paying.reference,
+        received_at: paying.received_at,
+        notes: paying.notes,
+      }).unwrap()
+      setPaying(null)
+    } catch (err) {
+      window.alert(err?.data ? Object.values(err.data).flat().join(' ') : 'Receipt failed.')
+    }
+  }
+
+  const columns = [
+    { key: 'number', label: 'Number', render: (r) => <span className="font-sora text-xs">{r.number}</span> },
+    { key: 'project', label: 'Project', render: (r) => (
+      <div>
+        <p className="font-sora text-sm font-medium">{r.project_title || '—'}</p>
+        <p className="text-xs text-lafoi-gray-medium">{r.customer_name}</p>
+      </div>
+    )},
+    { key: 'issue_date', label: 'Issue', render: (r) => fmtDate(r.issue_date) },
+    { key: 'due_date', label: 'Due', render: (r) => fmtDate(r.due_date) },
+    { key: 'total', label: 'Total', render: (r) => <span className="tabular-nums">{fmtMoney(r.total, r.currency)}</span> },
+    { key: 'balance_due', label: 'Balance', render: (r) => <span className="tabular-nums">{fmtMoney(r.balance_due, r.currency)}</span> },
+    { key: 'status', label: 'Status', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_DOC} /> },
+    { key: 'actions', label: '', render: (r) => (
+      <div className="flex justify-end gap-1">
+        <button title="PDF" onClick={(e) => { e.stopPropagation(); handlePdf(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><DownloadSimple size={14} /></button>
+        <button title="Record payment" onClick={(e) => { e.stopPropagation(); setPaying({ invoice: r, amount: r.balance_due, method: 'bank_transfer', reference: '', received_at: new Date().toISOString().slice(0, 10), notes: '' }) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green"><ReceiptIcon size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><PencilSimple size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"><Trash size={14} /></button>
+      </div>
+    )},
+  ]
+
+  return (
+    <div>
+      <PageHeader
+        eyebrow="Invoices"
+        title="What's owed, what's settled."
+        description="Invoice line-by-line, record receipts, and download branded PDFs."
+        actions={
+          <>
+            <Select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }} className="w-40">
+              <option value="">All statuses</option>
+              {['draft', 'sent', 'partial', 'paid', 'overdue', 'void'].map((s) => <option key={s} value={s}>{s}</option>)}
+            </Select>
+            <div className="relative">
+              <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
+              <input
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                placeholder="Search"
+                className="pl-9 pr-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body w-48"
+              />
+            </div>
+            <PrimaryButton onClick={() => setEditing(empty())}><Plus size={14} weight="bold" /> New invoice</PrimaryButton>
+          </>
+        }
+      />
+
+      <DataTable
+        columns={columns}
+        rows={data?.results || []}
+        isLoading={isFetching}
+        empty="No invoices yet."
+        pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
+      />
+
+      <Modal
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        title={isNew ? 'New invoice' : `Edit ${editing?.number}`}
+        size="xl"
+        footer={
+          <>
+            <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
+            <PrimaryButton form="inv-form" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</PrimaryButton>
+          </>
+        }
+      >
+        {editing && (
+          <form id="inv-form" onSubmit={handleSave} className="grid gap-4">
+            {error && <div className="px-3 py-2 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Field label="Project" required>
+                <Select value={editing.project || ''} onChange={(e) => setEditing({ ...editing, project: e.target.value })} required>
+                  <option value="">— Select project —</option>
+                  {(projects?.results || []).map((p) => <option key={p.id} value={p.id}>{p.code} — {p.title}</option>)}
+                </Select>
+              </Field>
+              <Field label="Subject">
+                <Input value={editing.subject} onChange={(e) => setEditing({ ...editing, subject: e.target.value })} />
+              </Field>
+              <Field label="Issue date" required>
+                <Input type="date" value={editing.issue_date} onChange={(e) => setEditing({ ...editing, issue_date: e.target.value })} required />
+              </Field>
+              <Field label="Due date">
+                <Input type="date" value={editing.due_date || ''} onChange={(e) => setEditing({ ...editing, due_date: e.target.value })} />
+              </Field>
+              <Field label="Status">
+                <Select value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value })}>
+                  {['draft', 'sent', 'partial', 'paid', 'overdue', 'void'].map((s) => <option key={s} value={s}>{s}</option>)}
+                </Select>
+              </Field>
+              <Field label="Currency">
+                <Select value={editing.currency} onChange={(e) => setEditing({ ...editing, currency: e.target.value })}>
+                  <option value="USD">USD</option>
+                  <option value="ZWL">ZWL</option>
+                  <option value="ZAR">ZAR</option>
+                </Select>
+              </Field>
+              <Field label="Tax rate (%)">
+                <Input type="number" step="0.01" value={editing.tax_rate} onChange={(e) => setEditing({ ...editing, tax_rate: e.target.value })} />
+              </Field>
+              <Field label="Discount amount">
+                <Input type="number" step="0.01" value={editing.discount_amount} onChange={(e) => setEditing({ ...editing, discount_amount: e.target.value })} />
+              </Field>
+            </div>
+
+            <div>
+              <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray mb-2">Line items</p>
+              <LineItemEditor
+                items={editing.items}
+                onChange={(items) => setEditing({ ...editing, items })}
+                currency={editing.currency}
+              />
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Field label="Notes (visible on PDF)">
+                <Textarea value={editing.notes} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} rows={3} />
+              </Field>
+              <Field label="Payment terms (visible on PDF)">
+                <Textarea value={editing.terms} onChange={(e) => setEditing({ ...editing, terms: e.target.value })} rows={3} />
+              </Field>
+            </div>
+          </form>
+        )}
+      </Modal>
+
+      {/* Record payment modal */}
+      <Modal
+        open={!!paying}
+        onClose={() => setPaying(null)}
+        title={`Record payment — ${paying?.invoice?.number || ''}`}
+        size="md"
+        footer={
+          <>
+            <SecondaryButton type="button" onClick={() => setPaying(null)}>Cancel</SecondaryButton>
+            <PrimaryButton form="rcp-form" type="submit" disabled={receiptState.isLoading}>
+              {receiptState.isLoading ? 'Recording…' : 'Record payment'}
+            </PrimaryButton>
+          </>
+        }
+      >
+        {paying && (
+          <form id="rcp-form" onSubmit={handleRecordPayment} className="grid gap-4">
+            <div className="px-4 py-3 rounded-xl bg-lafoi-cream text-sm">
+              <p className="text-lafoi-gray-medium text-xs uppercase tracking-[0.2em] mb-1">Outstanding</p>
+              <p className="font-display text-2xl">{fmtMoney(paying.invoice.balance_due, paying.invoice.currency)}</p>
+            </div>
+            <Field label="Amount" required>
+              <Input type="number" step="0.01" value={paying.amount} onChange={(e) => setPaying({ ...paying, amount: e.target.value })} required />
+            </Field>
+            <Field label="Method">
+              <Select value={paying.method} onChange={(e) => setPaying({ ...paying, method: e.target.value })}>
+                {['cash', 'bank_transfer', 'ecocash', 'cheque', 'card', 'other'].map((m) => <option key={m} value={m}>{m.replace('_', ' ')}</option>)}
+              </Select>
+            </Field>
+            <Field label="Reference">
+              <Input value={paying.reference} onChange={(e) => setPaying({ ...paying, reference: e.target.value })} placeholder="Bank ref, txn id, cheque #..." />
+            </Field>
+            <Field label="Date">
+              <Input type="date" value={paying.received_at} onChange={(e) => setPaying({ ...paying, received_at: e.target.value })} />
+            </Field>
+            <Field label="Notes">
+              <Textarea value={paying.notes} onChange={(e) => setPaying({ ...paying, notes: e.target.value })} rows={2} />
+            </Field>
+          </form>
+        )}
+      </Modal>
+    </div>
+  )
+}

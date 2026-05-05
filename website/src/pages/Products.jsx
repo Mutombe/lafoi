@@ -18,6 +18,7 @@ import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
 import { products, productCategories, productApplications } from '../data/site'
+import { linkifyProse } from '../utils/linkify.jsx'
 
 const PRODUCTS_HERO_SLIDES = [
   {
@@ -51,7 +52,7 @@ export default function Products() {
   useSEO({
     title: 'Products & Materials',
     description:
-      "Explore La Foi Designs' full range of German and Estonian engineered stretch ceiling membranes, architectural lighting and accessories. Matte, satin, gloss, translucent backlit, printed, 3D, acoustic, mirror and suede finishes.",
+      "Explore La Foi Designs' full range of premium PVC and fabric stretch ceiling membranes, architectural lighting and accessories. Matte, satin, gloss, translucent backlit, printed, 3D, acoustic, mirror and suede finishes.",
     path: '/products',
   })
 
@@ -86,52 +87,106 @@ export default function Products() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-      {/* HERO */}
-      <section className="relative min-h-[55vh] flex items-center overflow-hidden bg-lafoi-dark">
-        <HeroSlideshow slides={PRODUCTS_HERO_SLIDES} interval={6500} parallax overlay={false} />
-        <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/75 to-lafoi-dark/50 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent pointer-events-none" />
+      {/* HERO — Swiss Minimalist. Cream BG. No image. Monumental serif. Swatch row. */}
+      <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-16 lg:pb-24 overflow-hidden">
+        <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-40 pointer-events-none" />
+
         {/* Volume artifact */}
-        <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none">
-          <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
-            Vol.&nbsp;01 &mdash; The Library
-          </span>
+        <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex justify-end">
+            <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-lafoi-gray/55">
+              Vol.&nbsp;10 &mdash; The Library
+            </span>
+          </div>
         </div>
-        <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full pt-32 pb-16">
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <motion.div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <div className="w-2 h-2 rounded-full bg-lafoi-green animate-pulse" />
-              <span className="text-xs font-sora text-white/80 font-medium tracking-wider uppercase">
-                The Collection
-              </span>
-            </motion.div>
-            <h1 className="heading-xl text-4xl sm:text-5xl lg:text-6xl text-white mt-4 mb-6">
-              The collection of<br />
-              <span className="text-gradient">ceilings &amp; light</span>
-            </h1>
-            <p className="text-white/70 font-general text-lg max-w-xl">
-              German-engineered membranes, Estonian-printed art, EU-built lighting. Eighteen products engineered to disappear into great architecture.
+
+        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 text-center">
+          <motion.div
+            className="flex items-center justify-center gap-3 mb-8 lg:mb-10"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="block w-10 h-px bg-lafoi-green/60" />
+            <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+              The Collection &middot; {products.length} products
             </p>
-            <div className="flex flex-wrap items-center gap-3 mt-8">
-              <a
-                href="#catalog"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-green text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/20 group"
-              >
-                Browse the catalogue
-                <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
-              </a>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/15 text-white rounded-full font-sora text-sm font-medium hover:bg-white/15 transition-colors duration-300"
-              >
-                Request samples
-              </Link>
-            </div>
+            <span className="block w-10 h-px bg-lafoi-green/60" />
+          </motion.div>
+
+          <motion.h1
+            className="font-display font-light text-lafoi-dark tracking-[-0.04em] leading-[0.92] mx-auto"
+            style={{ fontSize: 'clamp(3.5rem, 10vw, 10rem)', fontVariationSettings: '"opsz" 144' }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            Membranes
+            <span className="block italic text-lafoi-green">&amp; lighting.</span>
+          </motion.h1>
+
+          <motion.p
+            className="mt-8 lg:mt-10 max-w-xl mx-auto text-base lg:text-lg text-lafoi-gray font-body font-light leading-[1.7]"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {linkifyProse(
+              'Premium PVC and fabric stretch membranes paired with bespoke architectural lighting. A focused product family — matte finish, satin finish, gloss finish, translucent backlit, printed photographic, sculptural and acoustic — engineered to disappear into great architecture.'
+            )}
+          </motion.p>
+
+          <motion.div
+            className="flex flex-wrap items-center justify-center gap-3 mt-10"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <a
+              href="#catalog"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-dark text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 group"
+            >
+              Browse the catalogue
+              <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
+            </a>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-lafoi-dark/15 text-lafoi-dark rounded-full font-sora text-sm font-medium hover:border-lafoi-green/40 hover:text-lafoi-green transition-colors duration-300"
+            >
+              Request samples
+            </Link>
+          </motion.div>
+
+          {/* Swatch row — 8 finishes aligned at the bottom */}
+          <motion.div
+            className="mt-14 lg:mt-20 pt-8 border-t border-lafoi-dark/10 flex flex-wrap items-center justify-center gap-x-3 gap-y-4 lg:gap-x-5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.7 }}
+          >
+            <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium mr-2">
+              The library
+            </p>
+            {[
+              { name: 'Matte', tone: '#E9E6DE' },
+              { name: 'Satin', tone: '#D2CFC4' },
+              { name: 'Gloss', tone: '#1A1A1A' },
+              { name: 'Translucent', tone: '#F4F1E8' },
+              { name: 'Printed', tone: '#9DC3D6' },
+              { name: '3D', tone: '#1A8A2E' },
+              { name: 'Acoustic', tone: '#C9C5BA' },
+              { name: 'Mirror', tone: '#A8A8A8' },
+            ].map((s) => (
+              <div key={s.name} className="flex flex-col items-center gap-1.5">
+                <span
+                  className="block w-9 h-9 lg:w-11 lg:h-11 rounded-full ring-1 ring-lafoi-dark/10"
+                  style={{ background: s.tone }}
+                />
+                <span className="font-sora text-[9px] tracking-[0.2em] uppercase text-lafoi-gray-medium">
+                  {s.name}
+                </span>
+              </div>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -151,7 +206,9 @@ export default function Products() {
                 </h2>
               </div>
               <p className="font-general text-lafoi-gray max-w-md">
-                The products our designers reach for first — proven, versatile, and the foundation of most La Foi installations.
+                {linkifyProse(
+                  'The stretch ceiling products our designers reach for first — proven, versatile, and the foundation of most La Foi installations. Each one is documented across our portfolio in real interior settings.'
+                )}
               </p>
             </div>
           </AnimatedSection>
@@ -186,7 +243,9 @@ export default function Products() {
                 The full range
               </h2>
               <p className="font-general text-lafoi-gray max-w-2xl">
-                Filter by category, application, or search the catalogue directly. Click any product for full specifications and warranty details.
+                {linkifyProse(
+                  'Filter by category, application, or search the catalogue directly. Click any stretch ceiling or lighting solution for full specifications, warranty details and case studies in our portfolio.'
+                )}
               </p>
             </div>
           </AnimatedSection>
@@ -384,7 +443,10 @@ export default function Products() {
                 Need help <span className="font-display font-light">choosing</span>?
               </h2>
               <p className="text-white/70 font-general text-lg mb-8 max-w-lg">
-                Our consultants will walk you through finishes, lighting compatibility, and on-site samples — at no charge.
+                {linkifyProse(
+                  'Our consultants will walk you through stretch ceiling finishes, lighting solutions compatibility, and on-site samples — at no charge. Browse our portfolio to see products in real interiors.',
+                  { variant: 'dark' }
+                )}
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link

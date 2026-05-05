@@ -25,6 +25,7 @@ import {
   getAdjacentProjects,
   getProductBySlug,
 } from '../data/site'
+import { linkifyProse } from '../utils/linkify.jsx'
 
 export default function ProjectDetail() {
   const { slug } = useParams()
@@ -155,7 +156,9 @@ export default function ProjectDetail() {
                   How <span className="font-display font-light text-lafoi-green">{project.title.split(' ')[0]}</span> came together
                 </h2>
                 <p className="font-general text-lafoi-gray text-base leading-relaxed">
-                  Three short chapters: the brief our client brought us, the design response we proposed, and the measurable outcome on completion.
+                  {linkifyProse(
+                    'Three short chapters: the brief our client brought us, the design response we proposed, and the measurable outcome on completion. Set against the broader portfolio of related projects.'
+                  )}
                 </p>
               </div>
             </div>
@@ -166,9 +169,10 @@ export default function ProjectDetail() {
                 title="The brief"
                 body={project.brief}
                 dropCap
+                index={0}
               />
-              <Chapter number="02" title="The approach" body={project.approach} />
-              <Chapter number="03" title="The outcome" body={project.outcome} />
+              <Chapter number="02" title="The approach" body={project.approach} index={1} />
+              <Chapter number="03" title="The outcome" body={project.outcome} index={2} />
             </div>
           </div>
         </div>
@@ -509,9 +513,12 @@ function Fact({ icon: Icon, label, value }) {
   )
 }
 
-function Chapter({ number, title, body, dropCap = false }) {
+function Chapter({ number, title, body, dropCap = false, index = 0 }) {
+  // Alternate the entry direction by chapter index — Brief from left,
+  // Approach from right, Outcome from left — for editorial rhythm.
+  const dir = index % 2 === 0 ? 'left' : 'right'
   return (
-    <AnimatedSection direction="up">
+    <AnimatedSection direction={dir}>
       <div className="flex items-center gap-4 mb-5">
         <span className="font-mono text-sm text-lafoi-green tracking-widest">{number}</span>
         <span className="h-px flex-1 bg-gradient-to-r from-lafoi-green/30 to-transparent" />
@@ -524,7 +531,7 @@ function Chapter({ number, title, body, dropCap = false }) {
             : ''
         }`}
       >
-        {body}
+        {linkifyProse(body)}
       </p>
     </AnimatedSection>
   )

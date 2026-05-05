@@ -1,26 +1,30 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
 import { Toaster } from 'sonner'
 import App from './App'
 import './index.css'
+import { store } from './dashboard/store'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            fontFamily: "'DM Sans', sans-serif",
-            borderRadius: '16px',
-            padding: '16px',
-          },
-          className: 'glass',
-        }}
-        richColors
-      />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              fontFamily: "'DM Sans', sans-serif",
+              borderRadius: '16px',
+              padding: '16px',
+            },
+            className: 'glass',
+          }}
+          richColors
+        />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 )

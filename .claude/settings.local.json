@@ -7,7 +7,30 @@
       "Bash(curl:*)",
       "WebSearch",
       "WebFetch(domain:unsplash.com)",
-      "Bash(npx:*)"
+      "Bash(npx:*)",
+      "Bash(python3:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(Out-String)",
+      "Read(//c/Users/PC/documents/**)",
+      "Bash(pdftotext -layout \"C:\\\\Users\\\\PC\\\\Downloads\\\\lafoi-brand-assets\\\\LA FOI DESIGNS COMPANY PROFILE.pdf.pdf\" \"C:\\\\Users\\\\PC\\\\Downloads\\\\lafoi-brand-assets\\\\company_profile.txt\")",
+      "Bash(pdftotext -layout \"C:\\\\Users\\\\PC\\\\Downloads\\\\lafoi-brand-assets\\\\WHAT ARE STRETCH CEILINGS.pdf\" \"C:\\\\Users\\\\PC\\\\Downloads\\\\lafoi-brand-assets\\\\stretch_ceilings.txt\")",
+      "Bash(cp \"C:\\\\Users\\\\PC\\\\documents\\\\lafoi\\\\website\\\\public\\\\lafoi-brand-assets\\\\LA FOI PNGS 1\\\\\"*.png \"C:\\\\Users\\\\PC\\\\documents\\\\lafoi\\\\website\\\\public\\\\brand\\\\images\\\\\")",
+      "Bash(cp \"C:\\\\Users\\\\PC\\\\documents\\\\lafoi\\\\website\\\\public\\\\lafoi-brand-assets\\\\LA FOI PNGS 2\\\\\"*.png \"C:\\\\Users\\\\PC\\\\documents\\\\lafoi\\\\website\\\\public\\\\brand\\\\images\\\\\")",
+      "Bash(cp \"C:\\\\Users\\\\PC\\\\documents\\\\lafoi\\\\website\\\\public\\\\lafoi-brand-assets\\\\LA FOI PNGS 3\\\\\"*.png \"C:\\\\Users\\\\PC\\\\documents\\\\lafoi\\\\website\\\\public\\\\brand\\\\images\\\\\")",
+      "Bash(cp \"/c/Users/PC/documents/lafoi/website/public/lafoi-brand-assets/LA FOI PNGS 1\"/*.png \"/c/Users/PC/documents/lafoi/website/public/brand/images/\")",
+      "Bash(cp \"/c/Users/PC/documents/lafoi/website/public/lafoi-brand-assets/LA FOI PNGS 2\"/*.png \"/c/Users/PC/documents/lafoi/website/public/brand/images/\")",
+      "Bash(cp \"/c/Users/PC/documents/lafoi/website/public/lafoi-brand-assets/LA FOI PNGS 3\"/*.png \"/c/Users/PC/documents/lafoi/website/public/brand/images/\")",
+      "Bash(cp \"C:/Users/PC/Downloads/lafoi-brand-assets/WHAT ARE STRETCH CEILINGS.pdf\" \"C:/Users/PC/documents/lafoi/website/public/brand/docs/stretch-ceilings-guide.pdf\")",
+      "Bash(cp \"C:/Users/PC/Downloads/lafoi-brand-assets/LA FOI DESIGNS COMPANY PROFILE.pdf.pdf\" \"C:/Users/PC/documents/lafoi/website/public/brand/docs/company-profile.pdf\")",
+      "Bash(node scripts/strip-fabrications.mjs)",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({'has_local': 'local_results' in d, 'place_results': d.get\\('place_results', {}\\).get\\('place_id'\\), 'place_results_title': d.get\\('place_results', {}\\).get\\('title'\\), 'place_results_rating': d.get\\('place_results', {}\\).get\\('rating'\\), 'place_results_reviews': d.get\\('place_results', {}\\).get\\('reviews'\\), 'first_local': \\(d.get\\('local_results'\\) or [{}]\\)[0] if d.get\\('local_results'\\) else None, 'error': d.get\\('error'\\)}, indent=2\\)\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(pdftotext -layout \"/c/Users/PC/documents/lafoi/website/public/brand/docs/Catalogue Material Collection.pdf\" \"/c/Users/PC/documents/lafoi/website/public/brand/docs/catalogue.txt\")"
     ]
   }
 }

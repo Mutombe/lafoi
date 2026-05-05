@@ -4,19 +4,21 @@ import { motion } from 'framer-motion'
 import {
   ArrowRight, MapPin, Phone, Envelope,
   InstagramLogo, FacebookLogo, LinkedinLogo, ArrowUpRight,
+  DownloadSimple,
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import AnimatedSection from '../ui/AnimatedSection'
+import Logo from '../shared/Logo'
 
 const footerLinks = {
   Solutions: [
-    { name: 'All Products', path: '/products' },
     { name: 'Stretch Ceilings', path: '/services/stretch-ceilings' },
     { name: 'Custom Lighting', path: '/services/custom-lighting' },
-    { name: 'Printed Ceilings', path: '/services/printed-ceilings' },
-    { name: '3D Installations', path: '/services/3d-ceilings' },
-    { name: 'Acoustic Solutions', path: '/services/acoustic' },
+    { name: 'Design Consultation', path: '/services' },
+    { name: 'Maintenance & Support', path: '/services' },
+    { name: 'All Products', path: '/products' },
+    { name: 'Shop', path: '/shop' },
   ],
   Company: [
     { name: 'Our Story', path: '/about' },
@@ -30,6 +32,10 @@ const footerLinks = {
     { name: 'Contact Us', path: '/contact' },
     { name: 'Get a Quote', path: '/contact' },
     { name: 'Book Consultation', path: '/contact' },
+  ],
+  Resources: [
+    { name: 'Company Profile (PDF)', path: '/brand/docs/company-profile.pdf', download: true },
+    { name: 'Stretch Ceilings Guide (PDF)', path: '/brand/docs/stretch-ceilings-guide.pdf', download: true },
   ],
 }
 
@@ -112,18 +118,18 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
 
       {/* Main footer content */}
       <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 lg:gap-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10 lg:gap-14">
           {/* Brand */}
           <div className="col-span-2 lg:col-span-2">
             <Link to="/" className="inline-block mb-5">
-              <img src="/logo.png" alt="La Foi Designs" className="h-20 sm:h-24 w-auto brightness-0 invert" />
+              <Logo tone="light" variant="wordmark" imgClassName="h-10 sm:h-12 w-auto" />
             </Link>
             {/* Issue number — editorial flourish */}
             <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light/80 mb-4">
               N&#xBA; 01 — 2026
             </p>
             <p className="text-sm text-white/50 font-general leading-relaxed max-w-xs mb-6">
-              Zimbabwe's premier stretch ceiling and custom lighting solutions provider. Transforming spaces with German &amp; Estonian engineered excellence.
+              Zimbabwe's first and leading provider of premium stretch ceilings and architectural lighting. Pioneering luminous interiors across Southern Africa from our Belgravia studio.
             </p>
             <div className="space-y-2.5">
               <div className="flex items-center gap-2 text-sm text-white/40">
@@ -149,17 +155,44 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
                 <h4 className="font-sora text-[11px] font-semibold tracking-[0.18em] uppercase text-white">{title}</h4>
               </div>
               <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      to={link.path}
-                      className="text-sm text-white/40 hover:text-lafoi-green-light transition-colors font-general inline-flex items-center gap-1 group"
-                    >
-                      {link.name}
-                      <ArrowUpRight size={12} weight="regular" className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </Link>
-                  </li>
-                ))}
+                {links.map((link) =>
+                  link.download ? (
+                    <li key={link.name}>
+                      <a
+                        href={link.path}
+                        target="_blank"
+                        rel="noopener"
+                        download
+                        className="text-sm text-white/40 hover:text-lafoi-green-light transition-colors font-general inline-flex items-center gap-1.5 group"
+                      >
+                        <DownloadSimple size={12} weight="regular" className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                        {link.name}
+                      </a>
+                    </li>
+                  ) : link.external ? (
+                    <li key={link.name}>
+                      <a
+                        href={link.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-white/40 hover:text-lafoi-green-light transition-colors font-general inline-flex items-center gap-1 group"
+                      >
+                        {link.name}
+                        <ArrowUpRight size={12} weight="regular" className="opacity-60 group-hover:opacity-100 transition-opacity" />
+                      </a>
+                    </li>
+                  ) : (
+                    <li key={link.name}>
+                      <Link
+                        to={link.path}
+                        className="text-sm text-white/40 hover:text-lafoi-green-light transition-colors font-general inline-flex items-center gap-1 group"
+                      >
+                        {link.name}
+                        <ArrowUpRight size={12} weight="regular" className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </Link>
+                    </li>
+                  )
+                )}
               </ul>
             </div>
           ))}

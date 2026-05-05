@@ -1,5 +1,5 @@
-import React, { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import React from 'react'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
@@ -14,6 +14,7 @@ import {
   Sparkle,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
+import { linkifyProse } from '../utils/linkify.jsx'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO } from '../utils/seo'
@@ -71,7 +72,7 @@ const perks = [
   {
     icon: Globe,
     title: 'International training',
-    desc: 'Trained directly by our German and Estonian partners. Travel, hands-on workshops, and a craft taught nowhere else in the country.',
+    desc: 'Trained on the membrane and lighting systems first introduced to Zimbabwe by our studio. Hands-on workshops and a craft taught nowhere else in the country.',
     feature: true,
     image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1200&q=80',
     vision: 'Open-plan office where the craft is taught',
@@ -144,29 +145,47 @@ export default function Careers() {
 }
 
 function CareersHero() {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
-
+  // Aurora Dark — no image, no slideshow. Italic Fraunces headline with sculptural blob accent.
   return (
-    <section
-      ref={ref}
-      className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark"
-    >
-      <HeroSlideshow slides={CAREERS_HERO_SLIDES} interval={6500} parallax overlay={false} />
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+    <section className="relative min-h-[100svh] lg:min-h-[88vh] overflow-hidden bg-lafoi-dark flex flex-col">
+      <div aria-hidden className="absolute inset-0 aurora-mesh" />
+      <div aria-hidden className="absolute inset-0 dot-pattern opacity-12 pointer-events-none" />
 
-      <div className="absolute top-28 right-6 lg:top-32 lg:right-10 z-10 pointer-events-none flex items-center gap-3">
-        <span className="hidden sm:block w-8 h-px bg-white/30" />
-        <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-          Vol.&nbsp;06 &mdash; 2026 &middot; Build with us
-        </span>
+      {/* Sculptural green blob */}
+      <motion.div
+        aria-hidden
+        className="absolute hidden lg:block top-[18vh] right-[8vw] w-[24rem] h-[24rem] rounded-full pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle at 35% 35%, rgba(26,138,46,0.45), rgba(26,138,46,0.15) 55%, transparent 70%)',
+          filter: 'blur(40px)',
+        }}
+        animate={{ y: [0, -16, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute lg:hidden top-[28vh] right-[-6rem] w-[18rem] h-[18rem] rounded-full pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle at 35% 35%, rgba(26,138,46,0.4), rgba(26,138,46,0.12) 55%, transparent 70%)',
+          filter: 'blur(36px)',
+        }}
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
+          <span className="hidden sm:block w-8 h-px bg-white/30" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
+            Vol.&nbsp;06 &mdash; 2026 &middot; Build with us
+          </span>
+        </div>
       </div>
 
       <motion.div
         className="relative z-10 flex-1 flex flex-col max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full"
-        style={{ opacity }}
       >
         <motion.div
           className="pt-28 lg:pt-32"
@@ -190,15 +209,11 @@ function CareersHero() {
             transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
             <h1
-              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.2rem] xl:text-[6.8rem]"
+              className="font-display text-white tracking-[-0.035em] leading-[0.95] text-[3rem] sm:text-[4.5rem] lg:text-[6.2rem] xl:text-[6.8rem]"
               style={{ fontVariationSettings: '"opsz" 144' }}
             >
-              <span className="block font-light text-white/95">A studio looking</span>
-              <span className="block">
-                <span className="font-normal text-white">for </span>
-                <span className="font-normal text-lafoi-green-light">makers</span>
-                <span className="text-lafoi-green-light">.</span>
-              </span>
+              <span className="block font-light text-white/95">Build</span>
+              <span className="block italic font-light text-lafoi-green-light">with us.</span>
             </h1>
 
             <motion.p
@@ -207,8 +222,10 @@ function CareersHero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              We hire for taste, patience and a steady hand — the rest can be taught. The studio is
-              still small, the work is unusually varied, and good craft moves quickly here.
+              {linkifyProse(
+                'We hire for taste, patience and a steady hand — the rest can be taught. The studio is still small, the work is unusually varied, and good craft moves quickly here. See our portfolio for the kind of projects you would be helping shape.',
+                { variant: 'dark' }
+              )}
             </motion.p>
 
             <motion.div
@@ -411,7 +428,7 @@ function PerkTypoCard({ p, index }) {
       <h3 className="font-display font-light text-lafoi-dark text-3xl lg:text-4xl xl:text-[2.4rem] leading-[1.1] mb-5 tracking-[-0.01em]">
         {p.title}
       </h3>
-      <p className="font-body font-light text-base text-lafoi-gray leading-[1.7]">{p.desc}</p>
+      <p className="font-body font-light text-base text-lafoi-gray leading-[1.7]">{linkifyProse(p.desc)}</p>
     </div>
   )
 }
@@ -453,9 +470,12 @@ function Openings() {
               </h2>
             </AnimatedSection>
           </div>
-          <AnimatedSection delay={0.2}>
+          <AnimatedSection delay={0.2} direction="right">
             <p className="font-body font-light text-white/65 max-w-sm leading-relaxed">
-              No job-spec theatre. Click through to apply by email — we read every CV personally.
+              {linkifyProse(
+                'No job-spec theatre. Click through to apply by email — we read every CV personally. Browse our portfolio for the work you would be joining.',
+                { variant: 'dark' }
+              )}
             </p>
           </AnimatedSection>
         </div>

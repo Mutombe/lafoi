@@ -1,0 +1,199 @@
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, Eye } from '@phosphor-icons/react'
+
+import PageHeader from '../components/PageHeader'
+import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_PROJECT } from '../components/DataTable'
+import Modal from '../components/Modal'
+import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
+import {
+  useListProjectsQuery,
+  useCreateProjectMutation,
+  useUpdateProjectMutation,
+  useDeleteProjectMutation,
+  useListCustomersQuery,
+} from '../store/api'
+
+const empty = {
+  title: '', customer: '', category: 'residential', status: 'lead',
+  description: '', site_address: '', area_sqm: '', budget: '',
+  start_date: '', target_end_date: '', progress: 0,
+}
+
+export default function Projects() {
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
+  const [editing, setEditing] = useState(null)
+  const [error, setError] = useState('')
+
+  const { data, isFetching } = useListProjectsQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  const { data: customers } = useListCustomersQuery({ page_size: 200 })
+
+  const [createProject, createState] = useCreateProjectMutation()
+  const [updateProject, updateState] = useUpdateProjectMutation()
+  const [deleteProject] = useDeleteProjectMutation()
+
+  const isNew = editing && !editing.id
+  const saving = createState.isLoading || updateState.isLoading
+
+  const handleSave = async (e) => {
+    e.preventDefault()
+    setError('')
+    const payload = {
+      title: editing.title?.trim(),
+      customer: editing.customer ? Number(editing.customer) : null,
+      category: editing.category,
+      status: editing.status,
+      description: editing.description || '',
+      site_address: editing.site_address || '',
+      area_sqm: editing.area_sqm || null,
+      budget: editing.budget || null,
+      start_date: editing.start_date || null,
+      target_end_date: editing.target_end_date || null,
+      progress: Number(editing.progress) || 0,
+    }
+    try {
+      if (isNew) await createProject(payload).unwrap()
+      else await updateProject({ id: editing.id, ...payload }).unwrap()
+      setEditing(null)
+    } catch (err) {
+      setError(err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.')
+    }
+  }
+
+  const handleDelete = async (row) => {
+    if (!window.confirm(`Delete project ${row.code}? This cannot be undone.`)) return
+    try { await deleteProject(row.id).unwrap() } catch (e) { window.alert(e?.data?.detail || 'Delete failed.') }
+  }
+
+  const columns = [
+    { key: 'code', label: 'Code', render: (r) => <span className="font-sora text-xs">{r.code}</span> },
+    { key: 'title', label: 'Project', render: (r) => (
+      <div>
+        <p className="font-sora text-sm font-medium">{r.title}</p>
+        <p className="text-xs text-lafoi-gray-medium">{r.customer_name || '—'}</p>
+      </div>
+    )},
+    { key: 'category', label: 'Category', render: (r) => <span className="capitalize text-xs font-sora">{r.category}</span> },
+    { key: 'progress', label: 'Progress', render: (r) => (
+      <div className="flex items-center gap-2 min-w-[120px]">
+        <div className="flex-1 h-1.5 rounded-full bg-lafoi-dark/8 overflow-hidden">
+          <div className="h-full bg-lafoi-green" style={{ width: `${Math.min(100, Math.max(0, r.progress || 0))}%` }} />
+        </div>
+        <span className="text-xs font-sora w-9 text-right">{r.progress ?? 0}%</span>
+      </div>
+    )},
+    { key: 'status', label: 'Status', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_PROJECT} /> },
+    { key: 'budget', label: 'Budget', render: (r) => r.budget ? fmtMoney(r.budget) : '—' },
+    { key: 'created_at', label: 'Created', render: (r) => fmtDate(r.created_at) },
+    { key: 'actions', label: '', render: (r) => (
+      <div className="flex justify-end gap-1">
+        <Link to={`/dashboard/projects/${r.id}`} onClick={(e) => e.stopPropagation()} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><Eye size={14} /></Link>
+        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><PencilSimple size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"><Trash size={14} /></button>
+      </div>
+    )},
+  ]
+
+  const STATUSES = ['lead', 'quoted', 'approved', 'in_progress', 'on_hold', 'completed', 'cancelled']
+
+  return (
+    <div>
+      <PageHeader
+        eyebrow="Projects"
+        title="Every commission, tracked."
+        description="From first lead to final reveal — manage progress, plans, and updates per project."
+        actions={
+          <>
+            <Select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }} className="w-44">
+              <option value="">All statuses</option>
+              {STATUSES.map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
+            </Select>
+            <div className="relative">
+              <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
+              <input
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                placeholder="Search projects"
+                className="pl-9 pr-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body w-56"
+              />
+            </div>
+            <PrimaryButton onClick={() => setEditing({ ...empty })}><Plus size={14} weight="bold" /> New project</PrimaryButton>
+          </>
+        }
+      />
+
+      <DataTable
+        columns={columns}
+        rows={data?.results || []}
+        isLoading={isFetching}
+        empty="No projects yet — start your first."
+        pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
+      />
+
+      <Modal
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        title={isNew ? 'New project' : `Edit ${editing?.code || ''}`}
+        size="lg"
+        footer={
+          <>
+            <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
+            <PrimaryButton form="project-form" type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</PrimaryButton>
+          </>
+        }
+      >
+        {editing && (
+          <form id="project-form" onSubmit={handleSave} className="grid sm:grid-cols-2 gap-4">
+            {error && <div className="sm:col-span-2 px-3 py-2 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>}
+            <Field label="Title" required className="sm:col-span-2">
+              <Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required />
+            </Field>
+            <Field label="Customer" required>
+              <Select value={editing.customer || ''} onChange={(e) => setEditing({ ...editing, customer: e.target.value })} required>
+                <option value="">— Select customer —</option>
+                {(customers?.results || []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </Select>
+            </Field>
+            <Field label="Category">
+              <Select value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })}>
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+                <option value="hospitality">Hospitality</option>
+                <option value="retail">Retail</option>
+                <option value="institutional">Institutional</option>
+              </Select>
+            </Field>
+            <Field label="Status">
+              <Select value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value })}>
+                {STATUSES.map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
+              </Select>
+            </Field>
+            <Field label="Progress %">
+              <Input type="number" min="0" max="100" value={editing.progress ?? 0} onChange={(e) => setEditing({ ...editing, progress: e.target.value })} />
+            </Field>
+            <Field label="Area (m²)">
+              <Input type="number" step="0.01" value={editing.area_sqm || ''} onChange={(e) => setEditing({ ...editing, area_sqm: e.target.value })} />
+            </Field>
+            <Field label="Budget (USD)">
+              <Input type="number" step="0.01" value={editing.budget || ''} onChange={(e) => setEditing({ ...editing, budget: e.target.value })} />
+            </Field>
+            <Field label="Start date">
+              <Input type="date" value={editing.start_date || ''} onChange={(e) => setEditing({ ...editing, start_date: e.target.value })} />
+            </Field>
+            <Field label="Target end">
+              <Input type="date" value={editing.target_end_date || ''} onChange={(e) => setEditing({ ...editing, target_end_date: e.target.value })} />
+            </Field>
+            <Field label="Site address" className="sm:col-span-2">
+              <Textarea value={editing.site_address || ''} onChange={(e) => setEditing({ ...editing, site_address: e.target.value })} rows={2} />
+            </Field>
+            <Field label="Description / scope" className="sm:col-span-2">
+              <Textarea value={editing.description || ''} onChange={(e) => setEditing({ ...editing, description: e.target.value })} rows={4} />
+            </Field>
+          </form>
+        )}
+      </Modal>
+    </div>
+  )
+}
