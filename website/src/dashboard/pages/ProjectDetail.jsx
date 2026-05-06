@@ -3,21 +3,25 @@ import { Link, useParams } from 'react-router-dom'
 import {
   ArrowLeft, Plus, Trash, UploadSimple, FileText, Image as ImageIcon,
   Calendar, Plus as PlusIcon, CircleNotch, CheckCircle, Circle,
-  Clock, MapPin, CurrencyDollar, Ruler,
+  Clock, MapPin, CurrencyDollar, Ruler, PencilSimple, PaintBrush,
 } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
-import { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_PROJECT } from '../components/DataTable'
+import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_PROJECT } from '../components/DataTable'
 import Modal from '../components/Modal'
 import Skeleton, { SkeletonStat, SkeletonPageHeader } from '../components/Skeleton'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton, DangerButton } from '../components/FormField'
+import DrawingCanvas from '../components/DrawingCanvas'
 import {
   useGetProjectQuery,
   useCreateProjectUpdateMutation,
   useUploadProjectFileMutation,
   useDeleteProjectFileMutation,
+  useCreateProjectCostMutation,
+  useUpdateProjectCostMutation,
+  useDeleteProjectCostMutation,
 } from '../store/api'
 
 /* ============================================================================
@@ -45,6 +49,20 @@ const isImageFile = (f) =>
   f.kind === 'photo' || /\.(png|jpe?g|webp|gif|avif)$/i.test(f.file_name || f.file || '')
 
 const daysBetween = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000)
+
+// Cost-category palette: aligns with brief
+const COST_CATEGORY_PALETTE = {
+  materials: { pill: 'bg-lafoi-green/15 text-lafoi-green-dark border-lafoi-green/30', hex: '#1A8A2E' },
+  labour: { pill: 'bg-blue-50 text-blue-700 border-blue-200', hex: '#2563EB' },
+  transport: { pill: 'bg-amber-50 text-amber-700 border-amber-200', hex: '#D97706' },
+  permits: { pill: 'bg-purple-50 text-purple-700 border-purple-200', hex: '#9333EA' },
+  equipment: { pill: 'bg-teal-50 text-teal-700 border-teal-200', hex: '#0D9488' },
+  subcontract: { pill: 'bg-indigo-50 text-indigo-700 border-indigo-200', hex: '#4F46E5' },
+  overhead: { pill: 'bg-lafoi-gray-light text-lafoi-gray border-lafoi-dark/10', hex: '#6B7280' },
+  other: { pill: 'bg-lafoi-gray-light text-lafoi-gray border-lafoi-dark/10', hex: '#9CA3AF' },
+}
+
+const COST_CATEGORIES = ['materials', 'labour', 'transport', 'permits', 'equipment', 'subcontract', 'overhead', 'other']
 
 /* ============================================================================
    ProgressRing — animated SVG donut with hairline ticks at 25/50/75%
@@ -429,6 +447,8 @@ export default function ProjectDetail() {
   const { data: project, isLoading, refetch } = useGetProjectQuery(id)
   const [showUpdate, setShowUpdate] = useState(false)
   const [showFile, setShowFile] = useState(false)
+  const [showSketch, setShowSketch] = useState(false)
+  const [editingCost, setEditingCost] = useState(null)
 
   if (isLoading || !project) {
     return (
@@ -632,9 +652,14 @@ export default function ProjectDetail() {
       <section className="mt-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-2xl">Plans &amp; files</h2>
-          <PrimaryButton onClick={() => setShowFile(true)}>
-            <UploadSimple size={14} weight="bold" /> Upload file
-          </PrimaryButton>
+          <div className="flex items-center gap-2">
+            <SecondaryButton onClick={() => setShowSketch(true)}>
+              <PaintBrush size={14} weight="bold" /> Sketch
+            </SecondaryButton>
+            <PrimaryButton onClick={() => setShowFile(true)}>
+              <UploadSimple size={14} weight="bold" /> Upload file
+            </PrimaryButton>
+          </div>
         </div>
 
         {files.length === 0 && (
@@ -660,9 +685,416 @@ export default function ProjectDetail() {
         )}
       </section>
 
+      {/* 7. Costs — table + variance card */}
+      <section className="mt-10">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-display text-2xl">Costs &amp; budget</h2>
+          <PrimaryButton onClick={() => setEditingCost({})}>
+            <Plus size={14} weight="bold" /> Add cost
+          </PrimaryButton>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-7">
+            <CostsTable costs={project.costs || []} onEdit={setEditingCost} />
+          </div>
+          <div className="lg:col-span-5">
+            <BudgetVarianceCard
+              budget={project.budget}
+              costs={project.costs || []}
+              costsTotal={project.costs_total}
+            />
+          </div>
+        </div>
+      </section>
+
       <UpdateModal open={showUpdate} onClose={() => setShowUpdate(false)} project={project} onSaved={refetch} />
       <FileUploadModal open={showFile} onClose={() => setShowFile(false)} project={project} onSaved={refetch} />
+      <Modal open={showSketch} onClose={() => setShowSketch(false)} title="Sketch a plan" size="lg">
+        {showSketch && (
+          <DrawingCanvas
+            projectId={project.id}
+            onSaved={refetch}
+            onClose={() => setShowSketch(false)}
+          />
+        )}
+      </Modal>
+      <CostModal
+        open={!!editingCost}
+        onClose={() => setEditingCost(null)}
+        project={project}
+        editing={editingCost}
+        onSaved={refetch}
+      />
     </div>
+  )
+}
+
+/* ============================================================================
+   Costs table
+   ========================================================================= */
+function CostsTable({ costs, onEdit }) {
+  const [deleteCost] = useDeleteProjectCostMutation()
+  const handleDelete = async (cost) => {
+    if (!window.confirm(`Delete this cost (${fmtMoney(cost.amount, cost.currency)})?`)) return
+    try {
+      await deleteCost(cost.id).unwrap()
+      toast.success('Cost removed', { description: cost.description })
+    } catch (err) {
+      toast.error('Could not delete cost', { description: err?.data?.detail || 'Delete failed.' })
+    }
+  }
+
+  const columns = [
+    { key: 'incurred_on', label: 'Date', render: (r) => <span className="text-xs text-lafoi-gray font-sora tabular-nums">{fmtDate(r.incurred_on)}</span> },
+    {
+      key: 'description',
+      label: 'Description',
+      render: (r) => (
+        <div className="min-w-0">
+          <p className="font-sora text-sm font-medium text-lafoi-dark truncate">{r.description}</p>
+          {r.notes && <p className="text-[11px] text-lafoi-gray-medium truncate">{r.notes}</p>}
+        </div>
+      ),
+    },
+    {
+      key: 'category',
+      label: 'Category',
+      render: (r) => {
+        const cls = (COST_CATEGORY_PALETTE[r.category] || COST_CATEGORY_PALETTE.other).pill
+        return (
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${cls}`}>
+            {r.category_label || r.category}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'supplier',
+      label: 'Supplier',
+      render: (r) => <span className="text-xs text-lafoi-gray">{r.supplier || '—'}</span>,
+    },
+    {
+      key: 'amount',
+      label: 'Amount',
+      className: 'text-right',
+      cellClassName: 'text-right',
+      render: (r) => <span className="font-sora text-sm tabular-nums text-lafoi-dark">{fmtMoney(r.amount, r.currency || 'USD')}</span>,
+    },
+    {
+      key: 'actions',
+      label: '',
+      render: (r) => (
+        <div className="flex justify-end gap-1">
+          <button
+            onClick={(e) => { e.stopPropagation(); onEdit(r) }}
+            className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"
+            title="Edit"
+          >
+            <PencilSimple size={14} />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); handleDelete(r) }}
+            className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"
+            title="Delete"
+          >
+            <Trash size={14} />
+          </button>
+        </div>
+      ),
+    },
+  ]
+
+  return (
+    <DataTable
+      columns={columns}
+      rows={costs}
+      empty="No costs logged yet — track materials, labour and supplier invoices to power the variance card."
+    />
+  )
+}
+
+/* ============================================================================
+   Budget vs actual card — stacked bar + donut by category
+   ========================================================================= */
+function BudgetVarianceCard({ budget, costs, costsTotal }) {
+  const b = Number(budget || 0)
+  const total = costsTotal != null
+    ? Number(costsTotal)
+    : costs.reduce((s, c) => s + Number(c.amount || 0), 0)
+
+  if (!b || b <= 0) {
+    return (
+      <div className="rounded-2xl border border-lafoi-dark/10 bg-white p-6 h-full flex flex-col">
+        <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">Budget vs actual</p>
+        <p className="mt-3 font-display text-xl text-lafoi-dark">No budget set</p>
+        <p className="mt-2 text-xs text-lafoi-gray-medium leading-relaxed">
+          Set a budget on the project to enable variance tracking. The card will
+          show a stacked bar and category donut once you do.
+        </p>
+        {total > 0 && (
+          <div className="mt-4 px-3 py-2 rounded-lg bg-lafoi-cream/60 text-xs text-lafoi-gray">
+            Logged so far: <span className="font-sora font-medium text-lafoi-dark">{fmtMoney(total)}</span>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const overBudget = total > b
+  const remaining = b - total
+  const pct = Math.max(0, Math.min(100, (total / b) * 100))
+  const overflowPct = overBudget ? Math.min(100, ((total - b) / b) * 100) : 0
+  const barColor = overBudget ? '#DC2626' : '#1A8A2E'
+
+  // Category breakdown for donut
+  const byCat = costs.reduce((acc, c) => {
+    const k = c.category || 'other'
+    acc[k] = (acc[k] || 0) + Number(c.amount || 0)
+    return acc
+  }, {})
+  const catTotal = Object.values(byCat).reduce((s, v) => s + v, 0) || 1
+  const segs = Object.entries(byCat).map(([k, v]) => ({
+    key: k,
+    value: v,
+    pct: (v / catTotal) * 100,
+    color: (COST_CATEGORY_PALETTE[k] || COST_CATEGORY_PALETTE.other).hex,
+    label: k.charAt(0).toUpperCase() + k.slice(1),
+  })).sort((a, b) => b.value - a.value)
+
+  return (
+    <div className="rounded-2xl border border-lafoi-dark/10 bg-white p-6 h-full flex flex-col">
+      <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">Budget vs actual</p>
+
+      {/* Big numbers */}
+      <div className="mt-3 grid grid-cols-3 gap-3">
+        <div>
+          <p className="text-[10px] tracking-[0.22em] uppercase font-sora text-lafoi-gray-medium">Budget</p>
+          <p className="mt-1 font-display text-xl text-lafoi-dark tabular-nums leading-tight">{fmtMoney(b)}</p>
+        </div>
+        <div>
+          <p className="text-[10px] tracking-[0.22em] uppercase font-sora text-lafoi-gray-medium">Spent</p>
+          <p className={`mt-1 font-display text-xl tabular-nums leading-tight ${overBudget ? 'text-red-600' : 'text-lafoi-dark'}`}>
+            {fmtMoney(total)}
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] tracking-[0.22em] uppercase font-sora text-lafoi-gray-medium">
+            {overBudget ? 'Over budget' : 'Remaining'}
+          </p>
+          <p className={`mt-1 font-display text-xl tabular-nums leading-tight ${overBudget ? 'text-red-600' : 'text-lafoi-green-dark'}`}>
+            {fmtMoney(Math.abs(remaining))}
+          </p>
+        </div>
+      </div>
+
+      {/* Stacked bar */}
+      <div className="mt-5">
+        <div className="flex items-center justify-between text-[10px] tracking-[0.2em] uppercase font-sora text-lafoi-gray-medium mb-1.5">
+          <span>{Math.round(pct)}% of budget</span>
+          {overBudget && <span className="text-red-600">+{Math.round(overflowPct)}% over</span>}
+        </div>
+        <div className="relative h-3 rounded-full bg-lafoi-dark/8 overflow-hidden">
+          <motion.div
+            className="absolute inset-y-0 left-0"
+            style={{ background: barColor }}
+            initial={{ width: 0 }}
+            animate={{ width: `${pct}%` }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          />
+        </div>
+        {overBudget && (
+          <div className="relative mt-1.5 h-1 rounded-full bg-red-100 overflow-hidden">
+            <motion.div
+              className="absolute inset-y-0 left-0 bg-red-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min(100, overflowPct)}%` }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Donut by category */}
+      {segs.length > 0 && (
+        <div className="mt-5">
+          <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium mb-3">
+            Spend by category
+          </p>
+          <div className="flex items-center gap-5">
+            <CategoryDonut segments={segs} total={catTotal} />
+            <ul className="flex-1 grid grid-cols-1 gap-1.5 text-xs">
+              {segs.map((s) => (
+                <li key={s.key} className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-2 min-w-0">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: s.color }} />
+                    <span className="capitalize text-lafoi-dark truncate">{s.label}</span>
+                  </span>
+                  <span className="font-sora tabular-nums text-lafoi-gray">{fmtMoney(s.value)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CategoryDonut({ segments, total, size = 120 }) {
+  const stroke = 18
+  const r = (size - stroke) / 2
+  const c = 2 * Math.PI * r
+  let offset = 0
+  return (
+    <svg width={size} height={size} className="-rotate-90 shrink-0">
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(17,17,17,0.06)" strokeWidth={stroke} />
+      {segments.map((s) => {
+        const len = (s.value / total) * c
+        const dasharray = `${len} ${c - len}`
+        const dashoffset = -offset
+        offset += len
+        return (
+          <motion.circle
+            key={s.key}
+            cx={size / 2}
+            cy={size / 2}
+            r={r}
+            fill="none"
+            stroke={s.color}
+            strokeWidth={stroke}
+            strokeDasharray={dasharray}
+            initial={{ strokeDashoffset: c }}
+            animate={{ strokeDashoffset: dashoffset }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          />
+        )
+      })}
+    </svg>
+  )
+}
+
+/* ============================================================================
+   Cost modal
+   ========================================================================= */
+function CostModal({ open, onClose, project, editing, onSaved }) {
+  const isNew = editing && !editing.id
+  const [form, setForm] = useState({
+    description: '', category: 'materials', amount: '', currency: 'USD',
+    incurred_on: new Date().toISOString().slice(0, 10), supplier: '',
+    receipt_reference: '', notes: '',
+  })
+  const [error, setError] = useState('')
+  const [createCost, createState] = useCreateProjectCostMutation()
+  const [updateCost, updateState] = useUpdateProjectCostMutation()
+
+  React.useEffect(() => {
+    if (!open || !editing) return
+    if (editing.id) {
+      setForm({
+        description: editing.description || '',
+        category: editing.category || 'materials',
+        amount: editing.amount || '',
+        currency: editing.currency || 'USD',
+        incurred_on: editing.incurred_on || new Date().toISOString().slice(0, 10),
+        supplier: editing.supplier || '',
+        receipt_reference: editing.receipt_reference || '',
+        notes: editing.notes || '',
+      })
+    } else {
+      setForm({
+        description: '', category: 'materials', amount: '', currency: 'USD',
+        incurred_on: new Date().toISOString().slice(0, 10), supplier: '',
+        receipt_reference: '', notes: '',
+      })
+    }
+    setError('')
+  }, [open, editing])
+
+  if (!open) return null
+  const saving = createState.isLoading || updateState.isLoading
+
+  const handleSave = async (e) => {
+    e.preventDefault()
+    setError('')
+    const payload = {
+      project: project.id,
+      description: form.description.trim(),
+      category: form.category,
+      amount: form.amount,
+      currency: form.currency,
+      incurred_on: form.incurred_on,
+      supplier: form.supplier,
+      receipt_reference: form.receipt_reference,
+      notes: form.notes,
+    }
+    try {
+      if (isNew) {
+        await createCost(payload).unwrap()
+        toast.success('Cost logged', { description: payload.description })
+      } else {
+        await updateCost({ id: editing.id, ...payload }).unwrap()
+        toast.success('Cost updated', { description: payload.description })
+      }
+      onSaved?.()
+      onClose()
+    } catch (err) {
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
+      setError(msg)
+      toast.error('Could not save cost', { description: msg })
+    }
+  }
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={isNew ? 'Log a cost' : 'Edit cost'}
+      size="md"
+      footer={
+        <>
+          <SecondaryButton type="button" onClick={onClose}>Cancel</SecondaryButton>
+          <PrimaryButton form="cost-form" type="submit" disabled={saving}>
+            {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save cost'}
+          </PrimaryButton>
+        </>
+      }
+    >
+      <form id="cost-form" onSubmit={handleSave} className="grid sm:grid-cols-2 gap-4">
+        {error && <div className="sm:col-span-2 px-3 py-2 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>}
+        <Field label="Description" required className="sm:col-span-2">
+          <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required placeholder="e.g. 50 sheets of drywall" />
+        </Field>
+        <Field label="Category">
+          <Select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+            {COST_CATEGORIES.map((c) => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
+          </Select>
+        </Field>
+        <Field label="Incurred on" required>
+          <Input type="date" value={form.incurred_on} onChange={(e) => setForm({ ...form, incurred_on: e.target.value })} required />
+        </Field>
+        <Field label="Amount" required>
+          <Input type="number" step="0.01" min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
+        </Field>
+        <Field label="Currency">
+          <Select value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
+            <option value="USD">USD</option>
+            <option value="ZWL">ZWL</option>
+            <option value="ZAR">ZAR</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+          </Select>
+        </Field>
+        <Field label="Supplier">
+          <Input value={form.supplier} onChange={(e) => setForm({ ...form, supplier: e.target.value })} />
+        </Field>
+        <Field label="Receipt reference">
+          <Input value={form.receipt_reference} onChange={(e) => setForm({ ...form, receipt_reference: e.target.value })} />
+        </Field>
+        <Field label="Notes" className="sm:col-span-2">
+          <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} />
+        </Field>
+      </form>
+    </Modal>
   )
 }
 

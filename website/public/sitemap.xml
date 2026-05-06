@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Top-level public routes -->
+  <url><loc>https://lafoidesigns.co.zw/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/services</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/portfolio</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/contact</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/faq</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/careers</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/shop</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Service detail pages -->
+  <url><loc>https://lafoidesigns.co.zw/services/stretch-ceiling-installation</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/services/lighting-solutions</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/services/interior-design</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/services/flooring</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/services/tiling</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/services/epoxy-flooring</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/services/design-consultation</loc><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/services/maintenance-support</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Product detail pages -->
+  <url><loc>https://lafoidesigns.co.zw/products/matte-stretch-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/satin-stretch-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/gloss-lacquer-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/translucent-backlit-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/printed-photographic-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/3d-sculptural-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/acoustic-microperforated-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/mirror-finish-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/suede-velvet-membrane</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/linear-led-cove</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/rgbw-cove-strip</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/fiber-optic-starfield</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/recessed-spot-downlight</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/wall-washer-recessed</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/magnetic-track-system</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/aluminium-edge-profile</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/products/light-diffuser-panel</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Project case studies -->
+  <url><loc>https://lafoidesigns.co.zw/projects/borrowdale-private-residence</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects/hospitality-ballroom-refit</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects/belgravia-commercial-office</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects/highlands-spa-wellness</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects/borrowdale-mall-atrium</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects/avondale-villa-renovation</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects/borrowdale-fine-dining</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects/highlands-family-home</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/projects/borrowdale-flagship-retail</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+</urlset>

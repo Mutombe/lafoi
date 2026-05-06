@@ -18,7 +18,7 @@ import {
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
-import { useSEO } from '../utils/seo'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 import {
   getProjectBySlug,
   getRelatedProjects,
@@ -63,9 +63,17 @@ export default function ProjectDetail() {
   const [lightboxIdx, setLightboxIdx] = useState(null)
 
   useSEO({
-    title: project.title,
-    description: project.brief,
+    title: `${project.title} | La Foi Designs Project`,
+    description:
+      project.brief?.slice(0, 200) ||
+      `${project.title} — a stretch ceiling case study by La Foi Designs.`,
     path: `/projects/${project.slug}`,
+    image: project.hero,
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Projects', path: '/projects' },
+      { name: project.title, path: `/projects/${project.slug}` },
+    ]),
   })
 
   const closeLightbox = () => setLightboxIdx(null)
@@ -273,7 +281,7 @@ export default function ProjectDetail() {
                   <div className={i % 3 === 1 ? 'h-72 sm:h-80' : i % 3 === 2 ? 'h-96' : 'h-64 sm:h-72'}>
                     <OptimizedImage
                       src={g.src}
-                      alt={g.alt}
+                      alt={`${project.title} — ${g.vision || g.alt}`}
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                       fill
                       vision={g.vision || project.vision}
@@ -329,7 +337,7 @@ export default function ProjectDetail() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
                         src={p.image}
-                        alt={p.name}
+                        alt={`${p.name} — ${p.vision || `${p.finish} finish ${p.category.toLowerCase()}`}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={p.vision}
@@ -409,7 +417,7 @@ export default function ProjectDetail() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
                         src={p.thumb}
-                        alt={p.title}
+                        alt={`${p.title} — ${p.vision}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={p.vision}
@@ -474,7 +482,7 @@ export default function ProjectDetail() {
               </button>
               <img
                 src={project.gallery[lightboxIdx].src}
-                alt={project.gallery[lightboxIdx].alt}
+                alt={`${project.title} — ${project.gallery[lightboxIdx].vision || project.gallery[lightboxIdx].alt}`}
                 className="w-full h-auto max-h-[85vh] object-contain bg-black rounded-2xl"
               />
               {project.gallery[lightboxIdx].caption && (
@@ -547,7 +555,7 @@ function PrevNextLink({ direction, project }) {
       <div className="absolute inset-0">
         <OptimizedImage
           src={project.thumb}
-          alt={project.title}
+          alt={`${project.title} — ${project.vision}`}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           fill
           vision={project.vision}

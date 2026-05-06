@@ -20,7 +20,7 @@ import { linkifyProse } from '../utils/linkify.jsx'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import SectionDivider from '../components/ui/SectionDivider'
-import { useSEO } from '../utils/seo'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 
 const CONTACT_HERO_SLIDES = [
   {
@@ -37,10 +37,14 @@ const CONTACT_HERO_SLIDES = [
 
 export default function Contact() {
   useSEO({
-    title: 'Contact Us',
+    title: 'Contact La Foi Designs | Request a Stretch Ceiling Quote',
     description:
-      'Get in touch with La Foi Designs for a free consultation. Visit our Belgravia showroom or call us today.',
+      'Talk to La Foi Designs about stretch ceilings, architectural lighting, flooring, tiling, and epoxy systems in Harare and across Zimbabwe. +263 782 931 472 · admin@lafoidesigns.co.zw',
     path: '/contact',
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Contact', path: '/contact' },
+    ]),
   })
 
   return (

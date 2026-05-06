@@ -13,7 +13,8 @@ import {
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
-import { useSEO } from '../utils/seo'
+import MagneticCard from '../components/ui/MagneticCard'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 import { projects, projectCategories, totalStats } from '../data/site'
 import { linkifyProse } from '../utils/linkify.jsx'
 
@@ -42,10 +43,14 @@ export default function Projects() {
   const [filter, setFilter] = useState('All')
 
   useSEO({
-    title: 'Case Studies & Projects',
+    title: 'Stretch Ceiling Projects in Zimbabwe',
     description:
-      "Explore deep case studies of La Foi Designs' stretch ceiling and architectural lighting installations across Zimbabwe — residential, commercial, hospitality and retail transformations.",
+      'Featured stretch ceiling and lighting case studies — residential, commercial, and hospitality installations across Harare and beyond.',
     path: '/projects',
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Projects', path: '/projects' },
+    ]),
   })
 
   const filtered = useMemo(() => (filter === 'All' ? projects : projects.filter((p) => p.category === filter)), [filter])
@@ -147,7 +152,7 @@ export default function Projects() {
           <div className="lg:col-span-7 relative min-h-[400px] lg:min-h-0">
             <OptimizedImage
               src={featured.hero}
-              alt={featured.title}
+              alt={`${featured.title} — ${featured.vision}`}
               className="w-full h-full object-cover object-center"
               fill
               vision={featured.vision}
@@ -234,7 +239,9 @@ export default function Projects() {
                   key={proj.slug}
                   className={i === 0 ? 'sm:col-span-2 lg:col-span-2 lg:row-span-2' : ''}
                 >
-                  <ProjectCard project={proj} large={i === 0} aspect={i === 0 ? 'aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:h-full' : aspectRotation[(i + 1) % aspectRotation.length]} />
+                  <MagneticCard strength={0.18} tiltAmplitude={4} className="h-full">
+                    <ProjectCard project={proj} large={i === 0} aspect={i === 0 ? 'aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:h-full' : aspectRotation[(i + 1) % aspectRotation.length]} />
+                  </MagneticCard>
                 </StaggerItem>
               ))}
             </StaggerContainer>
@@ -281,7 +288,7 @@ export default function Projects() {
         <div className="absolute inset-0">
           <OptimizedImage
             src="https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=1920&q=80"
-            alt="Start your project"
+            alt="Spa interior with printed photographic sky stretch ceiling and warm lighting"
             className="w-full h-full object-cover"
             fill
             vision="Spa interior with photographic ceiling and warm lighting"
@@ -336,7 +343,7 @@ function ProjectCard({ project, large = false, aspect = 'aspect-[3/4]' }) {
     >
       <OptimizedImage
         src={project.thumb}
-        alt={project.title}
+        alt={`${project.title} — ${project.vision}`}
         className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         fill
         vision={project.vision}

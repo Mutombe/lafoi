@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useStore } from 'react-redux'
 import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, CircleNotch } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -8,6 +8,8 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '.
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import LineItemEditor from '../components/LineItemEditor'
+import useDebouncedValue from '../hooks/useDebouncedValue'
+import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
   useListQuotationsQuery,
   useCreateQuotationMutation,
@@ -28,13 +30,25 @@ const empty = () => ({
 export default function Quotations() {
   const store = useStore()
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebouncedValue(search, 300)
   const [statusFilter, setStatusFilter] = useState('')
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isLoading: isFirstLoad, isFetching } = useListQuotationsQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  useEffect(() => { setPage(1) }, [debouncedSearch])
+
+  const queryArgs = {
+    page,
+    page_size: pageSize,
+    search: debouncedSearch || undefined,
+    status: statusFilter || undefined,
+  }
+  const { data, isLoading: isFirstLoad, isFetching } = useListQuotationsQuery(queryArgs)
   const { data: projects } = useListProjectsQuery({ page_size: 200 })
+
+  const applyOptimistic = useOptimisticListUpdate('listQuotations', queryArgs)
 
   const [createQ, createState] = useCreateQuotationMutation()
   const [updateQ, updateState] = useUpdateQuotationMutation()
@@ -82,7 +96,14 @@ export default function Quotations() {
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete quotation ${row.number}?`)) return
     try {
-      await deleteQ(row.id).unwrap()
+      await applyOptimistic(
+        (draft) => {
+          if (!draft?.results) return
+          draft.results = draft.results.filter((r) => r.id !== row.id)
+          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
+        },
+        () => deleteQ(row.id).unwrap(),
+      )
       toast.success('Quotation deleted', { description: row.number })
     } catch (e) {
       toast.error('Could not delete quotation', { description: e?.data?.detail || 'Delete failed.' })
@@ -108,22 +129,22 @@ export default function Quotations() {
   }
 
   const columns = [
-    { key: 'number', label: 'Number', render: (r) => <span className="font-sora text-xs">{r.number}</span> },
-    { key: 'project', label: 'Project', render: (r) => (
+    { key: 'number', label: 'Number', priority: 'high', mobileLabel: 'Number', render: (r) => <span className="font-sora text-xs">{r.number}</span> },
+    { key: 'project', label: 'Project', priority: 'high', mobileLabel: 'Project', render: (r) => (
       <div>
         <p className="font-sora text-sm font-medium">{r.project_title || '—'}</p>
         <p className="text-xs text-lafoi-gray-medium">{r.customer_name}</p>
       </div>
     )},
-    { key: 'issue_date', label: 'Issue', render: (r) => fmtDate(r.issue_date) },
-    { key: 'total', label: 'Total', render: (r) => <span className="tabular-nums">{fmtMoney(r.total, r.currency)}</span> },
-    { key: 'status', label: 'Status', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_DOC} /> },
-    { key: 'actions', label: '', render: (r) => (
+    { key: 'issue_date', label: 'Issue', priority: 'low', render: (r) => fmtDate(r.issue_date) },
+    { key: 'total', label: 'Total', priority: 'medium', render: (r) => <span className="tabular-nums">{fmtMoney(r.total, r.currency)}</span> },
+    { key: 'status', label: 'Status', priority: 'high', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_DOC} /> },
+    { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
-        <button title="PDF" onClick={(e) => { e.stopPropagation(); handlePdf(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><DownloadSimple size={14} /></button>
-        <button title="Convert to invoice" onClick={(e) => { e.stopPropagation(); handleConvert(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green"><ArrowsClockwise size={14} /></button>
-        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><PencilSimple size={14} /></button>
-        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"><Trash size={14} /></button>
+        <button title="PDF" onClick={(e) => { e.stopPropagation(); handlePdf(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><DownloadSimple size={14} /></button>
+        <button title="Convert to invoice" onClick={(e) => { e.stopPropagation(); handleConvert(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><ArrowsClockwise size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
       </div>
     )},
   ]
@@ -144,7 +165,7 @@ export default function Quotations() {
               <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
               <input
                 value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search"
                 className="pl-9 pr-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body w-48"
               />
@@ -159,7 +180,13 @@ export default function Quotations() {
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No quotations yet."
-        pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
+        pagination={data ? {
+          count: data.count,
+          page,
+          pageSize,
+          onPageChange: setPage,
+          onPageSizeChange: (s) => { setPageSize(s); setPage(1) },
+        } : null}
       />
 
       <Modal

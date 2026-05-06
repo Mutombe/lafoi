@@ -16,7 +16,7 @@ import {
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
-import { useSEO } from '../utils/seo'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 import { products, productCategories, productApplications } from '../data/site'
 import { linkifyProse } from '../utils/linkify.jsx'
 
@@ -50,10 +50,14 @@ export default function Products() {
   const [query, setQuery] = useState('')
 
   useSEO({
-    title: 'Products & Materials',
+    title: 'Membranes, Lighting & Accessories Catalogue',
     description:
-      "Explore La Foi Designs' full range of premium PVC and fabric stretch ceiling membranes, architectural lighting and accessories. Matte, satin, gloss, translucent backlit, printed, 3D, acoustic, mirror and suede finishes.",
+      'Browse the La Foi Designs catalogue — PVC and fabric stretch membranes (matte, satin, gloss, translucent, printed, sculptural, acoustic, mirror, suede), lighting fixtures, and installation accessories.',
     path: '/products',
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Products', path: '/products' },
+    ]),
   })
 
   const filtered = useMemo(() => {
@@ -397,7 +401,7 @@ export default function Products() {
                 >
                   <OptimizedImage
                     src={b.img}
-                    alt={b.label}
+                    alt={`${b.label} application — ${b.vision}`}
                     className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                     fill
                     vision={b.vision}
@@ -425,7 +429,7 @@ export default function Products() {
         <div className="absolute inset-0">
           <OptimizedImage
             src="https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=1920&q=80"
-            alt="Speak to a La Foi specialist"
+            alt="Refined residential interior with stretch ceiling and integrated lighting"
             className="w-full h-full object-cover"
             fill
             vision="Refined interior with luxury ceiling design"
@@ -484,7 +488,7 @@ function FeaturedCardLarge({ product }) {
       <div className="absolute inset-0">
         <OptimizedImage
           src={product.image}
-          alt={product.name}
+          alt={`${product.name} — ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           fill
           vision={product.vision}
@@ -518,7 +522,7 @@ function FeaturedCardSmall({ product }) {
       <div className="relative w-1/3 sm:w-2/5 shrink-0 overflow-hidden">
         <OptimizedImage
           src={product.image}
-          alt={product.name}
+          alt={`${product.name} — ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           fill
           vision={product.vision}
@@ -549,7 +553,7 @@ function ProductCard({ product }) {
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         <OptimizedImage
           src={product.image}
-          alt={product.name}
+          alt={`${product.name} — ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           fill
           vision={product.vision}

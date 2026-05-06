@@ -8,6 +8,7 @@ import {
   Question, Newspaper, Users, Lightbulb, Palette,
   SquaresFour, Lightning, Star, Package, ShoppingBag,
   Storefront, SignIn, UserCircle,
+  PaintBrush, Stack, GridFour, Drop,
 } from '@phosphor-icons/react'
 import { useSelector } from 'react-redux'
 import { selectIsAuthenticated, selectCurrentUser } from '../../dashboard/store/authSlice'
@@ -25,12 +26,16 @@ const navGroups = [
     ],
   },
   {
-    label: 'Solutions',
+    label: 'Services',
     items: [
-      { name: 'Products', path: '/products', icon: Package, desc: 'Membranes, lighting & accessories' },
-      { name: 'Stretch Ceilings', path: '/services/stretch-ceilings', icon: SquaresFour, desc: 'Premium ceiling systems' },
-      { name: 'Custom Lighting', path: '/services/custom-lighting', icon: Lightbulb, desc: 'Architectural illumination' },
-      { name: 'All Services', path: '/services', icon: Palette, desc: 'Full service catalog' },
+      { name: 'Stretch Ceilings',  path: '/services/stretch-ceiling-installation', icon: SquaresFour, desc: 'Premium membrane systems' },
+      { name: 'Lighting Solutions', path: '/services/lighting-solutions',          icon: Lightbulb,   desc: 'Architectural illumination' },
+      { name: 'Interior Design',    path: '/services/interior-design',             icon: PaintBrush,  desc: 'Concept to completion' },
+      { name: 'Flooring',           path: '/services/flooring',                    icon: Stack,       desc: 'Hardwood, vinyl, parquet' },
+      { name: 'Tiling',             path: '/services/tiling',                      icon: GridFour,    desc: 'Porcelain, ceramic, mosaic' },
+      { name: 'Epoxy Flooring',     path: '/services/epoxy-flooring',              icon: Drop,        desc: 'Seamless resin systems' },
+      { name: 'All Services',       path: '/services',                             icon: Palette,     desc: 'Full service catalog' },
+      { name: 'Products',           path: '/products',                             icon: Package,     desc: 'Membranes, lighting & accessories' },
     ],
   },
   {
@@ -46,6 +51,10 @@ const navGroups = [
 const searchableContent = [
   { title: 'Stretch Ceiling Installation', path: '/services/stretch-ceiling-installation', section: 'Services', keywords: 'stretch ceiling pvc fabric membrane install' },
   { title: 'Lighting Solutions', path: '/services/lighting-solutions', section: 'Services', keywords: 'led lighting custom lights backlit fibre optic' },
+  { title: 'Interior Design', path: '/services/interior-design', section: 'Services', keywords: 'interior design space planning palette furniture mood board styling' },
+  { title: 'Flooring', path: '/services/flooring', section: 'Services', keywords: 'flooring hardwood vinyl laminate parquet engineered floor' },
+  { title: 'Tiling', path: '/services/tiling', section: 'Services', keywords: 'tiling tile porcelain ceramic mosaic marble splashback wet room' },
+  { title: 'Epoxy Flooring', path: '/services/epoxy-flooring', section: 'Services', keywords: 'epoxy resin floor seamless metallic flake industrial garage showroom' },
   { title: 'Design Consultation & Customisation', path: '/services/design-consultation', section: 'Services', keywords: 'design consultation custom site visit sampling' },
   { title: 'Maintenance & Support', path: '/services/maintenance-support', section: 'Services', keywords: 'maintenance support warranty cleaning repair' },
   { title: 'About La Foi Designs', path: '/about', section: 'Company', keywords: 'about company history story team' },
@@ -178,7 +187,7 @@ export default function Navbar() {
             {/* Logo */}
             <Link to="/" className="flex items-center group relative z-10">
               <Logo
-                tone={isLightText ? 'light' : 'dark'}
+                tone={!scrolled ? 'light' : 'dark'}
                 variant="wordmark"
                 imgClassName="h-9 sm:h-10 lg:h-11 w-auto group-hover:scale-105 transition-transform duration-300"
               />

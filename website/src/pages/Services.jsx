@@ -14,11 +14,16 @@ import {
   CheckCircle,
   DownloadSimple,
   FilePdf,
+  PaintBrush,
+  GridFour,
+  Squares,
+  Drop,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
-import { useSEO } from '../utils/seo'
+import AnimatedHeading from '../components/ui/AnimatedHeading'
+import { useSEO, breadcrumbsLd, serviceLd } from '../utils/seo'
 import { linkifyProse } from '../utils/linkify.jsx'
 
 const SERVICES_HERO_SLIDES = [
@@ -54,7 +59,7 @@ const allServices = [
       { label: 'Fire rating', detail: 'B-s1, d0 — self-extinguishing' },
       { label: 'Moisture proof', detail: 'Bathroom and kitchen rated' },
       { label: 'Installation', detail: '1–2 working days per room' },
-      { label: 'Warranty', detail: 'Manufacturer warranty up to 15 years' },
+      { label: 'Warranty', detail: 'Manufacturer warranty up to 10 years' },
     ],
     applications: [
       'Living rooms & bedrooms',
@@ -132,7 +137,7 @@ const allServices = [
     features: [
       { label: 'Cleaning', detail: 'Damp-wipe / microfibre, neutral pH' },
       { label: 'Service access', detail: 'Membrane removable, services preserved' },
-      { label: 'Warranty', detail: 'Manufacturer warranty up to 15 years' },
+      { label: 'Warranty', detail: 'Manufacturer warranty up to 10 years' },
       { label: 'Repair', detail: 'Localised re-stretch, panel swap' },
       { label: 'Lighting', detail: 'Driver and fixture replacement' },
       { label: 'Response', detail: 'Same-week site visit across Harare' },
@@ -148,19 +153,152 @@ const allServices = [
     image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1400&q=80',
     imageVision: 'Installer servicing a stretch membrane ceiling',
   },
+  {
+    slug: 'interior-design',
+    icon: PaintBrush,
+    title: 'Interior Design',
+    subtitle: 'Concept to completion',
+    hero: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
+    heroVision: 'Curated residential interior with layered lighting',
+    desc: 'A full interior design service taken from first conversation to final styling — space planning, material palettes, furniture specification, mood boards, and supervised installation. We co-ordinate every trade so the room arrives whole.',
+    features: [
+      { label: 'Concept design', detail: 'Mood boards, design intent, sample boards' },
+      { label: 'Space planning', detail: 'Measured drawings, circulation, zoning' },
+      { label: 'Material palette', detail: 'Wall, floor, ceiling, joinery curated together' },
+      { label: 'Furniture & FF&E', detail: 'Sourced, specified, scheduled' },
+      { label: 'Project supervision', detail: 'Single point of contact across trades' },
+      { label: 'Visualisation', detail: '3D renders before commitment' },
+    ],
+    applications: [
+      'New residential builds',
+      'Apartment refreshes',
+      'Boutique hotels',
+      'Restaurants & cafés',
+      'Office redesign',
+      'Retail showrooms',
+    ],
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=80',
+    imageVision: 'Editorial interior with custom millwork and lighting',
+  },
+  {
+    slug: 'flooring',
+    icon: Stack,
+    title: 'Flooring',
+    subtitle: 'Hardwood, vinyl, laminate, parquet',
+    hero: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1920&q=80',
+    heroVision: 'Wide-plank engineered hardwood in a modern living space',
+    desc: 'Specialist flooring installation across engineered hardwood, luxury vinyl plank, laminate, and patterned parquet. Substrate preparation, perimeter detailing and skirting transitions handled in-house — the floor reads as one continuous plane.',
+    features: [
+      { label: 'Engineered hardwood', detail: 'Oak, walnut, ash — wide and narrow plank' },
+      { label: 'Luxury vinyl (LVP)', detail: 'Waterproof, click-lock, premium underlay' },
+      { label: 'Laminate', detail: 'AC4–AC5 commercial-grade options' },
+      { label: 'Parquet patterns', detail: 'Chevron, herringbone, basket weave' },
+      { label: 'Substrate prep', detail: 'Self-levelling, moisture barrier, acoustic underlay' },
+      { label: 'Detailing', detail: 'Skirting, transitions, expansion joints' },
+    ],
+    applications: [
+      'Residential living spaces',
+      'Bedrooms & studies',
+      'Office floors',
+      'Retail & showroom',
+      'Restaurants & lounges',
+      'Heritage refurbishment',
+    ],
+    image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1400&q=80',
+    imageVision: 'Wide-plank wood floor in a contemporary interior',
+  },
+  {
+    slug: 'tiling',
+    icon: GridFour,
+    title: 'Tiling',
+    subtitle: 'Ceramic, porcelain, mosaic, marble',
+    hero: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1920&q=80',
+    heroVision: 'Large-format porcelain tiles in a modern kitchen',
+    desc: 'Precision tile work — large-format porcelain, ceramic, marble, glass mosaic. Wet-room tanking, splashbacks, feature walls, and pool surrounds. Diamond cutting in-house, anti-slip ratings on demand, grout palettes matched to the brief.',
+    features: [
+      { label: 'Large-format porcelain', detail: 'Up to 1.2 × 2.4 m slabs' },
+      { label: 'Ceramic & marble', detail: 'Bookmatched veining, polished or honed' },
+      { label: 'Glass mosaic', detail: 'Pool, splashback, feature walls' },
+      { label: 'Wet-room tanking', detail: 'Continuous waterproof membrane' },
+      { label: 'Diamond cutting', detail: 'In-house bench saw — clean mitres' },
+      { label: 'Anti-slip rated', detail: 'R10–R13 finishes for wet areas' },
+    ],
+    applications: [
+      'Bathrooms & wet rooms',
+      'Kitchens & splashbacks',
+      'Pool surrounds',
+      'Commercial floors',
+      'Feature walls',
+      'Outdoor patios',
+    ],
+    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400&q=80',
+    imageVision: 'Marble-look porcelain feature wall and floor',
+  },
+  {
+    slug: 'epoxy-flooring',
+    icon: Drop,
+    title: 'Epoxy Flooring',
+    subtitle: 'Seamless resin systems',
+    hero: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=1920&q=80',
+    heroVision: 'High-gloss epoxy resin floor in a showroom',
+    desc: 'Industrial-strength epoxy resin floors — seamless, hygienic, chemically resistant. Decorative metallic flake, solid colour, self-levelling, and food-grade variants. From garages to commercial kitchens to retail showrooms.',
+    features: [
+      { label: 'Self-levelling', detail: 'Mirror-flat finish, 2–4 mm thick' },
+      { label: 'Metallic flake', detail: 'Decorative shimmer for showrooms' },
+      { label: 'Anti-slip', detail: 'Quartz aggregate broadcast for wet areas' },
+      { label: 'Food-grade', detail: 'HACCP-compatible, seamless coving' },
+      { label: 'Chemical resistance', detail: 'Solvent, acid, oil-rated systems' },
+      { label: 'Cure time', detail: 'Walkable in 24h, full cure in 7 days' },
+    ],
+    applications: [
+      'Garages & workshops',
+      'Retail showrooms',
+      'Commercial kitchens',
+      'Healthcare facilities',
+      'Industrial floors',
+      'Modern residential',
+    ],
+    image: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=1400&q=80',
+    imageVision: 'Glossy epoxy floor with decorative metallic flake',
+  },
 ]
 
 export default function Services() {
   const { serviceSlug } = useParams()
   const activeService = serviceSlug ? allServices.find((s) => s.slug === serviceSlug) : null
 
-  useSEO({
-    title: activeService ? activeService.title : 'Our Services',
-    description: activeService
-      ? activeService.desc
-      : "Explore La Foi Designs' comprehensive ceiling and lighting solutions — stretch ceilings, custom lighting, printed ceilings, 3D forms, and acoustic solutions.",
-    path: activeService ? `/services/${activeService.slug}` : '/services',
-  })
+  useSEO(
+    activeService
+      ? {
+          title: `${activeService.title} | La Foi Designs`,
+          description: activeService.desc,
+          path: `/services/${activeService.slug}`,
+          image: activeService.hero,
+          jsonLd: [
+            breadcrumbsLd([
+              { name: 'Home', path: '/' },
+              { name: 'Services', path: '/services' },
+              { name: activeService.title, path: `/services/${activeService.slug}` },
+            ]),
+            serviceLd({
+              name: activeService.title,
+              slug: activeService.slug,
+              description: activeService.desc,
+              image: activeService.hero,
+            }),
+          ],
+        }
+      : {
+          title: 'Stretch Ceiling Solutions, Lighting, Interior Design | La Foi Designs',
+          description:
+            'Explore stretch ceilings, architectural lighting, interior design, flooring, tiling, epoxy floors, and consultation services for residential and commercial spaces in Zimbabwe.',
+          path: '/services',
+          jsonLd: breadcrumbsLd([
+            { name: 'Home', path: '/' },
+            { name: 'Services', path: '/services' },
+          ]),
+        }
+  )
 
   if (activeService) return <ServiceDetail service={activeService} />
 
@@ -192,13 +330,38 @@ function ServicesHero() {
   const bentoTiles = [
     { src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=900&q=80', label: 'Stretch ceilings', vision: 'Stretch membrane install' },
     { src: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=900&q=80', label: 'Lighting', vision: 'Architectural lighting' },
-    { src: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=900&q=80', label: 'Consultation', vision: 'Design consultation' },
-    { src: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=900&q=80', label: 'Maintenance', vision: 'Maintenance & support' },
+    { src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80', label: 'Interior design', vision: 'Curated residential interior' },
+    { src: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=900&q=80', label: 'Tiling & flooring', vision: 'Large-format porcelain tiles' },
   ]
 
   return (
     <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-16 lg:pb-24 overflow-hidden">
       <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-40 pointer-events-none" />
+
+      {/* Membrane stretch overlay — a faint horizontal grid of subtly arched lines.
+          Tensions in on mount (1.4s, scaleY 1.04 → 1) then breathes in a slow loop. */}
+      <motion.svg
+        aria-hidden
+        className="absolute inset-0 w-full h-full pointer-events-none mix-blend-multiply"
+        initial={{ scaleY: 1.04, opacity: 0 }}
+        animate={{ scaleY: 1, opacity: 0.22 }}
+        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+        preserveAspectRatio="none"
+        viewBox="0 0 1000 600"
+      >
+        <motion.g
+          stroke="#1A8A2E"
+          strokeWidth="0.5"
+          fill="none"
+          animate={{ y: [0, -2, 0] }}
+          transition={{ duration: 7, ease: 'easeInOut', repeat: Infinity }}
+        >
+          {Array.from({ length: 14 }).map((_, i) => {
+            const y = (i + 1) * (600 / 15)
+            return <path key={i} d={`M0 ${y} Q 500 ${y - 4} 1000 ${y}`} opacity={0.45} />
+          })}
+        </motion.g>
+      </motion.svg>
 
       {/* Volume artifact */}
       <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
@@ -230,31 +393,46 @@ function ServicesHero() {
               className="font-display text-lafoi-dark tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[5.4rem] xl:text-[5.8rem]"
               style={{ fontVariationSettings: '"opsz" 144' }}
             >
-              <span className="block font-light">Ceilings, light,</span>
-              <span className="block italic font-light text-lafoi-green">and the craft between.</span>
+              <AnimatedHeading
+                as="span"
+                text="Ceilings, light,"
+                className="block font-light"
+                staggerChildren={0.06}
+              />
+              <AnimatedHeading
+                as="span"
+                text="and the craft between."
+                className="block italic font-light text-lafoi-green"
+                delay={0.2}
+                staggerChildren={0.06}
+              />
             </h1>
 
             <p className="mt-7 max-w-md text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
               {linkifyProse(
-                'Four services, each engineered to stand alone — and designed to work together. From the stretch membrane overhead to the architectural lighting calibrated within it.'
+                'Eight services, each engineered to stand alone — designed to work together. From the stretch membrane overhead, the architectural lighting calibrated within it, and now the floor, wall, and finish that meet them.'
               )}
             </p>
 
-            {/* Bullet list of the 4 real services — each links to its detail page */}
-            <ul className="mt-8 space-y-3 border-t border-lafoi-dark/10 pt-7">
+            {/* Bullet list of all services — each links to its detail page */}
+            <ul className="mt-8 space-y-2.5 border-t border-lafoi-dark/10 pt-7">
               {[
                 { name: 'Stretch Ceiling Installation', slug: 'stretch-ceiling-installation' },
                 { name: 'Lighting Solutions', slug: 'lighting-solutions' },
+                { name: 'Interior Design', slug: 'interior-design' },
+                { name: 'Flooring', slug: 'flooring' },
+                { name: 'Tiling', slug: 'tiling' },
+                { name: 'Epoxy Flooring', slug: 'epoxy-flooring' },
                 { name: 'Design Consultation & Customisation', slug: 'design-consultation' },
                 { name: 'Maintenance & Support', slug: 'maintenance-support' },
               ].map((s, i) => (
-                <li key={s.slug} className="flex items-baseline gap-4 py-2 border-b border-lafoi-dark/8">
+                <li key={s.slug} className="flex items-baseline gap-4 py-1.5 border-b border-lafoi-dark/8">
                   <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium shrink-0 w-6">
-                    0{i + 1}
+                    {String(i + 1).padStart(2, '0')}
                   </span>
                   <Link
                     to={`/services/${s.slug}`}
-                    className="font-display font-normal text-lafoi-dark text-lg lg:text-xl prose-link prose-link-arrow"
+                    className="font-display font-normal text-lafoi-dark text-base lg:text-lg prose-link prose-link-arrow"
                   >
                     {s.name}
                   </Link>
@@ -303,7 +481,7 @@ function ServicesHero() {
                 >
                   <OptimizedImage
                     src={t.src}
-                    alt={t.label}
+                    alt={`${t.label} service preview — ${t.vision}`}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                     fill
                     vision={t.vision}
@@ -396,7 +574,7 @@ function ServiceRow({ service, index, total }) {
         <div className="relative aspect-[5/4] rounded-3xl overflow-hidden bg-lafoi-dark group">
           <OptimizedImage
             src={service.image}
-            alt={service.title}
+            alt={`${service.title} — ${service.imageVision}`}
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             fill
             vision={service.imageVision}
@@ -609,7 +787,7 @@ function WhyChooseUs() {
     },
     {
       title: 'Full warranty',
-      desc: 'Every installation is backed by a 15-year manufacturer warranty and 2-year workmanship cover.',
+      desc: 'Every installation is backed by a 10-year manufacturer warranty and 2-year workmanship cover.',
       icon: Sparkle,
     },
   ]
@@ -674,7 +852,7 @@ function ServicesCTA() {
       <div className="absolute inset-0">
         <OptimizedImage
           src="https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2000&q=85"
-          alt="Master suite with stretch ceiling"
+          alt="Master suite with luminous stretch ceiling and warm perimeter lighting"
           className="w-full h-full object-cover object-center"
           fill
           vision="Master suite with luminous stretch ceiling — invitation to specify"
@@ -751,15 +929,15 @@ function ServicesCTA() {
 
 function ServiceDetail({ service }) {
   const detailSlides = [
-    { src: service.hero, alt: service.title, vision: service.heroVision },
+    { src: service.hero, alt: `${service.title} service hero — ${service.heroVision}`, vision: service.heroVision },
     {
       src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
-      alt: 'Luminous lobby ceiling',
+      alt: 'Luminous backlit translucent stretch ceiling spanning a hospitality lobby',
       vision: 'Luminous backlit ceiling',
     },
     {
       src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
-      alt: 'Master suite with stretch ceiling',
+      alt: 'Master suite with stretch ceiling and integrated cove lighting',
       vision: 'Suite ceiling and lighting',
     },
   ]
@@ -918,7 +1096,7 @@ function ServiceDetail({ service }) {
                 <div className="relative aspect-[16/9] rounded-3xl overflow-hidden bg-lafoi-dark mb-12">
                   <OptimizedImage
                     src={service.image}
-                    alt={service.title}
+                    alt={`${service.title} — ${service.imageVision}`}
                     className="w-full h-full object-cover object-center"
                     fill
                     vision={service.imageVision}
@@ -1019,7 +1197,7 @@ function ServiceDetail({ service }) {
                       </p>
                     </div>
                     <p className="font-body font-light text-xs text-lafoi-gray leading-relaxed">
-                      Manufacturer warranty up to 15 years. Premium PVC and fabric membrane. Class B fire
+                      Manufacturer warranty up to 10 years. Premium PVC and fabric membrane. Class B fire
                       performance.
                     </p>
                   </div>

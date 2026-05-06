@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -7,6 +7,8 @@ import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton, DangerButton } from '../components/FormField'
+import useDebouncedValue from '../hooks/useDebouncedValue'
+import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
   useListCustomersQuery,
   useCreateCustomerMutation,
@@ -21,11 +23,19 @@ const empty = {
 
 export default function Customers() {
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebouncedValue(search, 300)
   const [editing, setEditing] = useState(null) // null | {} (for new) | row
   const [error, setError] = useState('')
 
-  const { data, isLoading: isFirstLoad, isFetching } = useListCustomersQuery({ page, search: search || undefined })
+  // Reset to page 1 only when the debounced query actually changes.
+  useEffect(() => { setPage(1) }, [debouncedSearch])
+
+  const queryArgs = { page, page_size: pageSize, search: debouncedSearch || undefined }
+  const { data, isLoading: isFirstLoad, isFetching } = useListCustomersQuery(queryArgs)
+
+  const applyOptimistic = useOptimisticListUpdate('listCustomers', queryArgs)
 
   const [createCustomer, createState] = useCreateCustomerMutation()
   const [updateCustomer, updateState] = useUpdateCustomerMutation()
@@ -68,7 +78,14 @@ export default function Customers() {
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete customer “${row.name}”? This cannot be undone.`)) return
     try {
-      await deleteCustomer(row.id).unwrap()
+      await applyOptimistic(
+        (draft) => {
+          if (!draft?.results) return
+          draft.results = draft.results.filter((r) => r.id !== row.id)
+          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
+        },
+        () => deleteCustomer(row.id).unwrap(),
+      )
       toast.success('Customer removed', { description: row.name })
     } catch (e) {
       const msg = e?.data?.detail || 'Delete failed.'
@@ -77,21 +94,21 @@ export default function Customers() {
   }
 
   const columns = [
-    { key: 'name', label: 'Customer', render: (r) => (
+    { key: 'name', label: 'Customer', priority: 'high', mobileLabel: 'Customer', render: (r) => (
       <div>
         <p className="font-sora text-sm font-medium">{r.name}</p>
         <p className="text-xs text-lafoi-gray-medium">{r.contact_person || r.email || r.phone || '—'}</p>
       </div>
     )},
-    { key: 'customer_type', label: 'Type', render: (r) => <span className="capitalize text-xs font-sora">{r.customer_type}</span> },
-    { key: 'city', label: 'City' },
-    { key: 'phone', label: 'Phone' },
-    { key: 'project_count', label: 'Projects', render: (r) => r.project_count ?? 0 },
-    { key: 'created_at', label: 'Added', render: (r) => fmtDate(r.created_at) },
-    { key: 'actions', label: '', render: (r) => (
+    { key: 'customer_type', label: 'Type', priority: 'medium', render: (r) => <span className="capitalize text-xs font-sora">{r.customer_type}</span> },
+    { key: 'city', label: 'City', priority: 'low' },
+    { key: 'phone', label: 'Phone', priority: 'medium' },
+    { key: 'project_count', label: 'Projects', priority: 'medium', mobileLabel: 'Projects', render: (r) => r.project_count ?? 0 },
+    { key: 'created_at', label: 'Added', priority: 'low', render: (r) => fmtDate(r.created_at) },
+    { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
-        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><PencilSimple size={14} /></button>
-        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"><Trash size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
       </div>
     )},
   ]
@@ -108,7 +125,7 @@ export default function Customers() {
               <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
               <input
                 value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search customers"
                 className="pl-9 pr-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body w-56"
               />
@@ -123,7 +140,13 @@ export default function Customers() {
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No customers yet — add your first."
-        pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
+        pagination={data ? {
+          count: data.count,
+          page,
+          pageSize,
+          onPageChange: setPage,
+          onPageSizeChange: (s) => { setPageSize(s); setPage(1) },
+        } : null}
       />
 
       <Modal

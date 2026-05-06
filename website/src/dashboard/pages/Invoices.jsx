@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useStore } from 'react-redux'
 import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Receipt as ReceiptIcon, CircleNotch } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -8,6 +8,8 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '.
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import LineItemEditor from '../components/LineItemEditor'
+import useDebouncedValue from '../hooks/useDebouncedValue'
+import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
   useListInvoicesQuery,
   useCreateInvoiceMutation,
@@ -28,14 +30,26 @@ const empty = () => ({
 export default function Invoices() {
   const store = useStore()
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebouncedValue(search, 300)
   const [statusFilter, setStatusFilter] = useState('')
   const [editing, setEditing] = useState(null)
   const [paying, setPaying] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isLoading: isFirstLoad, isFetching } = useListInvoicesQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  useEffect(() => { setPage(1) }, [debouncedSearch])
+
+  const queryArgs = {
+    page,
+    page_size: pageSize,
+    search: debouncedSearch || undefined,
+    status: statusFilter || undefined,
+  }
+  const { data, isLoading: isFirstLoad, isFetching } = useListInvoicesQuery(queryArgs)
   const { data: projects } = useListProjectsQuery({ page_size: 200 })
+
+  const applyOptimistic = useOptimisticListUpdate('listInvoices', queryArgs)
 
   const [createI, createState] = useCreateInvoiceMutation()
   const [updateI, updateState] = useUpdateInvoiceMutation()
@@ -83,7 +97,14 @@ export default function Invoices() {
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete invoice ${row.number}?`)) return
     try {
-      await deleteI(row.id).unwrap()
+      await applyOptimistic(
+        (draft) => {
+          if (!draft?.results) return
+          draft.results = draft.results.filter((r) => r.id !== row.id)
+          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
+        },
+        () => deleteI(row.id).unwrap(),
+      )
       toast.success('Invoice deleted', { description: row.number })
     } catch (e) {
       toast.error('Could not delete invoice', { description: e?.data?.detail || 'Delete failed.' })
@@ -119,24 +140,24 @@ export default function Invoices() {
   }
 
   const columns = [
-    { key: 'number', label: 'Number', render: (r) => <span className="font-sora text-xs">{r.number}</span> },
-    { key: 'project', label: 'Project', render: (r) => (
+    { key: 'number', label: 'Number', priority: 'high', mobileLabel: 'Number', render: (r) => <span className="font-sora text-xs">{r.number}</span> },
+    { key: 'project', label: 'Project', priority: 'high', mobileLabel: 'Project', render: (r) => (
       <div>
         <p className="font-sora text-sm font-medium">{r.project_title || '—'}</p>
         <p className="text-xs text-lafoi-gray-medium">{r.customer_name}</p>
       </div>
     )},
-    { key: 'issue_date', label: 'Issue', render: (r) => fmtDate(r.issue_date) },
-    { key: 'due_date', label: 'Due', render: (r) => fmtDate(r.due_date) },
-    { key: 'total', label: 'Total', render: (r) => <span className="tabular-nums">{fmtMoney(r.total, r.currency)}</span> },
-    { key: 'balance_due', label: 'Balance', render: (r) => <span className="tabular-nums">{fmtMoney(r.balance_due, r.currency)}</span> },
-    { key: 'status', label: 'Status', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_DOC} /> },
-    { key: 'actions', label: '', render: (r) => (
+    { key: 'issue_date', label: 'Issue', priority: 'desktop', render: (r) => fmtDate(r.issue_date) },
+    { key: 'due_date', label: 'Due', priority: 'medium', render: (r) => fmtDate(r.due_date) },
+    { key: 'total', label: 'Total', priority: 'medium', render: (r) => <span className="tabular-nums">{fmtMoney(r.total, r.currency)}</span> },
+    { key: 'balance_due', label: 'Balance', priority: 'medium', mobileLabel: 'Balance', render: (r) => <span className="tabular-nums">{fmtMoney(r.balance_due, r.currency)}</span> },
+    { key: 'status', label: 'Status', priority: 'high', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_DOC} /> },
+    { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
-        <button title="PDF" onClick={(e) => { e.stopPropagation(); handlePdf(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><DownloadSimple size={14} /></button>
-        <button title="Record payment" onClick={(e) => { e.stopPropagation(); setPaying({ invoice: r, amount: r.balance_due, method: 'bank_transfer', reference: '', received_at: new Date().toISOString().slice(0, 10), notes: '' }) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green"><ReceiptIcon size={14} /></button>
-        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><PencilSimple size={14} /></button>
-        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"><Trash size={14} /></button>
+        <button title="PDF" onClick={(e) => { e.stopPropagation(); handlePdf(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><DownloadSimple size={14} /></button>
+        <button title="Record payment" onClick={(e) => { e.stopPropagation(); setPaying({ invoice: r, amount: r.balance_due, method: 'bank_transfer', reference: '', received_at: new Date().toISOString().slice(0, 10), notes: '' }) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><ReceiptIcon size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
       </div>
     )},
   ]
@@ -157,7 +178,7 @@ export default function Invoices() {
               <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
               <input
                 value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search"
                 className="pl-9 pr-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body w-48"
               />
@@ -172,7 +193,13 @@ export default function Invoices() {
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No invoices yet."
-        pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
+        pagination={data ? {
+          count: data.count,
+          page,
+          pageSize,
+          onPageChange: setPage,
+          onPageSizeChange: (s) => { setPageSize(s); setPage(1) },
+        } : null}
       />
 
       <Modal

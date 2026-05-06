@@ -17,15 +17,23 @@ import {
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import SectionDivider from '../components/ui/SectionDivider'
-import { useSEO } from '../utils/seo'
+import ScrollReveal from '../components/ui/ScrollReveal'
+import AnimatedHeading from '../components/ui/AnimatedHeading'
+import KineticTextStrip from '../components/ui/KineticTextStrip'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 import { linkifyProse } from '../utils/linkify.jsx'
 
 export default function About() {
   useSEO({
-    title: 'Our Story',
+    title: 'About La Foi Designs | Stretch Ceiling Experts',
     description:
-      "Learn about La Foi Designs — Zimbabwe's first stretch ceiling provider. Our journey, values, and commitment to excellence.",
+      "Learn about La Foi Designs — Zimbabwe's stretch ceiling and architectural lighting specialist. Founded January 2024 in Belgravia, Harare. Our team, our standards, our approach.",
     path: '/about',
+    image: '/brand/images/30.png',
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'About', path: '/about' },
+    ]),
   })
 
   return (
@@ -41,6 +49,7 @@ export default function About() {
       <StoryTimeline />
       <SectionDivider shape="organic-blob" from="dark" to="cream" />
       <Values />
+      <KineticTextStrip variant="dark" speed={70} />
       <SectionDivider shape="s-curve" from="cream" to="cream" />
       <Partners />
       <SectionDivider shape="big-wave" from="cream" to="dark" />
@@ -92,8 +101,19 @@ function AboutHero() {
               className="font-display text-lafoi-dark tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem] xl:text-[6rem]"
               style={{ fontVariationSettings: '"opsz" 144' }}
             >
-              <span className="block font-light">A studio of</span>
-              <span className="block italic font-light text-lafoi-green">attention.</span>
+              <AnimatedHeading
+                as="span"
+                text="A studio of"
+                className="block font-light"
+                staggerChildren={0.06}
+              />
+              <AnimatedHeading
+                as="span"
+                text="attention."
+                className="block italic font-light text-lafoi-green"
+                delay={0.18}
+                staggerChildren={0.06}
+              />
             </h1>
 
             <div className="mt-8 space-y-5 font-body font-light text-base lg:text-[17px] text-lafoi-gray leading-[1.7] max-w-md">
@@ -397,15 +417,17 @@ function Mission() {
             Restrained parallax: drifts ~90px while the left dark plate stays still. */}
         <motion.div
           className="relative order-1 lg:order-2 aspect-[4/3] lg:aspect-auto lg:min-h-full will-change-transform"
-          style={{ y: photoY, scale: 1.06 }}
+          style={{ y: photoY }}
         >
-          <OptimizedImage
-            src="/brand/images/30.png"
-            alt="La Foi Designs team at a branded event in Harare"
-            className="w-full h-full object-cover object-center"
-            fill
-            vision="The team behind every install — Belgravia, Harare"
-          />
+          <ScrollReveal className="absolute inset-0">
+            <OptimizedImage
+              src="/brand/images/30.png"
+              alt="La Foi Designs team at a branded event in Harare"
+              className="w-full h-full object-cover object-center"
+              fill
+              vision="The team behind every install — Belgravia, Harare"
+            />
+          </ScrollReveal>
         </motion.div>
       </div>
     </section>
@@ -676,7 +698,7 @@ function ValueImageCard({ v, index, wide = false }) {
     >
       <OptimizedImage
         src={v.image}
-        alt={v.title}
+        alt={v.vision || `La Foi Designs ${v.title.toLowerCase()} — studio principle`}
         className="w-full h-full object-cover object-center"
         fill
         vision={v.vision}
@@ -732,8 +754,8 @@ function Partners() {
   const partners = [
     {
       country: 'Pioneer',
-      role: 'A regional first',
-      title: 'Southern Africa’s first',
+      role: 'A Zimbabwean first',
+      title: 'Zimbabwe’s first',
       desc: 'La Foi Designs introduced stretch ceilings to Zimbabwe — and remains the country’s leading installer. The finish is everywhere in Europe; we made it specifiable here.',
       features: [
         { label: 'Fast', detail: '1–2 days to install vs. days for gypsum' },
@@ -857,7 +879,7 @@ function Team() {
     { name: 'Takudzwa Mhembere', role: 'Managing Director' },
     { name: 'Ashley Tafirenyika', role: 'Operations Manager' },
     { name: 'Tendekayi K. Mavunga', role: 'Projects Director' },
-    { name: 'Charmaine Mumbamarwo', role: 'Marketing Manager' },
+    { name: 'Mrs Mhembere', role: 'Head of Marketing' },
   ]
 
   return (

@@ -1,16 +1,20 @@
-import React, { useState } from 'react'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch } from '@phosphor-icons/react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch, Bank } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney, StatusBadge } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
+import useDebouncedValue from '../hooks/useDebouncedValue'
+import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
   useListEmployeesQuery,
   useCreateEmployeeMutation,
   useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,
+  useListEmployeeLoansQuery,
 } from '../store/api'
 
 const empty = () => ({
@@ -29,13 +33,39 @@ const STATUS_PALETTE_EMP = {
 }
 
 export default function Employees() {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebouncedValue(search, 300)
   const [statusFilter, setStatusFilter] = useState('')
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isLoading: isFirstLoad, isFetching } = useListEmployeesQuery({ page, search: search || undefined, status: statusFilter || undefined })
+  useEffect(() => { setPage(1) }, [debouncedSearch])
+
+  const queryArgs = {
+    page,
+    page_size: pageSize,
+    search: debouncedSearch || undefined,
+    status: statusFilter || undefined,
+  }
+  const { data, isLoading: isFirstLoad, isFetching } = useListEmployeesQuery(queryArgs)
+  const applyOptimistic = useOptimisticListUpdate('listEmployees', queryArgs)
+  // Pull active loans once and aggregate per-employee for the Loans column.
+  const { data: loansData } = useListEmployeeLoansQuery({ status: 'active' })
+  const loanByEmployee = useMemo(() => {
+    const m = new Map()
+    const rows = loansData?.results || loansData || []
+    rows.forEach((l) => {
+      const empId = l.employee
+      const cur = m.get(empId) || { count: 0, balance: 0, currency: l.currency || 'USD' }
+      cur.count += 1
+      cur.balance += Number(l.balance) || 0
+      m.set(empId, cur)
+    })
+    return m
+  }, [loansData])
 
   const [createE, createState] = useCreateEmployeeMutation()
   const [updateE, updateState] = useUpdateEmployeeMutation()
@@ -81,7 +111,14 @@ export default function Employees() {
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete employee ${row.full_name}? This cannot be undone.`)) return
     try {
-      await deleteE(row.id).unwrap()
+      await applyOptimistic(
+        (draft) => {
+          if (!draft?.results) return
+          draft.results = draft.results.filter((r) => r.id !== row.id)
+          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
+        },
+        () => deleteE(row.id).unwrap(),
+      )
       toast.success('Employee removed', { description: row.full_name })
     } catch (e) {
       toast.error('Could not delete employee', { description: e?.data?.detail || 'Delete failed.' })
@@ -97,21 +134,33 @@ export default function Employees() {
   const addItem = (key) => setEditing({ ...editing, [key]: [...(editing[key] || []), { name: '', amount: 0 }] })
 
   const columns = [
-    { key: 'employee_code', label: 'Code', render: (r) => <span className="font-sora text-xs">{r.employee_code}</span> },
-    { key: 'full_name', label: 'Name', render: (r) => (
+    { key: 'employee_code', label: 'Code', priority: 'medium', render: (r) => <span className="font-sora text-xs">{r.employee_code}</span> },
+    { key: 'full_name', label: 'Name', priority: 'high', mobileLabel: 'Name', render: (r) => (
       <div>
-        <p className="font-sora text-sm font-medium">{r.full_name}</p>
+        <Link to={`/dashboard/employees/${r.id}`} onClick={(e) => e.stopPropagation()} className="font-sora text-sm font-medium hover:text-lafoi-green">{r.full_name}</Link>
         <p className="text-xs text-lafoi-gray-medium">{r.job_title || '—'}</p>
       </div>
     )},
-    { key: 'department', label: 'Department' },
-    { key: 'base_salary', label: 'Base salary', render: (r) => <span className="tabular-nums">{fmtMoney(r.base_salary, r.currency)}</span> },
-    { key: 'hire_date', label: 'Hired', render: (r) => fmtDate(r.hire_date) },
-    { key: 'status', label: 'Status', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_EMP} /> },
-    { key: 'actions', label: '', render: (r) => (
+    { key: 'department', label: 'Department', priority: 'low' },
+    { key: 'base_salary', label: 'Base salary', priority: 'medium', mobileLabel: 'Salary', render: (r) => <span className="tabular-nums">{fmtMoney(r.base_salary, r.currency)}</span> },
+    { key: 'loans', label: 'Loans', priority: 'desktop', render: (r) => {
+      const info = loanByEmployee.get(r.id)
+      if (!info) return <span className="text-lafoi-gray-medium text-xs">—</span>
+      return (
+        <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs">
+          <Bank size={11} className="text-blue-700" />
+          <span className="font-sora text-blue-700">
+            {info.count} active · {fmtMoney(info.balance, info.currency)}
+          </span>
+        </div>
+      )
+    }},
+    { key: 'hire_date', label: 'Hired', priority: 'desktop', render: (r) => fmtDate(r.hire_date) },
+    { key: 'status', label: 'Status', priority: 'high', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_EMP} /> },
+    { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
-        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><PencilSimple size={14} /></button>
-        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"><Trash size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
       </div>
     )},
   ]
@@ -132,7 +181,7 @@ export default function Employees() {
               <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
               <input
                 value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search"
                 className="pl-9 pr-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body w-48"
               />
@@ -146,8 +195,15 @@ export default function Employees() {
         columns={columns}
         rows={data?.results || []}
         isLoading={isFirstLoad}
+        onRowClick={(r) => navigate(`/dashboard/employees/${r.id}`)}
         empty="No employees yet."
-        pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
+        pagination={data ? {
+          count: data.count,
+          page,
+          pageSize,
+          onPageChange: setPage,
+          onPageSizeChange: (s) => { setPageSize(s); setPage(1) },
+        } : null}
       />
 
       <Modal

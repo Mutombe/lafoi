@@ -13,7 +13,7 @@ import {
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import SectionDivider from '../components/ui/SectionDivider'
-import { useSEO } from '../utils/seo'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 import { linkifyProse } from '../utils/linkify.jsx'
 import { shopProducts, shopCategories, featuredShopProducts } from '../data/shop'
 import { useCart } from '../store/cart'
@@ -29,10 +29,14 @@ export default function Shop() {
   const [category, setCategory] = useState('All')
 
   useSEO({
-    title: 'Shop — Companion Pieces',
+    title: 'Shop — Lamps, Humidifiers & Companion Pieces',
     description:
-      'A curated selection of lamps, humidifiers and care kits chosen to live alongside La Foi stretch ceilings. Order via WhatsApp; delivery in Harare and across Zimbabwe.',
+      'A curated companion line of lamps, humidifiers, lighting accessories, and care kits to live alongside your stretch ceiling. Order via WhatsApp.',
     path: '/shop',
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Shop', path: '/shop' },
+    ]),
   })
 
   const filtered = useMemo(() => {
@@ -155,7 +159,7 @@ function ShopHero() {
                 >
                   <OptimizedImage
                     src={p.images[0]}
-                    alt={p.name}
+                    alt={`${p.name} — ${p.category} sample piece from La Foi Designs`}
                     fill
                     className="hover:scale-105 transition-transform duration-700"
                     vision={`${p.name} — featured shop piece`}
@@ -273,7 +277,7 @@ function ProductCard({ product }) {
       <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-lafoi-dark/[0.04] mb-4">
         <OptimizedImage
           src={product.images[0]}
-          alt={product.name}
+          alt={`${product.name} — ${product.category} sample piece from La Foi Designs`}
           fill
           className="group-hover:scale-105 transition-transform duration-700 ease-out"
           vision={`${product.name} — ${product.category} sample piece`}

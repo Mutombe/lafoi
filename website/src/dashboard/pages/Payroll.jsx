@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
-import { useStore } from 'react-redux'
-import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, Sparkle, CircleNotch } from '@phosphor-icons/react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useStore } from 'react-redux'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import {
+  ArrowLeft, ArrowRight, Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Download, Eye,
+  ArrowsClockwise, Sparkle, CircleNotch, Check, Lock, ArrowCounterClockwise,
+} from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
@@ -9,7 +12,10 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_PAYROLL } fro
 import Modal from '../components/Modal'
 import Skeleton, { SkeletonStat, SkeletonPageHeader, SkeletonTableRow } from '../components/Skeleton'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
+import useDebouncedValue from '../hooks/useDebouncedValue'
+import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+  api,
   useListPayrollPeriodsQuery,
   useGetPayrollPeriodQuery,
   useCreatePayrollPeriodMutation,
@@ -17,8 +23,32 @@ import {
   useDeletePayrollPeriodMutation,
   useGeneratePayrollEntriesMutation,
   useUpdatePayrollEntryMutation,
+  useMarkPeriodReviewedMutation,
+  useApprovePeriodMutation,
+  useMarkPeriodPaidMutation,
+  useClosePeriodMutation,
+  useReopenPeriodMutation,
   downloadPdf,
 } from '../store/api'
+
+// Bank-file download — reuses the same blob helper as PDFs.
+const downloadFile = downloadPdf
+
+const WORKFLOW_STAGES = [
+  { key: 'draft', label: 'Draft' },
+  { key: 'reviewed', label: 'Reviewed' },
+  { key: 'approved', label: 'Approved' },
+  { key: 'paid', label: 'Paid' },
+  { key: 'closed', label: 'Closed' },
+]
+
+const STATUS_PALETTE_PAYROLL_FULL = {
+  draft: 'bg-lafoi-gray-light text-lafoi-gray border-lafoi-dark/10',
+  reviewed: 'bg-amber-50 text-amber-700 border-amber-200',
+  approved: 'bg-blue-50 text-blue-700 border-blue-200',
+  paid: 'bg-lafoi-green/15 text-lafoi-green-dark border-lafoi-green/40',
+  closed: 'bg-purple-50 text-purple-700 border-purple-200',
+}
 
 const empty = () => ({
   name: '', period_start: '', period_end: '', pay_date: '',
@@ -26,12 +56,19 @@ const empty = () => ({
 })
 
 export function PayrollList() {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebouncedValue(search, 300)
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { data, isLoading: isFirstLoad, isFetching } = useListPayrollPeriodsQuery({ page, search: search || undefined })
+  useEffect(() => { setPage(1) }, [debouncedSearch])
+
+  const queryArgs = { page, page_size: pageSize, search: debouncedSearch || undefined }
+  const { data, isLoading: isFirstLoad, isFetching } = useListPayrollPeriodsQuery(queryArgs)
+  const applyOptimistic = useOptimisticListUpdate('listPayrollPeriods', queryArgs)
   const [createP, createState] = useCreatePayrollPeriodMutation()
   const [updateP, updateState] = useUpdatePayrollPeriodMutation()
   const [deleteP] = useDeletePayrollPeriodMutation()
@@ -69,7 +106,14 @@ export function PayrollList() {
   const handleDelete = async (row) => {
     if (!window.confirm(`Delete payroll period "${row.name}"? Entries will be removed too.`)) return
     try {
-      await deleteP(row.id).unwrap()
+      await applyOptimistic(
+        (draft) => {
+          if (!draft?.results) return
+          draft.results = draft.results.filter((r) => r.id !== row.id)
+          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
+        },
+        () => deleteP(row.id).unwrap(),
+      )
       toast.success('Period deleted', { description: row.name })
     } catch (e) {
       toast.error('Could not delete period', { description: e?.data?.detail || 'Delete failed.' })
@@ -77,21 +121,37 @@ export function PayrollList() {
   }
 
   const columns = [
-    { key: 'name', label: 'Period', render: (r) => (
+    { key: 'name', label: 'Period', priority: 'high', mobileLabel: 'Period', render: (r) => (
       <div>
-        <Link to={`/dashboard/payroll/${r.id}`} className="font-sora text-sm font-medium hover:text-lafoi-green">{r.name}</Link>
+        <Link
+          to={`/dashboard/payroll/${r.id}`}
+          onClick={(e) => e.stopPropagation()}
+          className="font-sora text-sm font-medium text-lafoi-dark hover:text-lafoi-green inline-flex items-center gap-1.5"
+        >
+          {r.name}
+          <ArrowRight size={11} weight="bold" className="text-lafoi-green" />
+        </Link>
         <p className="text-xs text-lafoi-gray-medium">{fmtDate(r.period_start)} → {fmtDate(r.period_end)}</p>
       </div>
     )},
-    { key: 'pay_date', label: 'Pay date', render: (r) => fmtDate(r.pay_date) },
-    { key: 'employee_count', label: 'Employees' },
-    { key: 'total_gross', label: 'Gross', render: (r) => <span className="tabular-nums">{fmtMoney(r.total_gross)}</span> },
-    { key: 'total_net', label: 'Net', render: (r) => <span className="tabular-nums">{fmtMoney(r.total_net)}</span> },
-    { key: 'status', label: 'Status', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_PAYROLL} /> },
-    { key: 'actions', label: '', render: (r) => (
+    { key: 'pay_date', label: 'Pay date', priority: 'low', render: (r) => fmtDate(r.pay_date) },
+    { key: 'employee_count', label: 'Employees', priority: 'medium', mobileLabel: 'Employees' },
+    { key: 'total_gross', label: 'Gross', priority: 'desktop', render: (r) => <span className="tabular-nums">{fmtMoney(r.total_gross)}</span> },
+    { key: 'total_net', label: 'Net', priority: 'medium', mobileLabel: 'Net', render: (r) => <span className="tabular-nums">{fmtMoney(r.total_net)}</span> },
+    { key: 'status', label: 'Status', priority: 'high', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_PAYROLL_FULL} /> },
+    { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
-        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><PencilSimple size={14} /></button>
-        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"><Trash size={14} /></button>
+        <Link
+          to={`/dashboard/payroll/${r.id}`}
+          onClick={(e) => e.stopPropagation()}
+          title="Open period · view & download payslips"
+          className="px-3 py-2 rounded-lg bg-lafoi-green/10 text-lafoi-green-dark hover:bg-lafoi-green hover:text-white transition-colors min-h-[36px] inline-flex items-center justify-center gap-1.5 text-xs font-sora"
+        >
+          <Eye size={13} weight="bold" />
+          <span className="hidden md:inline">Open</span>
+        </Link>
+        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
       </div>
     )},
   ]
@@ -108,7 +168,7 @@ export function PayrollList() {
               <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
               <input
                 value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search"
                 className="pl-9 pr-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body w-48"
               />
@@ -118,12 +178,32 @@ export function PayrollList() {
         }
       />
 
+      {/* How-to-download hint — payslips live inside each period */}
+      <div className="mb-5 px-4 py-3 rounded-2xl bg-lafoi-green/[0.04] border border-lafoi-green/20 flex items-start gap-3">
+        <span className="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-lafoi-green text-white shrink-0">
+          <DownloadSimple size={13} weight="bold" />
+        </span>
+        <div className="flex-1 text-sm text-lafoi-dark">
+          <p className="font-sora font-medium">Where are the payslips?</p>
+          <p className="text-xs text-lafoi-gray mt-0.5">
+            Open any period below — each employee row has a download icon for their branded payslip PDF, plus a "Download bank file" button at the top to export the batch as CSV.
+          </p>
+        </div>
+      </div>
+
       <DataTable
         columns={columns}
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No payroll periods yet."
-        pagination={data ? { count: data.count, page, pageSize: 25, onPageChange: setPage } : null}
+        onRowClick={(r) => navigate(`/dashboard/payroll/${r.id}`)}
+        pagination={data ? {
+          count: data.count,
+          page,
+          pageSize,
+          onPageChange: setPage,
+          onPageSizeChange: (s) => { setPageSize(s); setPage(1) },
+        } : null}
       />
 
       <Modal
@@ -156,7 +236,7 @@ export function PayrollList() {
             </Field>
             <Field label="Status">
               <Select value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value })}>
-                {['draft', 'approved', 'paid', 'closed'].map((s) => <option key={s} value={s}>{s}</option>)}
+                {['draft', 'reviewed', 'approved', 'paid', 'closed'].map((s) => <option key={s} value={s}>{s}</option>)}
               </Select>
             </Field>
             <Field label="Notes" className="sm:col-span-2">
@@ -172,10 +252,20 @@ export function PayrollList() {
 export function PayrollDetail() {
   const { id } = useParams()
   const store = useStore()
+  const dispatch = useDispatch()
   const { data: period, isLoading, refetch } = useGetPayrollPeriodQuery(id)
   const [generate, genState] = useGeneratePayrollEntriesMutation()
   const [updateEntry, updateEntryState] = useUpdatePayrollEntryMutation()
   const [editingEntry, setEditingEntry] = useState(null)
+
+  // Workflow mutations + transition modal state.
+  const [markReviewed, markReviewedState] = useMarkPeriodReviewedMutation()
+  const [approve, approveState] = useApprovePeriodMutation()
+  const [markPaid, markPaidState] = useMarkPeriodPaidMutation()
+  const [closePeriod, closeState] = useClosePeriodMutation()
+  const [reopenPeriod, reopenState] = useReopenPeriodMutation()
+  const [transition, setTransition] = useState(null) // { kind, requireReason }
+  const [transitionNotes, setTransitionNotes] = useState('')
 
   if (isLoading || !period) {
     return (
@@ -249,6 +339,75 @@ export function PayrollDetail() {
     catch (e) { toast.error('Payslip download failed', { description: e.message }) }
   }
 
+  const handleBankFile = async () => {
+    try {
+      await downloadFile(
+        `payroll-periods/${period.id}/bank-file/`,
+        `bank-file-${period.name?.replace(/\s+/g, '-') || period.id}.csv`,
+        store.getState,
+      )
+      toast.success('Bank file downloaded')
+    } catch (e) {
+      toast.error('Bank file download failed', { description: e.message })
+    }
+  }
+
+  const TRANSITION_MAP = {
+    reviewed: { fn: markReviewed, label: 'Mark as Reviewed', success: 'Marked reviewed', requireReason: false },
+    approved: { fn: approve, label: 'Approve', success: 'Approved', requireReason: false },
+    paid: { fn: markPaid, label: 'Mark as Paid', success: 'Marked paid', requireReason: false },
+    closed: { fn: closePeriod, label: 'Close', success: 'Closed', requireReason: false },
+    reopen: { fn: reopenPeriod, label: 'Reopen', success: 'Reopened', requireReason: true },
+  }
+
+  const handleTransition = async () => {
+    if (!transition) return
+    const cfg = TRANSITION_MAP[transition.kind]
+    if (cfg.requireReason && !transitionNotes.trim()) {
+      toast.error('Reason required', { description: 'Please provide a reason for reopening.' })
+      return
+    }
+    // Optimistic: flip the period status immediately so the workflow strip
+    // and badges update before the server round-trip completes. Reopen is
+    // back to draft; the rest move to the kind keyword as their status.
+    const optimisticStatus = transition.kind === 'reopen' ? 'draft' : transition.kind
+    const patch = dispatch(api.util.updateQueryData('getPayrollPeriod', id, (draft) => {
+      if (draft) {
+        draft.status = optimisticStatus
+        if (transition.kind === 'reopen') draft.is_locked = false
+        if (transition.kind === 'closed') draft.is_locked = true
+      }
+    }))
+    try {
+      const body = transition.kind === 'reopen' ? { reason: transitionNotes } : { notes: transitionNotes || undefined }
+      await cfg.fn({ id: period.id, ...body }).unwrap()
+      toast.success(cfg.success, { description: period.name })
+      setTransition(null)
+      setTransitionNotes('')
+      refetch()
+    } catch (e) {
+      patch.undo()
+      toast.error('Could not update period', { description: e?.data?.detail || 'Action failed.' })
+    }
+  }
+
+  const transitioning =
+    markReviewedState.isLoading || approveState.isLoading ||
+    markPaidState.isLoading || closeState.isLoading || reopenState.isLoading
+
+  const nextStageFor = (status) => {
+    switch (status) {
+      case 'draft': return { kind: 'reviewed', label: 'Mark as Reviewed', icon: Check, requireReason: false }
+      case 'reviewed': return { kind: 'approved', label: 'Approve', icon: Check, requireReason: false }
+      case 'approved': return { kind: 'paid', label: 'Mark as Paid', icon: Check, requireReason: false }
+      case 'paid': return { kind: 'closed', label: 'Close', icon: Lock, requireReason: false }
+      case 'closed': return { kind: 'reopen', label: 'Reopen', icon: ArrowCounterClockwise, requireReason: true }
+      default: return null
+    }
+  }
+  const nextStage = nextStageFor(period.status)
+  const isLocked = !!period.is_locked
+
   const upsertItem = (key, idx, patch) => {
     const arr = (editingEntry[key] || []).slice()
     arr[idx] = { ...arr[idx], ...patch }
@@ -269,12 +428,23 @@ export function PayrollDetail() {
         description={`${fmtDate(period.period_start)} → ${fmtDate(period.period_end)}`}
         actions={
           <>
-            <SecondaryButton onClick={handleGenerate} disabled={genState.isLoading}>
+            <SecondaryButton onClick={handleBankFile}>
+              <Download size={14} weight="bold" /> Bank file
+            </SecondaryButton>
+            <SecondaryButton onClick={handleGenerate} disabled={genState.isLoading || isLocked} title={isLocked ? 'Period is locked' : undefined}>
               {genState.isLoading ? (<><CircleNotch size={14} className="animate-spin" /> Generating…</>) : (<><Sparkle size={14} weight="bold" /> Generate from active employees</>)}
             </SecondaryButton>
-            <StatusBadge status={period.status} palette={STATUS_PALETTE_PAYROLL} />
+            <StatusBadge status={period.status} palette={STATUS_PALETTE_PAYROLL_FULL} />
           </>
         }
+      />
+
+      {/* Workflow strip */}
+      <WorkflowStrip
+        period={period}
+        nextStage={nextStage}
+        onTrigger={(stage) => { setTransition(stage); setTransitionNotes('') }}
+        transitioning={transitioning}
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -288,7 +458,7 @@ export function PayrollDetail() {
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-lafoi-cream border-b border-lafoi-dark/10">
-              {['Code', 'Employee', 'Base', 'Allowances', 'Deductions', 'Gross', 'Net', ''].map((h) => (
+              {['Code', 'Employee', 'Base', 'Allowances', 'Deductions', 'Gross', 'Net', 'Payslip'].map((h) => (
                 <th key={h} className="px-3 py-2.5 text-left font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium">{h}</th>
               ))}
             </tr>
@@ -305,8 +475,26 @@ export function PayrollDetail() {
                 <td className="px-3 py-2 tabular-nums font-semibold">{fmtMoney(en.net, en.employee_currency)}</td>
                 <td className="px-3 py-2">
                   <div className="flex justify-end gap-1">
-                    <button onClick={() => handlePayslip(en.id, en.employee_code, period.id)} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><DownloadSimple size={14} /></button>
-                    <button onClick={() => setEditingEntry({ ...en })} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"><PencilSimple size={14} /></button>
+                    <button
+                      onClick={() => handlePayslip(en.id, en.employee_code, period.id)}
+                      title="Download branded payslip PDF"
+                      className="px-3 py-1.5 rounded-lg bg-lafoi-green/10 text-lafoi-green-dark hover:bg-lafoi-green hover:text-white transition-colors inline-flex items-center gap-1.5 text-xs font-sora min-h-[32px]"
+                    >
+                      <DownloadSimple size={13} weight="bold" />
+                      <span>Payslip</span>
+                    </button>
+                    <button
+                      onClick={() => !isLocked && setEditingEntry({ ...en })}
+                      disabled={isLocked}
+                      title={isLocked ? '🔒 Locked' : 'Edit'}
+                      className={`p-2 rounded-lg ${
+                        isLocked
+                          ? 'text-lafoi-gray-medium/60 cursor-not-allowed'
+                          : 'hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark'
+                      }`}
+                    >
+                      {isLocked ? <Lock size={14} /> : <PencilSimple size={14} />}
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -382,6 +570,150 @@ export function PayrollDetail() {
           </form>
         )}
       </Modal>
+
+      {/* Workflow transition modal */}
+      <Modal
+        open={!!transition}
+        onClose={() => { setTransition(null); setTransitionNotes('') }}
+        title={transition ? `${TRANSITION_MAP[transition.kind]?.label} — ${period.name}` : ''}
+        size="sm"
+        footer={
+          <>
+            <SecondaryButton type="button" onClick={() => { setTransition(null); setTransitionNotes('') }}>
+              Cancel
+            </SecondaryButton>
+            <PrimaryButton type="button" onClick={handleTransition} disabled={transitioning}>
+              {transitioning ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Confirm'}
+            </PrimaryButton>
+          </>
+        }
+      >
+        {transition && (
+          <div className="space-y-4">
+            <p className="text-sm text-lafoi-gray">
+              {transition.kind === 'reopen'
+                ? 'Reopening will unlock the period and restore editability. A reason is required for the audit log.'
+                : transition.kind === 'closed'
+                  ? 'Closing will lock all entries permanently. Subsequent edits require a reopen.'
+                  : `Confirm transition to ${TRANSITION_MAP[transition.kind]?.label.toLowerCase()}.`}
+            </p>
+            <Field
+              label={transition.kind === 'reopen' ? 'Reason' : 'Notes'}
+              hint={transition.kind === 'reopen' ? 'Required.' : 'Optional.'}
+              required={transition.kind === 'reopen'}
+            >
+              <Textarea value={transitionNotes} onChange={(e) => setTransitionNotes(e.target.value)} rows={3} />
+            </Field>
+          </div>
+        )}
+      </Modal>
+    </div>
+  )
+}
+
+/**
+ * Five-stage workflow strip — Draft → Reviewed → Approved → Paid → Closed.
+ * Past stages are filled green w/ a check; current stage is solid green;
+ * future stages are gray outlined. Each completed stage shows the actor.
+ */
+function WorkflowStrip({ period, nextStage, onTrigger, transitioning }) {
+  const status = period.status
+  const currentIdx = WORKFLOW_STAGES.findIndex((s) => s.key === status)
+
+  // Build a per-stage actor lookup so we can attribute completed stages.
+  const actor = (key) => {
+    switch (key) {
+      case 'reviewed':
+        return period.reviewed_by_name && period.reviewed_at
+          ? `by ${period.reviewed_by_name} · ${fmtDate(period.reviewed_at)}` : null
+      case 'approved':
+        return period.approved_by_name && period.approved_at
+          ? `by ${period.approved_by_name} · ${fmtDate(period.approved_at)}` : null
+      case 'paid':
+        return period.paid_by_name && period.paid_at
+          ? `by ${period.paid_by_name} · ${fmtDate(period.paid_at)}` : null
+      case 'closed':
+        return period.closed_by_name && period.closed_at
+          ? `by ${period.closed_by_name} · ${fmtDate(period.closed_at)}` : null
+      default:
+        return null
+    }
+  }
+
+  const NextIcon = nextStage?.icon
+
+  return (
+    <div className="rounded-3xl border border-lafoi-dark/10 bg-white px-5 sm:px-7 py-5 mb-6">
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <div>
+          <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray-medium">Workflow</p>
+          <p className="font-sora text-sm text-lafoi-dark mt-0.5">
+            {period.is_locked ? (
+              <span className="inline-flex items-center gap-1 text-purple-700">
+                <Lock size={12} weight="bold" /> Period locked
+              </span>
+            ) : (
+              <>Currently <span className="font-medium">{status}</span></>
+            )}
+            {period.reopened_count > 0 && (
+              <span className="ml-2 text-xs text-lafoi-gray-medium">
+                · reopened {period.reopened_count}×
+              </span>
+            )}
+          </p>
+        </div>
+        {nextStage && (
+          <PrimaryButton
+            type="button"
+            onClick={() => onTrigger(nextStage)}
+            disabled={transitioning}
+            className={nextStage.kind === 'reopen' ? '!bg-purple-700 hover:!bg-purple-800' : ''}
+          >
+            {transitioning ? <CircleNotch size={14} className="animate-spin" /> : (NextIcon && <NextIcon size={14} weight="bold" />)}
+            {nextStage.label}
+          </PrimaryButton>
+        )}
+      </div>
+
+      <ol className="grid grid-cols-5 gap-2 sm:gap-3">
+        {WORKFLOW_STAGES.map((stage, idx) => {
+          const isPast = currentIdx > idx
+          const isCurrent = currentIdx === idx
+          const isFuture = currentIdx < idx
+          return (
+            <li key={stage.key} className="flex flex-col items-center text-center">
+              <div className="relative w-full flex items-center">
+                {/* Connector line (left side, hidden on first) */}
+                {idx > 0 && (
+                  <span
+                    aria-hidden
+                    className={`absolute right-1/2 left-0 -translate-x-1/2 h-px ${
+                      isPast || isCurrent ? 'bg-lafoi-green' : 'bg-lafoi-dark/12'
+                    }`}
+                    style={{ top: '50%' }}
+                  />
+                )}
+                {/* Pill */}
+                <span
+                  className={`relative z-[1] mx-auto inline-flex items-center justify-center h-8 px-3 rounded-full text-[10px] font-sora tracking-[0.18em] uppercase border whitespace-nowrap transition-colors ${
+                    isPast
+                      ? 'bg-lafoi-green text-white border-lafoi-green'
+                      : isCurrent
+                        ? 'bg-lafoi-green text-white border-lafoi-green shadow-[0_0_0_4px_rgba(26,138,46,0.12)]'
+                        : 'bg-white text-lafoi-gray-medium border-lafoi-dark/15'
+                  }`}
+                >
+                  {isPast && <Check size={11} weight="bold" className="mr-1" />}
+                  {stage.label}
+                </span>
+              </div>
+              <p className={`mt-2 text-[10px] font-sora ${isFuture ? 'text-lafoi-gray-medium/70' : 'text-lafoi-gray-medium'} min-h-[14px]`}>
+                {actor(stage.key) || (isCurrent ? 'In progress' : isPast ? 'Done' : ' ')}
+              </p>
+            </li>
+          )
+        })}
+      </ol>
     </div>
   )
 }

@@ -17,7 +17,7 @@ import AnimatedSection from '../components/ui/AnimatedSection'
 import { linkifyProse } from '../utils/linkify.jsx'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
-import { useSEO } from '../utils/seo'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 
 const CAREERS_HERO_SLIDES = [
   {
@@ -122,10 +122,14 @@ const processSteps = [
 
 export default function Careers() {
   useSEO({
-    title: 'Careers',
+    title: 'Careers at La Foi Designs',
     description:
-      "Join La Foi Designs — Zimbabwe's premier stretch ceiling company. Explore career opportunities and grow with us.",
+      'Open roles at La Foi Designs — installers, designers, project managers. Build with the studio shaping interiors across Zimbabwe.',
     path: '/careers',
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Careers', path: '/careers' },
+    ]),
   })
 
   return (

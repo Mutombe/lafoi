@@ -21,7 +21,12 @@ import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import SectionDivider from '../components/ui/SectionDivider'
 import VideoShowcase from '../components/ui/VideoShowcase'
-import { useSEO } from '../utils/seo'
+import ScrollReveal from '../components/ui/ScrollReveal'
+import MagneticCard from '../components/ui/MagneticCard'
+import KineticTextStrip from '../components/ui/KineticTextStrip'
+import AnimatedHeading from '../components/ui/AnimatedHeading'
+import CountUpUI from '../components/ui/CountUp'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 import { products, projects } from '../data/site'
 import { reviews, googleRating } from '../data/reviews'
 import { linkifyProse } from '../utils/linkify.jsx'
@@ -75,10 +80,12 @@ const HOME_HERO_SLIDES = [
 
 export default function Home() {
   useSEO({
-    title: null,
+    title: 'Stretch Ceilings in Zimbabwe',
     description:
-      "Zimbabwe's first stretch ceiling and architectural lighting studio. Premium PVC and fabric membranes paired with bespoke LED design. Founded 2024, Belgravia, Harare.",
+      'Modern stretch ceilings, architectural lighting, interior design, flooring, tiling and epoxy systems for homes, offices, hotels, and retail spaces in Zimbabwe. Request a quote from La Foi Designs.',
     path: '/',
+    image: '/brand/images/50.png',
+    jsonLd: breadcrumbsLd([{ name: 'Home', path: '/' }]),
   })
 
   return (
@@ -95,6 +102,7 @@ export default function Home() {
       <Manifesto />
       <SectionDivider shape="organic-blob" from="dark" to="cream" />
       <FinishGallery />
+      <KineticTextStrip variant="dark" speed={70} />
       <SectionDivider shape="mirror-angular" from="cream" to="cream" />
       <Approach />
       <SectionDivider shape="arc" from="cream" to="dark" />
@@ -121,6 +129,14 @@ function Hero() {
   const ref = useRef(null)
   const [mouse, setMouse] = useState({ x: 50, y: 40 })
   const [hoverable, setHoverable] = useState(false)
+
+  // Parallax depth layers — scroll-driven, separate from the slideshow's own parallax.
+  // 0.2× background haze, 0.45× dot-pattern mid-layer, 0.8× foreground gradient.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, 120])
+  const midY = useTransform(scrollYProgress, [0, 1], [0, 270])
+  const fgY = useTransform(scrollYProgress, [0, 1], [0, 480])
+  const fgOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [0.55, 0.4, 0.15])
 
   useEffect(() => {
     setHoverable(window.matchMedia('(hover: hover)').matches)
@@ -149,11 +165,41 @@ function Hero() {
       onMouseMove={onMouseMove}
       className="relative h-[100svh] min-h-[640px] overflow-hidden bg-lafoi-dark"
     >
+      {/* Parallax depth layer 1 — slow background haze (0.2× scroll) */}
+      <motion.div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          y: bgY,
+          background:
+            'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(34,197,94,0.06), transparent 70%)',
+        }}
+      />
+
       <HeroSlideshow slides={HOME_HERO_SLIDES} interval={6500} parallax overlay={false} />
+
+      {/* Parallax depth layer 2 — dot-pattern mid-layer (0.45× scroll) */}
+      <motion.div
+        aria-hidden
+        className="absolute inset-0 dot-pattern opacity-25 pointer-events-none"
+        style={{ y: midY }}
+      />
 
       {/* refined cinematic overlays */}
       <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+
+      {/* Parallax depth layer 3 — foreground gradient (0.8× scroll), fades out */}
+      <motion.div
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none"
+        style={{
+          y: fgY,
+          opacity: fgOpacity,
+          background:
+            'linear-gradient(180deg, transparent 0%, rgba(17,17,17,0.35) 60%, rgba(17,17,17,0.6) 100%)',
+        }}
+      />
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none transition-opacity duration-700"
@@ -463,8 +509,19 @@ function Manifesto() {
               className="font-display text-white tracking-[-0.025em] text-[2.4rem] sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem]"
               style={{ fontVariationSettings: '"opsz" 144', lineHeight: '1.04' }}
             >
-              <span className="block font-light">We believe a ceiling is the</span>
-              <span className="block italic font-light text-lafoi-green-light mt-1">sixth surface —</span>
+              <AnimatedHeading
+                as="span"
+                text="We believe a ceiling is the"
+                className="block font-light"
+                staggerChildren={0.05}
+              />
+              <AnimatedHeading
+                as="span"
+                text="sixth surface —"
+                className="block italic font-light text-lafoi-green-light mt-1"
+                delay={0.3}
+                staggerChildren={0.05}
+              />
               <span className="block font-light mt-2 text-white/90 leading-[1.2] text-[1.8rem] sm:text-[2.4rem] lg:text-[2.4rem] xl:text-[2.6rem]">
                 the one most often forgotten, and the one
                 <span className="italic text-white/95"> with the most to give.</span>
@@ -502,16 +559,22 @@ function Manifesto() {
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
-          <motion.img
-            src="/brand/images/49.png"
-            alt="Gold geometric LED ceiling — La Foi studio reference"
-            width="1600"
-            height="2133"
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 w-full h-full object-cover object-center will-change-transform"
-            style={{ y: imageY, scale: 1.18 }}
-          />
+          <motion.div
+            className="absolute inset-0 will-change-transform"
+            style={{ y: imageY }}
+          >
+            <ScrollReveal className="absolute inset-0">
+              <img
+                src="/brand/images/49.png"
+                alt="Gold geometric LED ceiling — La Foi studio reference"
+                width="1600"
+                height="2133"
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover object-center"
+              />
+            </ScrollReveal>
+          </motion.div>
           {/* mobile-only soft bottom gradient for legibility against next section seam (none on desktop — pure brutalism) */}
           <div aria-hidden className="absolute inset-0 lg:hidden bg-gradient-to-t from-lafoi-dark/40 via-transparent to-transparent" />
 
@@ -638,13 +701,14 @@ function FinishGallery() {
               amount={0.15}
               className={bentoSpans[i]}
             >
+            <MagneticCard strength={0.16} tiltAmplitude={4} className="h-full w-full">
             <Link
               to={`/products/${p.slug}`}
               className={`group relative block h-full w-full rounded-3xl overflow-hidden bg-lafoi-dark shadow-[0_18px_50px_-25px_rgba(17,17,17,0.35)]`}
             >
               <img
                 src={p.image}
-                alt={p.name}
+                alt={`${p.name} — ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling membrane`}`}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -680,6 +744,7 @@ function FinishGallery() {
                 </p>
               </div>
             </Link>
+            </MagneticCard>
             </AnimatedSection>
           ))}
         </div>
@@ -687,14 +752,14 @@ function FinishGallery() {
         {/* MOBILE — stacked cards */}
         <div className="lg:hidden grid grid-cols-2 gap-3 sm:gap-5">
           {stretchProducts.map((p, i) => (
+            <MagneticCard key={p.slug} strength={0.14} tiltAmplitude={3} className="block h-full">
             <Link
-              key={p.slug}
               to={`/products/${p.slug}`}
               className="group relative block rounded-3xl overflow-hidden bg-lafoi-dark aspect-[4/5]"
             >
               <img
                 src={p.image}
-                alt={p.name}
+                alt={`${p.name} — ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling membrane`}`}
                 width="800"
                 height="1067"
                 loading="lazy"
@@ -726,6 +791,7 @@ function FinishGallery() {
                 </h3>
               </div>
             </Link>
+            </MagneticCard>
           ))}
         </div>
 
@@ -823,7 +889,7 @@ function Approach() {
               >
                 <OptimizedImage
                   src={stages[activeStep].image}
-                  alt={stages[activeStep].title}
+                  alt={`Stage ${stages[activeStep].num} ${stages[activeStep].title} — ${stages[activeStep].vision}`}
                   className="w-full h-full object-cover"
                   fill
                   vision={stages[activeStep].vision}
@@ -885,7 +951,7 @@ function Approach() {
               >
                 <OptimizedImage
                   src={stages[activeStep].image}
-                  alt={stages[activeStep].title}
+                  alt={`Stage ${stages[activeStep].num} ${stages[activeStep].title} — ${stages[activeStep].vision}`}
                   className="w-full h-full object-cover"
                   fill
                   vision={stages[activeStep].vision}
@@ -984,7 +1050,7 @@ function ScrollStage({ stage, index, active }) {
       <div className="lg:hidden mb-6 rounded-2xl overflow-hidden aspect-[4/3]">
         <OptimizedImage
           src={stage.image}
-          alt={stage.title}
+          alt={`Stage ${stage.num} ${stage.title} — ${stage.vision}`}
           className="w-full h-full object-cover"
           fill
           vision={stage.vision}
@@ -1104,7 +1170,7 @@ function Stats() {
                     className="font-display font-light text-white leading-none tracking-[-0.03em]"
                     style={{ fontSize: 'clamp(3rem, 5vw, 5rem)' }}
                   >
-                    <CountUp to={s.value} suffix={s.suffix} />
+                    <CountUpUI end={s.value} suffix={s.suffix} />
                   </p>
                   <p className="mt-5 lg:mt-6 text-xs lg:text-sm text-white/60 font-sora tracking-wide leading-relaxed">
                     {s.label}
@@ -1211,7 +1277,7 @@ function BentoProject({ project, large = false }) {
     >
       <OptimizedImage
         src={project.hero}
-        alt={project.title}
+        alt={`${project.title} — ${project.vision}`}
         className="w-full h-full object-cover object-center group-hover:scale-[1.04] transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         fill
         vision={project.vision}

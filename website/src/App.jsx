@@ -35,12 +35,19 @@ const DashQuotations = lazy(() => import('./dashboard/pages/Quotations'))
 const DashInvoices = lazy(() => import('./dashboard/pages/Invoices'))
 const DashReceipts = lazy(() => import('./dashboard/pages/Receipts'))
 const DashEmployees = lazy(() => import('./dashboard/pages/Employees'))
+const DashEmployeeDetail = lazy(() => import('./dashboard/pages/EmployeeDetail'))
 const DashPayrollList = lazy(() =>
   import('./dashboard/pages/Payroll').then((m) => ({ default: m.PayrollList })),
 )
 const DashPayrollDetail = lazy(() =>
   import('./dashboard/pages/Payroll').then((m) => ({ default: m.PayrollDetail })),
 )
+const DashLoans = lazy(() => import('./dashboard/pages/Loans'))
+const DashLeave = lazy(() => import('./dashboard/pages/Leave'))
+const DashHolidays = lazy(() => import('./dashboard/pages/Holidays'))
+const DashCompliance = lazy(() => import('./dashboard/pages/Compliance'))
+const DashStudioMap = lazy(() => import('./dashboard/pages/StudioMap'))
+const DashUsers = lazy(() => import('./dashboard/pages/Users'))
 
 export default function App() {
   const location = useLocation()
@@ -68,8 +75,15 @@ export default function App() {
             <Route path="invoices" element={<DashInvoices />} />
             <Route path="receipts" element={<DashReceipts />} />
             <Route path="employees" element={<DashEmployees />} />
+            <Route path="employees/:id" element={<DashEmployeeDetail />} />
             <Route path="payroll" element={<DashPayrollList />} />
             <Route path="payroll/:id" element={<DashPayrollDetail />} />
+            <Route path="loans" element={<DashLoans />} />
+            <Route path="leave" element={<DashLeave />} />
+            <Route path="holidays" element={<DashHolidays />} />
+            <Route path="settings/compliance" element={<DashCompliance />} />
+            <Route path="map" element={<DashStudioMap />} />
+            <Route path="users" element={<DashUsers />} />
           </Route>
         </Routes>
       </Suspense>

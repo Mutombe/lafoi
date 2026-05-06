@@ -13,7 +13,7 @@ import {
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
-import { useSEO } from '../utils/seo'
+import { useSEO, breadcrumbsLd, faqLd } from '../utils/seo'
 import { linkifyProse } from '../utils/linkify.jsx'
 
 const FAQ_HERO_SLIDES = [
@@ -69,7 +69,7 @@ const faqCategories = [
       },
       {
         q: 'How long do stretch ceilings last?',
-        a: 'With proper care, stretch ceilings can last 15–25 years. Our products come with a manufacturer warranty up to 15 years on the membrane and a workmanship cover from La Foi Designs.',
+        a: 'With proper care, stretch ceilings can last 15–25 years. Our products come with a manufacturer warranty up to 10 years on the membrane and a workmanship cover from La Foi Designs.',
       },
     ],
   },
@@ -107,7 +107,7 @@ const faqCategories = [
       },
       {
         q: 'What is your warranty policy?',
-        a: 'All installations come with a manufacturer warranty up to 15 years on the membrane and a 2-year warranty on installation workmanship. The manufacturer warranty stands behind every product.',
+        a: 'All installations come with a manufacturer warranty up to 10 years on the membrane and a 2-year warranty on installation workmanship. The manufacturer warranty stands behind every product.',
       },
     ],
   },
@@ -120,8 +120,15 @@ export default function FAQ() {
   useSEO({
     title: 'Frequently Asked Questions',
     description:
-      'Find answers to common questions about stretch ceilings, installation, pricing, and more from La Foi Designs.',
+      'Stretch ceiling installation, lighting integration, lead times, materials, warranty, and pricing — answers to the most-asked questions.',
     path: '/faq',
+    jsonLd: [
+      breadcrumbsLd([
+        { name: 'Home', path: '/' },
+        { name: 'FAQ', path: '/faq' },
+      ]),
+      faqLd(faqCategories.flatMap((c) => c.questions.map((it) => ({ q: it.q, a: it.a })))),
+    ],
   })
 
   const activeQuestions = useMemo(() => {

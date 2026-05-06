@@ -12,7 +12,9 @@ import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import VideoShowcase from '../components/ui/VideoShowcase'
-import { useSEO } from '../utils/seo'
+import MagneticCard from '../components/ui/MagneticCard'
+import KineticTextStrip from '../components/ui/KineticTextStrip'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 import { linkifyProse } from '../utils/linkify.jsx'
 
 const PORTFOLIO_HERO_SLIDES = [
@@ -138,10 +140,14 @@ export default function Portfolio() {
   const filtered = filter === 'All' ? projects : projects.filter((p) => p.category === filter)
 
   useSEO({
-    title: 'Our Portfolio',
+    title: 'Portfolio | Stretch Ceiling and Lighting Projects',
     description:
-      "Explore La Foi Designs' portfolio of stunning stretch ceiling and lighting installations across Zimbabwe.",
+      'See residential, commercial, hospitality, and retail stretch ceiling installations across Zimbabwe by La Foi Designs.',
     path: '/portfolio',
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Portfolio', path: '/portfolio' },
+    ]),
   })
 
   // keyboard nav for lightbox
@@ -167,6 +173,8 @@ export default function Portfolio() {
       transition={{ duration: 0.5 }}
     >
       <PortfolioHero />
+
+      <KineticTextStrip variant="light" speed={70} />
 
       <VideoGallery />
 
@@ -236,6 +244,7 @@ export default function Portfolio() {
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="break-inside-avoid"
                 >
+                  <MagneticCard strength={0.18} tiltAmplitude={4}>
                   <button
                     onClick={() => setSelectedIndex(i)}
                     className="group relative block w-full rounded-3xl overflow-hidden text-left bg-lafoi-dark"
@@ -248,7 +257,7 @@ export default function Portfolio() {
                     <div className={project.tall ? 'h-[480px]' : 'h-[340px]'}>
                       <OptimizedImage
                         src={project.image}
-                        alt={project.title}
+                        alt={`${project.title} — ${project.vision}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={project.vision}
@@ -285,6 +294,7 @@ export default function Portfolio() {
                       </div>
                     </div>
                   </button>
+                  </MagneticCard>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -318,7 +328,7 @@ export default function Portfolio() {
                 <div className="lg:col-span-7 relative h-72 sm:h-96 lg:h-[560px] bg-lafoi-dark">
                   <OptimizedImage
                     src={selected.image}
-                    alt={selected.title}
+                    alt={`${selected.title} — ${selected.vision}`}
                     className="w-full h-full object-cover object-center"
                     fill
                     priority

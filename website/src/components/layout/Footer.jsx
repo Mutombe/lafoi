@@ -13,10 +13,14 @@ import Logo from '../shared/Logo'
 
 const footerLinks = {
   Solutions: [
-    { name: 'Stretch Ceilings', path: '/services/stretch-ceilings' },
-    { name: 'Custom Lighting', path: '/services/custom-lighting' },
-    { name: 'Design Consultation', path: '/services' },
-    { name: 'Maintenance & Support', path: '/services' },
+    { name: 'Stretch Ceilings', path: '/services/stretch-ceiling-installation' },
+    { name: 'Lighting Solutions', path: '/services/lighting-solutions' },
+    { name: 'Interior Design', path: '/services/interior-design' },
+    { name: 'Flooring', path: '/services/flooring' },
+    { name: 'Tiling', path: '/services/tiling' },
+    { name: 'Epoxy Flooring', path: '/services/epoxy-flooring' },
+    { name: 'Design Consultation', path: '/services/design-consultation' },
+    { name: 'Maintenance & Support', path: '/services/maintenance-support' },
     { name: 'All Products', path: '/products' },
     { name: 'Shop', path: '/shop' },
   ],
@@ -129,7 +133,7 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
               N&#xBA; 01 — 2026
             </p>
             <p className="text-sm text-white/50 font-general leading-relaxed max-w-xs mb-6">
-              Zimbabwe's first and leading provider of premium stretch ceilings and architectural lighting. Pioneering luminous interiors across Southern Africa from our Belgravia studio.
+              Zimbabwe's first and leading provider of premium stretch ceilings and architectural lighting. Designing luminous interiors from our Belgravia studio in Harare.
             </p>
             <div className="space-y-2.5">
               <div className="flex items-center gap-2 text-sm text-white/40">

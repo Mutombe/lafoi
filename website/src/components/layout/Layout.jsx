@@ -208,7 +208,7 @@ function TermsContent() {
       <h4 className="font-sora font-semibold text-lafoi-dark text-base mt-6">2. Quotations & Pricing</h4>
       <p>Quotations are valid for 30 days from the date of issue. Prices may vary based on project complexity, materials, and installation requirements. A deposit of 50% is required to confirm a project booking.</p>
       <h4 className="font-sora font-semibold text-lafoi-dark text-base mt-6">3. Warranty</h4>
-      <p>All stretch ceiling installations are covered by a comprehensive manufacturer warranty (up to 15 years on the membrane) plus a workmanship cover from La Foi Designs. Warranty terms vary by product and will be specified in your project agreement.</p>
+      <p>All stretch ceiling installations are covered by a comprehensive manufacturer warranty (up to 10 years on the membrane) plus a workmanship cover from La Foi Designs. Warranty terms vary by product and will be specified in your project agreement.</p>
       <h4 className="font-sora font-semibold text-lafoi-dark text-base mt-6">4. Limitation of Liability</h4>
       <p>La Foi Designs shall not be liable for any indirect, incidental, or consequential damages arising from the use of our website or services beyond the total amount paid for the specific project.</p>
       <h4 className="font-sora font-semibold text-lafoi-dark text-base mt-6">5. Intellectual Property</h4>

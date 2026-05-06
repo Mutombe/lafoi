@@ -13,7 +13,7 @@ import AnimatedSection from '../components/ui/AnimatedSection'
 import { linkifyProse } from '../utils/linkify.jsx'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
-import { useSEO } from '../utils/seo'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 
 const BLOG_HERO_SLIDES = [
   {
@@ -117,10 +117,14 @@ export default function Blog() {
   const filtered = filter === 'All' ? regular : regular.filter((p) => p.category === filter)
 
   useSEO({
-    title: 'Field Notes & Design Insights',
+    title: 'Stretch Ceiling Advice & Inspiration | La Foi Designs Blog',
     description:
-      'Expert insights on stretch ceilings, lighting design, interior trends, and more from La Foi Designs.',
+      'Practical advice on stretch ceilings, lighting integration, finishes, and interior planning from the La Foi Designs studio.',
     path: '/blog',
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Blog', path: '/blog' },
+    ]),
   })
 
   return (

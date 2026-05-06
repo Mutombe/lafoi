@@ -52,9 +52,13 @@ export const api = createApi({
   refetchOnMountOrArgChange: false,
   tagTypes: [
     'Auth', 'User',
-    'Customer', 'Project', 'ProjectFile', 'ProjectUpdate',
+    'Customer', 'Project', 'ProjectFile', 'ProjectUpdate', 'ProjectCost',
     'Quotation', 'Invoice', 'Receipt',
     'Employee', 'PayrollPeriod', 'PayrollEntry',
+    'TaxBracketSet', 'StatutoryRate', 'ExchangeRate', 'AuditLog',
+    'SalaryHistory', 'EmployeeLoan', 'LoanRepayment',
+    'LeaveType', 'LeaveBalance', 'LeaveRequest', 'PublicHoliday',
+    'ProjectMap', 'ModuleRegistry',
   ],
   endpoints: (b) => ({
     // ---------- Auth ----------
@@ -263,6 +267,223 @@ export const api = createApi({
       query: ({ id, ...body }) => ({ url: `payroll-entries/${id}/`, method: 'PATCH', body }),
       invalidatesTags: ['PayrollEntry', 'PayrollPeriod'],
     }),
+
+    // ---------- Compliance — Tax Bracket Sets ----------
+    listTaxBracketSets: b.query({
+      query: (params = {}) => ({ url: 'tax-bracket-sets/', params }),
+      providesTags: ['TaxBracketSet'],
+    }),
+    getTaxBracketSet: b.query({
+      query: (id) => `tax-bracket-sets/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'TaxBracketSet', id }],
+    }),
+    createTaxBracketSet: b.mutation({
+      query: (body) => ({ url: 'tax-bracket-sets/', method: 'POST', body }),
+      invalidatesTags: ['TaxBracketSet'],
+    }),
+    updateTaxBracketSet: b.mutation({
+      query: ({ id, ...body }) => ({ url: `tax-bracket-sets/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['TaxBracketSet', { type: 'TaxBracketSet', id }],
+    }),
+    deleteTaxBracketSet: b.mutation({
+      query: (id) => ({ url: `tax-bracket-sets/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['TaxBracketSet'],
+    }),
+    previewPaye: b.mutation({
+      query: (body) => ({ url: 'tax-bracket-sets/preview/', method: 'POST', body }),
+    }),
+
+    // ---------- Compliance — Statutory Rates ----------
+    listStatutoryRates: b.query({
+      query: (params = {}) => ({ url: 'statutory-rates/', params }),
+      providesTags: ['StatutoryRate'],
+    }),
+    createStatutoryRate: b.mutation({
+      query: (body) => ({ url: 'statutory-rates/', method: 'POST', body }),
+      invalidatesTags: ['StatutoryRate'],
+    }),
+    updateStatutoryRate: b.mutation({
+      query: ({ id, ...body }) => ({ url: `statutory-rates/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['StatutoryRate'],
+    }),
+    deleteStatutoryRate: b.mutation({
+      query: (id) => ({ url: `statutory-rates/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['StatutoryRate'],
+    }),
+
+    // ---------- Compliance — Exchange Rates ----------
+    listExchangeRates: b.query({
+      query: (params = {}) => ({ url: 'exchange-rates/', params }),
+      providesTags: ['ExchangeRate'],
+    }),
+    createExchangeRate: b.mutation({
+      query: (body) => ({ url: 'exchange-rates/', method: 'POST', body }),
+      invalidatesTags: ['ExchangeRate'],
+    }),
+    deleteExchangeRate: b.mutation({
+      query: (id) => ({ url: `exchange-rates/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['ExchangeRate'],
+    }),
+
+    // ---------- Compliance — Audit Log ----------
+    listAuditLogs: b.query({
+      query: (params = {}) => ({ url: 'audit-logs/', params }),
+      providesTags: ['AuditLog'],
+    }),
+
+    // ---------- Tier 2 — Salary history ----------
+    listSalaryHistory: b.query({
+      query: (params = {}) => ({ url: 'salary-history/', params }),
+      providesTags: ['SalaryHistory'],
+    }),
+    createSalaryHistory: b.mutation({
+      query: (body) => ({ url: 'salary-history/', method: 'POST', body }),
+      invalidatesTags: ['SalaryHistory', 'Employee'],
+    }),
+    deleteSalaryHistory: b.mutation({
+      query: (id) => ({ url: `salary-history/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['SalaryHistory'],
+    }),
+
+    // ---------- Tier 2 — Loans ----------
+    listEmployeeLoans: b.query({
+      query: (params = {}) => ({ url: 'employee-loans/', params }),
+      providesTags: ['EmployeeLoan'],
+    }),
+    getEmployeeLoan: b.query({
+      query: (id) => `employee-loans/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'EmployeeLoan', id }],
+    }),
+    createEmployeeLoan: b.mutation({
+      query: (body) => ({ url: 'employee-loans/', method: 'POST', body }),
+      invalidatesTags: ['EmployeeLoan'],
+    }),
+    updateEmployeeLoan: b.mutation({
+      query: ({ id, ...body }) => ({ url: `employee-loans/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['EmployeeLoan', { type: 'EmployeeLoan', id }],
+    }),
+    deleteEmployeeLoan: b.mutation({
+      query: (id) => ({ url: `employee-loans/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['EmployeeLoan'],
+    }),
+
+    // ---------- Tier 2 — Leave ----------
+    listLeaveTypes: b.query({
+      query: (params = {}) => ({ url: 'leave-types/', params }),
+      providesTags: ['LeaveType'],
+    }),
+    listLeaveBalances: b.query({
+      query: (params = {}) => ({ url: 'leave-balances/', params }),
+      providesTags: ['LeaveBalance'],
+    }),
+    listLeaveRequests: b.query({
+      query: (params = {}) => ({ url: 'leave-requests/', params }),
+      providesTags: ['LeaveRequest'],
+    }),
+    createLeaveRequest: b.mutation({
+      query: (body) => ({ url: 'leave-requests/', method: 'POST', body }),
+      invalidatesTags: ['LeaveRequest', 'LeaveBalance'],
+    }),
+    approveLeaveRequest: b.mutation({
+      query: ({ id, ...body }) => ({ url: `leave-requests/${id}/approve/`, method: 'POST', body }),
+      invalidatesTags: ['LeaveRequest', 'LeaveBalance'],
+    }),
+    rejectLeaveRequest: b.mutation({
+      query: ({ id, ...body }) => ({ url: `leave-requests/${id}/reject/`, method: 'POST', body }),
+      invalidatesTags: ['LeaveRequest'],
+    }),
+
+    // ---------- Tier 2 — Public holidays ----------
+    listPublicHolidays: b.query({
+      query: (params = {}) => ({ url: 'public-holidays/', params }),
+      providesTags: ['PublicHoliday'],
+    }),
+    createPublicHoliday: b.mutation({
+      query: (body) => ({ url: 'public-holidays/', method: 'POST', body }),
+      invalidatesTags: ['PublicHoliday'],
+    }),
+    deletePublicHoliday: b.mutation({
+      query: (id) => ({ url: `public-holidays/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['PublicHoliday'],
+    }),
+
+    // ---------- Tier 2 — Approval workflow + bank file + YTD ----------
+    markPeriodReviewed: b.mutation({
+      query: ({ id, ...body }) => ({ url: `payroll-periods/${id}/mark-reviewed/`, method: 'POST', body }),
+      invalidatesTags: (r, e, { id }) => ['PayrollPeriod', { type: 'PayrollPeriod', id }],
+    }),
+    approvePeriod: b.mutation({
+      query: ({ id, ...body }) => ({ url: `payroll-periods/${id}/approve/`, method: 'POST', body }),
+      invalidatesTags: (r, e, { id }) => ['PayrollPeriod', { type: 'PayrollPeriod', id }],
+    }),
+    markPeriodPaid: b.mutation({
+      query: ({ id, ...body }) => ({ url: `payroll-periods/${id}/mark-paid/`, method: 'POST', body }),
+      invalidatesTags: (r, e, { id }) => ['PayrollPeriod', { type: 'PayrollPeriod', id }],
+    }),
+    closePeriod: b.mutation({
+      query: ({ id, ...body }) => ({ url: `payroll-periods/${id}/close/`, method: 'POST', body }),
+      invalidatesTags: (r, e, { id }) => ['PayrollPeriod', { type: 'PayrollPeriod', id }],
+    }),
+    reopenPeriod: b.mutation({
+      query: ({ id, ...body }) => ({ url: `payroll-periods/${id}/reopen/`, method: 'POST', body }),
+      invalidatesTags: (r, e, { id }) => ['PayrollPeriod', { type: 'PayrollPeriod', id }],
+    }),
+    employeeYtd: b.query({
+      query: ({ id, year }) => ({ url: `employees/${id}/ytd/`, params: year ? { year } : {} }),
+    }),
+
+    // ---------- Project costs ----------
+    listProjectCosts: b.query({
+      query: (params = {}) => ({ url: 'project-costs/', params }),
+      providesTags: ['ProjectCost'],
+    }),
+    createProjectCost: b.mutation({
+      query: (body) => ({ url: 'project-costs/', method: 'POST', body }),
+      invalidatesTags: ['ProjectCost', 'Project'],
+    }),
+    updateProjectCost: b.mutation({
+      query: ({ id, ...body }) => ({ url: `project-costs/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['ProjectCost', 'Project'],
+    }),
+    deleteProjectCost: b.mutation({
+      query: (id) => ({ url: `project-costs/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['ProjectCost', 'Project'],
+    }),
+
+    // ---------- Project map ----------
+    projectsMap: b.query({
+      query: () => 'projects/map/',
+      providesTags: ['ProjectMap'],
+    }),
+
+    // ---------- Users + modules registry ----------
+    listModules: b.query({
+      query: () => 'auth/users/modules/',
+      providesTags: ['ModuleRegistry'],
+    }),
+    setUserModules: b.mutation({
+      query: ({ id, module_access }) => ({ url: `auth/users/${id}/set-modules/`, method: 'POST', body: { module_access } }),
+      invalidatesTags: ['User', 'Auth'],
+    }),
+    resetUserPassword: b.mutation({
+      query: ({ id, password }) => ({ url: `auth/users/${id}/reset-password/`, method: 'POST', body: { password } }),
+    }),
+    toggleUserActive: b.mutation({
+      query: (id) => ({ url: `auth/users/${id}/toggle-active/`, method: 'POST' }),
+      invalidatesTags: ['User'],
+    }),
+    createUser: b.mutation({
+      query: (body) => ({ url: 'auth/users/', method: 'POST', body }),
+      invalidatesTags: ['User'],
+    }),
+    deleteUser: b.mutation({
+      query: (id) => ({ url: `auth/users/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['User'],
+    }),
+    updateUser: b.mutation({
+      query: ({ id, ...body }) => ({ url: `auth/users/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['User'],
+    }),
   }),
 })
 
@@ -278,6 +499,21 @@ export const {
   useListEmployeesQuery, useGetEmployeeQuery, useCreateEmployeeMutation, useUpdateEmployeeMutation, useDeleteEmployeeMutation,
   useListPayrollPeriodsQuery, useGetPayrollPeriodQuery, useCreatePayrollPeriodMutation, useUpdatePayrollPeriodMutation, useDeletePayrollPeriodMutation, useGeneratePayrollEntriesMutation,
   useListPayrollEntriesQuery, useUpdatePayrollEntryMutation,
+  useListTaxBracketSetsQuery, useGetTaxBracketSetQuery, useCreateTaxBracketSetMutation, useUpdateTaxBracketSetMutation, useDeleteTaxBracketSetMutation, usePreviewPayeMutation,
+  useListStatutoryRatesQuery, useCreateStatutoryRateMutation, useUpdateStatutoryRateMutation, useDeleteStatutoryRateMutation,
+  useListExchangeRatesQuery, useCreateExchangeRateMutation, useDeleteExchangeRateMutation,
+  useListAuditLogsQuery,
+  useListSalaryHistoryQuery, useCreateSalaryHistoryMutation, useDeleteSalaryHistoryMutation,
+  useListEmployeeLoansQuery, useGetEmployeeLoanQuery, useCreateEmployeeLoanMutation, useUpdateEmployeeLoanMutation, useDeleteEmployeeLoanMutation,
+  useListLeaveTypesQuery, useListLeaveBalancesQuery, useListLeaveRequestsQuery,
+  useCreateLeaveRequestMutation, useApproveLeaveRequestMutation, useRejectLeaveRequestMutation,
+  useListPublicHolidaysQuery, useCreatePublicHolidayMutation, useDeletePublicHolidayMutation,
+  useMarkPeriodReviewedMutation, useApprovePeriodMutation, useMarkPeriodPaidMutation, useClosePeriodMutation, useReopenPeriodMutation,
+  useEmployeeYtdQuery,
+  useListProjectCostsQuery, useCreateProjectCostMutation, useUpdateProjectCostMutation, useDeleteProjectCostMutation,
+  useProjectsMapQuery,
+  useListModulesQuery, useSetUserModulesMutation, useResetUserPasswordMutation, useToggleUserActiveMutation,
+  useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation,
 } = api
 
 // Convenience: download a PDF endpoint with the bearer token attached.

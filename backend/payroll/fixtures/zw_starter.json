@@ -1,0 +1,22 @@
+[
+  {"model": "payroll.leavetype", "pk": 1, "fields": {"code": "annual",       "label": "Annual leave",        "paid": true,  "accrual_per_month": "1.83", "annual_cap": "30.00", "sort_order": 1, "is_active": true}},
+  {"model": "payroll.leavetype", "pk": 2, "fields": {"code": "sick",         "label": "Sick leave",          "paid": true,  "accrual_per_month": "0.00", "annual_cap": "90.00", "sort_order": 2, "is_active": true}},
+  {"model": "payroll.leavetype", "pk": 3, "fields": {"code": "maternity",    "label": "Maternity leave",     "paid": true,  "accrual_per_month": "0.00", "annual_cap": null,    "sort_order": 3, "is_active": true}},
+  {"model": "payroll.leavetype", "pk": 4, "fields": {"code": "paternity",    "label": "Paternity leave",     "paid": true,  "accrual_per_month": "0.00", "annual_cap": null,    "sort_order": 4, "is_active": true}},
+  {"model": "payroll.leavetype", "pk": 5, "fields": {"code": "compassionate","label": "Compassionate leave", "paid": true,  "accrual_per_month": "0.00", "annual_cap": "5.00",  "sort_order": 5, "is_active": true}},
+  {"model": "payroll.leavetype", "pk": 6, "fields": {"code": "unpaid",       "label": "Unpaid leave",        "paid": false, "accrual_per_month": "0.00", "annual_cap": null,    "sort_order": 6, "is_active": true}},
+
+  {"model": "payroll.publicholiday", "pk": 1, "fields": {"name": "New Year's Day",                "date": "2026-01-01", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk": 2, "fields": {"name": "Good Friday",                   "date": "2026-04-03", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk": 3, "fields": {"name": "Easter Saturday",               "date": "2026-04-04", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk": 4, "fields": {"name": "Easter Monday",                 "date": "2026-04-06", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk": 5, "fields": {"name": "Independence Day",              "date": "2026-04-18", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk": 6, "fields": {"name": "Workers' Day",                  "date": "2026-05-01", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk": 7, "fields": {"name": "Africa Day",                    "date": "2026-05-25", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk": 8, "fields": {"name": "Heroes' Day",                   "date": "2026-08-10", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk": 9, "fields": {"name": "Defence Forces Day",            "date": "2026-08-11", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk":10, "fields": {"name": "Mothers' Day",                  "date": "2026-05-10", "is_paid": false, "notes": "Observed; not a paid public holiday"}},
+  {"model": "payroll.publicholiday", "pk":11, "fields": {"name": "Unity Day",                     "date": "2026-12-22", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk":12, "fields": {"name": "Christmas Day",                 "date": "2026-12-25", "is_paid": true, "notes": ""}},
+  {"model": "payroll.publicholiday", "pk":13, "fields": {"name": "Boxing Day",                    "date": "2026-12-26", "is_paid": true, "notes": ""}}
+]

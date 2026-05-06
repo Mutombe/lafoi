@@ -1,0 +1,23 @@
+# La Foi Designs — robots
+# https://lafoidesigns.co.zw/robots.txt
+
+User-agent: *
+Allow: /
+
+# The dashboard is for staff — there's no value in indexing it.
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /shop/checkout
+
+# CSS / JS / images must remain crawlable for proper rendering.
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.webp$
+Allow: /*.svg$
+Allow: /*.pdf$
+Allow: /*.mp4$
+
+Sitemap: https://lafoidesigns.co.zw/sitemap.xml

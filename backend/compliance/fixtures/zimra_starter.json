@@ -1,0 +1,167 @@
+[
+  {
+    "model": "compliance.taxbracketset",
+    "pk": 1,
+    "fields": {
+      "name": "ZIMRA 2026 — USD (starter)",
+      "currency": "USD",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "aids_levy_rate": "3.00",
+      "is_active": true,
+      "notes": "Starter dataset — verify against the latest ZIMRA Schedule 1 before going live. Edit from the dashboard, never from code.",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "compliance.taxbracket",
+    "pk": 1,
+    "fields": {
+      "bracket_set": 1, "sort_order": 0,
+      "lower": "0.00", "upper": "1200.00",
+      "rate": "0.00", "fixed_deduction": "0.00"
+    }
+  },
+  {
+    "model": "compliance.taxbracket",
+    "pk": 2,
+    "fields": {
+      "bracket_set": 1, "sort_order": 1,
+      "lower": "1200.01", "upper": "3600.00",
+      "rate": "20.00", "fixed_deduction": "240.00"
+    }
+  },
+  {
+    "model": "compliance.taxbracket",
+    "pk": 3,
+    "fields": {
+      "bracket_set": 1, "sort_order": 2,
+      "lower": "3600.01", "upper": "12000.00",
+      "rate": "25.00", "fixed_deduction": "420.00"
+    }
+  },
+  {
+    "model": "compliance.taxbracket",
+    "pk": 4,
+    "fields": {
+      "bracket_set": 1, "sort_order": 3,
+      "lower": "12000.01", "upper": "24000.00",
+      "rate": "30.00", "fixed_deduction": "1020.00"
+    }
+  },
+  {
+    "model": "compliance.taxbracket",
+    "pk": 5,
+    "fields": {
+      "bracket_set": 1, "sort_order": 4,
+      "lower": "24000.01", "upper": "36000.00",
+      "rate": "35.00", "fixed_deduction": "2220.00"
+    }
+  },
+  {
+    "model": "compliance.taxbracket",
+    "pk": 6,
+    "fields": {
+      "bracket_set": 1, "sort_order": 5,
+      "lower": "36000.01", "upper": null,
+      "rate": "40.00", "fixed_deduction": "4020.00"
+    }
+  },
+  {
+    "model": "compliance.statutoryrate",
+    "pk": 1,
+    "fields": {
+      "code": "nssa_employee_pct",
+      "label": "NSSA Employee Contribution",
+      "value": "4.5000",
+      "currency": "",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "is_active": true,
+      "notes": "Verify with NSSA — historically 4.5% capped at insurable earnings ceiling.",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "compliance.statutoryrate",
+    "pk": 2,
+    "fields": {
+      "code": "nssa_employer_pct",
+      "label": "NSSA Employer Contribution",
+      "value": "4.5000",
+      "currency": "",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "is_active": true,
+      "notes": "Mirror of employee NSSA rate — paid by company, not deducted from employee net.",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "compliance.statutoryrate",
+    "pk": 3,
+    "fields": {
+      "code": "nssa_ceiling",
+      "label": "NSSA Insurable Earnings Ceiling",
+      "value": "700.0000",
+      "currency": "USD",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "is_active": true,
+      "notes": "Update from the latest NSSA gazette. Earnings above this are not subject to NSSA.",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "compliance.statutoryrate",
+    "pk": 4,
+    "fields": {
+      "code": "aids_levy_pct",
+      "label": "AIDS Levy",
+      "value": "3.0000",
+      "currency": "",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "is_active": true,
+      "notes": "3% surtax on PAYE per ZIMRA. Bracket sets carry a per-set override too.",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "compliance.statutoryrate",
+    "pk": 5,
+    "fields": {
+      "code": "standard_ot_rate",
+      "label": "Standard Overtime Multiplier",
+      "value": "1.5000",
+      "currency": "",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "is_active": true,
+      "notes": "Per Zimbabwe Labour Act for weekday overtime.",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "compliance.statutoryrate",
+    "pk": 6,
+    "fields": {
+      "code": "weekend_ot_rate",
+      "label": "Weekend / Holiday Overtime Multiplier",
+      "value": "2.0000",
+      "currency": "",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "is_active": true,
+      "notes": "Per Zimbabwe Labour Act for weekend / public holiday work.",
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z"
+    }
+  }
+]

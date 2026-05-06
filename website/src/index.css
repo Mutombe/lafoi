@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=Sora:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 
@@ -14,11 +14,11 @@
   --color-lafoi-cream: #FAFAF8;
   --color-lafoi-dark: #111111;
   --color-lafoi-accent: #C8E6C9;
-  --font-sora: 'Sora', sans-serif;
-  --font-display: 'Fraunces', 'Times New Roman', serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-cabinet: 'Fraunces', 'Times New Roman', serif;
-  --font-general: 'Inter', system-ui, sans-serif;
+  --font-sora: 'Sora', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-cabinet: 'Outfit', system-ui, sans-serif;
+  --font-general: 'Space Grotesk', system-ui, sans-serif;
 }
 
 
@@ -29,7 +29,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   /* `clip` (not `hidden`) prevents horizontal scroll without creating a scroll
      container — preserves position:sticky on descendant elements. */
   overflow-x: clip;
@@ -205,21 +205,21 @@ body {
 
 /* Responsive typography */
 .heading-xl {
-  font-family: 'Fraunces', 'Times New Roman', serif;
+  font-family: 'Outfit', system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.05;
 }
 
 .heading-lg {
-  font-family: 'Fraunces', 'Times New Roman', serif;
+  font-family: 'Outfit', system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
 .body-text {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   font-weight: 400;
   line-height: 1.7;
   color: #4A4A4A;

@@ -16,7 +16,7 @@ import {
 import AnimatedSection, { StaggerContainer, StaggerItem } from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
-import { useSEO } from '../utils/seo'
+import { useSEO, breadcrumbsLd } from '../utils/seo'
 import {
   getProductBySlug,
   getRelatedProducts,
@@ -61,9 +61,16 @@ export default function ProductDetail() {
   const [lightbox, setLightbox] = useState(null)
 
   useSEO({
-    title: `${product.name} — ${product.category}`,
-    description: product.shortDesc,
+    title: `${product.name} | La Foi Designs`,
+    description:
+      product.shortDesc || product.longDesc?.slice(0, 200) || product.name,
     path: `/products/${product.slug}`,
+    image: product.image,
+    jsonLd: breadcrumbsLd([
+      { name: 'Home', path: '/' },
+      { name: 'Products', path: '/products' },
+      { name: product.name, path: `/products/${product.slug}` },
+    ]),
   })
 
   return (
@@ -224,7 +231,7 @@ export default function ProductDetail() {
                       <div className="grid grid-cols-2 gap-3 mt-6 pt-5 border-t border-white/10">
                         <div className="flex items-center gap-2 text-xs text-white/60 font-general">
                           <Shield size={13} weight="regular" className="text-lafoi-green-light" />
-                          <span>{product.specs.Warranty || '15 years'}</span>
+                          <span>{product.specs.Warranty || '10 years'}</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs text-white/60 font-general">
                           <Clock size={13} weight="regular" className="text-lafoi-green-light" />
@@ -269,7 +276,7 @@ export default function ProductDetail() {
                   >
                     <OptimizedImage
                       src={src}
-                      alt={`${product.name} — view ${i + 1}`}
+                      alt={`${product.name} — ${product.vision} (view ${i + 1})`}
                       className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                       fill
                       vision={product.vision}
@@ -320,7 +327,7 @@ export default function ProductDetail() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
                         src={proj.thumb}
-                        alt={proj.title}
+                        alt={`${proj.title} — ${proj.vision}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={proj.vision}
@@ -368,7 +375,7 @@ export default function ProductDetail() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
                         src={p.image}
-                        alt={p.name}
+                        alt={`${p.name} — ${p.vision || `${p.finish} finish ${p.category.toLowerCase()}`}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={p.vision}
@@ -452,7 +459,7 @@ export default function ProductDetail() {
               </button>
               <img
                 src={lightbox}
-                alt={product.name}
+                alt={`${product.name} — ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
                 className="w-full h-auto max-h-[85vh] object-contain bg-black"
               />
             </motion.div>
