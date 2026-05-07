@@ -4,6 +4,8 @@ from .views import (
     CategoryViewSet,
     ItemViewSet,
     MovementViewSet,
+    NotificationRuleViewSet,
+    NotificationViewSet,
     PurchaseOrderViewSet,
     StockLocationViewSet,
     StockViewSet,
@@ -18,5 +20,7 @@ router.register('items', ItemViewSet, basename='item')
 router.register('stocks', StockViewSet, basename='stock')
 router.register('movements', MovementViewSet, basename='movement')
 router.register('purchase-orders', PurchaseOrderViewSet, basename='purchase-order')
+router.register('notification-rules', NotificationRuleViewSet, basename='notification-rule')
+router.register('notifications', NotificationViewSet, basename='notification')
 
 urlpatterns = router.urls

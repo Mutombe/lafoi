@@ -1,22 +1,28 @@
 """Inventory viewsets — catalogue, suppliers, POs, stock movements + analytics.
 
 Custom actions:
-  GET   /api/items/lookup/?barcode=…           — resolve a scanned barcode to an Item
-  GET   /api/items/?low_stock=true             — filter to items at/under threshold
-  GET   /api/items/export_csv/                 — full catalogue CSV
-  POST  /api/items/import_csv/  (multipart)    — upsert by SKU; returns counts
-  GET   /api/movements/burn-rate/?days=30      — top movers / slowest / dead stock
-  POST  /api/purchase-orders/<id>/receive/     — receive PO lines into a Location
+  GET   /api/items/lookup/?barcode=…              — resolve a scanned barcode to an Item
+  GET   /api/items/?low_stock=true                — filter to items at/under threshold
+  GET   /api/items/export_csv/                    — full catalogue CSV
+  POST  /api/items/import_csv/  (multipart)       — upsert by SKU; returns counts
+  POST  /api/items/<id>/quick_reorder/            — one-click PO + optional supplier email
+  GET   /api/movements/burn-rate/?days=30         — top movers / slowest / dead stock
+  POST  /api/purchase-orders/<id>/receive/        — receive PO lines into a Location
+  POST  /api/notification-rules/<id>/test/        — send a test message via the rule
 """
 import csv
 import io
+import logging
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db import transaction
 from django.db.models import F, Max, Q, Sum
 from django.http import HttpResponse
 from django.utils import timezone
+from decouple import config
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -28,21 +34,29 @@ from .models import (
     Category,
     Item,
     Movement,
+    Notification,
+    NotificationRule,
     PurchaseOrder,
     PurchaseOrderItem,
     Stock,
     StockLocation,
     Supplier,
 )
+from .notifications import send_test_alert
+from .po_pdf import store_purchase_order_pdf
 from .serializers import (
     CategorySerializer,
     ItemSerializer,
     MovementSerializer,
+    NotificationRuleSerializer,
+    NotificationSerializer,
     PurchaseOrderSerializer,
     StockLocationSerializer,
     StockSerializer,
     SupplierSerializer,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def _to_decimal(raw, field_name=None) -> Decimal:
@@ -158,6 +172,120 @@ class ItemViewSet(viewsets.ModelViewSet):
         resp['Content-Disposition'] = 'attachment; filename="inventory.csv"'
         return resp
 
+    @action(detail=True, methods=['post'], url_path='quick_reorder')
+    def quick_reorder(self, request, pk=None):
+        """One-click reorder — drafts a PO, optionally PDFs + emails the supplier.
+
+        Body (all optional):
+          {
+            "quantity":  Decimal,        # default: item.reorder_quantity or threshold * 2
+            "supplier":  <id>,           # default: item.supplier
+            "location":  <id>,           # default: first default StockLocation
+            "send_email": bool,          # default false; if True + supplier email,
+                                          #   render a PDF + email the supplier and
+                                          #   mark the PO status as 'sent'
+            "currency":  'USD'           # default: item.currency
+          }
+
+        Returns the new PurchaseOrder, including pdf_url if rendered.
+        """
+        item = self.get_object()
+
+        # Resolve quantity
+        qty_raw = request.data.get('quantity')
+        if qty_raw not in (None, ''):
+            quantity = _to_decimal(qty_raw, 'quantity')
+        else:
+            if item.reorder_quantity and item.reorder_quantity > 0:
+                quantity = item.reorder_quantity
+            else:
+                quantity = (item.reorder_threshold or Decimal('0')) * Decimal('2')
+            if quantity <= 0:
+                quantity = Decimal('1')
+
+        # Resolve supplier
+        supplier_id = request.data.get('supplier') or item.supplier_id
+        if not supplier_id:
+            raise ValidationError({"supplier": "No supplier on the item — pass `supplier` explicitly."})
+        try:
+            supplier = Supplier.objects.get(pk=supplier_id)
+        except Supplier.DoesNotExist:
+            raise ValidationError({"supplier": "Supplier not found."})
+
+        currency = request.data.get('currency') or item.currency or 'USD'
+        send_email_flag = bool(request.data.get('send_email'))
+
+        # Create the PO + line atomically. status starts as 'draft', flips to
+        # 'sent' below if we successfully email the supplier.
+        with transaction.atomic():
+            po = PurchaseOrder.objects.create(
+                supplier=supplier,
+                status='draft',
+                currency=currency,
+                notes=f"Quick reorder for {item.sku} — {item.name}",
+                created_by=request.user if request.user.is_authenticated else None,
+            )
+            PurchaseOrderItem.objects.create(
+                po=po,
+                item=item,
+                quantity=quantity,
+                unit_cost=item.cost_price or Decimal('0'),
+            )
+            po.refresh_from_db()  # pick up the recompute_total side effect
+
+        # Optional: render PDF + email it
+        pdf_url = ''
+        email_sent = False
+        email_error = ''
+        if send_email_flag:
+            try:
+                pdf_url = store_purchase_order_pdf(po)
+                po.pdf_url = pdf_url
+                po.save(update_fields=['pdf_url', 'updated_at'])
+            except Exception as exc:  # pragma: no cover — storage failure path
+                logger.exception("PO PDF render/store failed")
+                email_error = f"PDF render failed: {exc}"
+
+            if pdf_url and supplier.email:
+                co_name = getattr(settings, "COMPANY", {}).get("name", "La Foi Designs")
+                subject = f"[{co_name}] Purchase Order {po.reference}"
+                body = (
+                    f"Hello {supplier.contact_person or supplier.name},\n\n"
+                    f"Please find our purchase order {po.reference} attached as a PDF:\n"
+                    f"  {pdf_url}\n\n"
+                    f"  Item:     {item.sku} — {item.name}\n"
+                    f"  Quantity: {quantity} {item.unit}\n"
+                    f"  Total:    {currency} {po.total:.2f}\n\n"
+                    f"Kindly confirm receipt and the expected dispatch date.\n\n"
+                    f"Thank you,\n{co_name}"
+                )
+                from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "") or config(
+                    "DEFAULT_FROM_EMAIL", default="noreply@lafoidesigns.com"
+                )
+                try:
+                    sent_count = send_mail(
+                        subject=subject,
+                        message=body,
+                        from_email=from_email,
+                        recipient_list=[supplier.email],
+                        fail_silently=False,
+                    )
+                    if sent_count > 0:
+                        email_sent = True
+                        po.status = 'sent'
+                        po.save(update_fields=['status', 'updated_at'])
+                except Exception as exc:  # pragma: no cover — SMTP failure
+                    logger.exception("Supplier email failed")
+                    email_error = f"Email failed: {exc}"
+            elif send_email_flag and not supplier.email:
+                email_error = "Supplier has no email on file."
+
+        po.refresh_from_db()
+        data = PurchaseOrderSerializer(po).data
+        data['email_sent'] = email_sent
+        data['email_error'] = email_error
+        return Response(data, status=status.HTTP_201_CREATED)
+
     @action(detail=False, methods=['post'], url_path='import_csv', parser_classes=[MultiPartParser, FormParser])
     def import_csv(self, request):
         """Upsert items by SKU from a CSV upload.
@@ -254,6 +382,21 @@ class MovementViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = self.request.user if self.request.user.is_authenticated else None
         serializer.save(performed_by=user)
+
+    def create(self, request, *args, **kwargs):
+        """Idempotent create: if `client_uuid` matches an existing Movement,
+        return that row instead of double-posting.
+
+        This is the offline-sync contract — the IndexedDB queue can replay
+        the same payload after a flaky network and we won't end up with
+        duplicate stock movements.
+        """
+        client_uuid = request.data.get('client_uuid')
+        if client_uuid:
+            existing = Movement.objects.filter(client_uuid=client_uuid).first()
+            if existing is not None:
+                return Response(MovementSerializer(existing).data, status=status.HTTP_200_OK)
+        return super().create(request, *args, **kwargs)
 
     @action(detail=False, methods=['get'], url_path='burn-rate')
     def burn_rate(self, request):
@@ -419,3 +562,36 @@ class PurchaseOrderViewSet(viewsets.ModelViewSet):
             po.save(update_fields=['status', 'updated_at'])
 
         return Response(PurchaseOrderSerializer(po).data)
+
+
+class NotificationRuleViewSet(viewsets.ModelViewSet):
+    """Distribution-list management — who gets pinged when stock runs low."""
+
+    queryset = NotificationRule.objects.all()
+    serializer_class = NotificationRuleSerializer
+    permission_classes = [IsAuthenticated]
+    filterset_fields = ('event', 'channel', 'is_active')
+    search_fields = ('name', 'recipient_email', 'recipient_phone', 'notes')
+    ordering_fields = ('event', 'channel', 'name', 'created_at')
+
+    @action(detail=True, methods=['post'], url_path='test')
+    def test(self, request, pk=None):
+        """Fire a one-off test message to the rule's recipient.
+
+        Returns the created Notification row so the dashboard can surface
+        the success/failure status inline.
+        """
+        rule = self.get_object()
+        notification = send_test_alert(rule)
+        return Response(NotificationSerializer(notification).data)
+
+
+class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+    """Read-only history of every send attempt. Filters: event, channel, status, item."""
+
+    queryset = Notification.objects.select_related('rule', 'item').all()
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+    filterset_fields = ('event', 'channel', 'status', 'item', 'rule')
+    search_fields = ('recipient', 'subject', 'body', 'error', 'item__sku', 'item__name')
+    ordering_fields = ('created_at', 'sent_at', 'status')

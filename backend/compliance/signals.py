@@ -78,6 +78,8 @@ TRACKED_LABELS = {
     "inventory.Movement",
     "inventory.PurchaseOrder",
     "inventory.PurchaseOrderItem",
+    "inventory.NotificationRule",
+    "inventory.Notification",
 }
 
 

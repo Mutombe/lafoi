@@ -4,6 +4,8 @@ from .models import (
     Category,
     Item,
     Movement,
+    Notification,
+    NotificationRule,
     PurchaseOrder,
     PurchaseOrderItem,
     Stock,
@@ -75,5 +77,21 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
     list_display = ('reference', 'supplier', 'status', 'expected_date', 'total', 'created_at')
     list_filter = ('status',)
     search_fields = ('reference', 'supplier__name', 'notes')
-    readonly_fields = ('reference', 'total', 'created_at', 'updated_at')
+    readonly_fields = ('reference', 'total', 'pdf_url', 'created_at', 'updated_at')
     inlines = (POItemInline,)
+
+
+@admin.register(NotificationRule)
+class NotificationRuleAdmin(admin.ModelAdmin):
+    list_display = ('name', 'event', 'channel', 'recipient_email', 'recipient_phone', 'is_active')
+    list_filter = ('event', 'channel', 'is_active')
+    search_fields = ('name', 'recipient_email', 'recipient_phone', 'notes')
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('event', 'channel', 'recipient', 'item', 'status', 'sent_at', 'created_at')
+    list_filter = ('event', 'channel', 'status')
+    search_fields = ('recipient', 'subject', 'body', 'error', 'item__sku', 'item__name')
+    readonly_fields = ('rule', 'item', 'event', 'channel', 'recipient', 'subject', 'body',
+                       'status', 'error', 'sent_at', 'created_at')

@@ -64,6 +64,7 @@ export const api = createApi({
     'InventoryItem', 'InventoryCategory', 'InventoryLocation',
     'InventoryStock', 'InventoryMovement', 'InventorySupplier',
     'PurchaseOrder', 'BurnRate',
+    'NotificationRule', 'Notification',
   ],
   endpoints: (b) => ({
     // ---------- Auth ----------
@@ -645,6 +646,40 @@ export const api = createApi({
         'InventoryItem', 'InventoryMovement',
       ],
     }),
+
+    // ---------- Inventory — Quick reorder (one-click PO from item) ----------
+    quickReorderItem: b.mutation({
+      query: ({ id, ...body }) => ({ url: `items/${id}/quick_reorder/`, method: 'POST', body }),
+      invalidatesTags: (r, e, { id }) => [
+        'PurchaseOrder', 'InventoryItem', { type: 'InventoryItem', id },
+      ],
+    }),
+
+    // ---------- Inventory — Notification rules + history ----------
+    listNotificationRules: b.query({
+      query: (params = {}) => ({ url: 'notification-rules/', params }),
+      providesTags: ['NotificationRule'],
+    }),
+    createNotificationRule: b.mutation({
+      query: (body) => ({ url: 'notification-rules/', method: 'POST', body }),
+      invalidatesTags: ['NotificationRule'],
+    }),
+    updateNotificationRule: b.mutation({
+      query: ({ id, ...body }) => ({ url: `notification-rules/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['NotificationRule'],
+    }),
+    deleteNotificationRule: b.mutation({
+      query: (id) => ({ url: `notification-rules/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['NotificationRule'],
+    }),
+    testNotificationRule: b.mutation({
+      query: (id) => ({ url: `notification-rules/${id}/test/`, method: 'POST' }),
+      invalidatesTags: ['Notification'],
+    }),
+    listNotifications: b.query({
+      query: (params = {}) => ({ url: 'notifications/', params }),
+      providesTags: ['Notification'],
+    }),
   }),
 })
 
@@ -687,6 +722,9 @@ export const {
   useListMovementsQuery, useCreateMovementMutation, useGetBurnRateQuery,
   useListPurchaseOrdersQuery, useGetPurchaseOrderQuery, useCreatePurchaseOrderMutation, useUpdatePurchaseOrderMutation, useDeletePurchaseOrderMutation,
   useReceivePurchaseOrderMutation,
+  useQuickReorderItemMutation,
+  useListNotificationRulesQuery, useCreateNotificationRuleMutation, useUpdateNotificationRuleMutation, useDeleteNotificationRuleMutation, useTestNotificationRuleMutation,
+  useListNotificationsQuery,
 } = api
 
 // Convenience: download an arbitrary endpoint with the bearer token attached.

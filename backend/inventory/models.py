@@ -147,6 +147,11 @@ class Item(models.Model):
     image_url = models.URLField(blank=True)
     is_active = models.BooleanField(default=True)
 
+    last_low_stock_alert_at = models.DateTimeField(
+        null=True, blank=True,
+        help_text="Timestamp of the last low-stock alert sent for this item — used to suppress repeats.",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -230,6 +235,12 @@ class Movement(models.Model):
     occurred_at = models.DateTimeField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Idempotency key for offline-queue replays: an installer records a movement
+    # on their phone while offline, the queue ships it later. The client owns the
+    # uuid; if the same uuid arrives twice we return the previously-created row
+    # rather than double-posting.
+    client_uuid = models.UUIDField(null=True, blank=True, unique=True)
+
     class Meta:
         ordering = ('-occurred_at', '-created_at')
         indexes = [
@@ -271,6 +282,10 @@ class PurchaseOrder(models.Model):
     notes = models.TextField(blank=True)
     total = models.DecimalField(max_digits=14, decimal_places=2, default=Decimal('0'))
     currency = models.CharField(max_length=8, default='USD')
+    pdf_url = models.URLField(
+        blank=True, max_length=500,
+        help_text="Public URL of the rendered PO PDF (DO Spaces in prod).",
+    )
 
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
@@ -322,3 +337,85 @@ class PurchaseOrderItem(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.po.reference} :: {self.item.sku} × {self.quantity}"
+
+
+# ---------------------------------------------------------------------------
+# Notifications — automated low-stock alerts + audit trail of every send.
+# ---------------------------------------------------------------------------
+class NotificationChannel(models.TextChoices):
+    EMAIL = "email", "Email"
+    WHATSAPP = "whatsapp", "WhatsApp"
+    INAPP = "inapp", "In-app"
+
+
+class NotificationStatus(models.TextChoices):
+    PENDING = "pending", "Pending"
+    SENT = "sent", "Sent"
+    FAILED = "failed", "Failed"
+    SKIPPED = "skipped", "Skipped"
+
+
+class NotificationRule(models.Model):
+    """Who gets notified about which inventory event.
+
+    A rule binds a kind of event (e.g. low_stock) to one or more recipients
+    and channels. Rules are admin-configurable so the studio can manage
+    distribution lists without code changes.
+    """
+    EVENT_CHOICES = [
+        ("low_stock", "Low stock"),
+        ("po_received", "PO received"),
+        ("po_overdue", "PO overdue"),
+    ]
+    name = models.CharField(max_length=120)
+    event = models.CharField(max_length=24, choices=EVENT_CHOICES)
+    channel = models.CharField(max_length=12, choices=NotificationChannel.choices)
+    recipient_email = models.EmailField(blank=True)
+    recipient_phone = models.CharField(
+        max_length=32, blank=True,
+        help_text="E.164 format: +263…",
+    )
+    is_active = models.BooleanField(default=True)
+    notes = models.CharField(max_length=240, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("event", "channel", "name")
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.name} ({self.get_event_display()} · {self.get_channel_display()})"
+
+
+class Notification(models.Model):
+    """A single send-attempt record. One row per (rule, item, send-attempt)."""
+    rule = models.ForeignKey(
+        NotificationRule, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="notifications",
+    )
+    item = models.ForeignKey(
+        Item, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="notifications",
+    )
+    event = models.CharField(max_length=24)
+    channel = models.CharField(max_length=12, choices=NotificationChannel.choices)
+    recipient = models.CharField(
+        max_length=240,
+        help_text="email or phone — denormalised so we can audit even after the rule is deleted.",
+    )
+    subject = models.CharField(max_length=240, blank=True)
+    body = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=12, choices=NotificationStatus.choices,
+        default=NotificationStatus.PENDING,
+    )
+    error = models.TextField(blank=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        indexes = [models.Index(fields=["item", "event", "created_at"])]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.event} → {self.recipient} ({self.status})"

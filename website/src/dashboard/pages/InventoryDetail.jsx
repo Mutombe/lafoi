@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft, Package, Plus, ArrowUp, ArrowDown, ClipboardText, MapPin, CircleNotch,
-  Warning, PencilSimple,
+  Warning, PencilSimple, Truck,
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -16,7 +16,10 @@ import {
   useCreateMovementMutation,
   useListStockLocationsQuery,
   useListPurchaseOrdersQuery,
+  useListSuppliersQuery,
+  useQuickReorderItemMutation,
 } from '../store/api'
+import { recordMovement } from '../offline/syncQueue'
 
 const REASONS = [
   { value: 'receive', label: 'Receive (in)', sign: 1 },
@@ -54,12 +57,16 @@ export default function InventoryDetail() {
   const { data: movementsData } = useListMovementsQuery({ item: id, page: 1, page_size: 25 })
   const { data: locData } = useListStockLocationsQuery({ page: 1, page_size: 100 })
   const { data: poData } = useListPurchaseOrdersQuery({ page: 1, page_size: 100 })
+  const { data: supData } = useListSuppliersQuery({ page: 1, page_size: 200 })
 
   const [createMovement, createState] = useCreateMovementMutation()
+  const [quickReorder, reorderState] = useQuickReorderItemMutation()
   const [movementForm, setMovementForm] = useState(null)
+  const [reorderForm, setReorderForm] = useState(null)
 
   const locations = locData?.results || []
   const movements = movementsData?.results || []
+  const suppliers = supData?.results || []
 
   // Open POs that contain this item.
   const openPOs = useMemo(() => {
@@ -103,20 +110,73 @@ export default function InventoryDetail() {
     if (meta?.sign === 1) qty = Math.abs(qty)
     else if (meta?.sign === -1) qty = -Math.abs(qty)
 
+    const payload = {
+      item: item.id,
+      location: movementForm.location,
+      quantity: qty,
+      reason: movementForm.reason,
+      reference: movementForm.reference || '',
+      notes: movementForm.notes || '',
+    }
+
     try {
-      await createMovement({
-        item: item.id,
-        location: movementForm.location,
-        quantity: qty,
-        reason: movementForm.reason,
-        reference: movementForm.reference || '',
-        notes: movementForm.notes || '',
-      }).unwrap()
-      toast.success('Movement posted', { description: `${qty > 0 ? '+' : ''}${qty} ${item.unit}` })
+      const outcome = await recordMovement(payload, (body) => createMovement(body).unwrap())
+      if (outcome.online) {
+        toast.success('Movement posted', { description: `${qty > 0 ? '+' : ''}${qty} ${item.unit}` })
+      } else if (outcome.queued) {
+        toast.message('Queued offline', {
+          description: 'Movement will sync when you reconnect.',
+        })
+      }
       setMovementForm(null)
     } catch (err) {
       const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Could not post movement.'
       toast.error('Post failed', { description: msg })
+    }
+  }
+
+  const openReorderModal = () => {
+    const defaultLoc = locations.find((l) => l.is_default) || locations[0]
+    const suggestedQty = Number(item.reorder_quantity) || Number(item.reorder_threshold) * 2 || 1
+    setReorderForm({
+      quantity: suggestedQty,
+      supplier: item.supplier || '',
+      location: defaultLoc?.id || '',
+      send_email: false,
+    })
+  }
+
+  const handleSubmitReorder = async (e) => {
+    e.preventDefault()
+    if (!reorderForm) return
+    if (!reorderForm.supplier) {
+      toast.error('Pick a supplier')
+      return
+    }
+    if (Number(reorderForm.quantity) <= 0) {
+      toast.error('Quantity must be greater than zero')
+      return
+    }
+    try {
+      const po = await quickReorder({
+        id: item.id,
+        quantity: reorderForm.quantity,
+        supplier: reorderForm.supplier,
+        location: reorderForm.location || null,
+        send_email: reorderForm.send_email,
+      }).unwrap()
+      if (po.email_error) {
+        toast.error('PO created — email warning', { description: po.email_error })
+      } else if (po.email_sent) {
+        toast.success(`PO ${po.reference} created and emailed to supplier`)
+      } else {
+        toast.success(`PO ${po.reference} drafted`)
+      }
+      setReorderForm(null)
+      navigate('/dashboard/inventory/purchase-orders')
+    } catch (err) {
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Reorder failed.'
+      toast.error('Reorder failed', { description: msg })
     }
   }
 
@@ -169,6 +229,11 @@ export default function InventoryDetail() {
         description={item.description || (item.barcode ? `Barcode: ${item.barcode}` : 'Stock-keeping record.')}
         actions={
           <>
+            {item.is_low_stock && (
+              <SecondaryButton onClick={openReorderModal} title="One-click PO to supplier">
+                <Truck size={14} weight="bold" /> Quick reorder
+              </SecondaryButton>
+            )}
             <SecondaryButton onClick={() => openMovementModal('receive')}>
               <ArrowDown size={14} weight="bold" /> Add stock
             </SecondaryButton>
@@ -253,6 +318,55 @@ export default function InventoryDetail() {
           </Section>
         </div>
       </div>
+
+      {/* Quick reorder modal */}
+      <Modal
+        open={!!reorderForm}
+        onClose={() => setReorderForm(null)}
+        title={`Quick reorder — ${item.name}`}
+        size="md"
+        footer={
+          <>
+            <SecondaryButton type="button" onClick={() => setReorderForm(null)}>Cancel</SecondaryButton>
+            <PrimaryButton form="reorder-form" type="submit" disabled={reorderState.isLoading}>
+              {reorderState.isLoading ? (<><CircleNotch size={14} className="animate-spin" /> Creating…</>) : 'Create PO'}
+            </PrimaryButton>
+          </>
+        }
+      >
+        {reorderForm && (
+          <form id="reorder-form" onSubmit={handleSubmitReorder} className="grid sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2 px-3 py-2 rounded-lg bg-lafoi-cream/70 text-sm font-body text-lafoi-gray">
+              Drafts a PO for <strong>{item.sku}</strong> at the supplier's last known cost ({fmtMoney(item.cost_price, item.currency)}).
+            </div>
+            <Field label="Quantity" required>
+              <Input type="number" step="0.01" min="0" value={reorderForm.quantity}
+                onChange={(e) => setReorderForm({ ...reorderForm, quantity: e.target.value })} required />
+            </Field>
+            <Field label="Supplier" required>
+              <Select value={reorderForm.supplier} onChange={(e) => setReorderForm({ ...reorderForm, supplier: e.target.value })} required>
+                <option value="">Select supplier…</option>
+                {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </Select>
+            </Field>
+            <Field label="Receiving location" hint="Used when stock arrives — not bound to the PO itself.">
+              <Select value={reorderForm.location} onChange={(e) => setReorderForm({ ...reorderForm, location: e.target.value })}>
+                <option value="">— None —</option>
+                {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+              </Select>
+            </Field>
+            <Field label="Email PO to supplier" className="sm:col-span-1">
+              <label className="inline-flex items-center gap-2 px-3 py-2.5 rounded-xl border border-lafoi-dark/12 bg-white cursor-pointer">
+                <input type="checkbox"
+                  checked={reorderForm.send_email}
+                  onChange={(e) => setReorderForm({ ...reorderForm, send_email: e.target.checked })}
+                  className="accent-lafoi-green" />
+                <span className="text-xs font-sora">Render PDF + email</span>
+              </label>
+            </Field>
+          </form>
+        )}
+      </Modal>
 
       {/* Movement modal */}
       <Modal

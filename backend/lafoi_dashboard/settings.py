@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "django_filters",
+    "storages",
     # Local
     "accounts",
     "crm",
@@ -110,9 +111,46 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# --- Media storage --------------------------------------------------------
+# When AWS_STORAGE_BUCKET_NAME is set, route uploads to a Digital Ocean
+# Spaces (S3-compatible) bucket. Without it, fall back to the local disk —
+# fine for dev, but on Render the local disk is wiped on every redeploy.
+AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default="")
+AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL", default="")
+AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="sgp1")
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default="")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default="")
+AWS_S3_ADDRESSING_STYLE = "virtual"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_DEFAULT_ACL = "public-read"
+AWS_QUERYSTRING_AUTH = False  # public URLs without signed-URL noise
+AWS_S3_FILE_OVERWRITE = False  # never silently overwrite an upload
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "public, max-age=86400"}
+
+if AWS_STORAGE_BUCKET_NAME and AWS_S3_ENDPOINT_URL:
+    _media_storage = {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,
+            "region_name": AWS_S3_REGION_NAME,
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "default_acl": AWS_DEFAULT_ACL,
+            "querystring_auth": AWS_QUERYSTRING_AUTH,
+            "file_overwrite": AWS_S3_FILE_OVERWRITE,
+            "addressing_style": AWS_S3_ADDRESSING_STYLE,
+            "signature_version": AWS_S3_SIGNATURE_VERSION,
+            "object_parameters": AWS_S3_OBJECT_PARAMETERS,
+            "location": "media",  # all uploads namespaced under <bucket>/media/
+        },
+    }
+else:
+    _media_storage = {"BACKEND": "django.core.files.storage.FileSystemStorage"}
+
 # WhiteNoise compressed manifest storage — fingerprinted assets, gzip + brotli.
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "default": _media_storage,
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },

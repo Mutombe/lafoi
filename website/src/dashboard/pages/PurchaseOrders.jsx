@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
   Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch,
-  X, ArrowDown,
+  X, ArrowDown, FilePdf,
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -258,6 +258,18 @@ export default function PurchaseOrders() {
       key: 'actions', label: '', priority: 'high',
       render: (r) => (
         <div className="flex justify-end gap-1">
+          {r.pdf_url && (
+            <a
+              href={r.pdf_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center"
+              title="Download PDF"
+            >
+              <FilePdf size={14} />
+            </a>
+          )}
           {['sent', 'partial', 'draft'].includes(r.status) && (
             <button onClick={(e) => { e.stopPropagation(); startReceive(r) }}
               className="p-2 rounded-lg hover:bg-lafoi-green/10 text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center" title="Receive stock">

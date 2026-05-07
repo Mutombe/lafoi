@@ -6,6 +6,8 @@ from .models import (
     Category,
     Item,
     Movement,
+    Notification,
+    NotificationRule,
     PurchaseOrder,
     PurchaseOrderItem,
     Stock,
@@ -124,7 +126,7 @@ class MovementSerializer(serializers.ModelSerializer):
             'location', 'location_name',
             'quantity', 'reason', 'reference', 'notes',
             'performed_by', 'performed_by_name',
-            'occurred_at', 'created_at',
+            'occurred_at', 'client_uuid', 'created_at',
         )
         read_only_fields = (
             'id', 'item_name', 'item_sku', 'location_name',
@@ -158,13 +160,15 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'reference', 'supplier', 'supplier_name', 'status',
             'expected_date', 'notes', 'total', 'currency',
+            'pdf_url',
             'created_by', 'created_by_name',
             'items',
             'created_at', 'updated_at',
         )
         read_only_fields = (
             'id', 'reference', 'supplier_name', 'created_by',
-            'created_by_name', 'total', 'created_at', 'updated_at',
+            'created_by_name', 'total', 'pdf_url',
+            'created_at', 'updated_at',
         )
 
     def create(self, validated_data):
@@ -192,3 +196,46 @@ class PurchaseOrderSerializer(serializers.ModelSerializer):
                 PurchaseOrderItem.objects.create(po=instance, **item_data)
             instance.recompute_total()
         return instance
+
+
+class NotificationRuleSerializer(serializers.ModelSerializer):
+    event_label = serializers.CharField(source='get_event_display', read_only=True)
+    channel_label = serializers.CharField(source='get_channel_display', read_only=True)
+    recipient = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NotificationRule
+        fields = (
+            'id', 'name', 'event', 'event_label',
+            'channel', 'channel_label',
+            'recipient_email', 'recipient_phone', 'recipient',
+            'is_active', 'notes',
+            'created_at', 'updated_at',
+        )
+        read_only_fields = ('id', 'event_label', 'channel_label', 'recipient', 'created_at', 'updated_at')
+
+    def get_recipient(self, obj):
+        # Convenience for the dashboard table — collapses email/phone into one column.
+        if obj.channel == 'email':
+            return obj.recipient_email
+        if obj.channel == 'whatsapp':
+            return obj.recipient_phone
+        return ''
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    rule_name = serializers.CharField(source='rule.name', read_only=True)
+    item_sku = serializers.CharField(source='item.sku', read_only=True)
+    item_name = serializers.CharField(source='item.name', read_only=True)
+
+    class Meta:
+        model = Notification
+        fields = (
+            'id', 'rule', 'rule_name',
+            'item', 'item_sku', 'item_name',
+            'event', 'channel', 'recipient',
+            'subject', 'body',
+            'status', 'error',
+            'sent_at', 'created_at',
+        )
+        read_only_fields = fields

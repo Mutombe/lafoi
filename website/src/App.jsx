@@ -55,6 +55,7 @@ const DashSuppliers = lazy(() => import('./dashboard/pages/Suppliers'))
 const DashMovements = lazy(() => import('./dashboard/pages/Movements'))
 const DashPurchaseOrders = lazy(() => import('./dashboard/pages/PurchaseOrders'))
 const DashBurnRate = lazy(() => import('./dashboard/pages/BurnRate'))
+const DashInventoryNotifications = lazy(() => import('./dashboard/pages/InventoryNotifications'))
 
 export default function App() {
   const location = useLocation()
@@ -94,6 +95,7 @@ export default function App() {
             <Route path="inventory/movements" element={<DashMovements />} />
             <Route path="inventory/purchase-orders" element={<DashPurchaseOrders />} />
             <Route path="inventory/burn-rate" element={<DashBurnRate />} />
+            <Route path="inventory/notifications" element={<DashInventoryNotifications />} />
             <Route path="inventory/:id" element={<DashInventoryDetail />} />
             <Route path="settings/compliance" element={<DashCompliance />} />
             <Route path="map" element={<DashStudioMap />} />

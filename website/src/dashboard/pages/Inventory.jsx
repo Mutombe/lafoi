@@ -14,6 +14,7 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import BarcodeScanner from '../components/BarcodeScanner'
+import OfflineSyncBadge from '../components/OfflineSyncBadge'
 import {
   useListItemsQuery,
   useCreateItemMutation,
@@ -288,6 +289,7 @@ export default function Inventory() {
         description="Every SKU the studio holds — tracked across locations, surfaced when low, scannable from your phone."
         actions={
           <>
+            <OfflineSyncBadge />
             <SecondaryButton type="button" onClick={handleExport} title="Download as CSV">
               <DownloadSimple size={14} weight="bold" /> Export
             </SecondaryButton>

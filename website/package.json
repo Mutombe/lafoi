@@ -12,6 +12,7 @@
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "@reduxjs/toolkit": "^2.11.2",
+    "dexie": "^4.0.10",
     "framer-motion": "^12.34.3",
     "html5-qrcode": "^2.3.8",
     "leaflet": "^1.9.4",

@@ -9,7 +9,7 @@ import {
   Bank, Tray, CalendarStar, MapPin, UsersFour,
   CaretDown, Storefront, Coins, IdentificationCard, GearSix,
   ClockClockwise,
-  Package, ArrowsLeftRight, Truck, ClipboardText, Cube,
+  Package, ArrowsLeftRight, Truck, ClipboardText, Cube, BellRinging,
 } from '@phosphor-icons/react'
 
 import Logo from '../../components/shared/Logo'
@@ -53,6 +53,7 @@ const GROUPS = [
       { to: '/dashboard/inventory/suppliers',       icon: Truck,              label: 'Suppliers',       module: 'inventory' },
       { to: '/dashboard/inventory/purchase-orders', icon: ClipboardText,      label: 'Purchase Orders', module: 'inventory' },
       { to: '/dashboard/inventory/burn-rate',       icon: ChartBarHorizontal, label: 'Burn Rate',       module: 'inventory' },
+      { to: '/dashboard/inventory/notifications',   icon: BellRinging,        label: 'Notifications',   module: 'inventory' },
     ],
   },
   {
