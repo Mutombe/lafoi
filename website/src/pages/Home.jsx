@@ -43,9 +43,9 @@ const HOME_HERO_SLIDES = [
     vision: 'Editorial yellow linear-pendant ceiling against luxury marble',
   },
   {
-    src: '/brand/images/59.png',
-    alt: 'Backlit ceiling panel in a residence with onyx feature wall',
-    vision: 'Backlit luminous ceiling above an onyx-walled lounge',
+    src: '/brand/images/1.png',
+    alt: 'La Foi signature stretch ceiling installation — editorial cover image',
+    vision: 'Brand-supplied editorial hero — signature install',
   },
 ]
 

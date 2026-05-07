@@ -14,7 +14,13 @@
     <meta property="og:url" content="https://lafoidesigns.co.zw" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Preload all three home-hero slides so the carousel never stalls on rotate.
+         The first image is fetched at high priority for the LCP; the other two
+         are fetched in parallel as soon as the browser has bandwidth. -->
+    <link rel="preload" as="image" href="/brand/images/50.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/brand/images/35.png" />
+    <link rel="preload" as="image" href="/brand/images/1.png" />
     <title>La Foi Designs | Luxury Stretch Ceilings & Custom Lighting | Zimbabwe</title>
   </head>
   <body>

@@ -1,6 +1,7 @@
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    ClockEntryViewSet,
     EmployeeLoanViewSet,
     EmployeeViewSet,
     LeaveBalanceViewSet,
@@ -24,5 +25,6 @@ router.register("leave-types", LeaveTypeViewSet, basename="leave-type")
 router.register("leave-balances", LeaveBalanceViewSet, basename="leave-balance")
 router.register("leave-requests", LeaveRequestViewSet, basename="leave-request")
 router.register("public-holidays", PublicHolidayViewSet, basename="public-holiday")
+router.register("clock-entries", ClockEntryViewSet, basename="clock-entry")
 
 urlpatterns = router.urls

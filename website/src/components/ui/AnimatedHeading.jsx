@@ -1,3 +1,4 @@
+import React from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 
 /**
@@ -27,25 +28,36 @@ export default function AnimatedHeading({
   return (
     <Tag className={className}>
       {words.map((word, i) => (
-        <span
-          key={i}
-          style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'top' }}
-        >
-          <motion.span
-            style={{ display: 'inline-block', willChange: 'transform' }}
-            initial={{ y: '110%' }}
-            whileInView={{ y: '0%' }}
-            viewport={{ once: true, margin: '-15%' }}
-            transition={{
-              duration: 0.9,
-              delay: delay + i * staggerChildren,
-              ease: [0.16, 1, 0.3, 1],
+        <React.Fragment key={i}>
+          <span
+            style={{
+              display: 'inline-block',
+              overflow: 'hidden',
+              // Tiny bottom pad keeps descenders (g, p, y) from being clipped
+              // when the parent uses tight line-height for editorial headings.
+              paddingBottom: '0.12em',
+              marginBottom: '-0.12em',
             }}
           >
-            {word}
-            {i < words.length - 1 ? ' ' : ''}
-          </motion.span>
-        </span>
+            <motion.span
+              style={{ display: 'inline-block', willChange: 'transform' }}
+              initial={{ y: '110%' }}
+              whileInView={{ y: '0%' }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{
+                duration: 0.9,
+                delay: delay + i * staggerChildren,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+            >
+              {word}
+            </motion.span>
+          </span>
+          {/* Render the inter-word space as a real text node OUTSIDE the
+              inline-block mask, so word-wrap works and words don't crash
+              into each other. */}
+          {i < words.length - 1 ? ' ' : null}
+        </React.Fragment>
       ))}
     </Tag>
   )

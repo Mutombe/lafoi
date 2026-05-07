@@ -8,6 +8,8 @@ import {
   SignOut, List, X, Buildings, Gavel,
   Bank, Tray, CalendarStar, MapPin, UsersFour,
   CaretDown, Storefront, Coins, IdentificationCard, GearSix,
+  ClockClockwise,
+  Package, ArrowsLeftRight, Truck, ClipboardText, Cube,
 } from '@phosphor-icons/react'
 
 import Logo from '../../components/shared/Logo'
@@ -42,6 +44,18 @@ const GROUPS = [
     ],
   },
   {
+    key: 'operations',
+    label: 'Operations',
+    icon: Cube,
+    items: [
+      { to: '/dashboard/inventory',                 icon: Package,            label: 'Inventory',       module: 'inventory' },
+      { to: '/dashboard/inventory/movements',       icon: ArrowsLeftRight,    label: 'Movements',       module: 'inventory' },
+      { to: '/dashboard/inventory/suppliers',       icon: Truck,              label: 'Suppliers',       module: 'inventory' },
+      { to: '/dashboard/inventory/purchase-orders', icon: ClipboardText,      label: 'Purchase Orders', module: 'inventory' },
+      { to: '/dashboard/inventory/burn-rate',       icon: ChartBarHorizontal, label: 'Burn Rate',       module: 'inventory' },
+    ],
+  },
+  {
     key: 'billing',
     label: 'Billing',
     icon: Coins,
@@ -56,11 +70,12 @@ const GROUPS = [
     label: 'Team',
     icon: IdentificationCard,
     items: [
-      { to: '/dashboard/employees', icon: IdentificationBadge,  label: 'Employees', module: 'employees' },
-      { to: '/dashboard/payroll',   icon: ChartBarHorizontal,   label: 'Payroll',   module: 'payroll' },
-      { to: '/dashboard/loans',     icon: Bank,                 label: 'Loans',     module: 'loans' },
-      { to: '/dashboard/leave',     icon: Tray,                 label: 'Leave',     module: 'leave' },
-      { to: '/dashboard/holidays',  icon: CalendarStar,         label: 'Holidays',  module: 'holidays' },
+      { to: '/dashboard/employees',  icon: IdentificationBadge,  label: 'Employees',  module: 'employees' },
+      { to: '/dashboard/payroll',    icon: ChartBarHorizontal,   label: 'Payroll',    module: 'payroll' },
+      { to: '/dashboard/time-clock', icon: ClockClockwise,       label: 'Time Clock', module: 'time_clock' },
+      { to: '/dashboard/loans',      icon: Bank,                 label: 'Loans',      module: 'loans' },
+      { to: '/dashboard/leave',      icon: Tray,                 label: 'Leave',      module: 'leave' },
+      { to: '/dashboard/holidays',   icon: CalendarStar,         label: 'Holidays',   module: 'holidays' },
     ],
   },
   {
@@ -124,7 +139,7 @@ export default function DashboardLayout() {
   const [openMap, setOpenMap] = useState(() => {
     const persisted = readPersistedOpen() || {}
     // Default: open all groups on first run for discoverability.
-    return { sales: true, billing: true, team: true, settings: true, ...persisted }
+    return { sales: true, operations: true, billing: true, team: true, settings: true, ...persisted }
   })
   useEffect(() => {
     if (activeGroupKey) {

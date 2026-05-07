@@ -209,8 +209,22 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
       {/* Bottom bar */}
       <div className="relative z-10 border-t border-white/10">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/30 font-general">
-            &copy; 2026 La Foi Designs &middot; <span className="font-display italic">Belgravia, Harare</span>
+          <p className="text-xs text-white/30 font-general flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>&copy; 2026 La Foi Designs</span>
+            <span aria-hidden className="text-white/20">&middot;</span>
+            <span className="font-display italic">Belgravia, Harare</span>
+            <span aria-hidden className="text-white/20">&middot;</span>
+            <span>
+              Engineered by{' '}
+              <a
+                href="https://bitstudio.co.zw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/55 hover:text-lafoi-green-light transition-colors"
+              >
+                Bit Studio
+              </a>
+            </span>
           </p>
           <div className="flex items-center gap-6">
             <button onClick={onOpenPolicy} className="text-xs text-white/30 hover:text-white/60 transition-colors">

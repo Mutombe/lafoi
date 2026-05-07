@@ -16,7 +16,6 @@ import {
   FilePdf,
   PaintBrush,
   GridFour,
-  Squares,
   Drop,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'

@@ -65,10 +65,19 @@ TRACKED_LABELS = {
     "payroll.Employee",
     "payroll.PayrollPeriod",
     "payroll.PayrollEntry",
+    "payroll.ClockEntry",
     "compliance.TaxBracketSet",
     "compliance.TaxBracket",
     "compliance.StatutoryRate",
     "compliance.ExchangeRate",
+    "inventory.Category",
+    "inventory.StockLocation",
+    "inventory.Supplier",
+    "inventory.Item",
+    "inventory.Stock",
+    "inventory.Movement",
+    "inventory.PurchaseOrder",
+    "inventory.PurchaseOrderItem",
 }
 
 

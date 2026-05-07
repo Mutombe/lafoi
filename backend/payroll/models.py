@@ -352,6 +352,39 @@ class PayrollEntry(models.Model):
             # Never let loan accounting fail a payroll save
             pass
 
+    def total_clock_hours(self) -> Decimal:
+        """Sum of `ClockEntry.hours_worked` for this entry's employee whose
+        `clock_in` falls inside the parent period's date range.
+
+        Closed-out entries only — open shifts (no clock_out) are excluded.
+        Returns Decimal('0') when nothing is logged. Doesn't mutate any
+        payroll figures — purely informational so the dashboard can render
+        "logged X hours this period" alongside the payslip.
+        """
+        if not self.period_id or not self.employee_id:
+            return Decimal("0")
+        from datetime import datetime, time
+        from django.utils.timezone import make_aware, get_current_timezone, is_naive
+        try:
+            start_dt = make_aware(datetime.combine(self.period.period_start, time.min), get_current_timezone())
+            end_dt = make_aware(datetime.combine(self.period.period_end, time.max), get_current_timezone())
+        except Exception:
+            # Fall back to naive comparison if tz handling is off
+            start_dt = datetime.combine(self.period.period_start, time.min)
+            end_dt = datetime.combine(self.period.period_end, time.max)
+        qs = ClockEntry.objects.filter(
+            employee_id=self.employee_id,
+            clock_in__gte=start_dt,
+            clock_in__lte=end_dt,
+            clock_out__isnull=False,
+        )
+        total = Decimal("0")
+        for entry in qs:
+            hrs = entry.hours_worked
+            if hrs is not None:
+                total += Decimal(str(hrs))
+        return total
+
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.period.name}: {self.employee.full_name}"
 
@@ -572,3 +605,44 @@ class PublicHoliday(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.date} — {self.name}"
+
+
+# ============================================================================
+# Time clock — per-employee shift in/out records
+# ============================================================================
+
+class ClockEntry(models.Model):
+    """A single shift: when an employee clocked in and (optionally) clocked out.
+
+    The dashboard surfaces these as a "Time clock" page. The payroll engine
+    doesn't auto-deduct from these — they're informational. PayrollEntry
+    exposes a `total_clock_hours` helper that managers can refer to when
+    sanity-checking overtime.
+    """
+
+    employee = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, related_name="clock_entries",
+    )
+    clock_in = models.DateTimeField()
+    clock_out = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    location = models.CharField(
+        max_length=120, blank=True,
+        help_text="Free-text where the clock-in happened — site name, address.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-clock_in"]
+        indexes = [models.Index(fields=["employee", "clock_in"])]
+
+    @property
+    def hours_worked(self):
+        if not self.clock_out:
+            return None
+        delta = self.clock_out - self.clock_in
+        return round(delta.total_seconds() / 3600, 2)
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.employee.full_name} @ {self.clock_in:%Y-%m-%d %H:%M}"

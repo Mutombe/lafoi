@@ -467,7 +467,16 @@ export function PayrollDetail() {
             {(period.entries || []).map((en) => (
               <tr key={en.id} className="border-b border-lafoi-dark/[0.06] last:border-b-0">
                 <td className="px-3 py-2 text-xs font-sora">{en.employee_code}</td>
-                <td className="px-3 py-2 font-sora text-sm">{en.employee_name}</td>
+                <td className="px-3 py-2 font-sora text-sm">
+                  <div>
+                    <p>{en.employee_name}</p>
+                    {en.total_clock_hours > 0 && (
+                      <p className="text-[10px] tracking-[0.18em] uppercase text-lafoi-gray-medium mt-0.5">
+                        {Number(en.total_clock_hours).toFixed(1)}h logged
+                      </p>
+                    )}
+                  </div>
+                </td>
                 <td className="px-3 py-2 tabular-nums">{fmtMoney(en.base_salary, en.employee_currency)}</td>
                 <td className="px-3 py-2 tabular-nums text-lafoi-green-dark">+ {fmtMoney(en.total_allowances, en.employee_currency)}</td>
                 <td className="px-3 py-2 tabular-nums text-red-600">− {fmtMoney(en.total_deductions, en.employee_currency)}</td>

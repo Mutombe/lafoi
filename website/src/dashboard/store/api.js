@@ -58,7 +58,12 @@ export const api = createApi({
     'TaxBracketSet', 'StatutoryRate', 'ExchangeRate', 'AuditLog',
     'SalaryHistory', 'EmployeeLoan', 'LoanRepayment',
     'LeaveType', 'LeaveBalance', 'LeaveRequest', 'PublicHoliday',
+    'ClockEntry',
     'ProjectMap', 'ModuleRegistry',
+    // Inventory module
+    'InventoryItem', 'InventoryCategory', 'InventoryLocation',
+    'InventoryStock', 'InventoryMovement', 'InventorySupplier',
+    'PurchaseOrder', 'BurnRate',
   ],
   endpoints: (b) => ({
     // ---------- Auth ----------
@@ -393,6 +398,32 @@ export const api = createApi({
       invalidatesTags: ['LeaveRequest'],
     }),
 
+    // ---------- Time clock ----------
+    getClockEntries: b.query({
+      query: (params = {}) => ({ url: 'clock-entries/', params }),
+      providesTags: ['ClockEntry'],
+    }),
+    getClockEntry: b.query({
+      query: (id) => `clock-entries/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'ClockEntry', id }],
+    }),
+    clockIn: b.mutation({
+      query: (body) => ({ url: 'clock-entries/clock_in/', method: 'POST', body }),
+      invalidatesTags: ['ClockEntry'],
+    }),
+    clockOut: b.mutation({
+      query: ({ id, ...body }) => ({ url: `clock-entries/${id}/clock_out/`, method: 'POST', body }),
+      invalidatesTags: (r, e, { id }) => ['ClockEntry', { type: 'ClockEntry', id }],
+    }),
+    updateClockEntry: b.mutation({
+      query: ({ id, ...body }) => ({ url: `clock-entries/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['ClockEntry', { type: 'ClockEntry', id }],
+    }),
+    deleteClockEntry: b.mutation({
+      query: (id) => ({ url: `clock-entries/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['ClockEntry'],
+    }),
+
     // ---------- Tier 2 — Public holidays ----------
     listPublicHolidays: b.query({
       query: (params = {}) => ({ url: 'public-holidays/', params }),
@@ -484,6 +515,136 @@ export const api = createApi({
       query: ({ id, ...body }) => ({ url: `auth/users/${id}/`, method: 'PATCH', body }),
       invalidatesTags: ['User'],
     }),
+
+    // ---------- Inventory — Items ----------
+    listItems: b.query({
+      query: (params = {}) => ({ url: 'items/', params }),
+      providesTags: ['InventoryItem'],
+    }),
+    getItem: b.query({
+      query: (id) => `items/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'InventoryItem', id }],
+    }),
+    createItem: b.mutation({
+      query: (body) => ({ url: 'items/', method: 'POST', body }),
+      invalidatesTags: ['InventoryItem'],
+    }),
+    updateItem: b.mutation({
+      query: ({ id, ...body }) => ({ url: `items/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['InventoryItem', { type: 'InventoryItem', id }],
+    }),
+    deleteItem: b.mutation({
+      query: (id) => ({ url: `items/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['InventoryItem'],
+    }),
+    lookupItemByBarcode: b.query({
+      query: (barcode) => ({ url: 'items/lookup/', params: { barcode } }),
+    }),
+    importItemsCsv: b.mutation({
+      query: (formData) => ({ url: 'items/import_csv/', method: 'POST', body: formData }),
+      invalidatesTags: ['InventoryItem'],
+    }),
+
+    // ---------- Inventory — Categories ----------
+    listInventoryCategories: b.query({
+      query: (params = {}) => ({ url: 'inventory-categories/', params }),
+      providesTags: ['InventoryCategory'],
+    }),
+    createInventoryCategory: b.mutation({
+      query: (body) => ({ url: 'inventory-categories/', method: 'POST', body }),
+      invalidatesTags: ['InventoryCategory'],
+    }),
+    updateInventoryCategory: b.mutation({
+      query: ({ id, ...body }) => ({ url: `inventory-categories/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['InventoryCategory'],
+    }),
+    deleteInventoryCategory: b.mutation({
+      query: (id) => ({ url: `inventory-categories/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['InventoryCategory'],
+    }),
+
+    // ---------- Inventory — Stock locations ----------
+    listStockLocations: b.query({
+      query: (params = {}) => ({ url: 'stock-locations/', params }),
+      providesTags: ['InventoryLocation'],
+    }),
+    createStockLocation: b.mutation({
+      query: (body) => ({ url: 'stock-locations/', method: 'POST', body }),
+      invalidatesTags: ['InventoryLocation'],
+    }),
+    updateStockLocation: b.mutation({
+      query: ({ id, ...body }) => ({ url: `stock-locations/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['InventoryLocation'],
+    }),
+    deleteStockLocation: b.mutation({
+      query: (id) => ({ url: `stock-locations/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['InventoryLocation'],
+    }),
+
+    // ---------- Inventory — Suppliers ----------
+    listSuppliers: b.query({
+      query: (params = {}) => ({ url: 'suppliers/', params }),
+      providesTags: ['InventorySupplier'],
+    }),
+    getSupplier: b.query({
+      query: (id) => `suppliers/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'InventorySupplier', id }],
+    }),
+    createSupplier: b.mutation({
+      query: (body) => ({ url: 'suppliers/', method: 'POST', body }),
+      invalidatesTags: ['InventorySupplier'],
+    }),
+    updateSupplier: b.mutation({
+      query: ({ id, ...body }) => ({ url: `suppliers/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['InventorySupplier', { type: 'InventorySupplier', id }],
+    }),
+    deleteSupplier: b.mutation({
+      query: (id) => ({ url: `suppliers/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['InventorySupplier'],
+    }),
+
+    // ---------- Inventory — Movements ----------
+    listMovements: b.query({
+      query: (params = {}) => ({ url: 'movements/', params }),
+      providesTags: ['InventoryMovement'],
+    }),
+    createMovement: b.mutation({
+      query: (body) => ({ url: 'movements/', method: 'POST', body }),
+      invalidatesTags: ['InventoryMovement', 'InventoryItem', 'BurnRate'],
+    }),
+    getBurnRate: b.query({
+      query: (params = {}) => ({ url: 'movements/burn-rate/', params }),
+      providesTags: ['BurnRate'],
+    }),
+
+    // ---------- Inventory — Purchase orders ----------
+    listPurchaseOrders: b.query({
+      query: (params = {}) => ({ url: 'purchase-orders/', params }),
+      providesTags: ['PurchaseOrder'],
+    }),
+    getPurchaseOrder: b.query({
+      query: (id) => `purchase-orders/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'PurchaseOrder', id }],
+    }),
+    createPurchaseOrder: b.mutation({
+      query: (body) => ({ url: 'purchase-orders/', method: 'POST', body }),
+      invalidatesTags: ['PurchaseOrder'],
+    }),
+    updatePurchaseOrder: b.mutation({
+      query: ({ id, ...body }) => ({ url: `purchase-orders/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['PurchaseOrder', { type: 'PurchaseOrder', id }],
+    }),
+    deletePurchaseOrder: b.mutation({
+      query: (id) => ({ url: `purchase-orders/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['PurchaseOrder'],
+    }),
+    receivePurchaseOrder: b.mutation({
+      query: ({ id, ...body }) => ({ url: `purchase-orders/${id}/receive/`, method: 'POST', body }),
+      invalidatesTags: (r, e, { id }) => [
+        'PurchaseOrder', { type: 'PurchaseOrder', id },
+        'InventoryItem', 'InventoryMovement',
+      ],
+    }),
   }),
 })
 
@@ -508,13 +669,44 @@ export const {
   useListLeaveTypesQuery, useListLeaveBalancesQuery, useListLeaveRequestsQuery,
   useCreateLeaveRequestMutation, useApproveLeaveRequestMutation, useRejectLeaveRequestMutation,
   useListPublicHolidaysQuery, useCreatePublicHolidayMutation, useDeletePublicHolidayMutation,
+  useGetClockEntriesQuery, useGetClockEntryQuery,
+  useClockInMutation, useClockOutMutation,
+  useUpdateClockEntryMutation, useDeleteClockEntryMutation,
   useMarkPeriodReviewedMutation, useApprovePeriodMutation, useMarkPeriodPaidMutation, useClosePeriodMutation, useReopenPeriodMutation,
   useEmployeeYtdQuery,
   useListProjectCostsQuery, useCreateProjectCostMutation, useUpdateProjectCostMutation, useDeleteProjectCostMutation,
   useProjectsMapQuery,
   useListModulesQuery, useSetUserModulesMutation, useResetUserPasswordMutation, useToggleUserActiveMutation,
   useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation,
+  // Inventory
+  useListItemsQuery, useGetItemQuery, useCreateItemMutation, useUpdateItemMutation, useDeleteItemMutation,
+  useLazyLookupItemByBarcodeQuery, useImportItemsCsvMutation,
+  useListInventoryCategoriesQuery, useCreateInventoryCategoryMutation, useUpdateInventoryCategoryMutation, useDeleteInventoryCategoryMutation,
+  useListStockLocationsQuery, useCreateStockLocationMutation, useUpdateStockLocationMutation, useDeleteStockLocationMutation,
+  useListSuppliersQuery, useGetSupplierQuery, useCreateSupplierMutation, useUpdateSupplierMutation, useDeleteSupplierMutation,
+  useListMovementsQuery, useCreateMovementMutation, useGetBurnRateQuery,
+  useListPurchaseOrdersQuery, useGetPurchaseOrderQuery, useCreatePurchaseOrderMutation, useUpdatePurchaseOrderMutation, useDeletePurchaseOrderMutation,
+  useReceivePurchaseOrderMutation,
 } = api
+
+// Convenience: download an arbitrary endpoint with the bearer token attached.
+// Used for CSV exports etc — the browser would otherwise hit the unauthenticated
+// URL because <a href> can't carry the Authorization header.
+export const downloadFile = async (path, filename, getState) => {
+  const access = getState().auth?.access
+  const url = `${API_BASE}/${path}`
+  const res = await fetch(url, { headers: access ? { Authorization: `Bearer ${access}` } : {} })
+  if (!res.ok) throw new Error(`Download failed: ${res.status}`)
+  const blob = await res.blob()
+  const blobUrl = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = blobUrl
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(blobUrl)
+}
 
 // Convenience: download a PDF endpoint with the bearer token attached.
 export const downloadPdf = async (path, filename, getState) => {

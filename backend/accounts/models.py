@@ -17,6 +17,8 @@ MODULES = (
     ("loans", "Loans & Advances"),
     ("leave", "Leave"),
     ("holidays", "Public Holidays"),
+    ("time_clock", "Time Clock"),
+    ("inventory", "Inventory"),
     ("compliance", "Tax & Compliance"),
     ("audit", "Audit Log"),
     ("users", "User Management"),

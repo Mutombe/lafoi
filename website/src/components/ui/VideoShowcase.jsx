@@ -93,12 +93,14 @@ function VideoCard({ video, onOpen, aspect = 'aspect-[16/10]', large = false, in
       {/* on-hover deepening — adds depth without losing the imagery */}
       <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-      {/* centre play badge — glassmorphic, restrained */}
+      {/* centre play badge — glassmorphic, restrained. Smaller on mobile so it
+          fits comfortably in narrow small-card aspect ratios. */}
       <span
         aria-hidden
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(0,0,0,0.4)] group-hover:scale-110 group-hover:bg-white/25 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(0,0,0,0.4)] group-hover:scale-110 group-hover:bg-white/25 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
       >
-        <Play size={18} weight="fill" className="text-white translate-x-[1px]" />
+        <Play size={16} weight="fill" className="text-white translate-x-[1px] sm:hidden" />
+        <Play size={18} weight="fill" className="text-white translate-x-[1px] hidden sm:block" />
       </span>
 
       {/* index — top-left */}
@@ -110,17 +112,18 @@ function VideoCard({ video, onOpen, aspect = 'aspect-[16/10]', large = false, in
         Video
       </span>
 
-      {/* details — bottom */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 lg:p-6 z-10">
-        <span aria-hidden className="block w-7 h-px bg-lafoi-green-light/70 mb-3" />
+      {/* details — bottom. Tighter padding + smaller type on mobile so the
+          card never crops its own contents at narrow widths. */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5 lg:p-6 z-10">
+        <span aria-hidden className="block w-6 sm:w-7 h-px bg-lafoi-green-light/70 mb-2 sm:mb-3" />
         <h3
           className={`font-display font-light text-white leading-tight tracking-tight ${
-            large ? 'text-2xl lg:text-3xl' : 'text-lg lg:text-xl'
+            large ? 'text-2xl lg:text-3xl' : 'text-sm sm:text-lg lg:text-xl'
           }`}
         >
           {video.title}
         </h3>
-        <p className="mt-1.5 font-sora text-[10px] tracking-[0.22em] uppercase text-white/65">
+        <p className="mt-1 sm:mt-1.5 font-sora text-[9px] sm:text-[10px] tracking-[0.22em] uppercase text-white/65 line-clamp-1">
           {video.caption}
         </p>
       </div>
@@ -253,13 +256,15 @@ export default function VideoShowcase({ videos = [], layout = 'row', className =
               />
             </div>
           )}
-          {/* 4 small — top right and bottom right rows */}
+          {/* 4 small — top right and bottom right rows. Taller aspect on
+              mobile so the play button + bottom title don't overflow on
+              narrow widths. */}
           {rest.map((v, i) => (
             <div key={v.src} className="col-span-1 row-span-1">
               <VideoCard
                 video={v}
                 onOpen={handleOpen}
-                aspect="aspect-[16/10]"
+                aspect="aspect-[4/3] sm:aspect-[16/10]"
                 index={i + 1}
               />
             </div>

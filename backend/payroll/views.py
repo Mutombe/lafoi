@@ -9,11 +9,13 @@ from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from billing.pdf import render_payslip_pdf
 
 from .models import (
+    ClockEntry,
     Employee,
     EmployeeLoan,
     LeaveBalance,
@@ -26,6 +28,7 @@ from .models import (
     SalaryHistory,
 )
 from .serializers import (
+    ClockEntrySerializer,
     EmployeeLoanSerializer,
     EmployeeSerializer,
     LeaveBalanceSerializer,
@@ -363,3 +366,64 @@ class PublicHolidayViewSet(viewsets.ModelViewSet):
     filterset_fields = ("is_paid",)
     search_fields = ("name", "notes")
     ordering_fields = ("date",)
+
+
+# ============================================================================
+# Time clock — clock in / clock out shifts
+# ============================================================================
+
+class ClockEntryViewSet(viewsets.ModelViewSet):
+    """Per-employee clock-in/out records.
+
+    Standard CRUD plus two custom actions:
+      POST /clock-entries/clock_in/        — start a shift now (rejects double-open)
+      POST /clock-entries/<id>/clock_out/  — close a shift now
+    """
+
+    queryset = ClockEntry.objects.select_related("employee").all()
+    serializer_class = ClockEntrySerializer
+    permission_classes = [IsAuthenticated]
+    filterset_fields = {
+        "employee": ["exact"],
+        "clock_in": ["gte", "lte"],
+    }
+    search_fields = (
+        "employee__first_name", "employee__last_name", "notes", "location",
+    )
+    ordering_fields = ("clock_in", "clock_out", "created_at")
+
+    @action(detail=False, methods=["post"], url_path="clock_in")
+    def clock_in_action(self, request):
+        employee_id = request.data.get("employee")
+        if not employee_id:
+            raise ValidationError({"employee": "This field is required."})
+        try:
+            emp = Employee.objects.get(pk=employee_id)
+        except Employee.DoesNotExist:
+            raise ValidationError({"employee": "Employee not found."})
+        # Reject if there is already an open shift for this employee.
+        if ClockEntry.objects.filter(employee=emp, clock_out__isnull=True).exists():
+            raise ValidationError({
+                "detail": f"{emp.full_name} is already clocked in. Clock out first.",
+            })
+        entry = ClockEntry.objects.create(
+            employee=emp,
+            clock_in=timezone.now(),
+            clock_out=None,
+            location=request.data.get("location", "") or "",
+            notes=request.data.get("notes", "") or "",
+        )
+        return Response(ClockEntrySerializer(entry).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path="clock_out")
+    def clock_out_action(self, request, pk=None):
+        entry = self.get_object()
+        if entry.clock_out is not None:
+            raise ValidationError({"detail": "This entry is already closed."})
+        entry.clock_out = timezone.now()
+        extra = (request.data.get("notes") or "").strip()
+        if extra:
+            sep = "\n" if entry.notes else ""
+            entry.notes = f"{entry.notes}{sep}{extra}"
+        entry.save()
+        return Response(ClockEntrySerializer(entry).data)

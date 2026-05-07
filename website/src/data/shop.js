@@ -24,7 +24,7 @@ export const shopProducts = [
     shortDesc: 'A long, slim profile that reads like a horizon line above a dining table.',
     longDesc:
       'Solid brass extrusion with a frosted lower diffuser. Designed to sit just above eye level over a dining table or kitchen island, throwing soft downlight without glare. Pairs beautifully with matte stretch ceilings — the brass picks up the warm reflection of the membrane below.',
-    images: [U('1638284457192-27d3d0ec51aa', 1200, 85)],
+    images: [U('1540932239986-30128078f3c5', 1200, 85)],
     featured: true,
   },
   {
@@ -36,7 +36,7 @@ export const shopProducts = [
     shortDesc: 'A hand-finished onyx base supporting a parchment shade.',
     longDesc:
       'A small sculptural object that happens to give light. The onyx base is hand-finished to a soft sheen; the shade is parchment-style fabric. Warm 2700K bulb included. Sits well on a console, bedside, or as a reading lamp by a low chair.',
-    images: [U('1639663742190-1b3dba2eebcf', 1200, 85)],
+    images: [U('1573676386604-78f8ed228e2b', 1200, 85)],
     featured: true,
   },
   {
@@ -48,7 +48,7 @@ export const shopProducts = [
     shortDesc: 'A slim 1.8m floor lamp that leans toward an architectural reading.',
     longDesc:
       'A precision-machined matte black floor lamp with a single articulating head. Slim base footprint (220mm) makes it suitable for tight reading nooks or beside a sofa arm. 12W LED, dimmable. Designed for rooms with a minimalist palette.',
-    images: [U('1600585154340-be6161a56a0c', 1200, 85)],
+    images: [U('1718049720099-a035f05e539a', 1200, 85)],
     featured: false,
   },
   {
@@ -60,7 +60,7 @@ export const shopProducts = [
     shortDesc: 'A soft uplight sconce that washes the wall without hotspots.',
     longDesc:
       'A discreet wall sconce engineered to wash the wall above with even, indirect light. Useful in hallways, stairwells, and either side of a fireplace. Hardwired, IP44, available in matte black and brushed brass.',
-    images: [U('1600210492486-724fe5c67fb0', 1200, 85)],
+    images: [U('1762631817831-c3e7ee1b1467', 1200, 85)],
     featured: false,
   },
   {
@@ -72,7 +72,7 @@ export const shopProducts = [
     shortDesc: 'A flush ceiling fixture for spaces where the ceiling itself is the feature.',
     longDesc:
       'A low-profile drum fitting designed to sit flush against the ceiling. Translucent white acrylic body, brushed steel ring, integrated 24W LED. Pairs especially well below — or beside — translucent backlit stretch membranes where the goal is even, glare-free overhead light.',
-    images: [U('1600566753190-17f0baa2a6c3', 1200, 85)],
+    images: [U('1764961576606-ffb05ace4062', 1200, 85)],
     featured: true,
   },
 
@@ -86,7 +86,7 @@ export const shopProducts = [
     shortDesc: 'A bedside humidifier sized for a single room.',
     longDesc:
       '1.8L tank, ultrasonic cool mist, near-silent operation (under 30 dB). Suited to bedrooms and small studies. An easy companion to stretch ceilings during dry months — humidity around 40-55% keeps interior surfaces stable.',
-    images: [U('1600607687939-ce8a6c25118c', 1200, 85)],
+    images: [U('1605671507162-43e526ef6f97', 1200, 85)],
     featured: false,
   },
   {
@@ -98,7 +98,7 @@ export const shopProducts = [
     shortDesc: 'A ceramic-bodied humidifier designed to sit out in a living room.',
     longDesc:
       'A 3.5L glazed ceramic humidifier with a hidden water tank and a soft amber night light. Designed to be left visible — it reads as an object, not an appliance. Auto-shutoff, 36-hour runtime on low.',
-    images: [U('1768270181430-3e3672a32283', 1200, 85)],
+    images: [U('1635749886064-8debe661b70e', 1200, 85)],
     featured: false,
   },
   {
@@ -110,7 +110,7 @@ export const shopProducts = [
     shortDesc: 'A floor-standing tower humidifier with a humidity sensor and app control.',
     longDesc:
       '6L tank with built-in hygrometer that adjusts output to maintain a target humidity (configurable in the companion app). Useful for larger living spaces or open-plan rooms. Wi-Fi enabled, works with most home automation systems.',
-    images: [U('1758194090785-8e09b7288199', 1200, 85)],
+    images: [U('1768471569643-717e823b5f9a', 1200, 85)],
     featured: true,
   },
 
@@ -124,7 +124,7 @@ export const shopProducts = [
     shortDesc: 'A trailing-edge dimmer module compatible with most modern LED fixtures.',
     longDesc:
       'Trailing-edge phase dimmer with a 1-100W LED load range. Replaces a standard light switch in a single back box. Smooth low-end dimming without flicker. Available in single and double gang plates.',
-    images: [U('1730367019975-4ad8d9e14ef2', 1200, 85)],
+    images: [U('1611591594311-6eb9b7c7e340', 1200, 85)],
     featured: false,
   },
   {
@@ -136,7 +136,7 @@ export const shopProducts = [
     shortDesc: 'A retrofit adapter that converts a standard track to our magnetic system.',
     longDesc:
       '48V magnetic track adapter — clips into existing 240V track and exposes a low-voltage rail for our magnetic spot, linear and pendant heads. Allows reconfiguring of a lighting layout without rewiring.',
-    images: [U('1765434670017-c0d28ecde29a', 1200, 85)],
+    images: [U('1742196642261-b1b232abf483', 1200, 85)],
     featured: false,
   },
 
@@ -150,7 +150,7 @@ export const shopProducts = [
     shortDesc: 'Everything you need to keep a stretch ceiling looking like the day it was installed.',
     longDesc:
       'pH-neutral cleaning concentrate (250ml), two ultra-soft microfibre cloths, lint-free polishing pad, and a printed care guide. Safe for matte, satin, gloss and translucent membranes. One kit covers approx. 40m² of ceiling for several years.',
-    images: [U('1634146601607-9f319f71b5ee', 1200, 85)],
+    images: [U('1648735257013-2fb9604b15c6', 1200, 85)],
     featured: false,
   },
   {
@@ -162,7 +162,7 @@ export const shopProducts = [
     shortDesc: 'A small kit for keeping pendants, sconces and fittings dust-free.',
     longDesc:
       'Anti-static LED polish (100ml), three fine microfibre cloths, and a soft long-handle duster suited to high pendants and ceiling fittings. Designed to lift dust without scratching diffusers, brass or anodised aluminium.',
-    images: [U('1648858308067-2fdba1ca32f2', 1200, 85)],
+    images: [U('1714058948946-8fc9c3fa6a67', 1200, 85)],
     featured: false,
   },
 ]

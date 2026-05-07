@@ -45,9 +45,16 @@ const DashPayrollDetail = lazy(() =>
 const DashLoans = lazy(() => import('./dashboard/pages/Loans'))
 const DashLeave = lazy(() => import('./dashboard/pages/Leave'))
 const DashHolidays = lazy(() => import('./dashboard/pages/Holidays'))
+const DashTimeClock = lazy(() => import('./dashboard/pages/TimeClock'))
 const DashCompliance = lazy(() => import('./dashboard/pages/Compliance'))
 const DashStudioMap = lazy(() => import('./dashboard/pages/StudioMap'))
 const DashUsers = lazy(() => import('./dashboard/pages/Users'))
+const DashInventory = lazy(() => import('./dashboard/pages/Inventory'))
+const DashInventoryDetail = lazy(() => import('./dashboard/pages/InventoryDetail'))
+const DashSuppliers = lazy(() => import('./dashboard/pages/Suppliers'))
+const DashMovements = lazy(() => import('./dashboard/pages/Movements'))
+const DashPurchaseOrders = lazy(() => import('./dashboard/pages/PurchaseOrders'))
+const DashBurnRate = lazy(() => import('./dashboard/pages/BurnRate'))
 
 export default function App() {
   const location = useLocation()
@@ -81,6 +88,13 @@ export default function App() {
             <Route path="loans" element={<DashLoans />} />
             <Route path="leave" element={<DashLeave />} />
             <Route path="holidays" element={<DashHolidays />} />
+            <Route path="time-clock" element={<DashTimeClock />} />
+            <Route path="inventory" element={<DashInventory />} />
+            <Route path="inventory/suppliers" element={<DashSuppliers />} />
+            <Route path="inventory/movements" element={<DashMovements />} />
+            <Route path="inventory/purchase-orders" element={<DashPurchaseOrders />} />
+            <Route path="inventory/burn-rate" element={<DashBurnRate />} />
+            <Route path="inventory/:id" element={<DashInventoryDetail />} />
             <Route path="settings/compliance" element={<DashCompliance />} />
             <Route path="map" element={<DashStudioMap />} />
             <Route path="users" element={<DashUsers />} />

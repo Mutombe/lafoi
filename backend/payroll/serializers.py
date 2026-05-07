@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from .models import (
+    ClockEntry,
     Employee,
     EmployeeLoan,
     LeaveBalance,
@@ -37,6 +38,9 @@ class PayrollEntrySerializer(serializers.ModelSerializer):
     employee_name = serializers.CharField(source="employee.full_name", read_only=True)
     employee_code = serializers.CharField(source="employee.employee_code", read_only=True)
     employee_currency = serializers.CharField(source="employee.currency", read_only=True)
+    # Sum of `ClockEntry.hours_worked` for this entry's employee within the
+    # parent period's date range. Informational only — never auto-deducted.
+    total_clock_hours = serializers.SerializerMethodField()
 
     class Meta:
         model = PayrollEntry
@@ -49,6 +53,7 @@ class PayrollEntrySerializer(serializers.ModelSerializer):
             "tax_calc_snapshot", "currency_split", "auto_compute_statutory",
             # Totals
             "total_allowances", "total_deductions", "gross", "net",
+            "total_clock_hours",
             "notes", "paid_on",
             "created_at", "updated_at",
         )
@@ -56,8 +61,15 @@ class PayrollEntrySerializer(serializers.ModelSerializer):
                              "gross", "net",
                              "paye", "aids_levy", "nssa_employee", "nssa_employer",
                              "statutory_total", "tax_calc_snapshot",
+                             "total_clock_hours",
                              "created_at", "updated_at",
                              "employee_name", "employee_code", "employee_currency")
+
+    def get_total_clock_hours(self, obj):
+        try:
+            return float(obj.total_clock_hours())
+        except Exception:
+            return 0.0
 
 
 class PayrollPeriodSerializer(serializers.ModelSerializer):
@@ -175,3 +187,28 @@ class PublicHolidaySerializer(serializers.ModelSerializer):
         model = PublicHoliday
         fields = ("id", "name", "date", "is_paid", "notes", "created_at")
         read_only_fields = ("id", "created_at")
+
+
+class ClockEntrySerializer(serializers.ModelSerializer):
+    employee_name = serializers.SerializerMethodField()
+    employee_code = serializers.CharField(source="employee.employee_code", read_only=True)
+    hours_worked = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = ClockEntry
+        fields = (
+            "id", "employee", "employee_name", "employee_code",
+            "clock_in", "clock_out", "hours_worked",
+            "notes", "location",
+            "created_at", "updated_at",
+        )
+        read_only_fields = (
+            "id", "employee_name", "employee_code", "hours_worked",
+            "created_at", "updated_at",
+        )
+
+    def get_employee_name(self, obj):
+        emp = obj.employee
+        if not emp:
+            return ""
+        return f"{emp.first_name} {emp.last_name}".strip()
