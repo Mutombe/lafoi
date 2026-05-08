@@ -49,7 +49,7 @@ export default function ProjectDetail() {
     push(project.hero, project.title, project.vision)
     ;(project.gallery || []).forEach((g, i) => {
       const src = typeof g === 'string' ? g : g.src
-      push(src, g.alt || `${project.title} — view ${i + 1}`, g.vision || project.vision)
+      push(src, g.alt || `${project.title}, view ${i + 1}`, g.vision || project.vision)
     })
     const fallbacks = [
       'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
@@ -66,7 +66,7 @@ export default function ProjectDetail() {
     title: `${project.title} | La Foi Designs Project`,
     description:
       project.brief?.slice(0, 200) ||
-      `${project.title} — a stretch ceiling case study by La Foi Designs.`,
+      `${project.title}, a stretch ceiling case study by La Foi Designs.`,
     path: `/projects/${project.slug}`,
     image: project.hero,
     jsonLd: breadcrumbsLd([
@@ -97,7 +97,7 @@ export default function ProjectDetail() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-      {/* HERO — slideshow */}
+      {/* HERO, slideshow */}
       <section className="relative min-h-[75vh] flex items-end overflow-hidden bg-lafoi-dark">
         <HeroSlideshow slides={projectHeroSlides} interval={6500} parallax overlay={false} />
         <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/95 via-lafoi-dark/30 to-lafoi-dark/40 pointer-events-none" />
@@ -251,7 +251,7 @@ export default function ProjectDetail() {
         </section>
       )}
 
-      {/* GALLERY — masonry */}
+      {/* GALLERY, masonry */}
       {project.gallery && project.gallery.length > 0 && (
         <section className="py-16 lg:py-24 bg-white">
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
@@ -281,7 +281,7 @@ export default function ProjectDetail() {
                   <div className={i % 3 === 1 ? 'h-72 sm:h-80' : i % 3 === 2 ? 'h-96' : 'h-64 sm:h-72'}>
                     <OptimizedImage
                       src={g.src}
-                      alt={`${project.title} — ${g.vision || g.alt}`}
+                      alt={`${project.title}, ${g.vision || g.alt}`}
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                       fill
                       vision={g.vision || project.vision}
@@ -337,7 +337,7 @@ export default function ProjectDetail() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
                         src={p.image}
-                        alt={`${p.name} — ${p.vision || `${p.finish} finish ${p.category.toLowerCase()}`}`}
+                        alt={`${p.name}, ${p.vision || `${p.finish} finish ${p.category.toLowerCase()}`}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={p.vision}
@@ -386,7 +386,7 @@ export default function ProjectDetail() {
         </section>
       )}
 
-      {/* PREV/NEXT — full bleed */}
+      {/* PREV/NEXT, full bleed */}
       <section className="grid sm:grid-cols-2">
         <PrevNextLink direction="prev" project={adjacent.prev} />
         <PrevNextLink direction="next" project={adjacent.next} />
@@ -417,7 +417,7 @@ export default function ProjectDetail() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
                         src={p.thumb}
-                        alt={`${p.title} — ${p.vision}`}
+                        alt={`${p.title}, ${p.vision}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={p.vision}
@@ -482,7 +482,7 @@ export default function ProjectDetail() {
               </button>
               <img
                 src={project.gallery[lightboxIdx].src}
-                alt={`${project.title} — ${project.gallery[lightboxIdx].vision || project.gallery[lightboxIdx].alt}`}
+                alt={`${project.title}, ${project.gallery[lightboxIdx].vision || project.gallery[lightboxIdx].alt}`}
                 className="w-full h-auto max-h-[85vh] object-contain bg-black rounded-2xl"
               />
               {project.gallery[lightboxIdx].caption && (
@@ -522,8 +522,8 @@ function Fact({ icon: Icon, label, value }) {
 }
 
 function Chapter({ number, title, body, dropCap = false, index = 0 }) {
-  // Alternate the entry direction by chapter index — Brief from left,
-  // Approach from right, Outcome from left — for editorial rhythm.
+  // Alternate the entry direction by chapter index, Brief from left,
+  // Approach from right, Outcome from left, for editorial rhythm.
   const dir = index % 2 === 0 ? 'left' : 'right'
   return (
     <AnimatedSection direction={dir}>
@@ -555,7 +555,7 @@ function PrevNextLink({ direction, project }) {
       <div className="absolute inset-0">
         <OptimizedImage
           src={project.thumb}
-          alt={`${project.title} — ${project.vision}`}
+          alt={`${project.title}, ${project.vision}`}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           fill
           vision={project.vision}

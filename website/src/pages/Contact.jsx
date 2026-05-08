@@ -26,12 +26,12 @@ const CONTACT_HERO_SLIDES = [
   {
     src: '/brand/images/16.png',
     alt: 'Home theatre with a starry stretch ceiling and warm cove lighting',
-    vision: 'Home theatre with starfield ceiling and soft warm cove — invitation to converse',
+    vision: 'Home theatre with starfield ceiling and soft warm cove, invitation to converse',
   },
   {
     src: '/brand/images/14.png',
     alt: 'Commercial kitchen with continuous linear LED tracks',
-    vision: 'Commercial kitchen with linear LED tracks — precision install',
+    vision: 'Commercial kitchen with linear LED tracks, precision install',
   },
 ]
 
@@ -72,21 +72,21 @@ export default function Contact() {
 
 function ContactHero() {
   // Split-Screen Brutalist. 50/50 split.
-  // LEFT — dark plate + massive headline + 3 stacked contact info blocks with serif arrow.
-  // RIGHT — single full-bleed image, no overlay.
+  // LEFT, dark plate + massive headline + 3 stacked contact info blocks with serif arrow.
+  // RIGHT, single full-bleed image, no overlay.
   return (
     <section className="relative grid lg:grid-cols-2 min-h-[100svh] lg:min-h-[88vh]">
-      {/* Volume artifact — spans both columns */}
+      {/* Volume artifact, spans both columns */}
       <div className="absolute inset-x-0 top-28 lg:top-32 z-20 pointer-events-none">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
           <span className="hidden sm:block w-8 h-px bg-white/30" />
           <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-            Vol.&nbsp;05 &mdash; 2026 &middot; Conversations begin here
+            Vol.&nbsp;05, 2026 &middot; Conversations begin here
           </span>
         </div>
       </div>
 
-      {/* LEFT — dark plate */}
+      {/* LEFT, dark plate */}
       <motion.div
         className="relative bg-lafoi-dark text-white flex items-center order-2 lg:order-1 px-6 sm:px-10 lg:px-16 py-24 lg:py-0 overflow-hidden"
         initial={{ opacity: 0, x: -20 }}
@@ -111,12 +111,12 @@ function ContactHero() {
             <span className="block italic font-light text-lafoi-green-light">a conversation.</span>
           </h1>
 
-          {/* Three contact blocks — large serif → glyph */}
+          {/* Three contact blocks, large serif → glyph */}
           <div className="mt-10 lg:mt-12 space-y-6 border-t border-white/10 pt-8">
             {[
               { k: 'Studio', v: 'Suite 26, 6 Chelmsford Rd', extra: 'Belgravia, Harare', href: 'https://maps.google.com/?q=Suite+26+6+Chelmsford+Rd+Belgravia+Harare' },
               { k: 'Phone', v: '+263 712 326 951', extra: '+263 782 931 472', href: 'tel:+263712326951' },
-              { k: 'Email', v: 'admin@lafoidesigns.co.zw', extra: 'Mon–Fri · 08:00–17:00', href: 'mailto:admin@lafoidesigns.co.zw' },
+              { k: 'Email', v: 'admin@lafoidesigns.co.zw', extra: 'Mon-Fri · 08:00 to 17:00', href: 'mailto:admin@lafoidesigns.co.zw' },
             ].map((c) => (
               <a
                 key={c.k}
@@ -142,7 +142,7 @@ function ContactHero() {
         </div>
       </motion.div>
 
-      {/* RIGHT — full-bleed image, no overlay */}
+      {/* RIGHT, full-bleed image, no overlay */}
       <motion.div
         className="relative order-1 lg:order-2 min-h-[420px] lg:min-h-0"
         initial={{ opacity: 0, x: 20 }}
@@ -154,7 +154,7 @@ function ContactHero() {
           alt="Home theatre with starry stretch ceiling and warm cove lighting"
           className="w-full h-full object-cover object-center"
           fill
-          vision="Home theatre with starfield ceiling — invitation to converse"
+          vision="Home theatre with starfield ceiling, invitation to converse"
         />
         {/* mobile-only soft gradient for readability of any overlay (none on desktop) */}
         <div aria-hidden className="absolute inset-0 lg:hidden bg-gradient-to-t from-lafoi-dark/40 via-transparent to-transparent" />
@@ -164,7 +164,7 @@ function ContactHero() {
 }
 
 /* ============================================================================
-   2. CONTACT BENTO — 2x2 editorial
+   2. CONTACT BENTO, 2x2 editorial
    ============================================================================ */
 
 function ContactBento() {
@@ -195,9 +195,9 @@ function ContactBento() {
           </div>
         </div>
 
-        {/* 2x2 — 2 large primary, 2 smaller */}
+        {/* 2x2, 2 large primary, 2 smaller */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6">
-          {/* Phone — large */}
+          {/* Phone, large */}
           <AnimatedSection direction="up" className="lg:col-span-7">
             <ContactCardLarge
               eyebrow="01 / Phone"
@@ -211,7 +211,7 @@ function ContactBento() {
             />
           </AnimatedSection>
 
-          {/* Email — medium */}
+          {/* Email, medium */}
           <AnimatedSection direction="up" delay={0.05} className="lg:col-span-5">
             <ContactCardLarge
               eyebrow="02 / Email"
@@ -223,7 +223,7 @@ function ContactBento() {
             />
           </AnimatedSection>
 
-          {/* Address — small */}
+          {/* Address, small */}
           <AnimatedSection direction="up" delay={0.1} className="lg:col-span-5">
             <ContactCardSmall
               eyebrow="03 / Studio"
@@ -234,13 +234,13 @@ function ContactBento() {
             />
           </AnimatedSection>
 
-          {/* Hours — small */}
+          {/* Hours, small */}
           <AnimatedSection direction="up" delay={0.15} className="lg:col-span-7">
             <ContactCardSmall
               eyebrow="04 / Hours"
               icon={Clock}
               label="Open today"
-              lines={['Mon – Fri · 08:00 – 17:00', 'Saturday · 09:00 – 13:00']}
+              lines={['Mon to Fri · 08:00 to 17:00', 'Saturday · 09:00 to 13:00']}
               detail="Closed Sundays and public holidays"
             />
           </AnimatedSection>
@@ -368,7 +368,7 @@ function ContactCardSmall({ eyebrow, icon: Icon, label, lines, detail }) {
 }
 
 /* ============================================================================
-   3. CONTACT FORM — Editorial hairline inputs
+   3. CONTACT FORM, Editorial hairline inputs
    ============================================================================ */
 
 function ContactForm() {
@@ -397,7 +397,7 @@ function ContactForm() {
     <section className="relative py-20 lg:py-32 bg-white overflow-hidden">
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
-          {/* Left — copy */}
+          {/* Left, copy */}
           <div className="lg:col-span-4">
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
@@ -419,7 +419,7 @@ function ContactForm() {
             <AnimatedSection delay={0.2} direction="left">
               <p className="font-body font-light text-base text-lafoi-gray leading-[1.7] mb-8">
                 {linkifyProse(
-                  "Fill in the details below — we'll review the brief and reach out within 24 hours with next steps. Free of charge, no obligation. Browse our portfolio first if you'd prefer some context."
+                  "Fill in the details below, we'll review the brief and reach out within 24 hours with next steps. Free of charge, no obligation. Browse our portfolio first if you'd prefer some context."
                 )}
               </p>
             </AnimatedSection>
@@ -445,7 +445,7 @@ function ContactForm() {
               </div>
             </AnimatedSection>
 
-            {/* Subtle "read up first" row — non-competing with form CTAs */}
+            {/* Subtle "read up first" row, non-competing with form CTAs */}
             <AnimatedSection delay={0.4}>
               <div className="mt-8 flex items-center gap-3">
                 <FilePdf size={14} weight="duotone" className="text-lafoi-green shrink-0" />
@@ -466,7 +466,7 @@ function ContactForm() {
             </AnimatedSection>
           </div>
 
-          {/* Right — form */}
+          {/* Right, form */}
           <div className="lg:col-span-8">
             <AnimatedSection direction="right">
               {submitted ? (
@@ -547,7 +547,7 @@ function ContactForm() {
                     required
                     value={formData.message}
                     onChange={(v) => setFormData({ ...formData, message: v })}
-                    placeholder="Tell us about your project — space type, approximate size, desired look..."
+                    placeholder="Tell us about your project, space type, approximate size, desired look..."
                   />
 
                   <button
@@ -644,7 +644,7 @@ function FormTextarea({ label, required, value, onChange, placeholder }) {
 }
 
 /* ============================================================================
-   4. WHATSAPP CALLOUT — glass card with prominent CTA
+   4. WHATSAPP CALLOUT, glass card with prominent CTA
    ============================================================================ */
 
 function WhatsAppCallout() {
@@ -675,7 +675,7 @@ function WhatsAppCallout() {
 
                 <p className="font-body font-light text-base lg:text-lg text-lafoi-gray leading-[1.75] mb-8 max-w-lg">
                   {linkifyProse(
-                    'Send a photo of your space, a sketch, or just a brief message. Most enquiries get a personal reply within the hour during business days — followed by a free design consultation if you want one.'
+                    'Send a photo of your space, a sketch, or just a brief message. Most enquiries get a personal reply within the hour during business days, followed by a free design consultation if you want one.'
                   )}
                 </p>
 
@@ -701,7 +701,7 @@ function WhatsAppCallout() {
                     { eyebrow: 'Number', value: '+263 712 326 951' },
                     { eyebrow: 'Backup', value: '+263 782 931 472' },
                     { eyebrow: 'Reply time', value: 'Usually under an hour' },
-                    { eyebrow: 'Hours', value: 'Mon – Sat · 08:00 – 18:00' },
+                    { eyebrow: 'Hours', value: 'Mon to Sat · 08:00 to 18:00' },
                   ].map((row) => (
                     <div
                       key={row.eyebrow}
@@ -764,7 +764,7 @@ function MapSection() {
               alt="Hallway with crossing linear LED light pattern on a dark stretch ceiling"
               className="w-full h-full object-cover object-center"
               fill
-              vision="Editorial hallway — crossing linear LEDs on dark ceiling, the path to the studio"
+              vision="Editorial hallway, crossing linear LEDs on dark ceiling, the path to the studio"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/80 via-lafoi-dark/30 to-transparent" />
             <div className="absolute inset-0 flex items-center px-8 lg:px-12">

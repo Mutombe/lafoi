@@ -22,7 +22,7 @@ const PROJECTS_HERO_SLIDES = [
   {
     src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
     alt: 'Luminous hotel ballroom ceiling backlit and glowing across full plane',
-    vision: 'Transformation hero — backlit hotel ballroom',
+    vision: 'Transformation hero, backlit hotel ballroom',
   },
   {
     src: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=2200&q=85',
@@ -45,7 +45,7 @@ export default function Projects() {
   useSEO({
     title: 'Stretch Ceiling Projects in Zimbabwe',
     description:
-      'Featured stretch ceiling and lighting case studies — residential, commercial, and hospitality installations across Harare and beyond.',
+      'Featured stretch ceiling and lighting case studies, residential, commercial, and hospitality installations across Harare and beyond.',
     path: '/projects',
     jsonLd: breadcrumbsLd([
       { name: 'Home', path: '/' },
@@ -69,13 +69,13 @@ export default function Projects() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-      {/* HERO — Dark Masonry: three vertical strips with overlaid centre headline */}
+      {/* HERO, Dark Masonry: three vertical strips with overlaid centre headline */}
       <section className="relative bg-lafoi-dark overflow-hidden">
         {/* Volume artifact */}
         <div className="absolute inset-x-0 top-28 lg:top-32 z-30 pointer-events-none">
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex justify-end">
             <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
-              Vol.&nbsp;09 &mdash; The Archive
+              Vol.&nbsp;09, The Archive
             </span>
           </div>
         </div>
@@ -109,7 +109,7 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* Overlaid centre — massive headline + tags */}
+        {/* Overlaid centre, massive headline + tags */}
         <div className="absolute inset-0 z-20 flex items-center pointer-events-none">
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 w-full">
             <motion.div
@@ -136,7 +136,7 @@ export default function Projects() {
 
               <p className="mt-8 max-w-lg mx-auto text-base lg:text-lg text-white/75 font-body font-light leading-[1.65]">
                 {linkifyProse(
-                  'Deep case studies across residence, hospitality, commercial and retail. Brief, approach, outcome — and the stretch ceiling and lighting solutions specified for each project.',
+                  'Deep case studies across residence, hospitality, commercial and retail. Brief, approach, outcome, and the stretch ceiling and lighting solutions specified for each project.',
                   { variant: 'dark' }
                 )}
               </p>
@@ -145,14 +145,14 @@ export default function Projects() {
         </div>
       </section>
 
-      {/* FEATURED PROJECT — full bleed editorial */}
+      {/* FEATURED PROJECT, full bleed editorial */}
       <section className="bg-lafoi-dark text-white relative overflow-hidden">
         <div className="grid lg:grid-cols-12 min-h-[60vh]">
           {/* image */}
           <div className="lg:col-span-7 relative min-h-[400px] lg:min-h-0">
             <OptimizedImage
               src={featured.hero}
-              alt={`${featured.title} — ${featured.vision}`}
+              alt={`${featured.title}, ${featured.vision}`}
               className="w-full h-full object-cover object-center"
               fill
               vision={featured.vision}
@@ -343,7 +343,7 @@ function ProjectCard({ project, large = false, aspect = 'aspect-[3/4]' }) {
     >
       <OptimizedImage
         src={project.thumb}
-        alt={`${project.title} — ${project.vision}`}
+        alt={`${project.title}, ${project.vision}`}
         className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         fill
         vision={project.vision}
@@ -396,7 +396,7 @@ function Meta({ label, value }) {
 }
 
 // ----------------------------------------------------------------------------
-// STATS — IO-triggered count up
+// STATS, IO-triggered count up
 // ----------------------------------------------------------------------------
 
 function StatItem({ value, suffix = '', label }) {

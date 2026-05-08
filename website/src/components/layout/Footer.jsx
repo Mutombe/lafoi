@@ -55,18 +55,18 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
 
   return (
     <footer className="relative bg-lafoi-dark text-white overflow-hidden isolate">
-      {/* Pattern layers — diagonal hairlines + topo dots */}
+      {/* Pattern layers, diagonal hairlines + topo dots */}
       <div className="absolute inset-0 pattern-diagonal pointer-events-none" />
       <div className="absolute inset-0 pattern-topo opacity-70 pointer-events-none" />
 
-      {/* Architectural top edge — straight diagonal slope, refined */}
+      {/* Architectural top edge, straight diagonal slope, refined */}
       <div className="absolute top-0 left-0 right-0 h-20 -translate-y-full pointer-events-none">
         <svg viewBox="0 0 1440 80" fill="none" className="w-full h-full" preserveAspectRatio="none">
           <path d="M0 80L1440 80L1440 32L720 64L0 12L0 80Z" fill="#111111" />
         </svg>
       </div>
 
-      {/* Giant brand watermark — editorial */}
+      {/* Giant brand watermark, editorial */}
       <div
         aria-hidden
         className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none select-none overflow-hidden"
@@ -128,9 +128,9 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
             <Link to="/" className="inline-block mb-5">
               <Logo tone="light" variant="wordmark" imgClassName="h-10 sm:h-12 w-auto" />
             </Link>
-            {/* Issue number — editorial flourish */}
+            {/* Issue number, editorial flourish */}
             <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light/80 mb-4">
-              N&#xBA; 01 — 2026
+              N&#xBA; 01, 2026
             </p>
             <p className="text-sm text-white/50 font-general leading-relaxed max-w-xs mb-6">
               Zimbabwe's first and leading provider of premium stretch ceilings and architectural lighting. Designing luminous interiors from our Belgravia studio in Harare.
@@ -203,7 +203,7 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
         </div>
       </div>
 
-      {/* Pattern band separator — cross hairlines, 1px-ish stripe */}
+      {/* Pattern band separator, cross hairlines, 1px-ish stripe */}
       <div className="relative z-10 h-6 pattern-cross-light opacity-60 border-t border-white/10" />
 
       {/* Bottom bar */}

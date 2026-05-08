@@ -1,8 +1,8 @@
-// La Foi Designs — verified client testimonials.
+// La Foi Designs, verified client testimonials.
 //
 // Sources:
-//   • Google Reviews — Google Maps place ChIJH5IwWWilMRkR_FRuC27zzP0
-//     5.0 average across 9 reviews — fetched 2026-05-05 via SerpAPI
+//   • Google Reviews, Google Maps place ChIJH5IwWWilMRkR_FRuC27zzP0
+//     5.0 average across 9 reviews, fetched 2026-05-05 via SerpAPI
 //   • Company Profile (page 18: Partner & Client Testimonials)
 //
 // Only real, verifiable quotes. Profile pictures cached at /brand/reviews/.
@@ -17,7 +17,7 @@ export const googleRating = {
 export const reviews = [
   {
     quote:
-      "Elegance meets precision. La Foi Designs exceeded every expectation — from concept to execution. Their creativity, attention to detail, and professional approach brought our space to life with elegance and style. If you're looking for premium ceiling and interior design solutions that truly elevate your environment, La Foi Designs is the team to trust.",
+      "Elegance meets precision. La Foi Designs exceeded every expectation, from concept to execution. Their creativity, attention to detail, and professional approach brought our space to life with elegance and style. If you're looking for premium ceiling and interior design solutions that truly elevate your environment, La Foi Designs is the team to trust.",
     author: 'Nicholas Gwanzura',
     role: 'Google Review',
     avatar: '/brand/reviews/nicholas.jpg',
@@ -35,7 +35,7 @@ export const reviews = [
   },
   {
     quote:
-      'La Foi Designs delivered beyond expectations — professional, timely, and flawless finishes.',
+      'La Foi Designs delivered beyond expectations: professional, timely, and flawless finishes.',
     author: 'Mag Grip',
     role: 'Corporate Client',
     avatar: null,

@@ -46,7 +46,7 @@ export default function ProductDetail() {
     }
     push(product.image, product.name, product.vision)
     ;(product.gallery || []).forEach((g, i) =>
-      push(typeof g === 'string' ? g : g.src, `${product.name} — view ${i + 1}`, product.vision)
+      push(typeof g === 'string' ? g : g.src, `${product.name}, view ${i + 1}`, product.vision)
     )
     // Fill to 3 with verified fallbacks if needed
     const fallbacks = [
@@ -75,7 +75,7 @@ export default function ProductDetail() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-      {/* HERO — slideshow */}
+      {/* HERO, slideshow */}
       <section className="relative min-h-[60vh] flex items-end overflow-hidden bg-lafoi-dark">
         <HeroSlideshow slides={productHeroSlides} interval={6500} parallax overlay={false} />
         <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/95 via-lafoi-dark/40 to-lafoi-dark/30 pointer-events-none" />
@@ -276,7 +276,7 @@ export default function ProductDetail() {
                   >
                     <OptimizedImage
                       src={src}
-                      alt={`${product.name} — ${product.vision} (view ${i + 1})`}
+                      alt={`${product.name}, ${product.vision} (view ${i + 1})`}
                       className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                       fill
                       vision={product.vision}
@@ -327,7 +327,7 @@ export default function ProductDetail() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
                         src={proj.thumb}
-                        alt={`${proj.title} — ${proj.vision}`}
+                        alt={`${proj.title}, ${proj.vision}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={proj.vision}
@@ -375,7 +375,7 @@ export default function ProductDetail() {
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
                         src={p.image}
-                        alt={`${p.name} — ${p.vision || `${p.finish} finish ${p.category.toLowerCase()}`}`}
+                        alt={`${p.name}, ${p.vision || `${p.finish} finish ${p.category.toLowerCase()}`}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={p.vision}
@@ -459,7 +459,7 @@ export default function ProductDetail() {
               </button>
               <img
                 src={lightbox}
-                alt={`${product.name} — ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
+                alt={`${product.name}, ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
                 className="w-full h-auto max-h-[85vh] object-contain bg-black"
               />
             </motion.div>

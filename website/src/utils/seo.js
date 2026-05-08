@@ -1,15 +1,15 @@
 import { useEffect } from 'react'
 
 /**
- * SEO helper — keeps `<title>`, meta description/keywords, OG/Twitter tags,
+ * SEO helper - keeps `<title>`, meta description/keywords, OG/Twitter tags,
  * canonical link, and JSON-LD structured data in sync with each route.
  *
  *   useSEO({
  *     title: 'About La Foi Designs | Stretch Ceiling Experts',
  *     description: '…',
  *     path: '/about',
- *     image: '/brand/images/30.png',     // optional — defaults to /og-image.jpg
- *     jsonLd: [breadcrumbsLd, serviceLd] // optional — array OR single object
+ *     image: '/brand/images/30.png',     // optional, defaults to /og-image.jpg
+ *     jsonLd: [breadcrumbsLd, serviceLd] // optional, array OR single object
  *   })
  *
  * Two site-wide JSON-LD blocks (Organization + WebSite) are emitted on every
@@ -186,7 +186,7 @@ export function useSEO({ title, description, keywords, image, path = '', jsonLd 
     // page-specific blocks (BreadcrumbList, Service, FAQPage, etc.).
     clearManagedJsonLd()
     const pageBlocks = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []
-    // LocalBusiness is heavy — only emit on commercial / contact / service pages.
+    // LocalBusiness is heavy, only emit on commercial / contact / service pages.
     const isCommercial = !path || path === '/' || path === '/contact' || path.startsWith('/services')
     injectJsonLd([
       ORGANIZATION_LD,
@@ -196,14 +196,14 @@ export function useSEO({ title, description, keywords, image, path = '', jsonLd 
     ])
 
     return () => {
-      // Don't restore the default title on unmount — the next route's useSEO
+      // Don't restore the default title on unmount; the next route's useSEO
       // call will set its own. Restoring causes a brief flicker.
     }
   }, [title, description, keywords, image, path, JSON.stringify(jsonLd)])
 }
 
 /* ============================================================================
-   JSON-LD builders — call these from page components
+   JSON-LD builders, call these from page components
    ========================================================================= */
 
 export function breadcrumbsLd(items) {
@@ -261,7 +261,7 @@ export function faqLd(items) {
   }
 }
 
-/* Legacy helper — kept for callers that haven't migrated. */
+/* Legacy helper, kept for callers that haven't migrated. */
 export function generateStructuredData(type, data = {}) {
   if (type === 'organization') return { ...ORGANIZATION_LD, ...data }
   if (type === 'service') return { ...serviceLd({ name: 'Service', slug: '', description: '' }), ...data }

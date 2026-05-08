@@ -1,7 +1,7 @@
-// La Foi Designs — Shop catalog
+// La Foi Designs, Shop catalog
 // A small companion line: lamps, humidifiers, lighting accessories and care kits.
 // These are SAMPLE products curated to live alongside La Foi ceilings.
-// All Unsplash IDs verified working — pulled from existing usage on the site.
+// All Unsplash IDs verified working, pulled from existing usage on the site.
 
 const U = (id, w = 1200, q = 80) => `https://images.unsplash.com/photo-${id}?w=${w}&q=${q}`
 
@@ -17,19 +17,19 @@ export const shopProducts = [
   // ---------- LAMPS (5) ------------------------------------------------------
   {
     slug: 'linear-pendant-brass',
-    name: 'Linear Pendant — Brass',
+    name: 'Linear Pendant, Brass',
     category: 'Lamps',
     price: 240,
     priceUnit: 'USD',
     shortDesc: 'A long, slim profile that reads like a horizon line above a dining table.',
     longDesc:
-      'Solid brass extrusion with a frosted lower diffuser. Designed to sit just above eye level over a dining table or kitchen island, throwing soft downlight without glare. Pairs beautifully with matte stretch ceilings — the brass picks up the warm reflection of the membrane below.',
+      'Solid brass extrusion with a frosted lower diffuser. Designed to sit just above eye level over a dining table or kitchen island, throwing soft downlight without glare. Pairs beautifully with matte stretch ceilings, the brass picks up the warm reflection of the membrane below.',
     images: [U('1540932239986-30128078f3c5', 1200, 85)],
     featured: true,
   },
   {
     slug: 'sculpted-table-lamp-onyx',
-    name: 'Sculpted Table Lamp — Onyx',
+    name: 'Sculpted Table Lamp, Onyx',
     category: 'Lamps',
     price: 180,
     priceUnit: 'USD',
@@ -41,7 +41,7 @@ export const shopProducts = [
   },
   {
     slug: 'vertical-floor-beam-matte-black',
-    name: 'Vertical Floor Beam — Matte Black',
+    name: 'Vertical Floor Beam, Matte Black',
     category: 'Lamps',
     price: 320,
     priceUnit: 'USD',
@@ -53,7 +53,7 @@ export const shopProducts = [
   },
   {
     slug: 'wall-sconce-warm-diffuser',
-    name: 'Wall Sconce — Warm Diffuser',
+    name: 'Wall Sconce, Warm Diffuser',
     category: 'Lamps',
     price: 130,
     priceUnit: 'USD',
@@ -65,13 +65,13 @@ export const shopProducts = [
   },
   {
     slug: 'ceiling-drum-translucent-white',
-    name: 'Ceiling Drum — Translucent White',
+    name: 'Ceiling Drum, Translucent White',
     category: 'Lamps',
     price: 210,
     priceUnit: 'USD',
     shortDesc: 'A flush ceiling fixture for spaces where the ceiling itself is the feature.',
     longDesc:
-      'A low-profile drum fitting designed to sit flush against the ceiling. Translucent white acrylic body, brushed steel ring, integrated 24W LED. Pairs especially well below — or beside — translucent backlit stretch membranes where the goal is even, glare-free overhead light.',
+      'A low-profile drum fitting designed to sit flush against the ceiling. Translucent white acrylic body, brushed steel ring, integrated 24W LED. Pairs especially well below, or beside, translucent backlit stretch membranes where the goal is even, glare-free overhead light.',
     images: [U('1764961576606-ffb05ace4062', 1200, 85)],
     featured: true,
   },
@@ -85,7 +85,7 @@ export const shopProducts = [
     priceUnit: 'USD',
     shortDesc: 'A bedside humidifier sized for a single room.',
     longDesc:
-      '1.8L tank, ultrasonic cool mist, near-silent operation (under 30 dB). Suited to bedrooms and small studies. An easy companion to stretch ceilings during dry months — humidity around 40-55% keeps interior surfaces stable.',
+      '1.8L tank, ultrasonic cool mist, near-silent operation (under 30 dB). Suited to bedrooms and small studies. An easy companion to stretch ceilings during dry months, humidity around 40-55% keeps interior surfaces stable.',
     images: [U('1605671507162-43e526ef6f97', 1200, 85)],
     featured: false,
   },
@@ -97,13 +97,13 @@ export const shopProducts = [
     priceUnit: 'USD',
     shortDesc: 'A ceramic-bodied humidifier designed to sit out in a living room.',
     longDesc:
-      'A 3.5L glazed ceramic humidifier with a hidden water tank and a soft amber night light. Designed to be left visible — it reads as an object, not an appliance. Auto-shutoff, 36-hour runtime on low.',
+      'A 3.5L glazed ceramic humidifier with a hidden water tank and a soft amber night light. Designed to be left visible, it reads as an object, not an appliance. Auto-shutoff, 36-hour runtime on low.',
     images: [U('1635749886064-8debe661b70e', 1200, 85)],
     featured: false,
   },
   {
     slug: 'tower-humidifier-smart',
-    name: 'Tower Humidifier — Smart',
+    name: 'Tower Humidifier, Smart',
     category: 'Humidifiers',
     price: 180,
     priceUnit: 'USD',
@@ -135,7 +135,7 @@ export const shopProducts = [
     priceUnit: 'USD',
     shortDesc: 'A retrofit adapter that converts a standard track to our magnetic system.',
     longDesc:
-      '48V magnetic track adapter — clips into existing 240V track and exposes a low-voltage rail for our magnetic spot, linear and pendant heads. Allows reconfiguring of a lighting layout without rewiring.',
+      '48V magnetic track adapter, clips into existing 240V track and exposes a low-voltage rail for our magnetic spot, linear and pendant heads. Allows reconfiguring of a lighting layout without rewiring.',
     images: [U('1742196642261-b1b232abf483', 1200, 85)],
     featured: false,
   },

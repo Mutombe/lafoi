@@ -83,11 +83,11 @@ const searchableContent = [
   { title: 'Hospitality Ballroom Refit', path: '/projects/hospitality-ballroom-refit', section: 'Projects', keywords: 'ballroom hospitality refit translucent case study' },
   { title: 'Belgravia Commercial Office', path: '/projects/belgravia-commercial-office', section: 'Projects', keywords: 'belgravia office commercial acoustic case study' },
   // Shop
-  { title: 'Shop — Companion Pieces', path: '/shop', section: 'Shop', keywords: 'shop store buy purchase order lamp humidifier accessories cart whatsapp' },
-  { title: 'Lamps — Pendants, Sconces, Floor Lamps', path: '/shop', section: 'Shop', keywords: 'lamps pendant sconce floor table ceiling brass onyx light' },
+  { title: 'Shop, Companion Pieces', path: '/shop', section: 'Shop', keywords: 'shop store buy purchase order lamp humidifier accessories cart whatsapp' },
+  { title: 'Lamps, Pendants, Sconces, Floor Lamps', path: '/shop', section: 'Shop', keywords: 'lamps pendant sconce floor table ceiling brass onyx light' },
   { title: 'Humidifiers', path: '/shop', section: 'Shop', keywords: 'humidifier mist ceramic tower smart compact dry climate' },
   { title: 'Lighting Accessories', path: '/shop', section: 'Shop', keywords: 'dimmer led module magnetic track adapter accessory' },
-  { title: 'Care Kits — Membrane & LED Polish', path: '/shop', section: 'Shop', keywords: 'care kit cleaning microfibre polish membrane stretch ceiling maintenance' },
+  { title: 'Care Kits, Membrane & LED Polish', path: '/shop', section: 'Shop', keywords: 'care kit cleaning microfibre polish membrane stretch ceiling maintenance' },
 ]
 
 // Pages with dark hero backgrounds where navbar text must be white
@@ -223,7 +223,7 @@ export default function Navbar() {
               <button
                 onClick={openCart}
                 className={`relative p-2.5 rounded-xl transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
-                aria-label={`Open cart${cartCount > 0 ? ` — ${cartCount} item${cartCount === 1 ? '' : 's'}` : ''}`}
+                aria-label={`Open cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? '' : 's'}` : ''}`}
               >
                 <ShoppingBag size={18} weight="regular" className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
                 <AnimatePresence>
@@ -242,7 +242,7 @@ export default function Navbar() {
                 </AnimatePresence>
               </button>
 
-              {/* Studio dashboard — direct entry for the team. Shows "Sign in" when
+              {/* Studio dashboard, direct entry for the team. Shows "Sign in" when
                   unauthenticated, becomes a "Studio" pill (with the user's initial)
                   once a JWT is in localStorage so a return visitor goes straight in. */}
               <Link

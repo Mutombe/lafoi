@@ -19,7 +19,7 @@ import { shopProducts, shopCategories, featuredShopProducts } from '../data/shop
 import { useCart } from '../store/cart'
 
 /* ============================================================================
-   La Foi Designs — Shop
+   La Foi Designs, Shop
    A small companion line for our ceilings: lamps, humidifiers, lighting
    accessories and care kits. Cart persists across sessions; checkout is
    handled via WhatsApp.
@@ -29,7 +29,7 @@ export default function Shop() {
   const [category, setCategory] = useState('All')
 
   useSEO({
-    title: 'Shop — Lamps, Humidifiers & Companion Pieces',
+    title: 'Shop, Lamps, Humidifiers & Companion Pieces',
     description:
       'A curated companion line of lamps, humidifiers, lighting accessories, and care kits to live alongside your stretch ceiling. Order via WhatsApp.',
     path: '/shop',
@@ -67,7 +67,7 @@ export default function Shop() {
 }
 
 /* ============================================================================
-   1. HERO — Cream, editorial, Swiss minimalist with a 2x2 thumbnail grid
+   1. HERO, Cream, editorial, Swiss minimalist with a 2x2 thumbnail grid
    ============================================================================ */
 function ShopHero() {
   const heroProducts = featuredShopProducts.slice(0, 4)
@@ -80,14 +80,14 @@ function ShopHero() {
       <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex justify-end">
           <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-lafoi-gray/55">
-            Shop &middot; Vol.&nbsp;11 &mdash; 2026
+            Shop &middot; Vol.&nbsp;11, 2026
           </span>
         </div>
       </div>
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-          {/* LEFT — editorial column */}
+          {/* LEFT, editorial column */}
           <div className="lg:col-span-7">
             <motion.div
               className="flex items-center gap-3 mb-6 lg:mb-8"
@@ -119,7 +119,7 @@ function ShopHero() {
               transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             >
               {linkifyProse(
-                "A curated selection of lamps, humidifiers and care kits chosen to live alongside our stretch ceilings. Pieces are sourced from our partners — honest companions, not branded merchandise.\n\nOrder via WhatsApp. We handle delivery in Harare and shipping nationwide, and confirm everything before you pay."
+                "A curated selection of lamps, humidifiers and care kits chosen to live alongside our stretch ceilings. Pieces are sourced from our partners, honest companions, not branded merchandise.\n\nOrder via WhatsApp. We handle delivery in Harare and shipping nationwide, and confirm everything before you pay."
               )}
             </motion.div>
 
@@ -142,7 +142,7 @@ function ShopHero() {
             </motion.div>
           </div>
 
-          {/* RIGHT — 2x2 featured thumbnail */}
+          {/* RIGHT, 2x2 featured thumbnail */}
           <motion.div
             className="lg:col-span-5"
             initial={{ opacity: 0, scale: 0.96 }}
@@ -159,10 +159,10 @@ function ShopHero() {
                 >
                   <OptimizedImage
                     src={p.images[0]}
-                    alt={`${p.name} — ${p.category} sample piece from La Foi Designs`}
+                    alt={`${p.name}, ${p.category} sample piece from La Foi Designs`}
                     fill
                     className="hover:scale-105 transition-transform duration-700"
-                    vision={`${p.name} — featured shop piece`}
+                    vision={`${p.name}, featured shop piece`}
                   />
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
                     <span className="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-sora font-medium text-lafoi-dark tracking-wide uppercase">
@@ -247,7 +247,7 @@ function FilterAndGrid({ category, setCategory, filtered }) {
         {filtered.length === 0 && (
           <div className="text-center py-20">
             <p className="text-sm text-lafoi-gray-medium font-general">
-              No pieces in this family yet — check back soon.
+              No pieces in this family yet, check back soon.
             </p>
           </div>
         )}
@@ -277,10 +277,10 @@ function ProductCard({ product }) {
       <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-lafoi-dark/[0.04] mb-4">
         <OptimizedImage
           src={product.images[0]}
-          alt={`${product.name} — ${product.category} sample piece from La Foi Designs`}
+          alt={`${product.name}, ${product.category} sample piece from La Foi Designs`}
           fill
           className="group-hover:scale-105 transition-transform duration-700 ease-out"
-          vision={`${product.name} — ${product.category} sample piece`}
+          vision={`${product.name}, ${product.category} sample piece`}
         />
         {product.featured && (
           <div className="absolute top-3 left-3">
@@ -320,14 +320,14 @@ function ProductCard({ product }) {
 }
 
 /* ============================================================================
-   4. HOW ORDERING WORKS — three steps
+   4. HOW ORDERING WORKS, three steps
    ============================================================================ */
 function HowOrderingWorks() {
   const steps = [
     {
       n: '01',
       title: 'Add to cart',
-      body: 'Pick the lamps, humidifiers or care kits you would like. Your cart saves automatically — feel free to come back later.',
+      body: 'Pick the lamps, humidifiers or care kits you would like. Your cart saves automatically, feel free to come back later.',
     },
     {
       n: '02',
@@ -357,7 +357,7 @@ function HowOrderingWorks() {
               How <span className="italic text-lafoi-green">it works.</span>
             </h2>
             <p className="mt-5 text-base text-lafoi-gray font-general leading-relaxed">
-              We keep the loop short — a small line of products deserves a small, human checkout. Three steps from cart to delivery.
+              We keep the loop short, a small line of products deserves a small, human checkout. Three steps from cart to delivery.
             </p>
           </div>
         </AnimatedSection>
@@ -389,7 +389,7 @@ function HowOrderingWorks() {
 }
 
 /* ============================================================================
-   5. CTA — dark plate
+   5. CTA, dark plate
    ============================================================================ */
 function ShopCTA() {
   return (
@@ -408,7 +408,7 @@ function ShopCTA() {
             </div>
             <h2 className="font-display font-light tracking-[-0.025em] leading-[1.02]"
               style={{ fontSize: 'clamp(2.25rem, 4.5vw, 3.75rem)' }}>
-              We're a phone call away —{' '}
+              We're a phone call away ,{' '}
               <span className="italic text-lafoi-green-light">always.</span>
             </h2>
             <p className="mt-6 text-base text-white/65 font-general leading-relaxed max-w-xl">
@@ -477,8 +477,7 @@ function ShopCTA() {
                 className="prose-link-dark"
               >
                 company profile
-              </a>{' '}
-              — full studio details, services and contacts.
+              </a>{' '}, full studio details, services and contacts.
             </p>
           </AnimatedSection>
         </div>

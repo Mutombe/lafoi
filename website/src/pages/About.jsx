@@ -27,7 +27,7 @@ export default function About() {
   useSEO({
     title: 'About La Foi Designs | Stretch Ceiling Experts',
     description:
-      "Learn about La Foi Designs — Zimbabwe's stretch ceiling and architectural lighting specialist. Founded January 2024 in Belgravia, Harare. Our team, our standards, our approach.",
+      "Learn about La Foi Designs, Zimbabwe's stretch ceiling and architectural lighting specialist. Founded January 2024 in Belgravia, Harare. Our team, our standards, our approach.",
     path: '/about',
     image: '/brand/images/30.png',
     jsonLd: breadcrumbsLd([
@@ -60,30 +60,46 @@ export default function About() {
 }
 
 /* ============================================================================
-   1. HERO — Editorial heritage cover
+   1. HERO, Editorial heritage cover
    ============================================================================ */
 
 function AboutHero() {
   // Editorial / Typography-First. Cream BG. Asymmetric 5/7 split.
-  // LEFT — massive serif headline, two paragraphs, stat strip.
-  // RIGHT — single full-bleed team photo, no slideshow.
+  // LEFT, massive serif headline, two paragraphs, stat strip.
+  // RIGHT, single full-bleed team photo, no slideshow.
   return (
     <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-20 lg:pb-28 overflow-hidden">
+      {/* Atmospheric brand image, barely-there texture blended into the cream */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: 'url(/brand/images/50.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.1,
+          mixBlendMode: 'multiply',
+          maskImage:
+            'radial-gradient(ellipse at 70% 50%, rgba(0,0,0,1), rgba(0,0,0,0) 75%)',
+          WebkitMaskImage:
+            'radial-gradient(ellipse at 70% 50%, rgba(0,0,0,1), rgba(0,0,0,0) 75%)',
+        }}
+      />
       <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-50 pointer-events-none" />
 
-      {/* Volume artifact — respects content margin */}
+      {/* Volume artifact, respects content margin */}
       <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
           <span className="hidden sm:block w-8 h-px bg-lafoi-dark/20" />
           <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/65">
-            Vol.&nbsp;02 &mdash; 2026 &middot; Heritage
+            Vol.&nbsp;02, 2026 &middot; Heritage
           </span>
         </div>
       </div>
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
-          {/* LEFT 5 cols — typography-first */}
+          {/* LEFT 5 cols, typography-first */}
           <motion.div
             className="lg:col-span-5"
             initial={{ opacity: 0, y: 30 }}
@@ -119,7 +135,7 @@ function AboutHero() {
             <div className="mt-8 space-y-5 font-body font-light text-base lg:text-[17px] text-lafoi-gray leading-[1.7] max-w-md">
               <p>
                 {linkifyProse(
-                  'Founded January 2024 in Belgravia, Harare — Zimbabwe’s first dedicated stretch ceiling and architectural lighting studio.'
+                  'Founded January 2024 in Belgravia, Harare, Zimbabwe’s first dedicated stretch ceiling and architectural lighting studio.'
                 )}
               </p>
               <p className="text-lafoi-gray/85">
@@ -129,7 +145,7 @@ function AboutHero() {
               </p>
             </div>
 
-            {/* Stat strip — 3 hairline-divided cells with cascade reveal */}
+            {/* Stat strip, 3 hairline-divided cells with cascade reveal */}
             <div className="mt-10 pt-7 border-t border-lafoi-dark/10 grid grid-cols-3 gap-x-4">
               {[
                 { k: 'Founded', v: '2024' },
@@ -148,7 +164,7 @@ function AboutHero() {
             </div>
           </motion.div>
 
-          {/* RIGHT 7 cols — editorial pattern + artifacts (no image) */}
+          {/* RIGHT 7 cols, editorial pattern + artifacts (no image) */}
           <motion.div
             className="lg:col-span-7"
             initial={{ opacity: 0, y: 40 }}
@@ -156,12 +172,12 @@ function AboutHero() {
             transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="relative h-full min-h-[600px] lg:min-h-[640px] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden bg-lafoi-cream border border-lafoi-dark/10">
-              {/* Layer 1 — grid pattern (30%) */}
+              {/* Layer 1, grid pattern (30%) */}
               <div aria-hidden className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
-              {/* Layer 2 — soft mesh gradient (60%) */}
+              {/* Layer 2, soft mesh gradient (60%) */}
               <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-60 pointer-events-none" />
 
-              {/* Massive ghost numeral "01" — chapter mark */}
+              {/* Massive ghost numeral "01", chapter mark */}
               <div
                 aria-hidden
                 className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
@@ -177,26 +193,26 @@ function AboutHero() {
                 </span>
               </div>
 
-              {/* Organic blob — top-left */}
+              {/* Organic blob, top-left */}
               <div
                 aria-hidden
                 className="absolute -top-10 -left-10 w-[200px] h-[200px] blob bg-lafoi-green/[0.08] animate-float pointer-events-none"
               />
 
-              {/* Outlined circle — top-right */}
+              {/* Outlined circle, top-right */}
               <div
                 aria-hidden
                 className="absolute top-12 right-10 w-[120px] h-[120px] rounded-full border-2 border-lafoi-green/30 animate-float-delayed pointer-events-none"
               />
 
-              {/* Filled square (rotated) — mid-left */}
+              {/* Filled square (rotated), mid-left */}
               <div
                 aria-hidden
                 className="absolute top-1/2 left-12 w-16 h-16 bg-lafoi-green/15 animate-float pointer-events-none"
                 style={{ transform: 'translateY(-50%) rotate(12deg)' }}
               />
 
-              {/* Outlined triangle — bottom-right area */}
+              {/* Outlined triangle, bottom-right area */}
               <svg
                 aria-hidden
                 viewBox="0 0 80 80"
@@ -213,7 +229,7 @@ function AboutHero() {
                 />
               </svg>
 
-              {/* Hairline cross-rules — top horizontal + right vertical */}
+              {/* Hairline cross-rules, top horizontal + right vertical */}
               <span
                 aria-hidden
                 className="absolute top-16 left-0 h-px bg-lafoi-green/20 pointer-events-none"
@@ -243,7 +259,7 @@ function AboutHero() {
               {/* Bottom-left signature */}
               <div className="absolute bottom-6 left-7 flex items-center gap-2 pointer-events-none">
                 <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-dark/40">
-                  Est. 2024 &mdash; Belgravia, Harare
+                  Est. 2024, Belgravia, Harare
                 </span>
               </div>
 
@@ -260,12 +276,12 @@ function AboutHero() {
 }
 
 /* ============================================================================
-   2. MISSION — Duotone tile + offset stacked images
+   2. MISSION, Duotone tile + offset stacked images
    ============================================================================ */
 
 function Mission() {
-  // Brutalist split-screen — full-bleed, dark plate (left) + raw image (right).
-  // SUBTLE PARALLAX on the right photo — drifts ~50px down as the section
+  // Brutalist split-screen, full-bleed, dark plate (left) + raw image (right).
+  // SUBTLE PARALLAX on the right photo, drifts ~50px down as the section
   // scrolls past, while the dark text plate stays still.
   const sectionRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -277,11 +293,11 @@ function Mission() {
   return (
     <section ref={sectionRef} className="relative bg-lafoi-dark overflow-hidden">
       <div className="grid lg:grid-cols-2 lg:min-h-[88vh]">
-        {/* LEFT — dark plate with mission copy */}
+        {/* LEFT, dark plate with mission copy */}
         <div className="relative bg-lafoi-dark order-2 lg:order-1">
           <div aria-hidden className="absolute inset-0 aurora-mesh pointer-events-none" />
 
-          {/* Hairline green seam — right edge of dark plate (desktop only) */}
+          {/* Hairline green seam, right edge of dark plate (desktop only) */}
           <span
             aria-hidden
             className="hidden lg:block absolute top-0 right-0 w-px h-full bg-lafoi-green/30 pointer-events-none z-10"
@@ -312,7 +328,7 @@ function Mission() {
               <div className="space-y-5 font-body font-light text-base lg:text-[17px] text-white/70 leading-[1.7] max-w-lg">
                 <p>
                   {linkifyProse(
-                    'We transform interior spaces with durable, visually stunning, and versatile stretch ceilings that meet the highest standards of quality and design — pioneering a finish that, until 2024, no studio in Zimbabwe could specify.',
+                    'We transform interior spaces with durable, visually stunning, and versatile stretch ceilings that meet the highest standards of quality and design, pioneering a finish that, until 2024, no studio in Zimbabwe could specify.',
                     { variant: 'dark' }
                   )}
                 </p>
@@ -325,7 +341,7 @@ function Mission() {
               </div>
             </AnimatedSection>
 
-            {/* Slim metric strip — hairline divided */}
+            {/* Slim metric strip, hairline divided */}
             <AnimatedSection delay={0.25}>
               <div className="mt-10 pt-7 border-t border-white/15 grid grid-cols-3 gap-x-4 max-w-lg">
                 <div>
@@ -338,7 +354,7 @@ function Mission() {
                 </div>
                 <div className="border-l border-white/10 pl-4">
                   <p className="font-display font-light text-2xl lg:text-3xl text-white leading-none">
-                    1&ndash;2<span className="text-base lg:text-lg">d</span>
+                    1 to 2<span className="text-base lg:text-lg">d</span>
                   </p>
                   <p className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
                     Typical install
@@ -355,7 +371,7 @@ function Mission() {
               </div>
             </AnimatedSection>
 
-            {/* Downloads — restyled for dark BG: transparent card, green accent border */}
+            {/* Downloads, restyled for dark BG: transparent card, green accent border */}
             <AnimatedSection delay={0.32}>
               <div className="mt-10 relative rounded-tl-[1.6rem] rounded-br-[1.6rem] rounded-tr-2xl rounded-bl-2xl bg-white/[0.04] backdrop-blur-sm border border-lafoi-green-light/25 overflow-hidden max-w-lg">
                 <span
@@ -413,7 +429,7 @@ function Mission() {
           </div>
         </div>
 
-        {/* RIGHT — raw image (the original hero photo), full-bleed, no overlay.
+        {/* RIGHT, raw image (the original hero photo), full-bleed, no overlay.
             Restrained parallax: drifts ~90px while the left dark plate stays still. */}
         <motion.div
           className="relative order-1 lg:order-2 aspect-[4/3] lg:aspect-auto lg:min-h-full will-change-transform"
@@ -425,7 +441,7 @@ function Mission() {
               alt="La Foi Designs team at a branded event in Harare"
               className="w-full h-full object-cover object-center"
               fill
-              vision="The team behind every install — Belgravia, Harare"
+              vision="The team behind every install, Belgravia, Harare"
             />
           </ScrollReveal>
         </motion.div>
@@ -435,7 +451,7 @@ function Mission() {
 }
 
 /* ============================================================================
-   3. STORY TIMELINE — Editorial alternating spreads
+   3. STORY TIMELINE, Editorial alternating spreads
    ============================================================================ */
 
 function StoryTimeline() {
@@ -444,31 +460,31 @@ function StoryTimeline() {
       year: '2024',
       sub: 'January',
       title: 'The beginning',
-      copy: 'La Foi Designs is founded with a single bold mission — to bring world-class stretch ceiling technology to Zimbabwe for the very first time.',
+      copy: 'La Foi Designs is founded with a single bold mission, to bring world-class stretch ceiling technology to Zimbabwe for the very first time.',
     },
     {
       year: '01',
       sub: 'Pioneer',
       title: 'A regional first',
-      copy: 'We become Zimbabwe’s first dedicated stretch ceiling installer — introducing a finish that, until then, no one in the country could specify or build.',
+      copy: 'We become Zimbabwe’s first dedicated stretch ceiling installer, introducing a finish that, until then, no one in the country could specify or build.',
     },
     {
       year: '02',
       sub: 'Studio',
       title: 'A home in Belgravia',
-      copy: 'The studio settles at Suite 26, 6 Chelmsford Road — a quiet office in Belgravia, central enough to drive a same-day site visit anywhere in Harare.',
+      copy: 'The studio settles at Suite 26, 6 Chelmsford Road, a quiet office in Belgravia, central enough to drive a same-day site visit anywhere in Harare.',
     },
     {
       year: '03',
       sub: 'Craft',
       title: 'A team trained for the work',
-      copy: 'Four leads — managing, operations, projects, marketing — and a trained installation crew. Every membrane goes up under the eyes of someone who has done it before.',
+      copy: 'Four leads, managing, operations, projects, marketing, and a trained installation crew. Every membrane goes up under the eyes of someone who has done it before.',
     },
     {
       year: '04',
       sub: 'Today',
       title: 'Transforming Zimbabwe',
-      copy: 'Bedrooms, kitchens, spas, offices, conference rooms — the kind of work where the ceiling is now the first thing the room is photographed for.',
+      copy: 'Bedrooms, kitchens, spas, offices, conference rooms, the kind of work where the ceiling is now the first thing the room is photographed for.',
     },
   ]
 
@@ -499,7 +515,7 @@ function StoryTimeline() {
           </AnimatedSection>
         </div>
 
-        {/* Milestones — alternating left/right with massive numerals */}
+        {/* Milestones, alternating left/right with massive numerals */}
         <div className="space-y-20 lg:space-y-32">
           {milestones.map((m, i) => {
             const isLeft = i % 2 === 0
@@ -569,7 +585,7 @@ function Milestone({ m, index, total, align }) {
 }
 
 /* ============================================================================
-   4. VALUES — Editorial bento (2 image features + 4 typographic)
+   4. VALUES, Editorial bento (2 image features + 4 typographic)
    ============================================================================ */
 
 function Values() {
@@ -577,9 +593,9 @@ function Values() {
     {
       key: 'excellence',
       title: 'Excellence',
-      desc: 'Premium PVC and fabric stretch membranes, clean edge details, and finishes that read calm — not loud.',
+      desc: 'Premium PVC and fabric stretch membranes, clean edge details, and finishes that read calm, not loud.',
       image: '/brand/images/9.png',
-      vision: 'Excellence — La Foi installer in branded uniform on a ladder',
+      vision: 'Excellence, La Foi installer in branded uniform on a ladder',
       icon: Trophy,
       feature: true,
     },
@@ -598,9 +614,9 @@ function Values() {
     {
       key: 'innovation',
       title: 'Innovation',
-      desc: 'Starfields, translucent backlit panels, custom photographic prints — finishes Zimbabwe simply could not specify before.',
+      desc: 'Starfields, translucent backlit panels, custom photographic prints, finishes Zimbabwe simply could not specify before.',
       image: '/brand/images/44.png',
-      vision: 'Innovation — installers mounting an LED frame in branded shirts',
+      vision: 'Innovation, installers mounting an LED frame in branded shirts',
       icon: Lightbulb,
       feature: true,
     },
@@ -646,40 +662,40 @@ function Values() {
           <AnimatedSection delay={0.2} direction="right">
             <p className="font-body text-lafoi-gray max-w-sm leading-relaxed">
               {linkifyProse(
-                'More than a company — a team united by shared values that inform every project we accept. See our portfolio for projects that show how those values play out in finished work.'
+                'More than a company, a team united by shared values that inform every project we accept. See our portfolio for projects that show how those values play out in finished work.'
               )}
             </p>
           </AnimatedSection>
         </div>
 
-        {/* Bento — 6 cells across 12 cols, 2 are large image features */}
+        {/* Bento, 6 cells across 12 cols, 2 are large image features */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 auto-rows-auto">
-          {/* Excellence — image feature, spans 6 */}
+          {/* Excellence, image feature, spans 6 */}
           <AnimatedSection direction="up" className="lg:col-span-6 lg:row-span-2">
             <ValueImageCard v={values[0]} index={0} />
           </AnimatedSection>
 
-          {/* Passion — typographic */}
+          {/* Passion, typographic */}
           <AnimatedSection direction="up" delay={0.05} className="lg:col-span-3">
             <ValueTypoCard v={values[1]} index={1} />
           </AnimatedSection>
 
-          {/* Integrity — typographic */}
+          {/* Integrity, typographic */}
           <AnimatedSection direction="up" delay={0.1} className="lg:col-span-3">
             <ValueTypoCard v={values[2]} index={2} />
           </AnimatedSection>
 
-          {/* Collaboration — typographic */}
+          {/* Collaboration, typographic */}
           <AnimatedSection direction="up" delay={0.15} className="lg:col-span-3">
             <ValueTypoCard v={values[4]} index={4} />
           </AnimatedSection>
 
-          {/* Precision — typographic */}
+          {/* Precision, typographic */}
           <AnimatedSection direction="up" delay={0.2} className="lg:col-span-3">
             <ValueTypoCard v={values[5]} index={5} />
           </AnimatedSection>
 
-          {/* Innovation — image feature, spans 12 */}
+          {/* Innovation, image feature, spans 12 */}
           <AnimatedSection direction="up" delay={0.25} className="lg:col-span-12">
             <ValueImageCard v={values[3]} index={3} wide />
           </AnimatedSection>
@@ -698,7 +714,7 @@ function ValueImageCard({ v, index, wide = false }) {
     >
       <OptimizedImage
         src={v.image}
-        alt={v.vision || `La Foi Designs ${v.title.toLowerCase()} — studio principle`}
+        alt={v.vision || `La Foi Designs ${v.title.toLowerCase()}, studio principle`}
         className="w-full h-full object-cover object-center"
         fill
         vision={v.vision}
@@ -747,7 +763,7 @@ function ValueTypoCard({ v, index }) {
 }
 
 /* ============================================================================
-   5. PARTNERS — Two tall editorial cards
+   5. PARTNERS, Two tall editorial cards
    ============================================================================ */
 
 function Partners() {
@@ -756,9 +772,9 @@ function Partners() {
       country: 'Pioneer',
       role: 'A Zimbabwean first',
       title: 'Zimbabwe’s first',
-      desc: 'La Foi Designs introduced stretch ceilings to Zimbabwe — and remains the country’s leading installer. The finish is everywhere in Europe; we made it specifiable here.',
+      desc: 'La Foi Designs introduced stretch ceilings to Zimbabwe, and remains the country’s leading installer. The finish is everywhere in Europe; we made it specifiable here.',
       features: [
-        { label: 'Fast', detail: '1–2 days to install vs. days for gypsum' },
+        { label: 'Fast', detail: '1 to 2 days to install vs. days for gypsum' },
         { label: 'Clean', detail: 'No demolition, no plaster dust, no painting' },
         { label: 'Flexible', detail: 'A wide colour range, matte to mirror gloss' },
         { label: 'Backed', detail: 'Manufacturer-warranted PVC membrane' },
@@ -769,10 +785,10 @@ function Partners() {
       country: 'Engineered',
       role: 'PVC & fabric membrane',
       title: 'Built to last',
-      desc: 'Stretch ceilings are tensioned PVC or fabric membranes — fire-rated, water-resistant, 100% washable, and engineered to outlast the room beneath them.',
+      desc: 'Stretch ceilings are tensioned PVC or fabric membranes, fire-rated, water-resistant, 100% washable, and engineered to outlast the room beneath them.',
       features: [
         { label: 'Fire-rated', detail: 'B-s1, d0 self-extinguishing membrane' },
-        { label: 'Water-tight', detail: 'Holds water in a leak — protects below' },
+        { label: 'Water-tight', detail: 'Holds water in a leak, protects below' },
         { label: 'Acoustic', detail: 'Perforated options for sound absorption' },
         { label: 'Eco', detail: 'Recyclable membrane, low-VOC install' },
       ],
@@ -864,7 +880,7 @@ function PartnerCard({ p }) {
 }
 
 /* ============================================================================
-   6. TEAM — Restrained editorial
+   6. TEAM, Restrained editorial
    ============================================================================ */
 
 function Team() {
@@ -889,7 +905,7 @@ function Team() {
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-          {/* Left — copy */}
+          {/* Left, copy */}
           <div className="lg:col-span-6">
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-6">
@@ -912,8 +928,7 @@ function Team() {
 
             <AnimatedSection delay={0.2}>
               <p className="font-body font-light text-base lg:text-lg text-white/65 leading-[1.75] mb-10 max-w-xl">
-                A small, deliberate team. Managing Director, Operations, Projects, Marketing —
-                each one client-facing, each one accountable. Plus a trained install crew that
+                A small, deliberate team. Managing Director, Operations, Projects, Marketing, each one client-facing, each one accountable. Plus a trained install crew that
                 shows up on time, in branded shirts, and finishes the room by sundown.
               </p>
             </AnimatedSection>
@@ -971,7 +986,7 @@ function Team() {
             </AnimatedSection>
           </div>
 
-          {/* Right — typographic leadership plate (no portrait) */}
+          {/* Right, typographic leadership plate (no portrait) */}
           <AnimatedSection direction="right" className="lg:col-span-6 relative">
             <div className="relative aspect-[4/5] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden border border-white/10 bg-lafoi-green">
               <div aria-hidden className="absolute inset-0 dot-pattern opacity-25 pointer-events-none" />
@@ -1028,7 +1043,7 @@ function Team() {
 }
 
 /* ============================================================================
-   7. CTA — Cinematic full-bleed
+   7. CTA, Cinematic full-bleed
    ============================================================================ */
 
 function AboutCTA() {
@@ -1040,7 +1055,7 @@ function AboutCTA() {
           alt="Home theatre with deep recliners and a starfield stretch ceiling"
           className="w-full h-full object-cover object-center"
           fill
-          vision="Home theatre with starfield ceiling — invitation to begin"
+          vision="Home theatre with starfield ceiling, invitation to begin"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/85 via-lafoi-dark/30 to-lafoi-dark/55" />
         <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/30" />
@@ -1070,7 +1085,7 @@ function AboutCTA() {
           <AnimatedSection delay={0.25} direction="left">
             <p className="mt-8 max-w-xl text-base lg:text-lg text-white/70 font-body font-light leading-relaxed">
               {linkifyProse(
-                "Experience the La Foi difference. Book a free design consultation and let us show you what's possible — at no cost, no obligation, no rush. Browse our portfolio first, or read the technical guide.",
+                "Experience the La Foi difference. Book a free design consultation and let us show you what's possible, at no cost, no obligation, no rush. Browse our portfolio first, or read the technical guide.",
                 { variant: 'dark' }
               )}
             </p>
@@ -1108,7 +1123,7 @@ function AboutCTA() {
               {[
                 { label: 'Studio', value: 'Belgravia, Harare' },
                 { label: 'Email', value: 'admin@lafoidesigns.co.zw' },
-                { label: 'Hours', value: 'Mon–Fri · 09:00–17:00' },
+                { label: 'Hours', value: 'Mon-Fri · 09:00 to 17:00' },
               ].map((item) => (
                 <div key={item.label} className="flex items-center gap-3">
                   <span className="text-[10px] font-sora text-lafoi-green-light tracking-[0.25em] uppercase">

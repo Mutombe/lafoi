@@ -61,7 +61,7 @@ const faqCategories = [
       },
       {
         q: 'Are your ceilings fire-rated?',
-        a: 'Yes — all our PVC membranes are fire-rated to European standards (Class B-s1, d0). They are self-extinguishing and do not produce toxic fumes, making them safe for residential and commercial use.',
+        a: 'Yes, all our PVC membranes are fire-rated to European standards (Class B-s1, d0). They are self-extinguishing and do not produce toxic fumes, making them safe for residential and commercial use.',
       },
       {
         q: 'Are stretch ceilings waterproof?',
@@ -69,7 +69,7 @@ const faqCategories = [
       },
       {
         q: 'How long do stretch ceilings last?',
-        a: 'With proper care, stretch ceilings can last 15–25 years. Our products come with a manufacturer warranty up to 10 years on the membrane and a workmanship cover from La Foi Designs.',
+        a: 'With proper care, stretch ceilings can last 15 to 25 years. Our products come with a manufacturer warranty up to 10 years on the membrane and a workmanship cover from La Foi Designs.',
       },
     ],
   },
@@ -78,7 +78,7 @@ const faqCategories = [
     questions: [
       {
         q: 'How long does installation take?',
-        a: 'A standard room (20–30 sqm) can be completed in 4–8 hours. Larger spaces or complex designs with lighting integration may take 1–2 days. We work efficiently to minimize disruption.',
+        a: 'A standard room (20 to 30 sqm) can be completed in 4 to 8 hours. Larger spaces or complex designs with lighting integration may take 1 to 2 days. We work efficiently to minimize disruption.',
       },
       {
         q: 'Is the installation process messy?',
@@ -103,7 +103,7 @@ const faqCategories = [
       },
       {
         q: 'Do you offer free consultations?',
-        a: "Yes. We offer completely free initial consultations where we assess your space, discuss options, and provide recommendations. There's no obligation — we want you to make an informed decision.",
+        a: "Yes. We offer completely free initial consultations where we assess your space, discuss options, and provide recommendations. There's no obligation, we want you to make an informed decision.",
       },
       {
         q: 'What is your warranty policy?',
@@ -120,7 +120,7 @@ export default function FAQ() {
   useSEO({
     title: 'Frequently Asked Questions',
     description:
-      'Stretch ceiling installation, lighting integration, lead times, materials, warranty, and pricing — answers to the most-asked questions.',
+      'Stretch ceiling installation, lighting integration, lead times, materials, warranty, and pricing, answers to the most-asked questions.',
     path: '/faq',
     jsonLd: [
       breadcrumbsLd([
@@ -172,12 +172,12 @@ function FAQHero() {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
           <span className="hidden sm:block w-8 h-px bg-lafoi-dark/20" />
           <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/65">
-            Vol.&nbsp;07 &mdash; 2026 &middot; Questions answered
+            Vol.&nbsp;07, 2026 &middot; Questions answered
           </span>
         </div>
       </div>
 
-      {/* Massive ghost "?" glyph — upper-right */}
+      {/* Massive ghost "?" glyph, upper-right */}
       <span
         aria-hidden
         className="absolute right-[-2vw] top-12 lg:top-20 font-display font-light italic text-lafoi-green/10 leading-none pointer-events-none select-none"
@@ -186,7 +186,7 @@ function FAQHero() {
         ?
       </span>
 
-      {/* Floating geometric shapes — Memphis */}
+      {/* Floating geometric shapes, Memphis */}
       <motion.span
         aria-hidden
         className="absolute hidden lg:block top-[16rem] left-[6vw] w-12 h-12 rounded-full bg-lafoi-green/20 pointer-events-none"
@@ -244,7 +244,7 @@ function FAQHero() {
             transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
             {linkifyProse(
-              'Everything we are usually asked about stretch ceilings and lighting solutions, gathered in one quiet room. If yours is missing, our studio is one message away — or browse our portfolio for context.'
+              'Everything we are usually asked about stretch ceilings and lighting solutions, gathered in one quiet room. If yours is missing, our studio is one message away, or browse our portfolio for context.'
             )}
           </motion.p>
         </div>
@@ -285,13 +285,13 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
           <AnimatedSection delay={0.2} direction="right">
             <p className="font-body font-light text-lafoi-gray max-w-sm leading-relaxed">
               {linkifyProse(
-                'Pick a category, search by phrase, or scroll through. The longer answers tend to be the ones worth reading twice — and link out to the technical guide where appropriate.'
+                'Pick a category, search by phrase, or scroll through. The longer answers tend to be the ones worth reading twice, and link out to the technical guide where appropriate.'
               )}
             </p>
           </AnimatedSection>
         </div>
 
-        {/* Search bar — glass strip */}
+        {/* Search bar, glass strip */}
         <AnimatedSection delay={0.15}>
           <div className="mb-6 lg:mb-8">
             <div className="relative flex items-center gap-3 px-5 lg:px-6 py-4 rounded-full bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] focus-within:border-lafoi-green/40 focus-within:shadow-[0_8px_32px_-8px_rgba(34,197,94,0.18)] transition-all duration-500">
@@ -300,7 +300,7 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search questions — try 'warranty' or 'installation'…"
+                placeholder="Search questions, try 'warranty' or 'installation'…"
                 className="flex-1 bg-transparent font-body text-sm lg:text-base text-lafoi-dark placeholder:text-lafoi-gray-medium outline-none"
               />
               {query && (
@@ -315,7 +315,7 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
           </div>
         </AnimatedSection>
 
-        {/* Category tabs — glass pills */}
+        {/* Category tabs, glass pills */}
         <AnimatedSection delay={0.2}>
           <div className="mb-12 lg:mb-16 flex flex-wrap items-center gap-2 sm:gap-3 px-5 lg:px-6 py-3 rounded-full bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)]">
             <span className="hidden sm:inline-flex items-center gap-2 font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray-medium pr-3 mr-1 border-r border-lafoi-dark/15">
@@ -369,7 +369,7 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
                     Nothing here yet.
                   </p>
                   <p className="font-body font-light text-sm text-lafoi-gray max-w-md mx-auto">
-                    Try a different category or message the studio directly — most briefs benefit
+                    Try a different category or message the studio directly, most briefs benefit
                     from a conversation anyway.
                   </p>
                 </div>
@@ -472,7 +472,7 @@ function FAQContactCard() {
                 </h2>
 
                 <p className="font-body font-light text-base lg:text-lg text-lafoi-gray leading-[1.75] mb-9 max-w-xl">
-                  Most briefs are clarified in a single conversation. WhatsApp is fastest — email if
+                  Most briefs are clarified in a single conversation. WhatsApp is fastest, email if
                   you would rather attach drawings or photographs.
                 </p>
 
@@ -512,7 +512,7 @@ function FAQContactCard() {
                     { eyebrow: 'Reply', value: 'Within 24 hours' },
                     { eyebrow: 'Studio', value: 'Belgravia, Harare' },
                     { eyebrow: 'Phone', value: '+263 712 326 951' },
-                    { eyebrow: 'Hours', value: 'Mon–Sat · 08:00 – 18:00' },
+                    { eyebrow: 'Hours', value: 'Mon-Sat · 08:00 to 18:00' },
                   ].map((row) => (
                     <div
                       key={row.eyebrow}

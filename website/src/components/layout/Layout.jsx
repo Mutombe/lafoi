@@ -46,7 +46,7 @@ export default function Layout({ children }) {
         />
       </div>
 
-      {/* Scroll progress rail — right edge, hairline + dot */}
+      {/* Scroll progress rail, right edge, hairline + dot */}
       <div className="hidden lg:block fixed top-1/4 right-3 z-[105] h-1/2 w-[2px] pointer-events-none">
         <div className="absolute inset-0 bg-lafoi-dark/[0.06] rounded-full" />
         <div

@@ -128,7 +128,7 @@ const projects = [
     location: 'Highlands',
     year: '2025',
     image: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=1200&q=80',
-    desc: 'Full home installation — living room, bedrooms, and bathroom stretch ceilings.',
+    desc: 'Full home installation, living room, bedrooms, and bathroom stretch ceilings.',
     vision: 'Luxury modern living room with premium ceiling',
   },
 ]
@@ -249,7 +249,7 @@ export default function Portfolio() {
                     onClick={() => setSelectedIndex(i)}
                     className="group relative block w-full rounded-3xl overflow-hidden text-left bg-lafoi-dark"
                   >
-                    {/* hairline reveal — top */}
+                    {/* hairline reveal, top */}
                     <span
                       aria-hidden
                       className="absolute top-0 left-0 right-0 h-px bg-lafoi-green-light origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] z-20"
@@ -257,7 +257,7 @@ export default function Portfolio() {
                     <div className={project.tall ? 'h-[480px]' : 'h-[340px]'}>
                       <OptimizedImage
                         src={project.image}
-                        alt={`${project.title} — ${project.vision}`}
+                        alt={`${project.title}, ${project.vision}`}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                         fill
                         vision={project.vision}
@@ -265,7 +265,7 @@ export default function Portfolio() {
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/85 via-lafoi-dark/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                    {/* index — top */}
+                    {/* index, top */}
                     <div className="absolute top-5 left-5 right-5 flex items-start justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/70 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
                         0{i + 1} / 0{filtered.length}
@@ -275,7 +275,7 @@ export default function Portfolio() {
                       </span>
                     </div>
 
-                    {/* details — bottom */}
+                    {/* details, bottom */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-7 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
                       <span className="block w-8 h-px bg-lafoi-green-light/70 mb-3" />
                       <p className="text-[10px] font-sora text-lafoi-green-light tracking-[0.28em] uppercase mb-2">
@@ -328,7 +328,7 @@ export default function Portfolio() {
                 <div className="lg:col-span-7 relative h-72 sm:h-96 lg:h-[560px] bg-lafoi-dark">
                   <OptimizedImage
                     src={selected.image}
-                    alt={`${selected.title} — ${selected.vision}`}
+                    alt={`${selected.title}, ${selected.vision}`}
                     className="w-full h-full object-cover object-center"
                     fill
                     priority
@@ -406,11 +406,11 @@ export default function Portfolio() {
 }
 
 /* ============================================================================
-   VIDEO GALLERY — 4×2 row of in-motion captures, modal player
+   VIDEO GALLERY, 4×2 row of in-motion captures, modal player
    ============================================================================ */
 
 function VideoGallery() {
-  // Eight studio captures. Generic, category-level captions — no fabricated clients.
+  // Eight studio captures. Generic, category-level captions, no fabricated clients.
   const videos = [
     { src: '/brand/videos/7.mp4',  title: 'Studio in motion',         caption: 'Stretch membrane install · Residential' },
     { src: '/brand/videos/8.mp4',  title: 'Membrane tensioning',      caption: 'Live install · Harare studio' },
@@ -448,7 +448,7 @@ function VideoGallery() {
             <AnimatedSection delay={0.2}>
               <p className="mt-5 max-w-xl font-body font-light text-sm lg:text-base text-lafoi-gray leading-relaxed">
                 {linkifyProse(
-                  'Captures from the studio floor — installations underway, lighting solutions calibrated, photographic membranes finished. Click any tile for the full clip.'
+                  'Captures from the studio floor, installations underway, lighting solutions calibrated, photographic membranes finished. Click any tile for the full clip.'
                 )}
               </p>
             </AnimatedSection>
@@ -469,7 +469,7 @@ function PortfolioHero() {
   // Full-bleed cinematic + kinetic counter. Single still image, no slideshow.
   return (
     <section className="relative h-[100svh] min-h-[640px] overflow-hidden bg-lafoi-dark">
-      {/* Background image — wrapped in an absolute container so it doesn't push
+      {/* Background image, wrapped in an absolute container so it doesn't push
           the content off-screen via normal flow (OptimizedImage's fill wrapper
           is position:relative). */}
       <div className="absolute inset-0">
@@ -479,7 +479,7 @@ function PortfolioHero() {
           className="absolute inset-0 w-full h-full object-cover object-center"
           fill
           priority
-          vision="Commercial kitchen with linear LED tracks — single still cinematic frame"
+          vision="Commercial kitchen with linear LED tracks, single still cinematic frame"
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/30 to-lafoi-dark/60" />
@@ -490,7 +490,7 @@ function PortfolioHero() {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
           <span className="hidden sm:block w-8 h-px bg-white/30" />
           <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-            Vol.&nbsp;04 &mdash; 2026 &middot; The Gallery
+            Vol.&nbsp;04, 2026 &middot; The Gallery
           </span>
         </div>
       </div>
@@ -518,13 +518,13 @@ function PortfolioHero() {
             </h1>
             <p className="mt-6 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]">
               {linkifyProse(
-                'A curated collection of frames from residential, commercial, hospitality and retail installations across Zimbabwe — every one a real stretch ceiling project drawn from our portfolio.',
+                'A curated collection of frames from residential, commercial, hospitality and retail installations across Zimbabwe, every one a real stretch ceiling project drawn from our portfolio.',
                 { variant: 'dark' }
               )}
             </p>
           </motion.div>
 
-          {/* Kinetic counter — right column */}
+          {/* Kinetic counter, right column */}
           <motion.aside
             className="lg:col-span-5 lg:pl-8"
             initial={{ opacity: 0, y: 30 }}

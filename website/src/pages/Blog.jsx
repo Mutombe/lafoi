@@ -148,7 +148,7 @@ export default function Blog() {
 }
 
 function BlogHero() {
-  // Magazine Cover. Cream BG. LEFT — magazine stamp + headline + subtitle. RIGHT — 3x2 thumb grid.
+  // Magazine Cover. Cream BG. LEFT, magazine stamp + headline + subtitle. RIGHT, 3x2 thumb grid.
   const thumbs = [
     'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=600&q=80',
     'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=600&q=80',
@@ -167,14 +167,14 @@ function BlogHero() {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
           <span className="hidden sm:block w-8 h-px bg-lafoi-dark/20" />
           <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/65">
-            Vol.&nbsp;08 &mdash; 2026 &middot; Field notes
+            Vol.&nbsp;08, 2026 &middot; Field notes
           </span>
         </div>
       </div>
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* LEFT — magazine masthead */}
+          {/* LEFT, magazine masthead */}
           <motion.div
             className="lg:col-span-7"
             initial={{ opacity: 0, y: 24 }}
@@ -206,7 +206,7 @@ function BlogHero() {
 
             <p className="mt-7 max-w-xl text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
               {linkifyProse(
-                'Essays on stretch ceilings, architectural lighting and the small craft decisions that change a room. Written between projects, edited slowly — and cross-linked to our portfolio where the ideas were tested in practice.'
+                'Essays on stretch ceilings, architectural lighting and the small craft decisions that change a room. Written between projects, edited slowly, and cross-linked to our portfolio where the ideas were tested in practice.'
               )}
             </p>
 
@@ -215,7 +215,7 @@ function BlogHero() {
             </p>
           </motion.div>
 
-          {/* RIGHT — 3x2 thumb grid */}
+          {/* RIGHT, 3x2 thumb grid */}
           <motion.div
             className="lg:col-span-5"
             initial={{ opacity: 0, y: 30 }}
@@ -272,7 +272,7 @@ function FeaturedPost({ post }) {
 
         <AnimatedSection delay={0.1}>
           <article className="group grid lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-            {/* duotone image — magazine cover */}
+            {/* duotone image, magazine cover */}
             <a
               href="#"
               className="lg:col-span-7 block relative aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden bg-lafoi-green"
@@ -285,7 +285,7 @@ function FeaturedPost({ post }) {
                 fill
                 vision={post.vision}
               />
-              {/* duotone overlay — only on this one card */}
+              {/* duotone overlay, only on this one card */}
               <div
                 aria-hidden
                 className="absolute inset-0 bg-lafoi-green mix-blend-multiply pointer-events-none"
@@ -425,7 +425,7 @@ function PostsGrid({ posts, categories, filter, setFilter }) {
           </div>
         </AnimatedSection>
 
-        {/* asymmetric editorial bento — varied aspects */}
+        {/* asymmetric editorial bento, varied aspects */}
         <AnimatePresence mode="popLayout">
           <motion.div
             key={filter}
@@ -557,7 +557,7 @@ function NewsletterBand() {
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-          {/* left — copy */}
+          {/* left, copy */}
           <AnimatedSection direction="left" className="lg:col-span-7">
             <div className="flex items-center gap-3 mb-5">
               <span className="block w-10 h-px bg-lafoi-green/60" />
@@ -574,12 +574,12 @@ function NewsletterBand() {
             </h2>
             <p className="mt-6 font-body font-light text-base lg:text-lg text-lafoi-gray leading-[1.7] max-w-lg">
               {linkifyProse(
-                'An essay every other Friday — on craft, architectural lighting, materials and the small studio decisions that shape a room. No promotions, just thinking out loud, with the occasional link to our portfolio.'
+                'An essay every other Friday, on craft, architectural lighting, materials and the small studio decisions that shape a room. No promotions, just thinking out loud, with the occasional link to our portfolio.'
               )}
             </p>
           </AnimatedSection>
 
-          {/* right — input */}
+          {/* right, input */}
           <AnimatedSection direction="right" className="lg:col-span-5">
             {submitted ? (
               <div className="border-t border-lafoi-dark/10 pt-8">

@@ -52,7 +52,7 @@ export default function Products() {
   useSEO({
     title: 'Membranes, Lighting & Accessories Catalogue',
     description:
-      'Browse the La Foi Designs catalogue — PVC and fabric stretch membranes (matte, satin, gloss, translucent, printed, sculptural, acoustic, mirror, suede), lighting fixtures, and installation accessories.',
+      'Browse the La Foi Designs catalogue, PVC and fabric stretch membranes (matte, satin, gloss, translucent, printed, sculptural, acoustic, mirror, suede), lighting fixtures, and installation accessories.',
     path: '/products',
     jsonLd: breadcrumbsLd([
       { name: 'Home', path: '/' },
@@ -91,7 +91,7 @@ export default function Products() {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
-      {/* HERO — Swiss Minimalist. Cream BG. No image. Monumental serif. Swatch row. */}
+      {/* HERO, Swiss Minimalist. Cream BG. No image. Monumental serif. Swatch row. */}
       <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-16 lg:pb-24 overflow-hidden">
         <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-40 pointer-events-none" />
 
@@ -99,7 +99,7 @@ export default function Products() {
         <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex justify-end">
             <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-lafoi-gray/55">
-              Vol.&nbsp;10 &mdash; The Library
+              Vol.&nbsp;10, The Library
             </span>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function Products() {
             transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
             {linkifyProse(
-              'Premium PVC and fabric stretch membranes paired with bespoke architectural lighting. A focused product family — matte finish, satin finish, gloss finish, translucent backlit, printed photographic, sculptural and acoustic — engineered to disappear into great architecture.'
+              'Premium PVC and fabric stretch membranes paired with bespoke architectural lighting. A focused product family, matte finish, satin finish, gloss finish, translucent backlit, printed photographic, sculptural and acoustic, engineered to disappear into great architecture.'
             )}
           </motion.p>
 
@@ -161,7 +161,7 @@ export default function Products() {
             </Link>
           </motion.div>
 
-          {/* Swatch row — 8 finishes aligned at the bottom */}
+          {/* Swatch row, 8 finishes aligned at the bottom */}
           <motion.div
             className="mt-14 lg:mt-20 pt-8 border-t border-lafoi-dark/10 flex flex-wrap items-center justify-center gap-x-3 gap-y-4 lg:gap-x-5"
             initial={{ opacity: 0 }}
@@ -195,7 +195,7 @@ export default function Products() {
         </div>
       </section>
 
-      {/* FEATURED STRIP — editorial asymmetric */}
+      {/* FEATURED STRIP, editorial asymmetric */}
       <section className="py-16 lg:py-24 bg-lafoi-cream relative overflow-hidden">
         <div className="absolute inset-0 mesh-gradient-1 pointer-events-none" />
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 relative">
@@ -211,7 +211,7 @@ export default function Products() {
               </div>
               <p className="font-general text-lafoi-gray max-w-md">
                 {linkifyProse(
-                  'The stretch ceiling products our designers reach for first — proven, versatile, and the foundation of most La Foi installations. Each one is documented across our portfolio in real interior settings.'
+                  'The stretch ceiling products our designers reach for first, proven, versatile, and the foundation of most La Foi installations. Each one is documented across our portfolio in real interior settings.'
                 )}
               </p>
             </div>
@@ -254,7 +254,7 @@ export default function Products() {
             </div>
           </AnimatedSection>
 
-          {/* sticky filter bar — glass + faint blueprint pattern */}
+          {/* sticky filter bar, glass + faint blueprint pattern */}
           <div className="sticky top-16 lg:top-20 z-30 -mx-4 sm:-mx-6 lg:-mx-10 px-4 sm:px-6 lg:px-10 bg-white/70 backdrop-blur-xl border-y border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] py-5 mb-10 relative">
             <div aria-hidden className="absolute inset-0 pattern-blueprint opacity-30 pointer-events-none" />
             <div className="relative flex flex-col gap-4">
@@ -401,7 +401,7 @@ export default function Products() {
                 >
                   <OptimizedImage
                     src={b.img}
-                    alt={`${b.label} application — ${b.vision}`}
+                    alt={`${b.label} application, ${b.vision}`}
                     className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                     fill
                     vision={b.vision}
@@ -448,7 +448,7 @@ export default function Products() {
               </h2>
               <p className="text-white/70 font-general text-lg mb-8 max-w-lg">
                 {linkifyProse(
-                  'Our consultants will walk you through stretch ceiling finishes, lighting solutions compatibility, and on-site samples — at no charge. Browse our portfolio to see products in real interiors.',
+                  'Our consultants will walk you through stretch ceiling finishes, lighting solutions compatibility, and on-site samples, at no charge. Browse our portfolio to see products in real interiors.',
                   { variant: 'dark' }
                 )}
               </p>
@@ -488,7 +488,7 @@ function FeaturedCardLarge({ product }) {
       <div className="absolute inset-0">
         <OptimizedImage
           src={product.image}
-          alt={`${product.name} — ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
+          alt={`${product.name}, ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           fill
           vision={product.vision}
@@ -522,7 +522,7 @@ function FeaturedCardSmall({ product }) {
       <div className="relative w-1/3 sm:w-2/5 shrink-0 overflow-hidden">
         <OptimizedImage
           src={product.image}
-          alt={`${product.name} — ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
+          alt={`${product.name}, ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           fill
           vision={product.vision}
@@ -553,7 +553,7 @@ function ProductCard({ product }) {
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         <OptimizedImage
           src={product.image}
-          alt={`${product.name} — ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
+          alt={`${product.name}, ${product.vision || `${product.finish} finish ${product.category.toLowerCase()}`}`}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           fill
           vision={product.vision}

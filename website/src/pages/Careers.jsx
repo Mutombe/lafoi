@@ -64,7 +64,7 @@ const openings = [
     department: 'Installation',
     type: 'Internship',
     location: 'Harare',
-    desc: 'Learn the art of stretch ceiling installation under the guidance of our experienced team. No prior experience needed — just passion and dedication.',
+    desc: 'Learn the art of stretch ceiling installation under the guidance of our experienced team. No prior experience needed, just passion and dedication.',
   },
 ]
 
@@ -80,7 +80,7 @@ const perks = [
   {
     icon: Lightning,
     title: 'Room to grow',
-    desc: 'A studio still small enough that good work is visible — and rewarded quickly. Apprentices have become installers in under a year.',
+    desc: 'A studio still small enough that good work is visible, and rewarded quickly. Apprentices have become installers in under a year.',
   },
   {
     icon: Heart,
@@ -90,7 +90,7 @@ const perks = [
   {
     icon: Users,
     title: 'Diverse work',
-    desc: 'Residential, commercial, hospitality, retail. The brief changes weekly — and so does the craft you bring to it.',
+    desc: 'Residential, commercial, hospitality, retail. The brief changes weekly, and so does the craft you bring to it.',
     feature: true,
     image: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1200&q=80',
     vision: 'Hospitality lobby with sculptural ceiling',
@@ -101,7 +101,7 @@ const processSteps = [
   {
     num: '01',
     title: 'Send a CV or a note',
-    desc: 'Apply by email — attach a CV or simply tell us what kind of work you would like to do. We read everything.',
+    desc: 'Apply by email, attach a CV or simply tell us what kind of work you would like to do. We read everything.',
   },
   {
     num: '02',
@@ -111,7 +111,7 @@ const processSteps = [
   {
     num: '03',
     title: 'Studio visit',
-    desc: 'A morning at the studio in Belgravia — a tour of the membrane library and a chance to meet the team.',
+    desc: 'A morning at the studio in Belgravia, a tour of the membrane library and a chance to meet the team.',
   },
   {
     num: '04',
@@ -124,7 +124,7 @@ export default function Careers() {
   useSEO({
     title: 'Careers at La Foi Designs',
     description:
-      'Open roles at La Foi Designs — installers, designers, project managers. Build with the studio shaping interiors across Zimbabwe.',
+      'Open roles at La Foi Designs, installers, designers, project managers. Build with the studio shaping interiors across Zimbabwe.',
     path: '/careers',
     jsonLd: breadcrumbsLd([
       { name: 'Home', path: '/' },
@@ -149,7 +149,7 @@ export default function Careers() {
 }
 
 function CareersHero() {
-  // Aurora Dark — no image, no slideshow. Italic Fraunces headline with sculptural blob accent.
+  // Aurora Dark, no image, no slideshow. Italic Fraunces headline with sculptural blob accent.
   return (
     <section className="relative min-h-[100svh] lg:min-h-[88vh] overflow-hidden bg-lafoi-dark flex flex-col">
       <div aria-hidden className="absolute inset-0 aurora-mesh" />
@@ -183,7 +183,7 @@ function CareersHero() {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
           <span className="hidden sm:block w-8 h-px bg-white/30" />
           <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/65">
-            Vol.&nbsp;06 &mdash; 2026 &middot; Build with us
+            Vol.&nbsp;06, 2026 &middot; Build with us
           </span>
         </div>
       </div>
@@ -227,7 +227,7 @@ function CareersHero() {
               transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
               {linkifyProse(
-                'We hire for taste, patience and a steady hand — the rest can be taught. The studio is still small, the work is unusually varied, and good craft moves quickly here. See our portfolio for the kind of projects you would be helping shape.',
+                'We hire for taste, patience and a steady hand, the rest can be taught. The studio is still small, the work is unusually varied, and good craft moves quickly here. See our portfolio for the kind of projects you would be helping shape.',
                 { variant: 'dark' }
               )}
             </motion.p>
@@ -250,7 +250,7 @@ function CareersHero() {
                 />
               </a>
               <a
-                href="mailto:admin@lafoidesigns.co.zw?subject=General Application — La Foi Designs"
+                href="mailto:admin@lafoidesigns.co.zw?subject=General Application, La Foi Designs"
                 className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
               >
                 Open application
@@ -351,24 +351,24 @@ function Perks() {
           </AnimatedSection>
         </div>
 
-        {/* mixed bento — 2 image features + 2 typographic */}
+        {/* mixed bento, 2 image features + 2 typographic */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6">
-          {/* International training — image feature */}
+          {/* International training, image feature */}
           <AnimatedSection direction="up" className="lg:col-span-7">
             <PerkImageCard p={perks[0]} index={0} />
           </AnimatedSection>
 
-          {/* Room to grow — typographic */}
+          {/* Room to grow, typographic */}
           <AnimatedSection direction="up" delay={0.05} className="lg:col-span-5">
             <PerkTypoCard p={perks[1]} index={1} />
           </AnimatedSection>
 
-          {/* Quiet team culture — typographic */}
+          {/* Quiet team culture, typographic */}
           <AnimatedSection direction="up" delay={0.1} className="lg:col-span-5">
             <PerkTypoCard p={perks[2]} index={2} />
           </AnimatedSection>
 
-          {/* Diverse work — image feature */}
+          {/* Diverse work, image feature */}
           <AnimatedSection direction="up" delay={0.15} className="lg:col-span-7">
             <PerkImageCard p={perks[3]} index={3} />
           </AnimatedSection>
@@ -477,7 +477,7 @@ function Openings() {
           <AnimatedSection delay={0.2} direction="right">
             <p className="font-body font-light text-white/65 max-w-sm leading-relaxed">
               {linkifyProse(
-                'No job-spec theatre. Click through to apply by email — we read every CV personally. Browse our portfolio for the work you would be joining.',
+                'No job-spec theatre. Click through to apply by email, we read every CV personally. Browse our portfolio for the work you would be joining.',
                 { variant: 'dark' }
               )}
             </p>
@@ -646,7 +646,7 @@ function GeneralApplyCTA() {
           alt="Quiet studio environment"
           className="w-full h-full object-cover object-center"
           fill
-          vision="Quiet gallery space — invitation to apply"
+          vision="Quiet gallery space, invitation to apply"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/85 via-lafoi-dark/30 to-lafoi-dark/55" />
         <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/30" />
@@ -678,15 +678,14 @@ function GeneralApplyCTA() {
 
           <AnimatedSection delay={0.25}>
             <p className="mt-8 max-w-xl text-base lg:text-lg text-white/70 font-body font-light leading-relaxed">
-              We are always interested in hearing from talented people. Send a CV — or just a note —
-              and tell us what you would like to do. We read everything.
+              We are always interested in hearing from talented people. Send a CV, or just a note, and tell us what you would like to do. We read everything.
             </p>
           </AnimatedSection>
 
           <AnimatedSection delay={0.4}>
             <div className="mt-12 flex flex-wrap items-center gap-4 lg:gap-5">
               <a
-                href="mailto:admin@lafoidesigns.co.zw?subject=General Application — La Foi Designs"
+                href="mailto:admin@lafoidesigns.co.zw?subject=General Application, La Foi Designs"
                 className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
               >
                 <Sparkle size={15} weight="regular" />

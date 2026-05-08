@@ -44,38 +44,38 @@ const HOME_HERO_SLIDES = [
   },
   {
     src: '/brand/images/1.png',
-    alt: 'La Foi signature stretch ceiling installation — editorial cover image',
-    vision: 'Brand-supplied editorial hero — signature install',
+    alt: 'La Foi signature stretch ceiling installation, editorial cover image',
+    vision: 'Brand-supplied editorial hero, signature install',
   },
 ]
 
 /* ============================================================================
-   HOME — La Foi Designs · World-Class UI Elevation
+   HOME, La Foi Designs · World-Class UI Elevation
    ============================================================================
    Each section has its OWN aesthetic. Curved/angular dividers connect them.
    Symmetry within sections; rhythm between them.
 
-     1.  Hero            — kinetic typography, cinematic slideshow
+     1.  Hero, kinetic typography, cinematic slideshow
      ── divider: wave (dark → cream)
-     2.  Finish band     — Swiss numbered hairline, centre-grow underlines
+     2.  Finish band, Swiss numbered hairline, centre-grow underlines
      ── divider: angular (cream → dark)
-     3.  Manifesto       — aurora bento, marquee credentials
+     3.  Manifesto, aurora bento, marquee credentials
      ── divider: organic-blob (dark → cream)
-     4.  Finish gallery  — true bento grid (signature moment)
+     4.  Finish gallery, true bento grid (signature moment)
      ── divider: mirror-angular (cream → dark)
-     5.  Approach        — sticky scroll, massive ghost numerals, progress rail
+     5.  Approach, sticky scroll, massive ghost numerals, progress rail
      ── divider: arc (dark → cream)  [rendered flipped: cream wave into dark]
-     6.  Stats           — neumorphic glass cards on aurora
+     6.  Stats, neumorphic glass cards on aurora
      ── divider: angular (dark → cream)
-     7.  Projects bento  — asymmetric editorial bento with corner mark
+     7.  Projects bento, asymmetric editorial bento with corner mark
      ── divider: s-curve (cream → cream)
-     8.  Video showcase  — bento of in-motion captures, modal player
+     8.  Video showcase, bento of in-motion captures, modal player
      ── divider: subtle-wave (cream → cream)
-     9.  Testimonial     — typography-first pull-quote, kinetic name marquee
+     9.  Testimonial, typography-first pull-quote, kinetic name marquee
      ── divider: subtle-wave (cream → cream)
-    10.  Why La Foi      — 3×2 bento of pillars
+    10.  Why La Foi, 3×2 bento of pillars
      ── divider: big-wave (cream → dark)
-    11.  CinematicCTA    — split-tone full-bleed
+    11.  CinematicCTA, split-tone full-bleed
    ============================================================================ */
 
 export default function Home() {
@@ -122,7 +122,7 @@ export default function Home() {
 }
 
 /* ============================================================================
-   1. HERO — kinetic typography over cinematic slideshow
+   1. HERO, kinetic typography over cinematic slideshow
    ============================================================================ */
 
 function Hero() {
@@ -130,7 +130,7 @@ function Hero() {
   const [mouse, setMouse] = useState({ x: 50, y: 40 })
   const [hoverable, setHoverable] = useState(false)
 
-  // Parallax depth layers — scroll-driven, separate from the slideshow's own parallax.
+  // Parallax depth layers, scroll-driven, separate from the slideshow's own parallax.
   // 0.2× background haze, 0.45× dot-pattern mid-layer, 0.8× foreground gradient.
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const bgY = useTransform(scrollYProgress, [0, 1], [0, 120])
@@ -165,7 +165,7 @@ function Hero() {
       onMouseMove={onMouseMove}
       className="relative h-[100svh] min-h-[640px] overflow-hidden bg-lafoi-dark"
     >
-      {/* Parallax depth layer 1 — slow background haze (0.2× scroll) */}
+      {/* Parallax depth layer 1, slow background haze (0.2× scroll) */}
       <motion.div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
@@ -178,7 +178,7 @@ function Hero() {
 
       <HeroSlideshow slides={HOME_HERO_SLIDES} interval={6500} parallax overlay={false} />
 
-      {/* Parallax depth layer 2 — dot-pattern mid-layer (0.45× scroll) */}
+      {/* Parallax depth layer 2, dot-pattern mid-layer (0.45× scroll) */}
       <motion.div
         aria-hidden
         className="absolute inset-0 dot-pattern opacity-25 pointer-events-none"
@@ -189,7 +189,7 @@ function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
 
-      {/* Parallax depth layer 3 — foreground gradient (0.8× scroll), fades out */}
+      {/* Parallax depth layer 3, foreground gradient (0.8× scroll), fades out */}
       <motion.div
         aria-hidden
         className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none"
@@ -211,7 +211,7 @@ function Hero() {
         }}
       />
 
-      {/* Volume index — desktop: top-right floating; mobile: rendered inline below the pill (see CONTENT below) */}
+      {/* Volume index, desktop: top-right floating; mobile: rendered inline below the pill (see CONTENT below) */}
       <motion.div
         className="hidden lg:block absolute inset-x-0 top-32 z-10 pointer-events-none"
         initial={{ opacity: 0, filter: 'blur(8px)' }}
@@ -220,7 +220,7 @@ function Hero() {
       >
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex justify-end">
           <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
-            Vol.&nbsp;01 &mdash; 2026
+            Vol.&nbsp;01, 2026
           </span>
         </div>
       </motion.div>
@@ -252,14 +252,14 @@ function Hero() {
           >
             <span aria-hidden className="block w-6 h-px bg-white/35" />
             <span className="font-sora text-[10px] tracking-[0.35em] uppercase text-white/55">
-              Vol.&nbsp;01 &mdash; 2026
+              Vol.&nbsp;01, 2026
             </span>
           </motion.div>
         </motion.div>
 
         <div className="mt-auto pb-28 sm:pb-24 lg:pb-20 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
           <div className="lg:col-span-8">
-            {/* KINETIC TYPOGRAPHY — word-by-word reveal */}
+            {/* KINETIC TYPOGRAPHY, word-by-word reveal */}
             <h1
               className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.4rem] xl:text-[7.2rem]"
               style={{ fontVariationSettings: '"opsz" 144' }}
@@ -373,7 +373,7 @@ function Hero() {
         </div>
       </div>
 
-      {/* scroll cue — pinned to the right edge so it never overlaps the centered carousel dots.
+      {/* scroll cue, pinned to the right edge so it never overlaps the centered carousel dots.
           Hidden on small mobile to keep the bottom area clean. */}
       <motion.div
         className="hidden sm:flex absolute bottom-6 right-6 lg:right-10 z-10 flex-col items-center gap-2 pointer-events-none"
@@ -389,7 +389,7 @@ function Hero() {
 }
 
 /* ============================================================================
-   2. FINISH BAND — Swiss numbered hairline
+   2. FINISH BAND, Swiss numbered hairline
    ============================================================================ */
 
 function FinishBand() {
@@ -437,16 +437,16 @@ function FinishBand() {
 }
 
 /* ============================================================================
-   3. MANIFESTO — aurora mesh + symmetric bento
+   3. MANIFESTO, aurora mesh + symmetric bento
    ============================================================================ */
 
 function Manifesto() {
-  // Split-Screen Brutalist — borrowed from ContactHero.
+  // Split-Screen Brutalist, borrowed from ContactHero.
   // Section is full-bleed (no max-w-[1440px] constraint).
   // 50/50 grid at lg+: dark plate left, raw image right.
   // Credential marquee floats full-bleed across both halves at the bottom.
   //
-  // SUBTLE PARALLAX — the right-side image drifts ~50px down as the section
+  // SUBTLE PARALLAX, the right-side image drifts ~50px down as the section
   // scrolls past, while the dark text plate stays still. Restrained: capped
   // translation, no scale or opacity shift.
   const sectionRef = useRef(null)
@@ -460,7 +460,7 @@ function Manifesto() {
     <section ref={sectionRef} className="relative bg-lafoi-dark overflow-hidden">
       {/* Top region: 50/50 split */}
       <div className="relative grid lg:grid-cols-2 min-h-[88vh] lg:min-h-[92vh]">
-        {/* LEFT — dark plate with manifesto */}
+        {/* LEFT, dark plate with manifesto */}
         <motion.div
           className="relative bg-lafoi-dark text-white flex items-center order-2 lg:order-1 px-6 sm:px-10 lg:px-16 py-24 lg:py-28 overflow-hidden"
           initial={{ opacity: 0, x: -20 }}
@@ -492,7 +492,7 @@ function Manifesto() {
               />
               <AnimatedHeading
                 as="span"
-                text="sixth surface —"
+                text="sixth surface,"
                 className="block italic font-light text-lafoi-green-light mt-1"
                 delay={0.3}
                 staggerChildren={0.05}
@@ -508,7 +508,7 @@ function Manifesto() {
                 { k: 'Origin', v: 'Belgravia, Harare' },
                 { k: 'Founded', v: '2024' },
                 { k: 'Membranes', v: 'PVC · Fabric' },
-                { k: 'Install', v: '1–2 day, per room' },
+                { k: 'Install', v: '1 to 2 days per room' },
               ].map((m) => (
                 <div key={m.k} className="border-t border-white/10 pt-4">
                   <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/40 mb-1.5">
@@ -520,11 +520,11 @@ function Manifesto() {
             </div>
           </div>
 
-          {/* Hairline seam — full-height, sits on the right edge of the dark plate */}
+          {/* Hairline seam, full-height, sits on the right edge of the dark plate */}
           <span aria-hidden className="hidden lg:block absolute top-0 right-0 w-px h-full bg-lafoi-green/30 z-10" />
         </motion.div>
 
-        {/* RIGHT — full-bleed image, NO overlay. Dark fallback bg + overflow-hidden so
+        {/* RIGHT, full-bleed image, NO overlay. Dark fallback bg + overflow-hidden so
             parallax overscan never reveals cream and the curved dividers above/below
             blend seamlessly with the image edge. */}
         <motion.div
@@ -541,7 +541,7 @@ function Manifesto() {
             <ScrollReveal className="absolute inset-0">
               <img
                 src="/brand/images/49.png"
-                alt="Gold geometric LED ceiling — La Foi studio reference"
+                alt="Gold geometric LED ceiling, La Foi studio reference"
                 width="1600"
                 height="2133"
                 loading="lazy"
@@ -550,10 +550,10 @@ function Manifesto() {
               />
             </ScrollReveal>
           </motion.div>
-          {/* mobile-only soft bottom gradient for legibility against next section seam (none on desktop — pure brutalism) */}
+          {/* mobile-only soft bottom gradient for legibility against next section seam (none on desktop, pure brutalism) */}
           <div aria-hidden className="absolute inset-0 lg:hidden bg-gradient-to-t from-lafoi-dark/40 via-transparent to-transparent" />
 
-          {/* corner badge — restrained, only visible on the right plate */}
+          {/* corner badge, restrained, only visible on the right plate */}
           <div className="absolute top-6 right-6 lg:top-8 lg:right-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/12 backdrop-blur-md border border-white/20">
             <Sparkle size={11} weight="fill" className="text-lafoi-green-light" />
             <span className="font-sora text-[10px] tracking-[0.25em] uppercase text-white/90">
@@ -563,7 +563,7 @@ function Manifesto() {
         </motion.div>
       </div>
 
-      {/* Credential marquee — full-bleed floating band across both halves */}
+      {/* Credential marquee, full-bleed floating band across both halves */}
       <div className="relative border-y border-white/10 py-6 overflow-hidden marquee-pause">
         <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-lafoi-dark to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-lafoi-dark to-transparent z-10 pointer-events-none" />
@@ -574,7 +574,7 @@ function Manifesto() {
               'PVC & fabric membrane',
               'Wide colour range',
               'Fire-rated B-s1, d0',
-              '1–2 day install',
+              '1 to 2 day install',
             ].map((chip, i) => (
               <span key={`${k}-${i}`} className="inline-flex items-center mx-8">
                 <span className="font-sora text-xs lg:text-sm text-white/55 tracking-[0.18em] uppercase">
@@ -591,7 +591,7 @@ function Manifesto() {
 }
 
 /* ============================================================================
-   4. FINISH GALLERY — true bento grid (signature moment)
+   4. FINISH GALLERY, true bento grid (signature moment)
    ============================================================================ */
 
 function FinishGallery() {
@@ -609,12 +609,12 @@ function FinishGallery() {
     Suede: 'tactile · acoustic warmth',
   }
 
-  // Bento layout — 9 cells, asymmetric editorial grid (4 cols × 5 rows)
-  // Cell 1: hero (col-span-2 row-span-2) — top-left feature
-  // Cell 2: col-span-1 — top-right
-  // Cell 3: col-span-1 — top-right
-  // Cell 4: col-span-2 — middle-right (sits next to hero's bottom half)
-  // Cell 5: col-span-1 row-span-2 — tall left feature
+  // Bento layout, 9 cells, asymmetric editorial grid (4 cols × 5 rows)
+  // Cell 1: hero (col-span-2 row-span-2), top-left feature
+  // Cell 2: col-span-1, top-right
+  // Cell 3: col-span-1, top-right
+  // Cell 4: col-span-2, middle-right (sits next to hero's bottom half)
+  // Cell 5: col-span-1 row-span-2, tall left feature
   // Cell 6: col-span-1
   // Cell 7: col-span-2
   // Cell 8: col-span-1
@@ -660,13 +660,13 @@ function FinishGallery() {
           <AnimatedSection delay={0.2} direction="right">
             <p className="text-lafoi-gray font-general max-w-sm leading-relaxed">
               {linkifyProse(
-                'Every stretch ceiling finish answers a different brief — calm or theatrical, silent or sculptural. We help you choose the one your space is asking for, drawing on a decade of architectural lighting experience.'
+                'Every stretch ceiling finish answers a different brief, calm or theatrical, silent or sculptural. We help you choose the one your space is asking for, drawing on a decade of architectural lighting experience.'
               )}
             </p>
           </AnimatedSection>
         </div>
 
-        {/* DESKTOP — editorial bento grid: 4 cols × 5 rows, asymmetric */}
+        {/* DESKTOP, editorial bento grid: 4 cols × 5 rows, asymmetric */}
         <div className="hidden lg:grid lg:grid-cols-4 gap-5 auto-rows-[260px]">
           {stretchProducts.map((p, i) => (
             <AnimatedSection
@@ -683,7 +683,7 @@ function FinishGallery() {
             >
               <img
                 src={p.image}
-                alt={`${p.name} — ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling membrane`}`}
+                alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling membrane`}`}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -724,7 +724,7 @@ function FinishGallery() {
           ))}
         </div>
 
-        {/* MOBILE — stacked cards */}
+        {/* MOBILE, stacked cards */}
         <div className="lg:hidden grid grid-cols-2 gap-3 sm:gap-5">
           {stretchProducts.map((p, i) => (
             <MagneticCard key={p.slug} strength={0.14} tiltAmplitude={3} className="block h-full">
@@ -734,7 +734,7 @@ function FinishGallery() {
             >
               <img
                 src={p.image}
-                alt={`${p.name} — ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling membrane`}`}
+                alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling membrane`}`}
                 width="800"
                 height="1067"
                 loading="lazy"
@@ -789,7 +789,7 @@ function FinishGallery() {
 }
 
 /* ============================================================================
-   5. APPROACH — sticky scroll · massive ghost numerals · progress rail
+   5. APPROACH, sticky scroll · massive ghost numerals · progress rail
    ============================================================================ */
 
 function Approach() {
@@ -816,39 +816,39 @@ function Approach() {
     {
       num: '01',
       title: 'Design',
-      copy: 'A site visit, a measured drawing, a long design consultation. Stretch membrane, lighting layout, control logic, edge details — we sample the finish in your light, not ours.',
+      copy: 'A site visit, a measured drawing, a long design consultation. Stretch membrane, lighting layout, control logic, edge details, we sample the finish in your light, not ours.',
       image: '/brand/images/11.png',
-      vision: 'White gloss kitchen with perimeter LED — magazine-clean design language',
+      vision: 'White gloss kitchen with perimeter LED, magazine-clean design language',
     },
     {
       num: '02',
       title: 'Craft',
       copy: 'Custom-cut stretch membrane, hand-joined seams, architectural lighting prepped to scene before the room is touched. The work happens off-site so the room itself stays calm.',
       image: '/brand/images/15.png',
-      vision: 'Dining room with hand-blown glass-globe chandelier — crafted entertaining space',
+      vision: 'Dining room with hand-blown glass-globe chandelier, crafted entertaining space',
     },
     {
       num: '03',
       title: 'Reveal',
-      copy: 'A trained crew, one to two working days per room, no demolition. The membrane goes up, the lighting comes alive, and the room is yours by sundown — followed by our maintenance and support warranty.',
+      copy: 'A trained crew, one to two working days per room, no demolition. The membrane goes up, the lighting comes alive, and the room is yours by sundown, followed by our maintenance and support warranty.',
       image: '/brand/images/20.png',
-      vision: 'Bedroom with white gloss ceiling, arched mirrors and timber panelling — finished reveal',
+      vision: 'Bedroom with white gloss ceiling, arched mirrors and timber panelling, finished reveal',
     },
   ]
 
   return (
     <section ref={containerRef} className="relative bg-lafoi-cream">
-      {/* decorative mesh — clipped on its own wrapper so the section stays overflow-visible
+      {/* decorative mesh, clipped on its own wrapper so the section stays overflow-visible
           (sticky child requires overflow-visible ancestors) */}
       <div aria-hidden className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 mesh-gradient-1 opacity-50" />
       </div>
 
-      {/* 50/50 mirrored split — image LEFT, text RIGHT (Manifesto is the inverse) */}
+      {/* 50/50 mirrored split, image LEFT, text RIGHT (Manifesto is the inverse) */}
       <div className="relative grid lg:grid-cols-2 lg:min-h-[100vh]">
-        {/* LEFT — full-bleed sticky image, fills the entire left half.
+        {/* LEFT, full-bleed sticky image, fills the entire left half.
             `lg:bg-lafoi-dark` ensures that when the sticky pane releases at the
-            bottom of the section, the column shows dark — which carries the
+            bottom of the section, the column shows dark, which carries the
             image's tone all the way down into the curved divider below. */}
         <div className="relative order-1 lg:order-1 lg:bg-lafoi-dark">
           {/* Mobile: simple full-width image, no sticky */}
@@ -864,7 +864,7 @@ function Approach() {
               >
                 <OptimizedImage
                   src={stages[activeStep].image}
-                  alt={`Stage ${stages[activeStep].num} ${stages[activeStep].title} — ${stages[activeStep].vision}`}
+                  alt={`Stage ${stages[activeStep].num} ${stages[activeStep].title}, ${stages[activeStep].vision}`}
                   className="w-full h-full object-cover"
                   fill
                   vision={stages[activeStep].vision}
@@ -889,7 +889,7 @@ function Approach() {
             </div>
           </div>
 
-          {/* Inline SVG defs — clip-path that mirrors the bottom-divider arc.
+          {/* Inline SVG defs, clip-path that mirrors the bottom-divider arc.
               The desktop sticky image references this clip via `clipPathUnits=objectBoundingBox`
               so its bottom edge bends in step with the SectionDivider below.
               Path geometry mirrors the divider's `arc` shape (left half: dips from 0,0 to 0.5,0.96;
@@ -926,7 +926,7 @@ function Approach() {
               >
                 <OptimizedImage
                   src={stages[activeStep].image}
-                  alt={`Stage ${stages[activeStep].num} ${stages[activeStep].title} — ${stages[activeStep].vision}`}
+                  alt={`Stage ${stages[activeStep].num} ${stages[activeStep].title}, ${stages[activeStep].vision}`}
                   className="w-full h-full object-cover"
                   fill
                   vision={stages[activeStep].vision}
@@ -937,7 +937,7 @@ function Approach() {
               </motion.div>
             </AnimatePresence>
 
-            {/* Stage label and dots — pinned to corners of the full pane */}
+            {/* Stage label and dots, pinned to corners of the full pane */}
             <div className="absolute top-8 left-8 flex items-center gap-3 z-10">
               <span className="block w-10 h-px bg-white/50" />
               <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/85">
@@ -962,13 +962,13 @@ function Approach() {
             </div>
           </div>
 
-          {/* Hairline seam — full-height, sits on the right edge of the image plate */}
+          {/* Hairline seam, full-height, sits on the right edge of the image plate */}
           <span aria-hidden className="hidden lg:block absolute top-0 right-0 w-px h-full bg-lafoi-green/30 z-10" />
         </div>
 
-        {/* RIGHT — scrolling text plate */}
+        {/* RIGHT, scrolling text plate */}
         <div className="relative order-2 lg:order-2 p-8 sm:p-12 lg:p-16 xl:p-24 lg:py-24">
-          {/* vertical progress rail — desktop only, runs down the LEFT edge of the right half just inside the seam */}
+          {/* vertical progress rail, desktop only, runs down the LEFT edge of the right half just inside the seam */}
           <div className="hidden lg:block absolute top-0 bottom-0 left-0 pointer-events-none">
             <div className="progress-rail h-full" />
             <div
@@ -977,7 +977,7 @@ function Approach() {
             />
           </div>
 
-          {/* heading — section title lives at the top of the right plate */}
+          {/* heading, section title lives at the top of the right plate */}
           <div className="max-w-2xl mb-16 lg:mb-24">
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
@@ -997,7 +997,7 @@ function Approach() {
             </AnimatedSection>
           </div>
 
-          {/* three scroll stages — same data, same component */}
+          {/* three scroll stages, same data, same component */}
           <div className="flex flex-col gap-20 lg:gap-44">
             {stages.map((stage, i) => (
               <ScrollStage key={stage.num} stage={stage} index={i} active={i === activeStep} />
@@ -1025,14 +1025,14 @@ function ScrollStage({ stage, index, active }) {
       <div className="lg:hidden mb-6 rounded-2xl overflow-hidden aspect-[4/3]">
         <OptimizedImage
           src={stage.image}
-          alt={`Stage ${stage.num} ${stage.title} — ${stage.vision}`}
+          alt={`Stage ${stage.num} ${stage.title}, ${stage.vision}`}
           className="w-full h-full object-cover"
           fill
           vision={stage.vision}
         />
       </div>
 
-      {/* MASSIVE ghost numeral — sits behind text */}
+      {/* MASSIVE ghost numeral, sits behind text */}
       <span
         aria-hidden
         className="absolute -top-6 -left-2 lg:-top-10 lg:-left-4 font-display font-light text-lafoi-dark/[0.06] leading-none pointer-events-none select-none"
@@ -1061,7 +1061,7 @@ function ScrollStage({ stage, index, active }) {
 }
 
 /* ============================================================================
-   6. STATS — neumorphic glass cards on aurora
+   6. STATS, neumorphic glass cards on aurora
    ============================================================================ */
 
 function CountUp({ to, duration = 1800, suffix = '' }) {
@@ -1095,7 +1095,7 @@ function Stats() {
   const stats = [
     { value: 1, suffix: 'st', label: 'Stretch ceiling studio in Zimbabwe' },
     { value: 4, suffix: '', label: 'Core service lines, end to end' },
-    { value: 2, suffix: 'd', label: 'Typical install — start to handover' },
+    { value: 2, suffix: 'd', label: 'Typical install, start to handover' },
     { value: 15, suffix: 'yr', label: 'Manufacturer warranty on the membrane' },
   ]
 
@@ -1161,7 +1161,7 @@ function Stats() {
 }
 
 /* ============================================================================
-   7. PROJECTS BENTO — asymmetric editorial bento with brutalist corner mark
+   7. PROJECTS BENTO, asymmetric editorial bento with brutalist corner mark
    ============================================================================ */
 
 function ProjectsBento() {
@@ -1252,7 +1252,7 @@ function BentoProject({ project, large = false }) {
     >
       <OptimizedImage
         src={project.hero}
-        alt={`${project.title} — ${project.vision}`}
+        alt={`${project.title}, ${project.vision}`}
         className="w-full h-full object-cover object-center group-hover:scale-[1.04] transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         fill
         vision={project.vision}
@@ -1266,7 +1266,7 @@ function BentoProject({ project, large = false }) {
         </span>
       </div>
 
-      {/* brutalist corner mark — appears on hover */}
+      {/* brutalist corner mark, appears on hover */}
       <div className="corner-mark">
         <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           <path d="M64 0 L64 64 L0 64 Z" fill="#1A8A2E" opacity="0.92" />
@@ -1315,7 +1315,7 @@ function BentoProject({ project, large = false }) {
 }
 
 /* ============================================================================
-   8. TESTIMONIAL — typography-first pull-quote
+   8. TESTIMONIAL, typography-first pull-quote
    ============================================================================ */
 
 function ReviewAvatar({ author, avatar }) {
@@ -1373,7 +1373,7 @@ function Testimonial() {
     <section className="relative bg-lafoi-cream py-28 lg:py-44 overflow-hidden">
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="max-w-5xl mx-auto text-center relative">
-          {/* RATING EYEBROW — verified Google reviews */}
+          {/* RATING EYEBROW, verified Google reviews */}
           <AnimatedSection>
             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mb-4">
               <span className="inline-flex items-center gap-0.5">
@@ -1448,7 +1448,7 @@ function Testimonial() {
                   </div>
                 </div>
 
-                {/* Google verified badge — only when source is google */}
+                {/* Google verified badge, only when source is google */}
                 {t.source === 'google' && (
                   <a
                     href={googleRating.url}
@@ -1494,7 +1494,7 @@ function Testimonial() {
           </div>
         </div>
 
-        {/* kinetic name marquee — sourced from reviews data */}
+        {/* kinetic name marquee, sourced from reviews data */}
         <AnimatedSection delay={0.4} className="mt-20 lg:mt-28">
           <p className="text-center text-[10px] font-sora text-lafoi-gray tracking-[0.3em] uppercase mb-8">
             In good company
@@ -1521,13 +1521,13 @@ function Testimonial() {
 }
 
 /* ============================================================================
-   8.5  VIDEO SHOWCASE — bento of in-motion captures, modal player
+   8.5  VIDEO SHOWCASE, bento of in-motion captures, modal player
    ============================================================================ */
 
 function VideoShowcaseSection() {
   // Catalogue insight: every material category has a "Play video" affordance.
   // We adopt the pattern with our own footage. Five tiles: 1 large + 4 small.
-  // Captions are intentionally generic, category-level — no fabricated clients.
+  // Captions are intentionally generic, category-level, no fabricated clients.
   const videos = [
     {
       src: '/brand/videos/7.mp4',
@@ -1584,7 +1584,7 @@ function VideoShowcaseSection() {
             <AnimatedSection delay={0.2}>
               <p className="mt-6 max-w-xl text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
                 {linkifyProse(
-                  'Short captures from the studio floor — stretch membranes tensioned, lighting solutions calibrated, photographic membranes finished and signed off. The kind of detail that hides between the photographs in our portfolio.'
+                  'Short captures from the studio floor, stretch membranes tensioned, lighting solutions calibrated, photographic membranes finished and signed off. The kind of detail that hides between the photographs in our portfolio.'
                 )}
               </p>
             </AnimatedSection>
@@ -1613,7 +1613,7 @@ function VideoShowcaseSection() {
 }
 
 /* ============================================================================
-   10. WHY LA FOI — 3×2 bento of pillars (replaces flat Partners block)
+   10. WHY LA FOI, 3×2 bento of pillars (replaces flat Partners block)
    ============================================================================ */
 
 function WhyLaFoi() {
@@ -1631,7 +1631,7 @@ function WhyLaFoi() {
     {
       icon: Lightning,
       title: 'Fast & Cost Effective',
-      copy: 'One to two day install per room — no demolition, no concealed delays.',
+      copy: 'One to two day install per room, no demolition, no concealed delays.',
     },
     {
       icon: PaintBrush,
@@ -1674,7 +1674,7 @@ function WhyLaFoi() {
           <AnimatedSection direction="right" className="lg:col-span-5">
             <p className="text-base lg:text-lg text-lafoi-gray font-general leading-relaxed">
               {linkifyProse(
-                'We pioneered stretch ceilings in Zimbabwe and remain the country’s leading installer. Tensioned PVC and fabric membranes go up in one to two days — clean, fire-rated, fully washable, and finished in a wide colour range and printed designs.'
+                'We pioneered stretch ceilings in Zimbabwe and remain the country’s leading installer. Tensioned PVC and fabric membranes go up in one to two days, clean, fire-rated, fully washable, and finished in a wide colour range and printed designs.'
               )}
             </p>
           </AnimatedSection>
@@ -1712,11 +1712,11 @@ function WhyLaFoi() {
 }
 
 /* ============================================================================
-   10. CINEMATIC CTA — split-tone, massive serif, symmetric CTAs
+   10. CINEMATIC CTA, split-tone, massive serif, symmetric CTAs
    ============================================================================ */
 
 function CinematicCTA() {
-  // Subtle "arrival" parallax — the background image scales (1 → 1.05) and
+  // Subtle "arrival" parallax, the background image scales (1 → 1.05) and
   // gently brightens as the user reaches the bottom of the page. Restrained.
   const ctaRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -1737,14 +1737,14 @@ function CinematicCTA() {
           alt="Black gloss kitchen with mirror stretch ceiling and warm cove lighting"
           className="w-full h-full object-cover object-center"
           fill
-          vision="Black gloss kitchen with mirror ceiling — luxe invitation to begin"
+          vision="Black gloss kitchen with mirror ceiling, luxe invitation to begin"
         />
-        {/* SPLIT-TONE — dark on left, green-dark on right */}
+        {/* SPLIT-TONE, dark on left, green-dark on right */}
         <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/90 via-lafoi-dark/55 to-lafoi-green-dark/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/85 via-transparent to-lafoi-dark/35" />
       </motion.div>
 
-      {/* limited slots pill — top-right within content margin */}
+      {/* limited slots pill, top-right within content margin */}
       <div className="absolute inset-x-0 top-8 lg:top-10 z-20 pointer-events-none">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex justify-end">
           <motion.div
@@ -1791,7 +1791,7 @@ function CinematicCTA() {
           <AnimatedSection delay={0.25}>
             <p className="mt-8 max-w-xl text-base lg:text-lg text-white/70 font-general leading-relaxed">
               {linkifyProse(
-                'We visit, we measure, we listen. The first design consultation costs nothing and tends to clarify even the briefs that arrive uncertain. WhatsApp is the fastest channel — email if you would rather attach drawings, or browse our portfolio for context.',
+                'We visit, we measure, we listen. The first design consultation costs nothing and tends to clarify even the briefs that arrive uncertain. WhatsApp is the fastest channel, email if you would rather attach drawings, or browse our portfolio for context.',
                 { variant: 'dark' }
               )}
             </p>
@@ -1829,7 +1829,7 @@ function CinematicCTA() {
               {[
                 { label: 'Studio', value: 'Belgravia, Harare' },
                 { label: 'Phone', value: '+263 712 326 951' },
-                { label: 'Hours', value: 'Mon–Fri · 09:00–17:00' },
+                { label: 'Hours', value: 'Mon-Fri · 09:00 to 17:00' },
               ].map((item) => (
                 <div key={item.label} className="flex items-center gap-3">
                   <span className="text-[10px] font-sora text-lafoi-green-light tracking-[0.25em] uppercase">
