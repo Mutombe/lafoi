@@ -370,31 +370,6 @@ function Hero() {
             </motion.div>
           </div>
 
-          {/* lower-right metadata — layered glass plate */}
-          <motion.aside
-            className="lg:col-span-4 hidden lg:block"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 1.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="ml-auto max-w-[300px] relative glass-layered rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-lg rounded-bl-lg p-7 overflow-hidden">
-              <div aria-hidden className="absolute inset-0 mesh-gradient-hero opacity-50 pointer-events-none" />
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="block w-6 h-px bg-lafoi-green-light/70" />
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-green-light">
-                    Studio &mdash; Est. 2024
-                  </p>
-                </div>
-                <div className="space-y-2 font-body font-light text-[13px] text-white/75 leading-relaxed">
-                  <p>Suite 26, 6 Chelmsford Rd</p>
-                  <p>Belgravia, Harare</p>
-                  <p>Stretch ceilings &middot; lighting</p>
-                  <p>1–2 day install per room</p>
-                </div>
-              </div>
-            </div>
-          </motion.aside>
         </div>
       </div>
 
