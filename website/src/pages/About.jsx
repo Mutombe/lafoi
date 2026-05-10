@@ -855,7 +855,7 @@ function Team() {
     { name: 'Takudzwa Mhembere', role: 'Managing Director' },
     { name: 'Ashley Tafirenyika', role: 'Operations Manager' },
     { name: 'Tendekayi K. Mavunga', role: 'Projects Director' },
-    { name: 'Mrs Mhembere', role: 'Head of Marketing' },
+    { name: 'Faith Mhembere', role: 'Co-Founder & Head of Marketing' },
   ]
 
   return (
