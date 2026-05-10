@@ -90,8 +90,8 @@ const searchableContent = [
   { title: 'Care Kits, Membrane & LED Polish', path: '/shop', section: 'Shop', keywords: 'care kit cleaning microfibre polish membrane stretch ceiling maintenance' },
 ]
 
-// Pages with dark hero backgrounds where navbar text must be white
-const darkHeroPages = ['/', '/portfolio', '/careers', '/projects']
+// Pages with dark / image hero backgrounds where navbar text and logo must be white
+const darkHeroPages = ['/', '/about', '/portfolio', '/careers', '/projects', '/services', '/products']
 // Pages with sub-routes that also have dark heroes
 const darkHeroPrefixes = ['/services/', '/products/', '/projects/']
 
@@ -187,7 +187,7 @@ export default function Navbar() {
             {/* Logo */}
             <Link to="/" className="flex items-center group relative z-10">
               <Logo
-                tone={!scrolled ? 'light' : 'dark'}
+                tone={isLightText ? 'light' : 'dark'}
                 variant="wordmark"
                 imgClassName="h-9 sm:h-10 lg:h-11 w-auto group-hover:scale-105 transition-transform duration-300"
               />

@@ -74,48 +74,48 @@ function AboutHero() {
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: 'url(/brand/images/35.png)',
+          backgroundImage: 'url(/brand/images/1.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: 0.85,
+          opacity: 1,
         }}
       />
 
-      {/* Warm sepia / honey wash, multiply-blends with the photo so the room reads as a candlelit interior rather than a magazine flat */}
+      {/* Warm sepia / honey wash, multiply-blends with the photo so the room reads candlelit, never magazine-flat */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none mix-blend-multiply"
         style={{
           background:
-            'linear-gradient(125deg, rgba(255,228,180,0.42) 0%, rgba(228,180,120,0.18) 45%, rgba(212,140,80,0.12) 100%)',
+            'linear-gradient(125deg, rgba(255,228,180,0.30) 0%, rgba(228,180,120,0.14) 45%, rgba(212,140,80,0.10) 100%)',
         }}
       />
 
-      {/* Soft left-to-right cream haze, fades the image on the left so the headline holds the page; the right half stays luminous */}
+      {/* Localized scrim behind the typography column only — radial fade in the bottom-left quadrant so the headline holds against any tonal surprise in the image, and the rest of the picture stays open and visible */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'linear-gradient(95deg, rgba(250,250,248,0.94) 0%, rgba(250,250,248,0.78) 25%, rgba(250,250,248,0.35) 55%, rgba(250,250,248,0.05) 100%)',
+            'radial-gradient(ellipse 60% 80% at 22% 60%, rgba(17,17,17,0.55) 0%, rgba(17,17,17,0.25) 45%, rgba(17,17,17,0) 70%)',
         }}
       />
 
-      {/* Top fade, so the white wordmark in the navbar holds against the image without the image disappearing */}
+      {/* Top fade, so the white wordmark in the navbar holds against the image */}
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 h-32 pointer-events-none"
+        className="absolute inset-x-0 top-0 h-40 pointer-events-none"
         style={{
           background:
-            'linear-gradient(180deg, rgba(17,17,17,0.32) 0%, rgba(17,17,17,0) 100%)',
+            'linear-gradient(180deg, rgba(17,17,17,0.45) 0%, rgba(17,17,17,0) 100%)',
         }}
       />
 
       {/* Volume artifact, respects content margin */}
       <div className="absolute inset-x-0 top-32 lg:top-40 z-10 pointer-events-none">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
-          <span className="hidden sm:block w-8 h-px bg-lafoi-dark/30" />
-          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-dark/70">
+          <span className="hidden sm:block w-8 h-px bg-white/45" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-white/80">
             Vol.&nbsp;02, 2026 &middot; Heritage
           </span>
         </div>
@@ -131,14 +131,14 @@ function AboutHero() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex items-center gap-3 mb-7">
-              <span className="block w-12 h-px bg-lafoi-green/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+              <span className="block w-12 h-px bg-lafoi-green-light/80" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Who we are
               </p>
             </div>
 
             <h1
-              className="font-display text-lafoi-dark tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem] xl:text-[6rem]"
+              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[5.5rem] xl:text-[6rem] [text-shadow:0_2px_30px_rgba(0,0,0,0.35)]"
               style={{ fontVariationSettings: '"opsz" 144' }}
             >
               <AnimatedHeading
@@ -150,19 +150,19 @@ function AboutHero() {
               <AnimatedHeading
                 as="span"
                 text="attention."
-                className="block italic font-light text-lafoi-green"
+                className="block italic font-light text-lafoi-green-light"
                 delay={0.18}
                 staggerChildren={0.06}
               />
             </h1>
 
-            <div className="mt-8 space-y-5 font-body font-light text-base lg:text-[17px] text-lafoi-gray leading-[1.7] max-w-md">
+            <div className="mt-8 space-y-5 font-body font-light text-base lg:text-[17px] text-white/90 leading-[1.7] max-w-md [text-shadow:0_1px_12px_rgba(0,0,0,0.4)]">
               <p>
                 {linkifyProse(
                   'Founded January 2024 in Belgravia, Harare, Zimbabwe’s first dedicated stretch ceiling and architectural lighting studio.'
                 )}
               </p>
-              <p className="text-lafoi-gray/85">
+              <p className="text-white/80">
                 {linkifyProse(
                   'Built around a single conviction: the ceiling deserves the same care as the floor it sits above. Premium PVC and fabric stretch membranes, paired with bespoke lighting solutions, installed in one to two days per room.'
                 )}
@@ -170,17 +170,17 @@ function AboutHero() {
             </div>
 
             {/* Stat strip, 3 hairline-divided cells with cascade reveal */}
-            <div className="mt-10 pt-7 border-t border-lafoi-dark/10 grid grid-cols-3 gap-x-4">
+            <div className="mt-10 pt-7 border-t border-white/20 grid grid-cols-3 gap-x-4">
               {[
                 { k: 'Founded', v: '2024' },
                 { k: 'Studio', v: 'Belgravia' },
                 { k: 'Origin', v: 'Regional first' },
               ].map((s, i) => (
                 <AnimatedSection key={s.k} direction="up" delay={i * 0.08}>
-                  <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium mb-2">
+                  <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/60 mb-2">
                     {s.k}
                   </p>
-                  <p className="font-display font-light text-lafoi-dark text-lg lg:text-xl leading-tight">
+                  <p className="font-display font-light text-white text-lg lg:text-xl leading-tight">
                     {s.v}
                   </p>
                 </AnimatedSection>
