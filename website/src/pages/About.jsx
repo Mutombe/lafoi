@@ -164,108 +164,68 @@ function AboutHero() {
             </div>
           </motion.div>
 
-          {/* RIGHT 7 cols, editorial pattern + artifacts (no image) */}
+          {/* RIGHT 7 cols, full-bleed brand image plate with grain overlay */}
           <motion.div
             className="lg:col-span-7"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative h-full min-h-[600px] lg:min-h-[640px] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden bg-lafoi-cream border border-lafoi-dark/10">
-              {/* Layer 1, grid pattern (30%) */}
-              <div aria-hidden className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
-              {/* Layer 2, soft mesh gradient (60%) */}
-              <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-60 pointer-events-none" />
+            <div className="relative h-full min-h-[600px] lg:min-h-[640px] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden border border-lafoi-dark/10 bg-lafoi-dark">
+              {/* Base image, full-bleed */}
+              <img
+                src="/brand/images/35.png"
+                alt="La Foi Designs studio install"
+                draggable={false}
+                className="absolute inset-0 w-full h-full object-cover select-none"
+              />
 
-              {/* Massive ghost numeral "01", chapter mark */}
+              {/* Sandpaper grain overlay, fine SVG fractalNoise tiled across the plate */}
               <div
                 aria-hidden
-                className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-              >
-                <span
-                  className="font-display font-light text-lafoi-dark/[0.05] leading-none tracking-[-0.06em]"
-                  style={{
-                    fontSize: 'clamp(14rem, 22vw, 22rem)',
-                    fontVariationSettings: '"opsz" 144',
-                  }}
-                >
-                  01
-                </span>
-              </div>
+                className="absolute inset-0 pointer-events-none opacity-55 mix-blend-overlay"
+                style={{
+                  backgroundImage:
+                    "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.95 0 0 0 0 0.95 0 0 0 0.85 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+                  backgroundSize: '160px 160px',
+                }}
+              />
 
-              {/* Organic blob, top-left */}
+              {/* Editorial wash, deepens the lower half so the signature reads cleanly */}
               <div
                 aria-hidden
-                className="absolute -top-10 -left-10 w-[200px] h-[200px] blob bg-lafoi-green/[0.08] animate-float pointer-events-none"
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'linear-gradient(180deg, rgba(17,17,17,0) 45%, rgba(17,17,17,0.55) 100%)',
+                }}
               />
 
-              {/* Outlined circle, top-right */}
+              {/* Subtle inner ring */}
               <div
                 aria-hidden
-                className="absolute top-12 right-10 w-[120px] h-[120px] rounded-full border-2 border-lafoi-green/30 animate-float-delayed pointer-events-none"
+                className="absolute inset-3 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-xl rounded-bl-xl border border-white/15 pointer-events-none"
               />
 
-              {/* Filled square (rotated), mid-left */}
-              <div
-                aria-hidden
-                className="absolute top-1/2 left-12 w-16 h-16 bg-lafoi-green/15 animate-float pointer-events-none"
-                style={{ transform: 'translateY(-50%) rotate(12deg)' }}
-              />
-
-              {/* Outlined triangle, bottom-right area */}
-              <svg
-                aria-hidden
-                viewBox="0 0 80 80"
-                width="80"
-                height="80"
-                className="absolute bottom-24 right-20 text-lafoi-dark/15 animate-float-delayed pointer-events-none"
-              >
-                <polygon
-                  points="40,6 76,72 4,72"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                />
-              </svg>
-
-              {/* Hairline cross-rules, top horizontal + right vertical */}
-              <span
-                aria-hidden
-                className="absolute top-16 left-0 h-px bg-lafoi-green/20 pointer-events-none"
-                style={{ width: '60%' }}
-              />
-              <span
-                aria-hidden
-                className="absolute top-0 right-10 w-px bg-lafoi-green/20 pointer-events-none"
-                style={{ height: '60%' }}
-              />
-
-              {/* Top-right stamp */}
-              <div className="absolute top-6 right-7 flex items-center gap-2 pointer-events-none">
-                <span className="block w-6 h-px bg-lafoi-green-dark/40" />
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-dark">
+              {/* Top-right stamp, kept restrained */}
+              <div className="absolute top-7 right-8 flex items-center gap-2 pointer-events-none">
+                <span className="block w-6 h-px bg-white/60" />
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/85">
                   Vol.&nbsp;02
                 </span>
               </div>
 
-              {/* Center-right pull-quote */}
-              <div className="absolute inset-y-0 right-0 w-full max-w-[280px] lg:max-w-[320px] flex items-center justify-end pr-7 lg:pr-10 pointer-events-none">
-                <p className="font-display italic font-light text-lafoi-dark/65 text-[17px] lg:text-[18px] leading-[1.45] text-right">
-                  &ldquo;Six surfaces. The ceiling deserves all of them.&rdquo;
-                </p>
-              </div>
-
               {/* Bottom-left signature */}
-              <div className="absolute bottom-6 left-7 flex items-center gap-2 pointer-events-none">
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-dark/40">
-                  Est. 2024, Belgravia, Harare
+              <div className="absolute bottom-6 left-8 flex items-center gap-2 pointer-events-none">
+                <span className="block w-6 h-px bg-white/60" />
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/85">
+                  Est. 2024, Belgravia
                 </span>
               </div>
 
               {/* Bottom-right brand mark icon */}
-              <div className="absolute bottom-6 right-7 pointer-events-none">
-                <Compass size={18} weight="regular" className="text-lafoi-green" />
+              <div className="absolute bottom-6 right-8 pointer-events-none">
+                <Compass size={18} weight="regular" className="text-white/85" />
               </div>
             </div>
           </motion.div>
