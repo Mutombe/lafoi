@@ -12,7 +12,6 @@ import {
   Lightbulb,
   DownloadSimple,
   FilePdf,
-  Compass,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
@@ -64,34 +63,59 @@ export default function About() {
    ============================================================================ */
 
 function AboutHero() {
-  // Editorial / Typography-First. Cream BG. Asymmetric 5/7 split.
-  // LEFT, massive serif headline, two paragraphs, stat strip.
-  // RIGHT, single full-bleed team photo, no slideshow.
+  // Full-bleed warm hero. The brand image fills the whole section including
+  // the area behind the transparent navbar. Sepia / honey overlays warm it
+  // toward the brand tone; a left-side cream gradient keeps the headline
+  // legible without dimming the right side.
   return (
-    <section className="relative bg-lafoi-cream pt-32 lg:pt-40 pb-20 lg:pb-28 overflow-hidden">
-      {/* Atmospheric brand image, barely-there texture blended into the cream */}
+    <section className="relative bg-lafoi-cream overflow-hidden -mt-16 lg:-mt-20 pt-40 lg:pt-52 pb-20 lg:pb-28">
+      {/* Base, full-bleed brand stretch-ceiling photograph */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: 'url(/brand/images/50.png)',
+          backgroundImage: 'url(/brand/images/35.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: 0.1,
-          mixBlendMode: 'multiply',
-          maskImage:
-            'radial-gradient(ellipse at 70% 50%, rgba(0,0,0,1), rgba(0,0,0,0) 75%)',
-          WebkitMaskImage:
-            'radial-gradient(ellipse at 70% 50%, rgba(0,0,0,1), rgba(0,0,0,0) 75%)',
+          opacity: 0.85,
         }}
       />
-      <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-50 pointer-events-none" />
+
+      {/* Warm sepia / honey wash, multiply-blends with the photo so the room reads as a candlelit interior rather than a magazine flat */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none mix-blend-multiply"
+        style={{
+          background:
+            'linear-gradient(125deg, rgba(255,228,180,0.42) 0%, rgba(228,180,120,0.18) 45%, rgba(212,140,80,0.12) 100%)',
+        }}
+      />
+
+      {/* Soft left-to-right cream haze, fades the image on the left so the headline holds the page; the right half stays luminous */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(95deg, rgba(250,250,248,0.94) 0%, rgba(250,250,248,0.78) 25%, rgba(250,250,248,0.35) 55%, rgba(250,250,248,0.05) 100%)',
+        }}
+      />
+
+      {/* Top fade, so the white wordmark in the navbar holds against the image without the image disappearing */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-32 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(17,17,17,0.32) 0%, rgba(17,17,17,0) 100%)',
+        }}
+      />
 
       {/* Volume artifact, respects content margin */}
-      <div className="absolute inset-x-0 top-28 lg:top-32 z-10 pointer-events-none">
+      <div className="absolute inset-x-0 top-32 lg:top-40 z-10 pointer-events-none">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-end gap-3">
-          <span className="hidden sm:block w-8 h-px bg-lafoi-dark/20" />
-          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/65">
+          <span className="hidden sm:block w-8 h-px bg-lafoi-dark/30" />
+          <span className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-dark/70">
             Vol.&nbsp;02, 2026 &middot; Heritage
           </span>
         </div>
@@ -99,9 +123,9 @@ function AboutHero() {
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-stretch">
-          {/* LEFT 5 cols, typography-first */}
+          {/* LEFT, typography sits over the warm image, breathing room on the right */}
           <motion.div
-            className="lg:col-span-5"
+            className="lg:col-span-7"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
@@ -164,71 +188,6 @@ function AboutHero() {
             </div>
           </motion.div>
 
-          {/* RIGHT 7 cols, full-bleed brand image plate with grain overlay */}
-          <motion.div
-            className="lg:col-span-7"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="relative h-full min-h-[600px] lg:min-h-[640px] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden border border-lafoi-dark/10 bg-lafoi-dark">
-              {/* Base image, full-bleed */}
-              <img
-                src="/brand/images/35.png"
-                alt="La Foi Designs studio install"
-                draggable={false}
-                className="absolute inset-0 w-full h-full object-cover select-none"
-              />
-
-              {/* Sandpaper grain overlay, fine SVG fractalNoise tiled across the plate */}
-              <div
-                aria-hidden
-                className="absolute inset-0 pointer-events-none opacity-55 mix-blend-overlay"
-                style={{
-                  backgroundImage:
-                    "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.95 0 0 0 0 0.95 0 0 0 0.85 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-                  backgroundSize: '160px 160px',
-                }}
-              />
-
-              {/* Editorial wash, deepens the lower half so the signature reads cleanly */}
-              <div
-                aria-hidden
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(17,17,17,0) 45%, rgba(17,17,17,0.55) 100%)',
-                }}
-              />
-
-              {/* Subtle inner ring */}
-              <div
-                aria-hidden
-                className="absolute inset-3 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-xl rounded-bl-xl border border-white/15 pointer-events-none"
-              />
-
-              {/* Top-right stamp, kept restrained */}
-              <div className="absolute top-7 right-8 flex items-center gap-2 pointer-events-none">
-                <span className="block w-6 h-px bg-white/60" />
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/85">
-                  Vol.&nbsp;02
-                </span>
-              </div>
-
-              {/* Bottom-left signature */}
-              <div className="absolute bottom-6 left-8 flex items-center gap-2 pointer-events-none">
-                <span className="block w-6 h-px bg-white/60" />
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/85">
-                  Est. 2024, Belgravia
-                </span>
-              </div>
-
-              {/* Bottom-right brand mark icon */}
-              <div className="absolute bottom-6 right-8 pointer-events-none">
-                <Compass size={18} weight="regular" className="text-white/85" />
-              </div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>
