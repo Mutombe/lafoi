@@ -877,5 +877,5 @@ export const totalStats = {
   totalProjects: projects.length,
   servicesOffered: 4,
   founded: 2024,
-  warrantyYears: 15,
+  warrantyYears: 10,
 }

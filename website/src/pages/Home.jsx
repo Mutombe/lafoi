@@ -1136,7 +1136,7 @@ function Stats() {
     { value: 1, suffix: 'st', label: 'Stretch ceiling studio in Zimbabwe' },
     { value: 4, suffix: '', label: 'Core service lines, end to end' },
     { value: 2, suffix: 'd', label: 'Typical install, start to handover' },
-    { value: 15, suffix: 'yr', label: 'Manufacturer warranty on the membrane' },
+    { value: 10, suffix: 'yr', label: 'Manufacturer warranty on the membrane' },
   ]
 
   return (
