@@ -359,18 +359,50 @@ def _meta_block(rows: Iterable[tuple], st):
 
 
 def _bill_to(customer, st):
-    co_name = customer.name if customer else "—"
-    parts = [Paragraph("BILL TO", st["LFEyebrow"]), Paragraph(co_name, st["LFValue"])]
-    contact = customer.contact_person if customer else ""
+    """Build a BILL TO block.
+
+    Accepts either a Customer instance OR a plain dict with the same
+    keys (name, contact_person, email, phone, address). The dict form
+    is used when the document was raised for a free-form recipient
+    (no project, no customer record yet).
+    """
+    if customer is None:
+        return [Paragraph("BILL TO", st["LFEyebrow"]), Paragraph("—", st["LFValue"])]
+    get = (lambda key: customer.get(key, "")) if isinstance(customer, dict) else (lambda key: getattr(customer, key, "") or "")
+    name = get("name") or "—"
+    parts = [Paragraph("BILL TO", st["LFEyebrow"]), Paragraph(name, st["LFValue"])]
+    contact = get("contact_person")
     if contact:
         parts.append(Paragraph(contact, st["LFBodySmall"]))
-    if customer and customer.email:
-        parts.append(Paragraph(customer.email, st["LFBodySmall"]))
-    if customer and customer.phone:
-        parts.append(Paragraph(customer.phone, st["LFBodySmall"]))
-    if customer and customer.address:
-        parts.append(Paragraph(customer.address.replace("\n", "<br/>"), st["LFBodySmall"]))
+    email = get("email")
+    if email:
+        parts.append(Paragraph(email, st["LFBodySmall"]))
+    phone = get("phone")
+    if phone:
+        parts.append(Paragraph(phone, st["LFBodySmall"]))
+    address = get("address")
+    if address:
+        parts.append(Paragraph(address.replace("\n", "<br/>"), st["LFBodySmall"]))
     return parts
+
+
+def _quotation_recipient(quotation):
+    """Resolve the quotation's recipient into something _bill_to can render.
+
+    Precedence: project.customer -> standalone customer -> free-form
+    recipient dict built from quotation.recipient_* fields.
+    """
+    if quotation.project_id and quotation.project and quotation.project.customer_id:
+        return quotation.project.customer
+    if getattr(quotation, "customer_id", None):
+        return quotation.customer
+    return {
+        "name": quotation.recipient_name,
+        "contact_person": quotation.recipient_contact,
+        "email": quotation.recipient_email,
+        "phone": quotation.recipient_phone,
+        "address": quotation.recipient_address,
+    }
 
 
 def _items_table(items, st, currency="USD"):
@@ -502,8 +534,8 @@ def render_quotation_pdf(quotation) -> bytes:
     )
     st = _styles()
 
-    project = quotation.project
-    customer = project.customer if project else None
+    project = quotation.project if quotation.project_id else None
+    customer = _quotation_recipient(quotation)
 
     flow = []
     flow.append(_header_flowable("Quotation", quotation.number, st))
@@ -511,13 +543,15 @@ def render_quotation_pdf(quotation) -> bytes:
     flow.append(_hr(1.2, BRAND_GREEN))
     flow.append(Spacer(1, 12))
 
-    # Bill-to + meta — two columns
+    # Bill-to + meta — two columns. Project row is omitted entirely when
+    # the quotation was raised for a customer / free-form recipient.
     meta_rows = [
         ("Issue date", quotation.issue_date.strftime("%d %b %Y") if quotation.issue_date else "—"),
         ("Valid until", quotation.expiry_date.strftime("%d %b %Y") if quotation.expiry_date else "—"),
-        ("Project", f"{project.code} — {project.title}" if project else "—"),
-        ("Status", quotation.get_status_display()),
     ]
+    if project:
+        meta_rows.append(("Project", f"{project.code} — {project.title}"))
+    meta_rows.append(("Status", quotation.get_status_display()))
     bill_block = _bill_to(customer, st)
     meta_table = _meta_block(meta_rows, st)
     head_table = Table([[bill_block, meta_table]], colWidths=[None, 80 * mm])

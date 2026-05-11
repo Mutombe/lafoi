@@ -59,7 +59,28 @@ class Quotation(_MoneyMixin, models.Model):
         CONVERTED = "converted", "Converted to Invoice"
 
     number = models.CharField(max_length=24, unique=True, blank=True)
-    project = models.ForeignKey(Project, on_delete=models.PROTECT, related_name="quotations")
+    # Recipient is one of three shapes: an existing project, an existing
+    # customer (no project yet), or a free-form recipient (lead /
+    # prospect). All three FKs/fields are optional; the serializer
+    # enforces that at least one shape is present.
+    project = models.ForeignKey(
+        Project, on_delete=models.PROTECT, related_name="quotations",
+        null=True, blank=True,
+    )
+    customer = models.ForeignKey(
+        "crm.Customer", on_delete=models.PROTECT, related_name="quotations",
+        null=True, blank=True,
+        help_text="Customer the quotation is for, when no project has been opened yet.",
+    )
+    recipient_name = models.CharField(
+        max_length=200, blank=True,
+        help_text="Free-form recipient when neither project nor customer is set.",
+    )
+    recipient_contact = models.CharField(max_length=200, blank=True)
+    recipient_email = models.EmailField(blank=True)
+    recipient_phone = models.CharField(max_length=32, blank=True)
+    recipient_address = models.TextField(blank=True)
+
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
 
     issue_date = models.DateField(default=date.today)
