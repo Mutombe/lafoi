@@ -52,7 +52,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: false,
   tagTypes: [
     'Auth', 'User',
-    'Customer', 'Project', 'ProjectFile', 'ProjectUpdate', 'ProjectCost',
+    'Customer', 'Project', 'ProjectFile', 'ProjectUpdate', 'ProjectCost', 'Expense',
     'Quotation', 'Invoice', 'Receipt',
     'Employee', 'PayrollPeriod', 'PayrollEntry',
     'TaxBracketSet', 'StatutoryRate', 'ExchangeRate', 'AuditLog',
@@ -464,22 +464,44 @@ export const api = createApi({
       query: ({ id, year }) => ({ url: `employees/${id}/ytd/`, params: year ? { year } : {} }),
     }),
 
-    // ---------- Project costs ----------
+    // ---------- Expenses (global ledger, optionally linked to a project) ----------
+    listExpenses: b.query({
+      query: (params = {}) => ({ url: 'expenses/', params }),
+      providesTags: ['Expense'],
+    }),
+    getExpense: b.query({
+      query: (id) => `expenses/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'Expense', id }],
+    }),
+    createExpense: b.mutation({
+      query: (body) => ({ url: 'expenses/', method: 'POST', body }),
+      invalidatesTags: ['Expense', 'Project'],
+    }),
+    updateExpense: b.mutation({
+      query: ({ id, ...body }) => ({ url: `expenses/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['Expense', 'Project', { type: 'Expense', id }],
+    }),
+    deleteExpense: b.mutation({
+      query: (id) => ({ url: `expenses/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['Expense', 'Project'],
+    }),
+    // Aliases preserved for any existing call sites that still use the
+    // project-cost wording. Same endpoint under the hood.
     listProjectCosts: b.query({
-      query: (params = {}) => ({ url: 'project-costs/', params }),
-      providesTags: ['ProjectCost'],
+      query: (params = {}) => ({ url: 'expenses/', params }),
+      providesTags: ['Expense'],
     }),
     createProjectCost: b.mutation({
-      query: (body) => ({ url: 'project-costs/', method: 'POST', body }),
-      invalidatesTags: ['ProjectCost', 'Project'],
+      query: (body) => ({ url: 'expenses/', method: 'POST', body }),
+      invalidatesTags: ['Expense', 'Project'],
     }),
     updateProjectCost: b.mutation({
-      query: ({ id, ...body }) => ({ url: `project-costs/${id}/`, method: 'PATCH', body }),
-      invalidatesTags: ['ProjectCost', 'Project'],
+      query: ({ id, ...body }) => ({ url: `expenses/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['Expense', 'Project'],
     }),
     deleteProjectCost: b.mutation({
-      query: (id) => ({ url: `project-costs/${id}/`, method: 'DELETE' }),
-      invalidatesTags: ['ProjectCost', 'Project'],
+      query: (id) => ({ url: `expenses/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['Expense', 'Project'],
     }),
 
     // ---------- Project map ----------
@@ -710,6 +732,7 @@ export const {
   useMarkPeriodReviewedMutation, useApprovePeriodMutation, useMarkPeriodPaidMutation, useClosePeriodMutation, useReopenPeriodMutation,
   useEmployeeYtdQuery,
   useListProjectCostsQuery, useCreateProjectCostMutation, useUpdateProjectCostMutation, useDeleteProjectCostMutation,
+  useListExpensesQuery, useGetExpenseQuery, useCreateExpenseMutation, useUpdateExpenseMutation, useDeleteExpenseMutation,
   useProjectsMapQuery,
   useListModulesQuery, useSetUserModulesMutation, useResetUserPasswordMutation, useToggleUserActiveMutation,
   useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation,

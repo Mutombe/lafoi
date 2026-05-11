@@ -64,6 +64,7 @@ const GROUPS = [
       { to: '/dashboard/quotations', icon: FileText,        label: 'Quotations', module: 'quotations' },
       { to: '/dashboard/invoices',   icon: ReceiptIcon,     label: 'Invoices',   module: 'invoices' },
       { to: '/dashboard/receipts',   icon: CurrencyDollar,  label: 'Receipts',   module: 'receipts' },
+      { to: '/dashboard/expenses',   icon: Coins,           label: 'Expenses',   module: 'expenses' },
     ],
   },
   {

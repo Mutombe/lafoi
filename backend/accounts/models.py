@@ -12,6 +12,7 @@ MODULES = (
     ("quotations", "Quotations"),
     ("invoices", "Invoices"),
     ("receipts", "Receipts"),
+    ("expenses", "Expenses"),
     ("employees", "Employees"),
     ("payroll", "Payroll"),
     ("loans", "Loans & Advances"),

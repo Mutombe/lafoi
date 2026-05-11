@@ -19,9 +19,6 @@ import {
   useCreateProjectUpdateMutation,
   useUploadProjectFileMutation,
   useDeleteProjectFileMutation,
-  useCreateProjectCostMutation,
-  useUpdateProjectCostMutation,
-  useDeleteProjectCostMutation,
 } from '../store/api'
 
 /* ============================================================================
@@ -448,7 +445,6 @@ export default function ProjectDetail() {
   const [showUpdate, setShowUpdate] = useState(false)
   const [showFile, setShowFile] = useState(false)
   const [showSketch, setShowSketch] = useState(false)
-  const [editingCost, setEditingCost] = useState(null)
 
   if (isLoading || !project) {
     return (
@@ -685,17 +681,24 @@ export default function ProjectDetail() {
         )}
       </section>
 
-      {/* 7. Costs — table + variance card */}
+      {/* 7. Linked expenses — read-only summary + variance card. Adding,
+          editing or removing expenses happens in the Expenses tab now;
+          this section just surfaces what's already linked to this project
+          so the variance card stays useful in context. */}
       <section className="mt-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-2xl">Costs &amp; budget</h2>
-          <PrimaryButton onClick={() => setEditingCost({})}>
-            <Plus size={14} weight="bold" /> Add cost
-          </PrimaryButton>
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <h2 className="font-display text-2xl">Linked expenses &amp; budget</h2>
+          <Link
+            to={`/dashboard/expenses?project=${project.id}`}
+            className="inline-flex items-center gap-2 text-sm font-sora text-lafoi-dark hover:text-lafoi-green transition-colors"
+          >
+            Manage in Expenses
+            <span aria-hidden>→</span>
+          </Link>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-7">
-            <CostsTable costs={project.costs || []} onEdit={setEditingCost} />
+            <CostsTable costs={project.costs || []} readonly />
           </div>
           <div className="lg:col-span-5">
             <BudgetVarianceCard
@@ -718,32 +721,15 @@ export default function ProjectDetail() {
           />
         )}
       </Modal>
-      <CostModal
-        open={!!editingCost}
-        onClose={() => setEditingCost(null)}
-        project={project}
-        editing={editingCost}
-        onSaved={refetch}
-      />
     </div>
   )
 }
 
 /* ============================================================================
-   Costs table
+   Costs table — READ-ONLY summary on the project page. Add/edit/delete
+   happens in the new Expenses tab now.
    ========================================================================= */
-function CostsTable({ costs, onEdit }) {
-  const [deleteCost] = useDeleteProjectCostMutation()
-  const handleDelete = async (cost) => {
-    if (!window.confirm(`Delete this cost (${fmtMoney(cost.amount, cost.currency)})?`)) return
-    try {
-      await deleteCost(cost.id).unwrap()
-      toast.success('Cost removed', { description: cost.description })
-    } catch (err) {
-      toast.error('Could not delete cost', { description: err?.data?.detail || 'Delete failed.' })
-    }
-  }
-
+function CostsTable({ costs, readonly = false }) {
   const columns = [
     { key: 'incurred_on', label: 'Date', render: (r) => <span className="text-xs text-lafoi-gray font-sora tabular-nums">{fmtDate(r.incurred_on)}</span> },
     {
@@ -752,7 +738,7 @@ function CostsTable({ costs, onEdit }) {
       render: (r) => (
         <div className="min-w-0">
           <p className="font-sora text-sm font-medium text-lafoi-dark truncate">{r.description}</p>
-          {r.notes && <p className="text-[11px] text-lafoi-gray-medium truncate">{r.notes}</p>}
+          {r.supplier && <p className="text-[11px] text-lafoi-gray-medium truncate">{r.supplier}</p>}
         </div>
       ),
     },
@@ -769,38 +755,11 @@ function CostsTable({ costs, onEdit }) {
       },
     },
     {
-      key: 'supplier',
-      label: 'Supplier',
-      render: (r) => <span className="text-xs text-lafoi-gray">{r.supplier || '—'}</span>,
-    },
-    {
       key: 'amount',
       label: 'Amount',
       className: 'text-right',
       cellClassName: 'text-right',
       render: (r) => <span className="font-sora text-sm tabular-nums text-lafoi-dark">{fmtMoney(r.amount, r.currency || 'USD')}</span>,
-    },
-    {
-      key: 'actions',
-      label: '',
-      render: (r) => (
-        <div className="flex justify-end gap-1">
-          <button
-            onClick={(e) => { e.stopPropagation(); onEdit(r) }}
-            className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark"
-            title="Edit"
-          >
-            <PencilSimple size={14} />
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); handleDelete(r) }}
-            className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600"
-            title="Delete"
-          >
-            <Trash size={14} />
-          </button>
-        </div>
-      ),
     },
   ]
 
@@ -808,7 +767,9 @@ function CostsTable({ costs, onEdit }) {
     <DataTable
       columns={columns}
       rows={costs}
-      empty="No costs logged yet — track materials, labour and supplier invoices to power the variance card."
+      empty={readonly
+        ? "No expenses linked to this project yet — record one in the Expenses tab and pick this project."
+        : "No costs logged yet."}
     />
   )
 }
@@ -974,9 +935,10 @@ function CategoryDonut({ segments, total, size = 120 }) {
 }
 
 /* ============================================================================
-   Cost modal
+   Cost modal — REMOVED. Cost entry now lives in the Expenses tab.
+   Kept the surrounding code structure but no longer rendered.
    ========================================================================= */
-function CostModal({ open, onClose, project, editing, onSaved }) {
+function _RemovedCostModal({ open, onClose, project, editing, onSaved }) {
   const isNew = editing && !editing.id
   const [form, setForm] = useState({
     description: '', category: 'materials', amount: '', currency: 'USD',

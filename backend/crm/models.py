@@ -1,4 +1,6 @@
 """CRM — Customers, Projects, Project lifecycle (updates + files)."""
+from decimal import Decimal
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -175,11 +177,17 @@ class ProjectFile(models.Model):
 
 
 class ProjectCost(models.Model):
-    """A line of actual cost incurred against a project.
+    """A line of business expense.
 
-    Aggregated to compare budget vs spent for variance analysis. Categories
-    let finance group costs (materials/labour/transport/permits/equipment/
-    subcontract/other).
+    Modelled as a global expense ledger. Each expense can OPTIONALLY be
+    associated with a project (project FK is nullable) so studio overhead,
+    office costs, fuel, marketing etc. live alongside project-specific
+    costs in one place. When project is set, the entry also surfaces on
+    the project's budget-variance card.
+
+    Categories let finance group expenses (materials/labour/transport/
+    permits/equipment/subcontract/overhead/office/marketing/fuel/utilities
+    /software/other).
     """
 
     class Category(models.TextChoices):
@@ -190,16 +198,59 @@ class ProjectCost(models.Model):
         EQUIPMENT = "equipment", "Equipment hire"
         SUBCONTRACT = "subcontract", "Subcontract"
         OVERHEAD = "overhead", "Overhead"
+        OFFICE = "office", "Office"
+        MARKETING = "marketing", "Marketing"
+        FUEL = "fuel", "Fuel & vehicle"
+        UTILITIES = "utilities", "Utilities"
+        SOFTWARE = "software", "Software & subscriptions"
+        ENTERTAINMENT = "entertainment", "Client entertainment"
         OTHER = "other", "Other"
 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="costs")
+    class PaymentMethod(models.TextChoices):
+        CASH = "cash", "Cash"
+        BANK_TRANSFER = "bank_transfer", "Bank transfer"
+        MOBILE_MONEY = "mobile_money", "Mobile money"
+        CARD = "card", "Card"
+        CHEQUE = "cheque", "Cheque"
+        OTHER = "other", "Other"
+
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="costs",
+        help_text="Optional. Leave blank for global / overhead expenses.",
+    )
     description = models.CharField(max_length=240)
     category = models.CharField(max_length=24, choices=Category.choices, default=Category.OTHER)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
+    tax_amount = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0"),
+        help_text="VAT or other tax portion of the amount, if recorded separately.",
+    )
     currency = models.CharField(max_length=8, default="USD")
-    incurred_on = models.DateField()
-    supplier = models.CharField(max_length=200, blank=True)
-    receipt_reference = models.CharField(max_length=120, blank=True, help_text="External receipt / invoice number, if any.")
+    incurred_on = models.DateField(help_text="Date the expense was actually incurred.")
+    paid_on = models.DateField(
+        null=True, blank=True,
+        help_text="When the expense was paid. Leave blank for unpaid / pending.",
+    )
+    payment_method = models.CharField(
+        max_length=16, choices=PaymentMethod.choices, default=PaymentMethod.BANK_TRANSFER,
+        blank=True,
+    )
+    supplier = models.CharField(max_length=200, blank=True, help_text="Vendor or supplier name.")
+    receipt_reference = models.CharField(
+        max_length=120, blank=True,
+        help_text="External receipt / invoice number, if any.",
+    )
+    receipt_url = models.URLField(
+        blank=True,
+        help_text="Link to the scanned receipt or invoice (e.g. DO Spaces upload).",
+    )
+    is_billable = models.BooleanField(
+        default=False,
+        help_text="Marks the expense as on-bill to a client (typically only when a project is attached).",
+    )
     notes = models.TextField(blank=True)
 
     created_by = models.ForeignKey(

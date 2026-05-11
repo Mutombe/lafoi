@@ -9,16 +9,31 @@ from .models import Customer, Project, ProjectCost, ProjectFile, ProjectUpdate
 class ProjectCostSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(read_only=True)
     category_label = serializers.CharField(source="get_category_display", read_only=True)
+    payment_method_label = serializers.CharField(source="get_payment_method_display", read_only=True)
+    project_code = serializers.CharField(source="project.code", read_only=True)
+    project_title = serializers.CharField(source="project.title", read_only=True)
 
     class Meta:
         model = ProjectCost
         fields = (
-            "id", "project", "description", "category", "category_label",
-            "amount", "currency", "incurred_on", "supplier",
-            "receipt_reference", "notes",
+            "id",
+            "project", "project_code", "project_title",
+            "description",
+            "category", "category_label",
+            "amount", "tax_amount", "currency",
+            "incurred_on", "paid_on",
+            "payment_method", "payment_method_label",
+            "supplier",
+            "receipt_reference", "receipt_url",
+            "is_billable",
+            "notes",
             "created_by", "created_at", "updated_at",
         )
-        read_only_fields = ("id", "category_label", "created_by", "created_at", "updated_at")
+        read_only_fields = (
+            "id", "category_label", "payment_method_label",
+            "project_code", "project_title",
+            "created_by", "created_at", "updated_at",
+        )
 
 
 class CustomerSerializer(serializers.ModelSerializer):

@@ -75,11 +75,23 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
 class ProjectCostViewSet(viewsets.ModelViewSet):
+    """Global expense ledger. Each row is an `Expense`; the URL is
+    /api/expenses/ for clarity. project FK is optional — overhead and
+    studio costs sit alongside project-specific entries.
+    """
     serializer_class = ProjectCostSerializer
     queryset = ProjectCost.objects.select_related("project", "created_by").all()
-    filterset_fields = ("project", "category", "currency")
+    filterset_fields = {
+        "project": ["exact", "isnull"],
+        "category": ["exact"],
+        "currency": ["exact"],
+        "payment_method": ["exact"],
+        "is_billable": ["exact"],
+        "incurred_on": ["gte", "lte"],
+        "paid_on": ["gte", "lte"],
+    }
     search_fields = ("description", "supplier", "receipt_reference", "notes")
-    ordering_fields = ("incurred_on", "amount", "created_at")
+    ordering_fields = ("incurred_on", "paid_on", "amount", "created_at")
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user if self.request.user.is_authenticated else None)
