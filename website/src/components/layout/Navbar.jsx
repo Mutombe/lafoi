@@ -31,8 +31,6 @@ const navGroups = [
       { name: 'Stretch Ceilings',  path: '/services/stretch-ceiling-installation', icon: SquaresFour, desc: 'Premium membrane systems' },
       { name: 'Lighting Solutions', path: '/services/lighting-solutions',          icon: Lightbulb,   desc: 'Architectural illumination' },
       { name: 'Interior Design',    path: '/services/interior-design',             icon: PaintBrush,  desc: 'Concept to completion' },
-      { name: 'Flooring',           path: '/services/flooring',                    icon: Stack,       desc: 'Hardwood, vinyl, parquet' },
-      { name: 'Epoxy Flooring',     path: '/services/epoxy-flooring',              icon: Drop,        desc: 'Seamless resin systems' },
       { name: 'All Services',       path: '/services',                             icon: Palette,     desc: 'Full service catalog' },
       { name: 'Products',           path: '/products',                             icon: Package,     desc: 'Membranes, lighting & accessories' },
     ],
@@ -51,8 +49,6 @@ const searchableContent = [
   { title: 'Stretch Ceiling Installation', path: '/services/stretch-ceiling-installation', section: 'Services', keywords: 'stretch ceiling pvc fabric membrane install' },
   { title: 'Lighting Solutions', path: '/services/lighting-solutions', section: 'Services', keywords: 'led lighting custom lights backlit fibre optic' },
   { title: 'Interior Design', path: '/services/interior-design', section: 'Services', keywords: 'interior design space planning palette furniture mood board styling' },
-  { title: 'Flooring', path: '/services/flooring', section: 'Services', keywords: 'flooring hardwood vinyl laminate parquet engineered floor' },
-  { title: 'Epoxy Flooring', path: '/services/epoxy-flooring', section: 'Services', keywords: 'epoxy resin floor seamless metallic flake industrial garage showroom' },
   { title: 'Design Consultation & Customisation', path: '/services/design-consultation', section: 'Services', keywords: 'design consultation custom site visit sampling' },
   { title: 'Maintenance & Support', path: '/services/maintenance-support', section: 'Services', keywords: 'maintenance support warranty cleaning repair' },
   { title: 'About La Foi Designs', path: '/about', section: 'Company', keywords: 'about company history story team' },
@@ -91,10 +87,13 @@ const searchableContent = [
   { title: 'Care Kits, Membrane & LED Polish', path: '/shop', section: 'Shop', keywords: 'care kit cleaning microfibre polish membrane stretch ceiling maintenance' },
 ]
 
-// Pages with dark / image hero backgrounds where navbar text and logo must be white
-const darkHeroPages = ['/', '/about', '/portfolio', '/careers', '/projects', '/services', '/products']
+// Pages with dark / image hero backgrounds where navbar text and logo must be white.
+// Services and products catalogue + their detail pages run on bright photography
+// (white kitchens, gloss ceilings, hardwood floors) so the logo + nav links stay
+// in dark colour there.
+const darkHeroPages = ['/', '/about', '/portfolio', '/careers', '/projects']
 // Pages with sub-routes that also have dark heroes
-const darkHeroPrefixes = ['/services/', '/products/', '/projects/']
+const darkHeroPrefixes = ['/projects/']
 
 function useHasDarkHero(pathname) {
   return darkHeroPages.includes(pathname) || darkHeroPrefixes.some(p => pathname.startsWith(p))

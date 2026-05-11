@@ -39,7 +39,7 @@ export default function Contact() {
   useSEO({
     title: 'Contact La Foi Designs | Request a Stretch Ceiling Quote',
     description:
-      'Talk to La Foi Designs about stretch ceilings, architectural lighting, flooring, and epoxy systems in Harare and across Zimbabwe. +263 782 931 472 · admin@lafoidesigns.co.zw',
+      'Talk to La Foi Designs about stretch ceilings, architectural lighting and interior design in Harare and across Zimbabwe. +263 782 931 472 · admin@lafoidesigns.co.zw',
     path: '/contact',
     jsonLd: breadcrumbsLd([
       { name: 'Home', path: '/' },

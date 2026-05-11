@@ -16,8 +16,6 @@ const footerLinks = {
     { name: 'Stretch Ceilings', path: '/services/stretch-ceiling-installation' },
     { name: 'Lighting Solutions', path: '/services/lighting-solutions' },
     { name: 'Interior Design', path: '/services/interior-design' },
-    { name: 'Flooring', path: '/services/flooring' },
-    { name: 'Epoxy Flooring', path: '/services/epoxy-flooring' },
     { name: 'Design Consultation', path: '/services/design-consultation' },
     { name: 'Maintenance & Support', path: '/services/maintenance-support' },
     { name: 'All Products', path: '/products' },
