@@ -74,7 +74,10 @@ const searchableContent = [
   { title: 'Printed Photographic Membrane', path: '/products/printed-photographic-membrane', section: 'Products', keywords: 'printed photographic custom artwork ceiling' },
   { title: 'Star Ceiling Membrane', path: '/products/star-ceiling-membrane', section: 'Products', keywords: 'star ceiling fibre optic starfield night sky bedroom cinema spa' },
   { title: 'Fibre-Optic Starfield Kit', path: '/products/fiber-optic-starfield', section: 'Products', keywords: 'fibre fiber optic star starry sky ceiling lighting' },
-  { title: 'Linear LED Cove System', path: '/products/linear-led-cove', section: 'Products', keywords: 'led cove perimeter lighting strip linear' },
+  { title: 'Linear Lights', path: '/products/linear-led-cove', section: 'Products', keywords: 'linear lights led cove perimeter strip continuous stretch ceiling' },
+  { title: 'Magnetic Track Lights', path: '/products/magnetic-track-system', section: 'Products', keywords: 'magnetic track lights 48v rail spot pendant linear reconfigurable' },
+  { title: 'Back-Lighting', path: '/products/back-lighting', section: 'Products', keywords: 'back lighting hidden led concealed mirror vanity headboard wall feature reveal' },
+  { title: 'Shadow Edge Lighting', path: '/products/shadow-edge-lighting', section: 'Products', keywords: 'shadow edge cove perimeter reveal floating ceiling halo wash' },
   // Projects
   { title: 'Project Case Studies', path: '/projects', section: 'Projects', keywords: 'projects case studies transformations archive' },
   { title: 'Borrowdale Private Residence', path: '/projects/borrowdale-private-residence', section: 'Projects', keywords: 'borrowdale residence home residential case study' },
