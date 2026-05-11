@@ -1024,10 +1024,10 @@ function AboutCTA() {
                 />
               </Link>
               <a
-                href="tel:+263712326951"
+                href="tel:+263782931472"
                 className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-white/10 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-500"
               >
-                +263 712 326 951
+                +263 782 931 472
                 <ArrowUpRight
                   size={16}
                   weight="bold"

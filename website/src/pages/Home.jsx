@@ -82,7 +82,7 @@ export default function Home() {
   useSEO({
     title: 'Stretch Ceilings in Zimbabwe',
     description:
-      'Modern stretch ceilings, architectural lighting, interior design, flooring, tiling and epoxy systems for homes, offices, hotels, and retail spaces in Zimbabwe. Request a quote from La Foi Designs.',
+      'Modern stretch ceilings, architectural lighting, interior design, flooring and epoxy systems for homes, offices, hotels, and retail spaces in Zimbabwe. Request a quote from La Foi Designs.',
     path: '/',
     image: '/brand/images/50.png',
     jsonLd: breadcrumbsLd([{ name: 'Home', path: '/' }]),
@@ -399,7 +399,8 @@ function FinishBand() {
     { name: 'Gloss', slug: 'gloss-lacquer-membrane' },
     { name: 'Translucent', slug: 'translucent-backlit-membrane' },
     { name: 'Printed', slug: 'printed-photographic-membrane' },
-    { name: 'Sculptural', slug: '3d-sculptural-membrane' },
+    { name: 'Stars', slug: 'star-ceiling-membrane' },
+    { name: 'Acoustic', slug: 'acoustic-microperforated-membrane' },
   ]
 
   return (
@@ -508,7 +509,7 @@ function Manifesto() {
                 { k: 'Origin', v: 'Belgravia, Harare' },
                 { k: 'Founded', v: '2024' },
                 { k: 'Membranes', v: 'PVC · Fabric' },
-                { k: 'Install', v: '1 to 2 days per room' },
+                { k: 'Install', v: '1 to 2 days per 9 m² standard room' },
               ].map((m) => (
                 <div key={m.k} className="border-t border-white/10 pt-4">
                   <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/40 mb-1.5">
@@ -597,16 +598,27 @@ function Manifesto() {
 function FinishGallery() {
   const stretchProducts = products.filter((p) => p.category === 'Stretch Ceilings').slice(0, 9)
 
+  // Each finish carries a custom colour range, from neutral off-whites through
+  // saturated brand-greens to deep blacks. The palette below previews a slice
+  // of what's available, the spec sheet has the full custom-mix programme.
   const finishMeta = {
-    Matte: 'plaster-like · zero glare',
-    Satin: 'pearl sheen · 18% gloss',
-    Gloss: 'liquid mirror · 95% gloss',
-    Translucent: 'glowing plane · 75% transmission',
+    Matte: 'plaster-flat · custom colour range',
+    Satin: 'pearl sheen · custom colour range',
+    Gloss: 'liquid mirror · saturated colour range',
+    Translucent: 'glowing plane · tunable white & colour',
     Printed: 'photographic · 1440 dpi',
-    Sculptural: '3D form · hidden subframe',
-    Acoustic: 'invisible silence · NRC 0.90',
-    Mirror: 'specular field · 98% reflection',
-    Suede: 'tactile · acoustic warmth',
+    Stars: 'fibre-optic field · deep matte base',
+    Acoustic: 'invisible silence · standard colour range',
+  }
+
+  const finishPalettes = {
+    Matte: ['#FAFAF8', '#E8DFCF', '#C9B89A', '#8B7355', '#4A3C2A', '#1A1A1A'],
+    Satin: ['#FFFFFF', '#F4E8D8', '#D9B98E', '#A87C50', '#5A3C24', '#2A1F18'],
+    Gloss: ['#FAFAFA', '#5B0F0F', '#1A1F4A', '#0A0F1A', '#1F3E2A', '#3E1F3E'],
+    Translucent: ['#FFFFFF', '#F4EFE2', '#DCE6F0', '#E8DCEC', '#FFE9C2', '#D6F0DC'],
+    Printed: ['#9CB8D8', '#E0A55A', '#6B8E52', '#C2877A', '#D8C99C', '#5C5C8A'],
+    Stars: ['#06091A', '#0A1228', '#10183A', '#FFFFFF', '#FFE9B0', '#A8C8FF'],
+    Acoustic: ['#FAFAF8', '#EDEDEA', '#D8D6D2', '#A8A6A0', '#6E6C68', '#2A2A28'],
   }
 
   // Bento layout, 9 cells, asymmetric editorial grid (4 cols × 5 rows)
@@ -649,10 +661,10 @@ function FinishGallery() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
-                Nine finishes.
+                Seven finishes.
                 <br />
                 <span className="font-display font-light text-lafoi-green">
-                  One ceiling that listens.
+                  Every colour you can imagine.
                 </span>
               </h2>
             </AnimatedSection>
@@ -717,6 +729,22 @@ function FinishGallery() {
                 <p className="text-[11px] lg:text-xs font-sora text-white/70 tracking-wide mt-1.5 line-clamp-1">
                   {finishMeta[p.finish] || p.shortDesc}
                 </p>
+                {/* Colour palette preview, showcases that each finish carries a colour spectrum */}
+                {finishPalettes[p.finish] && (
+                  <div className="mt-3 flex items-center gap-1.5">
+                    {finishPalettes[p.finish].slice(0, 6).map((c, idx) => (
+                      <span
+                        key={idx}
+                        aria-hidden
+                        className="block w-3 h-3 rounded-full ring-1 ring-white/30 shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
+                        style={{ backgroundColor: c }}
+                      />
+                    ))}
+                    <span className="ml-1 font-sora text-[9px] tracking-[0.22em] uppercase text-white/55">
+                      + more
+                    </span>
+                  </div>
+                )}
               </div>
             </Link>
             </MagneticCard>
@@ -764,6 +792,18 @@ function FinishGallery() {
                 <h3 className="font-display font-light text-white text-xl leading-none tracking-[-0.01em]">
                   {p.name.replace(/ Stretch Membrane$| Membrane$/i, '')}
                 </h3>
+                {finishPalettes[p.finish] && (
+                  <div className="mt-2 flex items-center gap-1">
+                    {finishPalettes[p.finish].slice(0, 5).map((c, idx) => (
+                      <span
+                        key={idx}
+                        aria-hidden
+                        className="block w-2.5 h-2.5 rounded-full ring-1 ring-white/30"
+                        style={{ backgroundColor: c }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </Link>
             </MagneticCard>
@@ -1828,7 +1868,7 @@ function CinematicCTA() {
             <div className="mt-16 lg:mt-20 pt-8 border-t border-white/10 flex flex-wrap items-center gap-x-8 gap-y-3">
               {[
                 { label: 'Studio', value: 'Belgravia, Harare' },
-                { label: 'Phone', value: '+263 712 326 951' },
+                { label: 'Phone', value: '+263 782 931 472' },
                 { label: 'Hours', value: 'Mon-Fri · 09:00 to 17:00' },
               ].map((item) => (
                 <div key={item.label} className="flex items-center gap-3">

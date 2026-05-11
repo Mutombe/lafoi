@@ -17,7 +17,6 @@ const footerLinks = {
     { name: 'Lighting Solutions', path: '/services/lighting-solutions' },
     { name: 'Interior Design', path: '/services/interior-design' },
     { name: 'Flooring', path: '/services/flooring' },
-    { name: 'Tiling', path: '/services/tiling' },
     { name: 'Epoxy Flooring', path: '/services/epoxy-flooring' },
     { name: 'Design Consultation', path: '/services/design-consultation' },
     { name: 'Maintenance & Support', path: '/services/maintenance-support' },
@@ -142,7 +141,7 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
               </div>
               <div className="flex items-center gap-2 text-sm text-white/40">
                 <Phone size={14} weight="regular" className="text-lafoi-green shrink-0" />
-                <span>+263 712 326 951 | +263 782 931 472</span>
+                <span>+263 782 931 472</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-white/40">
                 <Envelope size={14} weight="regular" className="text-lafoi-green shrink-0" />

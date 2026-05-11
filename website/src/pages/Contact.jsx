@@ -39,7 +39,7 @@ export default function Contact() {
   useSEO({
     title: 'Contact La Foi Designs | Request a Stretch Ceiling Quote',
     description:
-      'Talk to La Foi Designs about stretch ceilings, architectural lighting, flooring, tiling, and epoxy systems in Harare and across Zimbabwe. +263 782 931 472 · admin@lafoidesigns.co.zw',
+      'Talk to La Foi Designs about stretch ceilings, architectural lighting, flooring, and epoxy systems in Harare and across Zimbabwe. +263 782 931 472 · admin@lafoidesigns.co.zw',
     path: '/contact',
     jsonLd: breadcrumbsLd([
       { name: 'Home', path: '/' },
@@ -115,7 +115,7 @@ function ContactHero() {
           <div className="mt-10 lg:mt-12 space-y-6 border-t border-white/10 pt-8">
             {[
               { k: 'Studio', v: 'Suite 26, 6 Chelmsford Rd', extra: 'Belgravia, Harare', href: 'https://maps.google.com/?q=Suite+26+6+Chelmsford+Rd+Belgravia+Harare' },
-              { k: 'Phone', v: '+263 712 326 951', extra: '+263 782 931 472', href: 'tel:+263712326951' },
+              { k: 'Phone', v: '+263 782 931 472', extra: '', href: 'tel:+263782931472' },
               { k: 'Email', v: 'admin@lafoidesigns.co.zw', extra: 'Mon-Fri · 08:00 to 17:00', href: 'mailto:admin@lafoidesigns.co.zw' },
             ].map((c) => (
               <a
@@ -203,10 +203,9 @@ function ContactBento() {
               eyebrow="01 / Phone"
               icon={Phone}
               label="Call us"
-              value="+263 712 326 951"
-              alt="+263 782 931 472"
+              value="+263 782 931 472"
               detail="Speak to a consultant directly"
-              href="tel:+263712326951"
+              href="tel:+263782931472"
               accent
             />
           </AnimatedSection>
@@ -680,7 +679,7 @@ function WhatsAppCallout() {
                 </p>
 
                 <a
-                  href="https://wa.me/263712326951"
+                  href="https://wa.me/263782931472"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
@@ -698,8 +697,7 @@ function WhatsAppCallout() {
               <div className="lg:col-span-5">
                 <div className="space-y-0 border-t border-lafoi-dark/10">
                   {[
-                    { eyebrow: 'Number', value: '+263 712 326 951' },
-                    { eyebrow: 'Backup', value: '+263 782 931 472' },
+                    { eyebrow: 'Number', value: '+263 782 931 472' },
                     { eyebrow: 'Reply time', value: 'Usually under an hour' },
                     { eyebrow: 'Hours', value: 'Mon to Sat · 08:00 to 18:00' },
                   ].map((row) => (

@@ -57,7 +57,7 @@ const allServices = [
       { label: 'Colour range', detail: 'A wide custom colour range' },
       { label: 'Fire rating', detail: 'B-s1, d0, self-extinguishing' },
       { label: 'Moisture proof', detail: 'Bathroom and kitchen rated' },
-      { label: 'Installation', detail: '1 to 2 working days per room' },
+      { label: 'Installation', detail: '1 to 2 working days per 9 m² standard room' },
       { label: 'Warranty', detail: 'Manufacturer warranty up to 10 years' },
     ],
     applications: [
@@ -207,33 +207,6 @@ const allServices = [
     imageVision: 'Wide-plank wood floor in a contemporary interior',
   },
   {
-    slug: 'tiling',
-    icon: GridFour,
-    title: 'Tiling',
-    subtitle: 'Ceramic, porcelain, mosaic, marble',
-    hero: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1920&q=80',
-    heroVision: 'Large-format porcelain tiles in a modern kitchen',
-    desc: 'Precision tile work, large-format porcelain, ceramic, marble, glass mosaic. Wet-room tanking, splashbacks, feature walls, and pool surrounds. Diamond cutting in-house, anti-slip ratings on demand, grout palettes matched to the brief.',
-    features: [
-      { label: 'Large-format porcelain', detail: 'Up to 1.2 × 2.4 m slabs' },
-      { label: 'Ceramic & marble', detail: 'Bookmatched veining, polished or honed' },
-      { label: 'Glass mosaic', detail: 'Pool, splashback, feature walls' },
-      { label: 'Wet-room tanking', detail: 'Continuous waterproof membrane' },
-      { label: 'Diamond cutting', detail: 'In-house bench saw, clean mitres' },
-      { label: 'Anti-slip rated', detail: 'R10-R13 finishes for wet areas' },
-    ],
-    applications: [
-      'Bathrooms & wet rooms',
-      'Kitchens & splashbacks',
-      'Pool surrounds',
-      'Commercial floors',
-      'Feature walls',
-      'Outdoor patios',
-    ],
-    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1400&q=80',
-    imageVision: 'Marble-look porcelain feature wall and floor',
-  },
-  {
     slug: 'epoxy-flooring',
     icon: Drop,
     title: 'Epoxy Flooring',
@@ -290,7 +263,7 @@ export default function Services() {
       : {
           title: 'Stretch Ceiling Solutions, Lighting, Interior Design | La Foi Designs',
           description:
-            'Explore stretch ceilings, architectural lighting, interior design, flooring, tiling, epoxy floors, and consultation services for residential and commercial spaces in Zimbabwe.',
+            'Explore stretch ceilings, architectural lighting, interior design, flooring, epoxy floors, and consultation services for residential and commercial spaces in Zimbabwe.',
           path: '/services',
           jsonLd: breadcrumbsLd([
             { name: 'Home', path: '/' },
@@ -330,7 +303,7 @@ function ServicesHero() {
     { src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=900&q=80', label: 'Stretch ceilings', vision: 'Stretch membrane install' },
     { src: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=900&q=80', label: 'Lighting', vision: 'Architectural lighting' },
     { src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80', label: 'Interior design', vision: 'Curated residential interior' },
-    { src: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=900&q=80', label: 'Tiling & flooring', vision: 'Large-format porcelain tiles' },
+    { src: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=900&q=80', label: 'Flooring', vision: 'Large-format porcelain tiles' },
   ]
 
   return (
@@ -420,7 +393,6 @@ function ServicesHero() {
                 { name: 'Lighting Solutions', slug: 'lighting-solutions' },
                 { name: 'Interior Design', slug: 'interior-design' },
                 { name: 'Flooring', slug: 'flooring' },
-                { name: 'Tiling', slug: 'tiling' },
                 { name: 'Epoxy Flooring', slug: 'epoxy-flooring' },
                 { name: 'Design Consultation & Customisation', slug: 'design-consultation' },
                 { name: 'Maintenance & Support', slug: 'maintenance-support' },

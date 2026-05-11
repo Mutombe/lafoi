@@ -13,7 +13,6 @@ export default function KineticTextStrip({
     'Architectural lighting',
     'Interior design',
     'Flooring',
-    'Tiling',
     'Epoxy systems',
   ],
   variant = 'dark',

@@ -478,7 +478,7 @@ function FAQContactCard() {
 
                 <div className="flex flex-wrap items-center gap-4 lg:gap-5">
                   <a
-                    href="https://wa.me/263712326951"
+                    href="https://wa.me/263782931472"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
@@ -511,7 +511,7 @@ function FAQContactCard() {
                   {[
                     { eyebrow: 'Reply', value: 'Within 24 hours' },
                     { eyebrow: 'Studio', value: 'Belgravia, Harare' },
-                    { eyebrow: 'Phone', value: '+263 712 326 951' },
+                    { eyebrow: 'Phone', value: '+263 782 931 472' },
                     { eyebrow: 'Hours', value: 'Mon-Sat · 08:00 to 18:00' },
                   ].map((row) => (
                     <div
