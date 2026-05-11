@@ -146,7 +146,11 @@ export default function useOptimisticRow(endpointName, args) {
         if (!list) return
         const idx = list.findIndex((r) => r.id === id)
         if (idx >= 0) {
-          snapshot = list[idx]
+          // Copy values out of the Immer draft now — the proxy is revoked
+          // once the recipe returns, so capturing the draft reference and
+          // reading from it later (in the toast describe callback) throws
+          // "Cannot perform 'get' on a proxy that has been revoked".
+          snapshot = { ...list[idx] }
           list[idx] = { ...snapshot, _pending: { action: 'delete', label } }
         }
       })
