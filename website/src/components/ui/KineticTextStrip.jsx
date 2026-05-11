@@ -12,6 +12,8 @@ export default function KineticTextStrip({
     'Stretch ceilings',
     'Architectural lighting',
     'Interior design',
+    'Flooring',
+    'Epoxy systems',
   ],
   variant = 'dark',
   speed = 60,

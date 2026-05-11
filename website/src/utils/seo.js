@@ -18,7 +18,7 @@ import { useEffect } from 'react'
 const BASE_URL = 'https://lafoidesigns.co.zw'
 const COMPANY_NAME = 'La Foi Designs'
 const COMPANY_DESC =
-  "Zimbabwe's stretch ceiling and architectural lighting specialist. Premium PVC and fabric membranes, custom lighting integration and interior design. Founded January 2024, Belgravia, Harare."
+  "Zimbabwe's stretch ceiling and architectural lighting specialist. Premium PVC and fabric membranes, custom lighting integration, interior design, flooring and epoxy systems. Founded January 2024, Belgravia, Harare."
 const COMPANY_PHONE_PRIMARY = '+263782931472'
 const COMPANY_EMAIL = 'admin@lafoidesigns.co.zw'
 
@@ -26,7 +26,7 @@ const defaultMeta = {
   title: `${COMPANY_NAME} | Stretch Ceilings & Architectural Lighting | Zimbabwe`,
   description: COMPANY_DESC,
   keywords:
-    'stretch ceilings Zimbabwe, stretch ceilings Harare, architectural lighting, custom lighting, interior design, La Foi Designs, ceiling lighting Zimbabwe',
+    'stretch ceilings Zimbabwe, stretch ceilings Harare, architectural lighting, custom lighting, interior design, flooring, epoxy, La Foi Designs, ceiling lighting Zimbabwe',
   image: '/og-image.jpg',
 }
 

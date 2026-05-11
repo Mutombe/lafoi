@@ -49,6 +49,8 @@ const searchableContent = [
   { title: 'Stretch Ceiling Installation', path: '/services/stretch-ceiling-installation', section: 'Services', keywords: 'stretch ceiling pvc fabric membrane install' },
   { title: 'Lighting Solutions', path: '/services/lighting-solutions', section: 'Services', keywords: 'led lighting custom lights backlit fibre optic' },
   { title: 'Interior Design', path: '/services/interior-design', section: 'Services', keywords: 'interior design space planning palette furniture mood board styling' },
+  { title: 'Flooring', path: '/services/flooring', section: 'Services', keywords: 'flooring hardwood vinyl laminate parquet engineered floor' },
+  { title: 'Epoxy Flooring', path: '/services/epoxy-flooring', section: 'Services', keywords: 'epoxy resin floor seamless metallic flake industrial garage showroom' },
   { title: 'Design Consultation & Customisation', path: '/services/design-consultation', section: 'Services', keywords: 'design consultation custom site visit sampling' },
   { title: 'Maintenance & Support', path: '/services/maintenance-support', section: 'Services', keywords: 'maintenance support warranty cleaning repair' },
   { title: 'About La Foi Designs', path: '/about', section: 'Company', keywords: 'about company history story team' },

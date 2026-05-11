@@ -82,7 +82,7 @@ export default function Home() {
   useSEO({
     title: 'Stretch Ceilings in Zimbabwe',
     description:
-      'Modern stretch ceilings, architectural lighting and interior design for homes, offices, hotels, and retail spaces in Zimbabwe. Request a quote from La Foi Designs.',
+      'Modern stretch ceilings, architectural lighting, interior design, flooring and epoxy systems for homes, offices, hotels, and retail spaces in Zimbabwe. Request a quote from La Foi Designs.',
     path: '/',
     image: '/brand/images/50.png',
     jsonLd: breadcrumbsLd([{ name: 'Home', path: '/' }]),
