@@ -1576,8 +1576,8 @@ function VideoShowcaseSection() {
     },
     {
       src: '/brand/videos/27.mp4',
-      title: 'Linear lighting reveal',
-      caption: 'Custom feature · Office fit-out',
+      title: 'Printed photographic ceiling',
+      caption: 'Artprint install · Custom design',
     },
     {
       src: '/brand/videos/35.mp4',

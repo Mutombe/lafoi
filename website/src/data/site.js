@@ -38,10 +38,10 @@ export const products = [
       'Warranty': 'Up to 10 years',
       'Cleanability': 'Damp wipe, neutral pH',
     },
-    image: '/brand/images/matte.png',
+    image: '/brand/images/32.png',
     gallery: [
-      '/brand/images/matte.png',
       '/brand/images/32.png',
+      '/brand/images/matte.png',
       '/brand/images/22.png',
     ],
     vision: 'Pristine matte ceiling diffusing soft daylight across a contemporary living room',
@@ -619,51 +619,6 @@ export const projects = [
   // REAL LA FOI PROJECTS, sourced from on-site photography
   // ==========================================================================
 
-  {
-    slug: 'stanbic-hq',
-    title: 'Stanbic Bank HQ',
-    category: 'Commercial',
-    client: 'Stanbic Bank',
-    location: 'Harare CBD',
-    year: 2025,
-    duration: '12 weeks',
-    area: 'Multi-floor commercial fit-out',
-    hero: '/brand/projects/stanbic-hq/stanbic-15.jpeg',
-    thumb: '/brand/projects/stanbic-hq/stanbic-15.jpeg',
-    brief: 'A major commercial fit-out across multiple floors of the Stanbic Bank headquarters in Harare CBD. The brief: deliver coordinated stretch-ceiling installations across executive floors, conference suites and open-plan work areas while the building remained under active construction.',
-    approach: 'We worked alongside the main contractor through structural framing and finishing phases. The membrane system was specified to integrate cleanly with mechanical services, sprinklers and lighting, and to be removable for future maintenance without disturbing the rest of the floor plate.',
-    outcome: 'Clean modern floor plates across multiple levels, ceilings concealing all services while remaining serviceable. Delivered on programme through coordinated work with the contractor on a live site.',
-    highlights: [
-      'Multi-floor commercial scale',
-      'Coordinated with active construction programme',
-      'Mechanical, sprinkler and AV services concealed',
-      'Stretch membrane fully demountable for maintenance',
-      'Conference suites and executive floors completed',
-      'On-programme delivery',
-    ],
-    productsUsed: ['matte-stretch-membrane', 'acoustic-microperforated-membrane', 'linear-led-cove'],
-    metrics: [
-      { label: 'Project type', value: 'Commercial fit-out' },
-      { label: 'Floors', value: 'Multi-floor' },
-      { label: 'Duration', value: '12 weeks' },
-      { label: 'Status', value: 'Delivered 2025' },
-    ],
-    gallery: [
-      { src: '/brand/projects/stanbic-hq/stanbic-15.jpeg', alt: 'Stanbic HQ install in progress', caption: 'Floor plate, mid-install', vision: 'Stanbic HQ floor plate during stretch-ceiling installation' },
-      { src: '/brand/projects/stanbic-hq/stanbic-1.jpeg', alt: 'Stanbic HQ steel framing', caption: 'Steel framing, ceiling carrier rails', vision: 'Stanbic HQ wall framing and ceiling carrier rails before membrane install' },
-      { src: '/brand/projects/stanbic-hq/stanbic-10.jpeg', alt: 'Stanbic HQ install', caption: 'Floor plate, structural phase', vision: 'Stanbic HQ floor plate during structural phase' },
-      { src: '/brand/projects/stanbic-hq/stanbic-20.jpeg', alt: 'Stanbic HQ install', caption: 'Conference suite, in progress', vision: 'Stanbic HQ conference suite during install' },
-      { src: '/brand/projects/stanbic-hq/stanbic-25.jpeg', alt: 'Stanbic HQ install', caption: 'Executive floor, finishing', vision: 'Stanbic HQ executive floor during finishing' },
-      { src: '/brand/projects/stanbic-hq/stanbic-30.jpeg', alt: 'Stanbic HQ install', caption: 'Floor plate, finishing detail', vision: 'Stanbic HQ floor plate finishing detail' },
-    ],
-    testimonial: {
-      quote: 'Stretch-ceiling work delivered to programme across multiple floors of a live site.',
-      author: 'Project team',
-      role: 'Stanbic Bank, Harare CBD',
-    },
-    featured: true,
-    vision: 'Stanbic Bank HQ commercial fit-out with stretch ceilings across multiple floors',
-  },
 
   {
     slug: 'belvedere-residence',
