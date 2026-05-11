@@ -14,7 +14,7 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_PROJECT } fro
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListProjectsQuery,
   useCreateProjectMutation,
@@ -124,16 +124,15 @@ export default function Projects() {
   const { data, isLoading: isFirstLoad, isFetching } = useListProjectsQuery(queryArgs)
   const { data: customers } = useListCustomersQuery({ page_size: 200 })
 
-  const applyOptimistic = useOptimisticListUpdate('listProjects', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listProjects', queryArgs)
 
-  const [createProject, createState] = useCreateProjectMutation()
-  const [updateProject, updateState] = useUpdateProjectMutation()
+  const [createProject] = useCreateProjectMutation()
+  const [updateProject] = useUpdateProjectMutation()
   const [deleteProject] = useDeleteProjectMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     const payload = {
@@ -151,38 +150,47 @@ export default function Projects() {
       latitude: editing.latitude === '' || editing.latitude == null ? null : Number(editing.latitude),
       longitude: editing.longitude === '' || editing.longitude == null ? null : Number(editing.longitude),
     }
-    try {
-      if (isNew) {
-        const created = await createProject(payload).unwrap()
-        toast.success('Project created', { description: `${created?.code || ''} — ${created?.title || payload.title}`.trim() })
-      } else {
-        const updated = await updateProject({ id: editing.id, ...payload }).unwrap()
-        toast.success('Project updated', { description: `${updated?.code || ''} — ${updated?.title || payload.title}`.trim() })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not create project' : 'Could not update project', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    const fallbackCode = editing.code
+    const matchedCustomer = (customers?.results || []).find((c) => String(c.id) === String(payload.customer))
+    setEditing(null)
+    const tempRow = {
+      ...payload,
+      code: wasNew ? '…' : fallbackCode,
+      customer_name: matchedCustomer?.name || '—',
+      created_at: new Date().toISOString(),
+    }
+    if (wasNew) {
+      optimisticCreate({
+        tempRow,
+        run: () => createProject(payload).unwrap(),
+        label: 'Creating…',
+        successTitle: 'Project created',
+        errorTitle: 'Could not create project',
+        describe: (r) => `${r?.code || ''} — ${r?.title || payload.title}`.trim(),
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: tempRow,
+        run: () => updateProject({ id, ...payload }).unwrap(),
+        successTitle: 'Project updated',
+        errorTitle: 'Could not update project',
+        describe: (r) => `${r?.code || ''} — ${r?.title || payload.title}`.trim(),
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete project?', message: `Project ${row.code} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deleteProject(row.id).unwrap(),
-      )
-      toast.success('Project deleted', { description: row.code })
-    } catch (e) {
-      const msg = e?.data?.detail || 'Delete failed.'
-      toast.error('Could not delete project', { description: msg })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteProject(row.id).unwrap(),
+      successTitle: 'Project deleted',
+      errorTitle: 'Could not delete project',
+      describe: (r) => r.code,
+    }).catch(() => {})
   }
 
   const columns = [
@@ -264,9 +272,7 @@ export default function Projects() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="project-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="project-form" type="submit">Save</PrimaryButton>
           </>
         }
       >

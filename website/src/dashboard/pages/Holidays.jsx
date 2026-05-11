@@ -6,7 +6,7 @@ import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, StatusBadge } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListPublicHolidaysQuery,
   useCreatePublicHolidayMutation,
@@ -34,13 +34,11 @@ export default function Holidays() {
   const queryArgs = { year }
   const { data, isLoading } = useListPublicHolidaysQuery(queryArgs)
   const holidays = data?.results || data || []
-  const applyOptimistic = useOptimisticListUpdate('listPublicHolidays', queryArgs)
+  const { optimisticCreate, optimisticDelete } = useOptimisticRow('listPublicHolidays', queryArgs)
 
-  const [createH, createState] = useCreatePublicHolidayMutation()
+  const [createH] = useCreatePublicHolidayMutation()
   const [deleteH] = useDeletePublicHolidayMutation()
-  const saving = createState.isLoading
 
-  // Map "YYYY-MM-DD" → holiday object for fast lookups in the calendar.
   const holidayByDate = useMemo(() => {
     const m = new Map()
     holidays.forEach((h) => {
@@ -49,7 +47,7 @@ export default function Holidays() {
     return m
   }, [holidays])
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     const payload = {
@@ -58,39 +56,26 @@ export default function Holidays() {
       is_paid: !!editing.is_paid,
       notes: editing.notes || '',
     }
-    try {
-      const created = await createH(payload).unwrap()
-      toast.success('Holiday added', { description: created?.name || payload.name })
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error('Could not add holiday', { description: msg })
-    }
+    setEditing(null)
+    optimisticCreate({
+      tempRow: payload,
+      run: () => createH(payload).unwrap(),
+      label: 'Adding…',
+      successTitle: 'Holiday added',
+      errorTitle: 'Could not add holiday',
+      describe: (r) => r?.name || payload.name,
+    }).catch(() => {})
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete holiday?', message: `"${row.name}" will be removed from the calendar.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft) return
-          if (Array.isArray(draft)) {
-            const idx = draft.findIndex((r) => r.id === row.id)
-            if (idx >= 0) draft.splice(idx, 1)
-            return
-          }
-          if (draft.results) {
-            draft.results = draft.results.filter((r) => r.id !== row.id)
-            if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-          }
-        },
-        () => deleteH(row.id).unwrap(),
-      )
-      toast.success('Holiday removed', { description: row.name })
-    } catch (e) {
-      toast.error('Could not delete', { description: e?.data?.detail || 'Delete failed.' })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteH(row.id).unwrap(),
+      successTitle: 'Holiday removed',
+      errorTitle: 'Could not delete',
+      describe: (r) => r.name,
+    }).catch(() => {})
   }
 
   const newHoliday = () => setEditing({
@@ -181,9 +166,7 @@ export default function Holidays() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="hol-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="hol-form" type="submit">Save</PrimaryButton>
           </>
         }
       >

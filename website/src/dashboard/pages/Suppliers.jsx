@@ -7,7 +7,7 @@ import DataTable from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListSuppliersQuery,
   useCreateSupplierMutation,
@@ -36,16 +36,15 @@ export default function Suppliers() {
   const queryArgs = { page, page_size: pageSize, search: debouncedSearch || undefined }
   const { data, isLoading: isFirstLoad } = useListSuppliersQuery(queryArgs)
 
-  const applyOptimistic = useOptimisticListUpdate('listSuppliers', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listSuppliers', queryArgs)
 
-  const [createSupplier, createState] = useCreateSupplierMutation()
-  const [updateSupplier, updateState] = useUpdateSupplierMutation()
+  const [createSupplier] = useCreateSupplierMutation()
+  const [updateSupplier] = useUpdateSupplierMutation()
   const [deleteSupplier] = useDeleteSupplierMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     const payload = {
@@ -59,38 +58,39 @@ export default function Suppliers() {
       notes: editing.notes || '',
       is_active: editing.is_active !== false,
     }
-    try {
-      if (isNew) {
-        const created = await createSupplier(payload).unwrap()
-        toast.success('Supplier added', { description: created?.name || payload.name })
-      } else {
-        await updateSupplier({ id: editing.id, ...payload }).unwrap()
-        toast.success('Supplier updated', { description: payload.name })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not add supplier' : 'Could not update supplier', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    setEditing(null)
+    if (wasNew) {
+      optimisticCreate({
+        tempRow: { ...payload, item_count: 0, open_po_count: 0 },
+        run: () => createSupplier(payload).unwrap(),
+        label: 'Adding…',
+        successTitle: 'Supplier added',
+        errorTitle: 'Could not add supplier',
+        describe: (r) => r?.name || payload.name,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: payload,
+        run: () => updateSupplier({ id, ...payload }).unwrap(),
+        successTitle: 'Supplier updated',
+        errorTitle: 'Could not update supplier',
+        describe: () => payload.name,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete supplier?', message: `"${row.name}" will be removed. Items linked to it will be unlinked.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deleteSupplier(row.id).unwrap(),
-      )
-      toast.success('Supplier removed', { description: row.name })
-    } catch (err) {
-      const msg = err?.data?.detail || 'Delete failed.'
-      toast.error('Could not delete supplier', { description: msg })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteSupplier(row.id).unwrap(),
+      successTitle: 'Supplier removed',
+      errorTitle: 'Could not delete supplier',
+      describe: (r) => r.name,
+    }).catch(() => {})
   }
 
   const columns = [
@@ -174,9 +174,7 @@ export default function Suppliers() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="supplier-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="supplier-form" type="submit">Save</PrimaryButton>
           </>
         }
       >

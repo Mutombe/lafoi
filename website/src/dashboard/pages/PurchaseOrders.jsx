@@ -11,7 +11,7 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge } from '../components/DataTab
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListPurchaseOrdersQuery,
   useCreatePurchaseOrderMutation,
@@ -75,23 +75,21 @@ export default function PurchaseOrders() {
   const { data: itemData } = useListItemsQuery({ page: 1, page_size: 250 })
   const { data: locData } = useListStockLocationsQuery({ page: 1, page_size: 100 })
 
-  const applyOptimistic = useOptimisticListUpdate('listPurchaseOrders', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete, optimisticAction } = useOptimisticRow('listPurchaseOrders', queryArgs)
 
-  const [createPO, createState] = useCreatePurchaseOrderMutation()
-  const [updatePO, updateState] = useUpdatePurchaseOrderMutation()
+  const [createPO] = useCreatePurchaseOrderMutation()
+  const [updatePO] = useUpdatePurchaseOrderMutation()
   const [deletePO] = useDeletePurchaseOrderMutation()
-  const [receivePO, receiveState] = useReceivePurchaseOrderMutation()
+  const [receivePO] = useReceivePurchaseOrderMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
   const suppliers = supData?.results || []
   const items = itemData?.results || []
   const locations = locData?.results || []
   const rows = data?.results || []
 
-  // ----- Save header + lines together -----
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     if (!editing.supplier) {
@@ -116,38 +114,48 @@ export default function PurchaseOrders() {
         received_quantity: Number(l.received_quantity) || 0,
       })),
     }
-    try {
-      if (isNew) {
-        const created = await createPO(payload).unwrap()
-        toast.success('PO created', { description: created.reference })
-      } else {
-        const updated = await updatePO({ id: editing.id, ...payload }).unwrap()
-        toast.success('PO updated', { description: updated.reference })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error('Save failed', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    const fallbackRef = editing.reference
+    const supplierMatch = suppliers.find((s) => String(s.id) === String(payload.supplier))
+    const total = payload.items.reduce((s, l) => s + l.quantity * l.unit_cost, 0)
+    setEditing(null)
+    const tempRow = {
+      ...payload,
+      reference: wasNew ? '…' : fallbackRef,
+      supplier_name: supplierMatch?.name || '—',
+      total,
+    }
+    if (wasNew) {
+      optimisticCreate({
+        tempRow,
+        run: () => createPO(payload).unwrap(),
+        label: 'Creating…',
+        successTitle: 'PO created',
+        errorTitle: 'Could not create PO',
+        describe: (r) => r?.reference,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: tempRow,
+        run: () => updatePO({ id, ...payload }).unwrap(),
+        successTitle: 'PO updated',
+        errorTitle: 'Could not update PO',
+        describe: (r) => r?.reference || fallbackRef,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete purchase order?', message: `PO ${row.reference} will be removed.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deletePO(row.id).unwrap(),
-      )
-      toast.success('PO removed', { description: row.reference })
-    } catch (err) {
-      const msg = err?.data?.detail || 'Delete failed.'
-      toast.error('Could not delete PO', { description: msg })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deletePO(row.id).unwrap(),
+      successTitle: 'PO removed',
+      errorTitle: 'Could not delete PO',
+      describe: (r) => r.reference,
+    }).catch(() => {})
   }
 
   const startReceive = (po) => {
@@ -167,7 +175,7 @@ export default function PurchaseOrders() {
     })
   }
 
-  const submitReceive = async (e) => {
+  const submitReceive = (e) => {
     e.preventDefault()
     if (!receiving?.location) {
       toast.error('Pick a receiving location')
@@ -183,14 +191,17 @@ export default function PurchaseOrders() {
       toast.error('Enter a quantity to receive on at least one line')
       return
     }
-    try {
-      await receivePO({ id: receiving.po.id, ...payload }).unwrap()
-      toast.success('Stock received')
-      setReceiving(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Receive failed.'
-      toast.error('Receive failed', { description: msg })
-    }
+    const poId = receiving.po.id
+    const poRef = receiving.po.reference
+    setReceiving(null)
+    optimisticAction({
+      id: poId,
+      label: 'Receiving…',
+      run: () => receivePO({ id: poId, ...payload }).unwrap(),
+      successTitle: 'Stock received',
+      errorTitle: 'Receive failed',
+      describe: () => poRef,
+    }).catch(() => {})
   }
 
   // ----- Open the edit/create modal pre-populated -----
@@ -350,9 +361,7 @@ export default function PurchaseOrders() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="po-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="po-form" type="submit">Save</PrimaryButton>
           </>
         }
       >
@@ -461,9 +470,7 @@ export default function PurchaseOrders() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setReceiving(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="receive-form" type="submit" disabled={receiveState.isLoading}>
-              {receiveState.isLoading ? (<><CircleNotch size={14} className="animate-spin" /> Receiving…</>) : 'Receive stock'}
-            </PrimaryButton>
+            <PrimaryButton form="receive-form" type="submit">Receive stock</PrimaryButton>
           </>
         }
       >

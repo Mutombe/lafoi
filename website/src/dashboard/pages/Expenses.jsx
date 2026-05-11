@@ -12,7 +12,7 @@ import DataTable, { fmtDate, fmtMoney } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListExpensesQuery,
   useCreateExpenseMutation,
@@ -104,22 +104,20 @@ export default function Expenses() {
   const { data: projData } = useListProjectsQuery({ page: 1, page_size: 500 })
   const projects = projData?.results || []
   const rows = data?.results || []
-  const applyOptimistic = useOptimisticListUpdate('listExpenses', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listExpenses', queryArgs)
 
-  // Rolling totals across what's loaded on this page.
   const pageTotal = useMemo(
     () => rows.reduce((s, r) => s + Number(r.amount || 0), 0),
     [rows],
   )
 
-  const [createExpense, createState] = useCreateExpenseMutation()
-  const [updateExpense, updateState] = useUpdateExpenseMutation()
+  const [createExpense] = useCreateExpenseMutation()
+  const [updateExpense] = useUpdateExpenseMutation()
   const [deleteExpense] = useDeleteExpenseMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     const payload = {
@@ -138,38 +136,46 @@ export default function Expenses() {
       is_billable: !!editing.is_billable,
       notes: editing.notes || '',
     }
-    try {
-      if (isNew) {
-        const created = await createExpense(payload).unwrap()
-        toast.success('Expense recorded', { description: `${payload.description} · ${fmtMoney(payload.amount, payload.currency)}` })
-      } else {
-        await updateExpense({ id: editing.id, ...payload }).unwrap()
-        toast.success('Expense updated', { description: payload.description })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not record expense' : 'Could not update expense', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    const projectMatch = projects.find((p) => String(p.id) === String(payload.project))
+    setEditing(null)
+    const tempRow = {
+      ...payload,
+      category_label: (CATEGORIES.find(([k]) => k === payload.category) || [])[1] || payload.category,
+      payment_method_label: (PAYMENT_METHODS.find(([k]) => k === payload.payment_method) || [])[1] || payload.payment_method,
+      project_code: projectMatch?.code || null,
+    }
+    if (wasNew) {
+      optimisticCreate({
+        tempRow,
+        run: () => createExpense(payload).unwrap(),
+        label: 'Recording…',
+        successTitle: 'Expense recorded',
+        errorTitle: 'Could not record expense',
+        describe: () => `${payload.description} · ${fmtMoney(payload.amount, payload.currency)}`,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: tempRow,
+        run: () => updateExpense({ id, ...payload }).unwrap(),
+        successTitle: 'Expense updated',
+        errorTitle: 'Could not update expense',
+        describe: () => payload.description,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete expense?', message: `"${row.description}" will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deleteExpense(row.id).unwrap(),
-      )
-      toast.success('Expense removed', { description: row.description })
-    } catch (err) {
-      const msg = err?.data?.detail || 'Delete failed.'
-      toast.error('Could not delete expense', { description: msg })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteExpense(row.id).unwrap(),
+      successTitle: 'Expense removed',
+      errorTitle: 'Could not delete expense',
+      describe: (r) => r.description,
+    }).catch(() => {})
   }
 
   const columns = [
@@ -332,9 +338,7 @@ export default function Expenses() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="expense-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save expense'}
-            </PrimaryButton>
+            <PrimaryButton form="expense-form" type="submit">Save expense</PrimaryButton>
           </>
         }
       >

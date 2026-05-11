@@ -13,7 +13,7 @@ import DataTable, { fmtMoney } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import BarcodeScanner from '../components/BarcodeScanner'
 import OfflineSyncBadge from '../components/OfflineSyncBadge'
 import {
@@ -83,22 +83,21 @@ export default function Inventory() {
   const { data: catData } = useListInventoryCategoriesQuery({ page: 1, page_size: 200 })
   const { data: supData } = useListSuppliersQuery({ page: 1, page_size: 200 })
 
-  const applyOptimistic = useOptimisticListUpdate('listItems', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listItems', queryArgs)
 
-  const [createItem, createState] = useCreateItemMutation()
-  const [updateItem, updateState] = useUpdateItemMutation()
+  const [createItem] = useCreateItemMutation()
+  const [updateItem] = useUpdateItemMutation()
   const [deleteItem] = useDeleteItemMutation()
   const [importCsv, importState] = useImportItemsCsvMutation()
   const [triggerLookup, lookupState] = useLazyLookupItemByBarcodeQuery()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
   const categories = catData?.results || []
   const suppliers = supData?.results || []
   const items = data?.results || []
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     const payload = {
@@ -116,38 +115,52 @@ export default function Inventory() {
       image_url: editing.image_url || '',
       is_active: editing.is_active !== false,
     }
-    try {
-      if (isNew) {
-        const created = await createItem(payload).unwrap()
-        toast.success('Item added', { description: `${created.sku} — ${created.name}` })
-      } else {
-        const updated = await updateItem({ id: editing.id, ...payload }).unwrap()
-        toast.success('Item updated', { description: `${updated.sku} — ${updated.name}` })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not add item' : 'Could not update item', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    const matchedCategory = categories.find((c) => String(c.id) === String(payload.category))
+    const matchedSupplier = suppliers.find((s) => String(s.id) === String(payload.supplier))
+    setEditing(null)
+    if (wasNew) {
+      optimisticCreate({
+        tempRow: {
+          ...payload,
+          sku: '…',
+          on_hand: 0,
+          is_low_stock: false,
+          category_name: matchedCategory?.name || '',
+          supplier_name: matchedSupplier?.name || '',
+        },
+        run: () => createItem(payload).unwrap(),
+        label: 'Adding…',
+        successTitle: 'Item added',
+        errorTitle: 'Could not add item',
+        describe: (r) => `${r.sku} — ${r.name}`,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: {
+          ...payload,
+          category_name: matchedCategory?.name || '',
+          supplier_name: matchedSupplier?.name || '',
+        },
+        run: () => updateItem({ id, ...payload }).unwrap(),
+        successTitle: 'Item updated',
+        errorTitle: 'Could not update item',
+        describe: (r) => `${r.sku} — ${r.name}`,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete inventory item?', message: `"${row.name}" will be removed permanently. Linked movements stay for audit.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deleteItem(row.id).unwrap(),
-      )
-      toast.success('Item removed', { description: row.name })
-    } catch (err) {
-      const msg = err?.data?.detail || 'Delete failed.'
-      toast.error('Could not delete item', { description: msg })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteItem(row.id).unwrap(),
+      successTitle: 'Item removed',
+      errorTitle: 'Could not delete item',
+      describe: (r) => r.name,
+    }).catch(() => {})
   }
 
   const handleScannerHit = async (code) => {
@@ -388,9 +401,7 @@ export default function Inventory() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="item-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="item-form" type="submit">Save</PrimaryButton>
           </>
         }
       >

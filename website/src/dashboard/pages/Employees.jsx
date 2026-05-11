@@ -8,7 +8,7 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge } from '../components/DataTab
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListEmployeesQuery,
   useCreateEmployeeMutation,
@@ -53,7 +53,7 @@ export default function Employees() {
     status: statusFilter || undefined,
   }
   const { data, isLoading: isFirstLoad, isFetching } = useListEmployeesQuery(queryArgs)
-  const applyOptimistic = useOptimisticListUpdate('listEmployees', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listEmployees', queryArgs)
   // Pull active loans once and aggregate per-employee for the Loans column.
   const { data: loansData } = useListEmployeeLoansQuery({ status: 'active' })
   const loanByEmployee = useMemo(() => {
@@ -69,14 +69,13 @@ export default function Employees() {
     return m
   }, [loansData])
 
-  const [createE, createState] = useCreateEmployeeMutation()
-  const [updateE, updateState] = useUpdateEmployeeMutation()
+  const [createE] = useCreateEmployeeMutation()
+  const [updateE] = useUpdateEmployeeMutation()
   const [deleteE] = useDeleteEmployeeMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     const payload = {
@@ -94,37 +93,40 @@ export default function Employees() {
       bank_name: editing.bank_name || '', bank_account: editing.bank_account || '',
       notes: editing.notes || '',
     }
-    try {
-      if (isNew) {
-        const created = await createE(payload).unwrap()
-        toast.success('Employee added', { description: created?.full_name || `${payload.first_name} ${payload.last_name}`.trim() })
-      } else {
-        const updated = await updateE({ id: editing.id, ...payload }).unwrap()
-        toast.success('Employee updated', { description: updated?.full_name || `${payload.first_name} ${payload.last_name}`.trim() })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not add employee' : 'Could not update employee', { description: msg })
+    const fullName = `${payload.first_name} ${payload.last_name}`.trim()
+    const wasNew = isNew
+    const id = editing.id
+    setEditing(null)
+    if (wasNew) {
+      optimisticCreate({
+        tempRow: { ...payload, full_name: fullName, employee_code: '…' },
+        run: () => createE(payload).unwrap(),
+        label: 'Adding…',
+        successTitle: 'Employee added',
+        errorTitle: 'Could not add employee',
+        describe: (r) => r?.full_name || fullName,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: { ...payload, full_name: fullName },
+        run: () => updateE({ id, ...payload }).unwrap(),
+        successTitle: 'Employee updated',
+        errorTitle: 'Could not update employee',
+        describe: (r) => r?.full_name || fullName,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete employee?', message: `${row.full_name} will be removed permanently. This cannot be undone.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deleteE(row.id).unwrap(),
-      )
-      toast.success('Employee removed', { description: row.full_name })
-    } catch (e) {
-      toast.error('Could not delete employee', { description: e?.data?.detail || 'Delete failed.' })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteE(row.id).unwrap(),
+      successTitle: 'Employee removed',
+      errorTitle: 'Could not delete employee',
+      describe: (r) => r.full_name,
+    }).catch(() => {})
   }
 
   const upsertItem = (key, idx, patch) => {
@@ -216,9 +218,7 @@ export default function Employees() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="emp-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="emp-form" type="submit">Save</PrimaryButton>
           </>
         }
       >

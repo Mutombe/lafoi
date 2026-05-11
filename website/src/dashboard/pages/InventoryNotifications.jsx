@@ -20,6 +20,7 @@ import {
   useListNotificationsQuery,
   useListItemsQuery,
 } from '../store/api'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 
 const EVENTS = [
   { value: 'low_stock', label: 'Low stock' },
@@ -64,15 +65,16 @@ export default function InventoryNotifications() {
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { data: rulesData, isLoading: rulesLoading } = useListNotificationRulesQuery({ page: 1, page_size: 100 })
-  const [createRule, createState] = useCreateNotificationRuleMutation()
-  const [updateRule, updateState] = useUpdateNotificationRuleMutation()
+  const rulesArgs = { page: 1, page_size: 100 }
+  const { data: rulesData, isLoading: rulesLoading } = useListNotificationRulesQuery(rulesArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete, optimisticAction } = useOptimisticRow('listNotificationRules', rulesArgs)
+  const [createRule] = useCreateNotificationRuleMutation()
+  const [updateRule] = useUpdateNotificationRuleMutation()
   const [deleteRule] = useDeleteNotificationRuleMutation()
-  const [testRule, testState] = useTestNotificationRuleMutation()
+  const [testRule] = useTestNotificationRuleMutation()
 
   const rules = rulesData?.results || []
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
   // ----- History -----
   const [eventFilter, setEventFilter] = useState('')
@@ -96,7 +98,7 @@ export default function InventoryNotifications() {
   const history = historyData?.results || []
   const items = itemsData?.results || []
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     if (!editing.name?.trim()) {
@@ -120,45 +122,54 @@ export default function InventoryNotifications() {
       is_active: editing.is_active !== false,
       notes: editing.notes || '',
     }
-    try {
-      if (isNew) {
-        await createRule(payload).unwrap()
-        toast.success('Rule added')
-      } else {
-        await updateRule({ id: editing.id, ...payload }).unwrap()
-        toast.success('Rule updated')
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed'
-      setError(msg)
-      toast.error('Save failed', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    setEditing(null)
+    if (wasNew) {
+      optimisticCreate({
+        tempRow: payload,
+        run: () => createRule(payload).unwrap(),
+        label: 'Adding…',
+        successTitle: 'Rule added',
+        errorTitle: 'Save failed',
+        describe: () => payload.name,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: payload,
+        run: () => updateRule({ id, ...payload }).unwrap(),
+        successTitle: 'Rule updated',
+        errorTitle: 'Save failed',
+        describe: () => payload.name,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete notification rule?', message: `"${row.name}" will be removed. Past notifications keep their record.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await deleteRule(row.id).unwrap()
-      toast.success('Rule removed')
-    } catch (err) {
-      toast.error('Delete failed', { description: err?.data?.detail || String(err) })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteRule(row.id).unwrap(),
+      successTitle: 'Rule removed',
+      errorTitle: 'Delete failed',
+      describe: (r) => r.name,
+    }).catch(() => {})
   }
 
-  const handleTest = async (row) => {
-    try {
-      const notif = await testRule(row.id).unwrap()
-      if (notif.status === 'sent') {
-        toast.success('Test sent', { description: `${row.channel} → ${notif.recipient}` })
-      } else if (notif.status === 'failed') {
-        toast.error('Test failed', { description: notif.error || 'Channel not configured' })
-      } else {
-        toast.message('Test recorded', { description: `Status: ${notif.status}` })
+  const handleTest = (row) => {
+    optimisticAction({
+      id: row.id,
+      label: 'Testing…',
+      run: () => testRule(row.id).unwrap(),
+      successTitle: 'Test sent',
+      errorTitle: 'Test failed',
+      describe: (notif) => notif?.recipient ? `${row.channel} → ${notif.recipient}` : undefined,
+    }).then((notif) => {
+      if (notif?.status === 'failed') {
+        toast.error('Channel reported failure', { description: notif.error || 'Channel not configured' })
       }
-    } catch (err) {
-      toast.error('Test failed', { description: err?.data?.detail || String(err) })
-    }
+    }).catch(() => {})
   }
 
   const ruleColumns = [
@@ -208,7 +219,6 @@ export default function InventoryNotifications() {
         <div className="flex justify-end gap-1">
           <button
             onClick={(e) => { e.stopPropagation(); handleTest(r) }}
-            disabled={testState.isLoading}
             className="p-2 rounded-lg hover:bg-lafoi-green/10 text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center disabled:opacity-50"
             title="Send test"
           >
@@ -382,9 +392,7 @@ export default function InventoryNotifications() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="notif-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="notif-form" type="submit">Save</PrimaryButton>
           </>
         }
       >

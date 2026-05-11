@@ -10,7 +10,7 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '
 import LineItemEditor from '../components/LineItemEditor'
 import RecipientPicker, { recipientPayload } from '../components/RecipientPicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListQuotationsQuery,
   useCreateQuotationMutation,
@@ -104,17 +104,16 @@ export default function Quotations() {
   const { data: projects } = useListProjectsQuery({ page_size: 200 })
   const { data: customers } = useListCustomersQuery({ page_size: 500 })
 
-  const applyOptimistic = useOptimisticListUpdate('listQuotations', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete, optimisticAction } = useOptimisticRow('listQuotations', queryArgs)
 
-  const [createQ, createState] = useCreateQuotationMutation()
-  const [updateQ, updateState] = useUpdateQuotationMutation()
+  const [createQ] = useCreateQuotationMutation()
+  const [updateQ] = useUpdateQuotationMutation()
   const [deleteQ] = useDeleteQuotationMutation()
-  const [convert, convertState] = useConvertQuotationToInvoiceMutation()
+  const [convert] = useConvertQuotationToInvoiceMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     let recipient
@@ -141,37 +140,54 @@ export default function Quotations() {
         unit: it.unit || 'unit', unit_price: Number(it.unit_price) || 0,
       })).filter((it) => it.description),
     }
-    try {
-      if (isNew) {
-        const created = await createQ(payload).unwrap()
-        toast.success('Quotation drafted', { description: created?.number })
-      } else {
-        const updated = await updateQ({ id: editing.id, ...payload }).unwrap()
-        toast.success('Quotation saved', { description: updated?.number || editing.number })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not draft quotation' : 'Could not save quotation', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    const fallbackNumber = editing.number
+    setEditing(null)
+    const projectMatch = (projects?.results || []).find((p) => String(p.id) === String(payload.project))
+    const customerMatch = (customers?.results || []).find((c) => String(c.id) === String(payload.customer))
+    const total = (payload.items || []).reduce(
+      (s, it) => s + (Number(it.quantity) || 0) * (Number(it.unit_price) || 0),
+      0,
+    )
+    const tempRow = {
+      ...payload,
+      number: '…',
+      total,
+      project_code: projectMatch?.code,
+      project_title: projectMatch?.title,
+      customer_name: customerMatch?.name || projectMatch?.customer_name || payload.recipient_name,
+    }
+    if (wasNew) {
+      optimisticCreate({
+        tempRow,
+        run: () => createQ(payload).unwrap(),
+        label: 'Drafting…',
+        successTitle: 'Quotation drafted',
+        errorTitle: 'Could not draft quotation',
+        describe: (r) => r?.number,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: tempRow,
+        run: () => updateQ({ id, ...payload }).unwrap(),
+        successTitle: 'Quotation saved',
+        errorTitle: 'Could not save quotation',
+        describe: (r) => r?.number || fallbackNumber,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete quotation?', message: `${row.number} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deleteQ(row.id).unwrap(),
-      )
-      toast.success('Quotation deleted', { description: row.number })
-    } catch (e) {
-      toast.error('Could not delete quotation', { description: e?.data?.detail || 'Delete failed.' })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteQ(row.id).unwrap(),
+      successTitle: 'Quotation deleted',
+      errorTitle: 'Could not delete quotation',
+      describe: (r) => r.number,
+    }).catch(() => {})
   }
 
   const handlePdf = async (row) => {
@@ -184,12 +200,15 @@ export default function Quotations() {
 
   const handleConvert = async (row) => {
     if (!(await confirm({ title: 'Convert to invoice?', message: `${row.number} will be marked converted, and a draft invoice created from its line items.`, confirmLabel: 'Convert' }))) return
-    try {
-      const invoice = await convert(row.id).unwrap()
-      toast.success('Converted to invoice', { description: invoice?.number })
-    } catch (e) {
-      toast.error('Conversion failed', { description: e?.data?.detail || 'Conversion failed.' })
-    }
+    optimisticAction({
+      id: row.id,
+      label: 'Converting…',
+      patch: { status: 'converted' },
+      run: () => convert(row.id).unwrap(),
+      successTitle: 'Converted to invoice',
+      errorTitle: 'Conversion failed',
+      describe: (inv) => inv?.number,
+    }).catch(() => {})
   }
 
   const columns = [
@@ -285,9 +304,7 @@ export default function Quotations() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="qt-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="qt-form" type="submit">Save</PrimaryButton>
           </>
         }
       >

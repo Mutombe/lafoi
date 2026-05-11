@@ -1,6 +1,27 @@
 import React, { useState } from 'react'
-import { CaretLeft, CaretRight, CaretDoubleLeft, CaretDoubleRight } from '@phosphor-icons/react'
+import { CaretLeft, CaretRight, CaretDoubleLeft, CaretDoubleRight, CircleNotch } from '@phosphor-icons/react'
 import { SkeletonTableRow } from './Skeleton'
+
+/**
+ * Small status pill rendered on rows that carry a `_pending` marker
+ * (set by useOptimisticRow). Replaces the contents of the actions cell
+ * while a mutation is in flight so the user knows what's happening.
+ */
+export function PendingBadge({ pending }) {
+  if (!pending) return null
+  const danger = pending.action === 'delete'
+  const cls = danger
+    ? 'bg-red-50 text-red-700 border-red-200'
+    : 'bg-amber-50 text-amber-800 border-amber-200'
+  return (
+    <div className="flex justify-end">
+      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${cls}`}>
+        <CircleNotch size={10} className="animate-spin" />
+        {pending.label || (danger ? 'Deleting…' : 'Saving…')}
+      </span>
+    </div>
+  )
+}
 
 /**
  * Compact, scalable, mobile-aware data table.
@@ -76,34 +97,41 @@ export default function DataTable({
           )}
           {!isLoading && rows.length > 0 && (
             <ul className="divide-y divide-lafoi-dark/[0.06]">
-              {rows.map((row) => (
-                <li
-                  key={row[keyField]}
-                  onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  className={`px-4 py-3.5 ${onRowClick ? 'cursor-pointer active:bg-lafoi-cream/80' : ''}`}
-                >
-                  {columns.map((c) => {
-                    const value = c.render ? c.render(row) : row[c.key]
-                    if (value === null || value === undefined || value === '') return null
-                    if (c.priority === 'desktop' || c.priority === 'low') return null
-                    if (c.key === 'actions') {
+              {rows.map((row) => {
+                const pending = row._pending
+                return (
+                  <li
+                    key={row[keyField]}
+                    onClick={!pending && onRowClick ? () => onRowClick(row) : undefined}
+                    className={`px-4 py-3.5 transition-opacity ${pending ? 'opacity-60' : ''} ${onRowClick && !pending ? 'cursor-pointer active:bg-lafoi-cream/80' : ''}`}
+                  >
+                    {pending && (
+                      <div className="mb-2"><PendingBadge pending={pending} /></div>
+                    )}
+                    {columns.map((c) => {
+                      const value = c.render ? c.render(row) : row[c.key]
+                      if (value === null || value === undefined || value === '') return null
+                      if (c.priority === 'desktop' || c.priority === 'low') return null
+                      if (c.key === 'actions') {
+                        if (pending) return null
+                        return (
+                          <div key={c.key} className="mt-2 flex justify-start gap-1" onClick={(e) => e.stopPropagation()}>
+                            {value}
+                          </div>
+                        )
+                      }
                       return (
-                        <div key={c.key} className="mt-2 flex justify-start gap-1" onClick={(e) => e.stopPropagation()}>
-                          {value}
+                        <div key={c.key} className="flex items-baseline justify-between gap-3 first:pt-0 pt-1">
+                          <span className="text-[10px] font-sora tracking-[0.18em] uppercase text-lafoi-gray-medium shrink-0">
+                            {c.mobileLabel || c.label}
+                          </span>
+                          <span className="text-right text-sm">{value}</span>
                         </div>
                       )
-                    }
-                    return (
-                      <div key={c.key} className="flex items-baseline justify-between gap-3 first:pt-0 pt-1">
-                        <span className="text-[10px] font-sora tracking-[0.18em] uppercase text-lafoi-gray-medium shrink-0">
-                          {c.mobileLabel || c.label}
-                        </span>
-                        <span className="text-right text-sm">{value}</span>
-                      </div>
-                    )
-                  })}
-                </li>
-              ))}
+                    })}
+                  </li>
+                )
+              })}
             </ul>
           )}
         </div>
@@ -139,22 +167,27 @@ export default function DataTable({
                 </td>
               </tr>
             )}
-            {!isLoading && rows.map((row) => (
-              <tr
-                key={row[keyField]}
-                onClick={onRowClick ? () => onRowClick(row) : undefined}
-                className={`border-b border-lafoi-dark/[0.06] last:border-b-0 ${onRowClick ? 'cursor-pointer hover:bg-lafoi-cream/60' : ''} transition-colors`}
-              >
-                {columns.map((c) => (
-                  <td
-                    key={c.key}
-                    className={`px-4 py-3 align-middle ${PRIORITY_CLASS[c.priority || 'high']} ${c.cellClassName || ''}`}
-                  >
-                    {c.render ? c.render(row) : row[c.key] ?? '—'}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {!isLoading && rows.map((row) => {
+              const pending = row._pending
+              return (
+                <tr
+                  key={row[keyField]}
+                  onClick={!pending && onRowClick ? () => onRowClick(row) : undefined}
+                  className={`border-b border-lafoi-dark/[0.06] last:border-b-0 transition-all ${pending ? 'opacity-70 pointer-events-none' : ''} ${onRowClick && !pending ? 'cursor-pointer hover:bg-lafoi-cream/60' : ''}`}
+                >
+                  {columns.map((c) => (
+                    <td
+                      key={c.key}
+                      className={`px-4 py-3 align-middle ${PRIORITY_CLASS[c.priority || 'high']} ${c.cellClassName || ''}`}
+                    >
+                      {pending && c.key === 'actions'
+                        ? <PendingBadge pending={pending} />
+                        : (c.render ? c.render(row) : row[c.key] ?? '—')}
+                    </td>
+                  ))}
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

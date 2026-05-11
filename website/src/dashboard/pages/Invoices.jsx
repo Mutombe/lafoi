@@ -10,7 +10,7 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '
 import LineItemEditor from '../components/LineItemEditor'
 import RecipientPicker, { recipientPayload } from '../components/RecipientPicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListInvoicesQuery,
   useCreateInvoiceMutation,
@@ -61,17 +61,16 @@ export default function Invoices() {
   const { data: projects } = useListProjectsQuery({ page_size: 200 })
   const { data: customers } = useListCustomersQuery({ page_size: 500 })
 
-  const applyOptimistic = useOptimisticListUpdate('listInvoices', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete, optimisticAction } = useOptimisticRow('listInvoices', queryArgs)
 
-  const [createI, createState] = useCreateInvoiceMutation()
-  const [updateI, updateState] = useUpdateInvoiceMutation()
+  const [createI] = useCreateInvoiceMutation()
+  const [updateI] = useUpdateInvoiceMutation()
   const [deleteI] = useDeleteInvoiceMutation()
-  const [createReceipt, receiptState] = useCreateReceiptMutation()
+  const [createReceipt] = useCreateReceiptMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     let recipient
@@ -98,37 +97,55 @@ export default function Invoices() {
         unit: it.unit || 'unit', unit_price: Number(it.unit_price) || 0,
       })).filter((it) => it.description),
     }
-    try {
-      if (isNew) {
-        const created = await createI(payload).unwrap()
-        toast.success('Invoice created', { description: created?.number })
-      } else {
-        const updated = await updateI({ id: editing.id, ...payload }).unwrap()
-        toast.success('Invoice updated', { description: updated?.number || editing.number })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not create invoice' : 'Could not update invoice', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    const fallbackNumber = editing.number
+    setEditing(null)
+    const projectMatch = (projects?.results || []).find((p) => String(p.id) === String(payload.project))
+    const customerMatch = (customers?.results || []).find((c) => String(c.id) === String(payload.customer))
+    const total = (payload.items || []).reduce(
+      (s, it) => s + (Number(it.quantity) || 0) * (Number(it.unit_price) || 0),
+      0,
+    )
+    const tempRow = {
+      ...payload,
+      number: '…',
+      total,
+      balance_due: total,
+      project_code: projectMatch?.code,
+      project_title: projectMatch?.title,
+      customer_name: customerMatch?.name || projectMatch?.customer_name || payload.recipient_name,
+    }
+    if (wasNew) {
+      optimisticCreate({
+        tempRow,
+        run: () => createI(payload).unwrap(),
+        label: 'Creating…',
+        successTitle: 'Invoice created',
+        errorTitle: 'Could not create invoice',
+        describe: (r) => r?.number,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: tempRow,
+        run: () => updateI({ id, ...payload }).unwrap(),
+        successTitle: 'Invoice updated',
+        errorTitle: 'Could not update invoice',
+        describe: (r) => r?.number || fallbackNumber,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete invoice?', message: `Invoice ${row.number} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deleteI(row.id).unwrap(),
-      )
-      toast.success('Invoice deleted', { description: row.number })
-    } catch (e) {
-      toast.error('Could not delete invoice', { description: e?.data?.detail || 'Delete failed.' })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteI(row.id).unwrap(),
+      successTitle: 'Invoice deleted',
+      errorTitle: 'Could not delete invoice',
+      describe: (r) => r.number,
+    }).catch(() => {})
   }
 
   const handlePdf = async (row) => {
@@ -139,24 +156,33 @@ export default function Invoices() {
     catch (e) { toast.error('PDF download failed', { description: e.message }) }
   }
 
-  const handleRecordPayment = async (e) => {
+  const handleRecordPayment = (e) => {
     e.preventDefault()
-    try {
-      const receipt = await createReceipt({
-        invoice: paying.invoice.id,
-        amount: Number(paying.amount),
-        method: paying.method,
-        reference: paying.reference,
-        received_at: paying.received_at,
-        notes: paying.notes,
-      }).unwrap()
-      const formattedAmount = `${paying.invoice.currency || 'USD'} ${Number(paying.amount).toLocaleString()}`
-      toast.success('Payment recorded', { description: `${receipt?.number || ''} — ${formattedAmount}`.trim() })
-      setPaying(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Receipt failed.'
-      toast.error('Could not record payment', { description: msg })
+    const invoiceId = paying.invoice.id
+    const amount = Number(paying.amount)
+    const body = {
+      invoice: invoiceId,
+      amount,
+      method: paying.method,
+      reference: paying.reference,
+      received_at: paying.received_at,
+      notes: paying.notes,
     }
+    const currency = paying.invoice.currency || 'USD'
+    const remaining = Math.max(0, Number(paying.invoice.balance_due || 0) - amount)
+    setPaying(null)
+    optimisticAction({
+      id: invoiceId,
+      label: 'Recording…',
+      patch: {
+        balance_due: remaining,
+        status: remaining <= 0 ? 'paid' : 'partial',
+      },
+      run: () => createReceipt(body).unwrap(),
+      successTitle: 'Payment recorded',
+      errorTitle: 'Could not record payment',
+      describe: (r) => `${r?.number || ''} — ${currency} ${amount.toLocaleString()}`.trim(),
+    }).catch(() => {})
   }
 
   const columns = [
@@ -251,9 +277,7 @@ export default function Invoices() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="inv-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="inv-form" type="submit">Save</PrimaryButton>
           </>
         }
       >
@@ -329,9 +353,7 @@ export default function Invoices() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setPaying(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="rcp-form" type="submit" disabled={receiptState.isLoading}>
-              {receiptState.isLoading ? (<><CircleNotch size={14} className="animate-spin" /> Recording…</>) : 'Record payment'}
-            </PrimaryButton>
+            <PrimaryButton form="rcp-form" type="submit">Record payment</PrimaryButton>
           </>
         }
       >

@@ -10,7 +10,7 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge } from '../components/DataTab
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton, DangerButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListEmployeeLoansQuery,
   useGetEmployeeLoanQuery,
@@ -75,16 +75,16 @@ export default function Loans() {
   const { data, isLoading: isFirstLoad } = useListEmployeeLoansQuery(queryArgs)
   const { data: employeesData } = useListEmployeesQuery({ page: 1, page_size: 200 })
 
-  const applyOptimistic = useOptimisticListUpdate('listEmployeeLoans', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listEmployeeLoans', queryArgs)
+  const employees = employeesData?.results || []
 
-  const [createL, createState] = useCreateEmployeeLoanMutation()
-  const [updateL, updateState] = useUpdateEmployeeLoanMutation()
+  const [createL] = useCreateEmployeeLoanMutation()
+  const [updateL] = useUpdateEmployeeLoanMutation()
   const [deleteL] = useDeleteEmployeeLoanMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     const payload = {
@@ -99,44 +99,48 @@ export default function Loans() {
       notes: editing.notes || '',
       status: editing.status || 'active',
     }
-    try {
-      if (isNew) {
-        const created = await createL(payload).unwrap()
-        toast.success('Loan recorded', { description: created?.reference })
-      } else {
-        const updated = await updateL({ id: editing.id, ...payload }).unwrap()
-        toast.success('Loan updated', { description: updated?.reference })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not record loan' : 'Could not update loan', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    const empMatch = employees.find((e) => String(e.id) === String(payload.employee))
+    setEditing(null)
+    const tempRow = {
+      ...payload,
+      reference: wasNew ? '…' : editing.reference,
+      employee_name: empMatch?.full_name || '—',
+      employee_code: empMatch?.employee_code || '',
+      balance: payload.principal,
+      total_repaid: 0,
+    }
+    if (wasNew) {
+      optimisticCreate({
+        tempRow,
+        run: () => createL(payload).unwrap(),
+        label: 'Recording…',
+        successTitle: 'Loan recorded',
+        errorTitle: 'Could not record loan',
+        describe: (r) => r?.reference,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: tempRow,
+        run: () => updateL({ id, ...payload }).unwrap(),
+        successTitle: 'Loan updated',
+        errorTitle: 'Could not update loan',
+        describe: (r) => r?.reference,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete loan?', message: `${row.reference} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft) return
-          if (Array.isArray(draft)) {
-            const idx = draft.findIndex((r) => r.id === row.id)
-            if (idx >= 0) draft.splice(idx, 1)
-            return
-          }
-          if (draft.results) {
-            draft.results = draft.results.filter((r) => r.id !== row.id)
-            if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-          }
-        },
-        () => deleteL(row.id).unwrap(),
-      )
-      toast.success('Loan removed', { description: row.reference })
-    } catch (e) {
-      toast.error('Could not delete loan', { description: e?.data?.detail || 'Delete failed.' })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteL(row.id).unwrap(),
+      successTitle: 'Loan removed',
+      errorTitle: 'Could not delete loan',
+      describe: (r) => r.reference,
+    }).catch(() => {})
   }
 
   const columns = useMemo(() => [
@@ -278,9 +282,7 @@ export default function Loans() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="loan-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="loan-form" type="submit">Save</PrimaryButton>
           </>
         }
       >

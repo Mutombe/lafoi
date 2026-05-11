@@ -8,7 +8,7 @@ import DataTable, { fmtDate } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton, DangerButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
-import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
+import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
   useListCustomersQuery,
   useCreateCustomerMutation,
@@ -37,16 +37,15 @@ export default function Customers() {
   const queryArgs = { page, page_size: pageSize, search: debouncedSearch || undefined }
   const { data, isLoading: isFirstLoad, isFetching } = useListCustomersQuery(queryArgs)
 
-  const applyOptimistic = useOptimisticListUpdate('listCustomers', queryArgs)
+  const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listCustomers', queryArgs)
 
-  const [createCustomer, createState] = useCreateCustomerMutation()
-  const [updateCustomer, updateState] = useUpdateCustomerMutation()
+  const [createCustomer] = useCreateCustomerMutation()
+  const [updateCustomer] = useUpdateCustomerMutation()
   const [deleteCustomer] = useDeleteCustomerMutation()
 
   const isNew = editing && !editing.id
-  const saving = createState.isLoading || updateState.isLoading
 
-  const handleSave = async (e) => {
+  const handleSave = (e) => {
     e.preventDefault()
     setError('')
     const payload = {
@@ -61,38 +60,39 @@ export default function Customers() {
       country: editing.country || '',
       notes: editing.notes || '',
     }
-    try {
-      if (isNew) {
-        const created = await createCustomer(payload).unwrap()
-        toast.success('Customer added', { description: created?.name || payload.name })
-      } else {
-        const updated = await updateCustomer({ id: editing.id, ...payload }).unwrap()
-        toast.success('Customer updated', { description: updated?.name || payload.name })
-      }
-      setEditing(null)
-    } catch (err) {
-      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
-      setError(msg)
-      toast.error(isNew ? 'Could not add customer' : 'Could not update customer', { description: msg })
+    const wasNew = isNew
+    const id = editing.id
+    setEditing(null)
+    if (wasNew) {
+      optimisticCreate({
+        tempRow: { ...payload, project_count: 0, created_at: new Date().toISOString() },
+        run: () => createCustomer(payload).unwrap(),
+        label: 'Adding…',
+        successTitle: 'Customer added',
+        errorTitle: 'Could not add customer',
+        describe: (r) => r?.name || payload.name,
+      }).catch(() => {})
+    } else {
+      optimisticUpdate({
+        id,
+        patch: payload,
+        run: () => updateCustomer({ id, ...payload }).unwrap(),
+        successTitle: 'Customer updated',
+        errorTitle: 'Could not update customer',
+        describe: (r) => r?.name || payload.name,
+      }).catch(() => {})
     }
   }
 
   const handleDelete = async (row) => {
     if (!(await confirm({ title: 'Delete customer?', message: `“${row.name}” will be removed permanently. This cannot be undone.`, confirmLabel: 'Delete', danger: true }))) return
-    try {
-      await applyOptimistic(
-        (draft) => {
-          if (!draft?.results) return
-          draft.results = draft.results.filter((r) => r.id !== row.id)
-          if (typeof draft.count === 'number') draft.count = Math.max(0, draft.count - 1)
-        },
-        () => deleteCustomer(row.id).unwrap(),
-      )
-      toast.success('Customer removed', { description: row.name })
-    } catch (e) {
-      const msg = e?.data?.detail || 'Delete failed.'
-      toast.error('Could not delete customer', { description: msg })
-    }
+    optimisticDelete({
+      id: row.id,
+      run: () => deleteCustomer(row.id).unwrap(),
+      successTitle: 'Customer removed',
+      errorTitle: 'Could not delete customer',
+      describe: (r) => r.name,
+    }).catch(() => {})
   }
 
   const columns = [
@@ -158,9 +158,7 @@ export default function Customers() {
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setEditing(null)}>Cancel</SecondaryButton>
-            <PrimaryButton form="customer-form" type="submit" disabled={saving}>
-              {saving ? (<><CircleNotch size={14} className="animate-spin" /> Saving…</>) : 'Save'}
-            </PrimaryButton>
+            <PrimaryButton form="customer-form" type="submit">Save</PrimaryButton>
           </>
         }
       >
