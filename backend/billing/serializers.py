@@ -8,7 +8,7 @@ from .models import Invoice, InvoiceItem, Quotation, QuotationItem, Receipt
 
 class _LineItemBaseSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ("id", "description", "quantity", "unit", "unit_price", "line_total", "sort_order")
+        fields = ("id", "section", "description", "quantity", "unit", "unit_price", "line_total", "sort_order")
         read_only_fields = ("id", "line_total")
 
 

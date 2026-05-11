@@ -53,7 +53,8 @@ const UNIT_OPTIONS = [
   { value: 'day',   label: 'day' },
 ]
 
-const newRow = () => ({
+const newRow = (section = '') => ({
+  section,
   description: '',
   a: '',
   b: '',
@@ -100,7 +101,12 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
     onChange(next)
   }
   const remove = (idx) => onChange(items.filter((_, i) => i !== idx))
-  const add = () => onChange([...items, newRow()])
+  const add = () => {
+    // New line inherits the section of the line above it for convenience.
+    const prev = items[items.length - 1]
+    onChange([...items, newRow(prev?.section || '')])
+  }
+  const addSection = () => onChange([...items, newRow('')])
 
   const lineTotal = (it) => Number(it.quantity || 0) * Number(it.unit_price || 0)
   const subtotal = items.reduce((s, it) => s + lineTotal(it), 0)
@@ -119,8 +125,29 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
           </tr>
         </thead>
         <tbody>
-          {items.map((it, idx) => (
-            <tr key={idx} className="border-b border-lafoi-dark/[0.06] last:border-b-0 align-top">
+          {items.map((it, idx) => {
+            const prevSection = idx > 0 ? (items[idx - 1].section || '') : ''
+            const showSectionHeader = (it.section || '') !== prevSection
+            return (
+            <React.Fragment key={idx}>
+              {showSectionHeader && (
+                <tr className="bg-lafoi-green/[0.06] border-t border-lafoi-green/20">
+                  <td colSpan={6} className="px-3 py-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-sora text-[9px] tracking-[0.28em] uppercase text-lafoi-green-dark shrink-0">
+                        Section
+                      </span>
+                      <Input
+                        value={it.section || ''}
+                        onChange={(e) => set(idx, 'section', e.target.value)}
+                        placeholder="e.g. Lounge, Master Suite, Bathroom — leave blank for no section"
+                        className="!py-1.5 !text-sm flex-1 min-w-[200px]"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              )}
+              <tr className="border-b border-lafoi-dark/[0.06] last:border-b-0 align-top">
               <td className="px-2 py-1.5">
                 <Input
                   value={it.description}
@@ -189,7 +216,9 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
                 </button>
               </td>
             </tr>
-          ))}
+            </React.Fragment>
+            )
+          })}
           {items.length === 0 && (
             <tr><td colSpan={6} className="px-4 py-6 text-center text-sm text-lafoi-gray-medium">No line items yet.</td></tr>
           )}
@@ -197,9 +226,17 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
         <tfoot>
           <tr className="bg-lafoi-cream/60 border-t border-lafoi-dark/10">
             <td colSpan={4} className="px-3 py-2.5">
-              <SecondaryButton type="button" onClick={add} className="!py-2 !px-3">
-                <Plus size={13} weight="bold" /> Add line
-              </SecondaryButton>
+              <div className="flex flex-wrap items-center gap-2">
+                <SecondaryButton type="button" onClick={add} className="!py-2 !px-3">
+                  <Plus size={13} weight="bold" /> Add line
+                </SecondaryButton>
+                <SecondaryButton type="button" onClick={addSection} className="!py-2 !px-3">
+                  <Plus size={13} weight="bold" /> Add section
+                </SecondaryButton>
+                <span className="text-[11px] font-sora text-lafoi-gray-medium ml-1">
+                  Group items by room or area (Bathroom, Lounge, …) so the PDF reads as one document with subtotals per section.
+                </span>
+              </div>
             </td>
             <td className="px-3 py-2.5 text-right font-sora font-semibold tabular-nums">
               {currency} {subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

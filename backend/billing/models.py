@@ -115,6 +115,10 @@ class Quotation(_MoneyMixin, models.Model):
 
 class QuotationItem(models.Model):
     quotation = models.ForeignKey(Quotation, on_delete=models.CASCADE, related_name="items")
+    section = models.CharField(
+        max_length=80, blank=True,
+        help_text="Optional grouping label, e.g. 'Bathroom', 'Lounge', 'Master Suite'. Items sharing a section render under one subheader on the PDF.",
+    )
     description = models.CharField(max_length=400)
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("1"))
     unit = models.CharField(max_length=24, default="unit", help_text="e.g. m², unit, hours")
@@ -209,6 +213,10 @@ class Invoice(_MoneyMixin, models.Model):
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name="items")
+    section = models.CharField(
+        max_length=80, blank=True,
+        help_text="Optional grouping label (Bathroom, Lounge, …). Items in the same section render under one subheader on the PDF.",
+    )
     description = models.CharField(max_length=400)
     quantity = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("1"))
     unit = models.CharField(max_length=24, default="unit")

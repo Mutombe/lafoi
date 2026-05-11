@@ -91,6 +91,7 @@ export default function Invoices() {
       notes: editing.notes || '',
       terms: editing.terms || '',
       items: (editing.items || []).map((it) => ({
+        section: it.section || '',
         description: it.description, quantity: Number(it.quantity) || 0,
         unit: it.unit || 'unit', unit_price: Number(it.unit_price) || 0,
       })).filter((it) => it.description),
@@ -158,12 +159,33 @@ export default function Invoices() {
 
   const columns = [
     { key: 'number', label: 'Number', priority: 'high', mobileLabel: 'Number', render: (r) => <span className="font-sora text-xs">{r.number}</span> },
-    { key: 'project', label: 'Project', priority: 'high', mobileLabel: 'Project', render: (r) => (
-      <div>
-        <p className="font-sora text-sm font-medium">{r.project_title || '—'}</p>
-        <p className="text-xs text-lafoi-gray-medium">{r.customer_name}</p>
-      </div>
-    )},
+    {
+      key: 'recipient',
+      label: 'Recipient',
+      priority: 'high',
+      mobileLabel: 'Recipient',
+      render: (r) => {
+        const primary = r.customer_name || r.recipient_name || '—'
+        let kind = null
+        if (r.project) {
+          kind = r.project_code ? `Project · ${r.project_code}` : 'Project'
+        } else if (r.customer) {
+          kind = 'Customer'
+        } else if (r.recipient_name) {
+          kind = 'New recipient'
+        }
+        return (
+          <div>
+            <p className="font-sora text-sm font-medium">{primary}</p>
+            {kind && (
+              <p className="text-[10px] tracking-[0.16em] uppercase text-lafoi-gray-medium font-sora mt-0.5">
+                {kind}{r.project_title ? ` · ${r.project_title}` : ''}
+              </p>
+            )}
+          </div>
+        )
+      },
+    },
     { key: 'issue_date', label: 'Issue', priority: 'desktop', render: (r) => fmtDate(r.issue_date) },
     { key: 'due_date', label: 'Due', priority: 'medium', render: (r) => fmtDate(r.due_date) },
     { key: 'total', label: 'Total', priority: 'medium', render: (r) => <span className="tabular-nums">{fmtMoney(r.total, r.currency)}</span> },

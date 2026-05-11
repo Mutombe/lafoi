@@ -406,31 +406,70 @@ def _quotation_recipient(doc):
 
 
 def _items_table(items, st, currency="USD"):
-    head = [
-        [
-            Paragraph("DESCRIPTION", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8)),
-            Paragraph("QTY", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_RIGHT)),
-            Paragraph("UNIT", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_CENTER)),
-            Paragraph("UNIT PRICE", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_RIGHT)),
-            Paragraph("LINE TOTAL", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_RIGHT)),
-        ]
+    head_row = [
+        Paragraph("DESCRIPTION", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8)),
+        Paragraph("QTY", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_RIGHT)),
+        Paragraph("UNIT", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_CENTER)),
+        Paragraph("UNIT PRICE", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_RIGHT)),
+        Paragraph("LINE TOTAL", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_RIGHT)),
     ]
-    rows = []
-    for it in items:
-        rows.append([
-            Paragraph(it.description or "", st["LFBody"]),
-            Paragraph(f"{it.quantity:.2f}", ParagraphStyle("r", parent=st["LFBody"], alignment=TA_RIGHT)),
-            Paragraph(it.unit or "", ParagraphStyle("c", parent=st["LFBody"], alignment=TA_CENTER)),
-            Paragraph(_fmt_money(it.unit_price, currency), ParagraphStyle("r", parent=st["LFBody"], alignment=TA_RIGHT)),
-            Paragraph(_fmt_money(it.line_total, currency), ParagraphStyle("r", parent=st["LFValue"], alignment=TA_RIGHT)),
-        ])
-    if not rows:
-        rows.append([
-            Paragraph("<i>No line items.</i>", st["LFBodySmall"]),
-            "", "", "", "",
-        ])
 
-    table = Table(head + rows, colWidths=[None, 18 * mm, 18 * mm, 28 * mm, 28 * mm])
+    # Group items by section while preserving sort order. Items without a
+    # section land in an unnamed "Items" bucket rendered without a header.
+    sections = []
+    current = None
+    for it in items:
+        key = (getattr(it, "section", "") or "").strip()
+        if not sections or sections[-1]["name"] != key:
+            current = {"name": key, "items": [], "total": Decimal("0")}
+            sections.append(current)
+        current["items"].append(it)
+        current["total"] += it.line_total or Decimal("0")
+
+    table_rows = [head_row]
+    section_indices = []   # rows where a section header sits
+    subtotal_indices = []  # rows where a section subtotal sits
+
+    show_sections = any(s["name"] for s in sections)
+
+    for sec in sections:
+        if show_sections and sec["name"]:
+            section_indices.append(len(table_rows))
+            table_rows.append([
+                Paragraph(
+                    sec["name"].upper(),
+                    ParagraphStyle("sec", parent=st["LFEyebrow"], textColor=BRAND_GREEN_DARK, fontSize=9, leading=11),
+                ),
+                "", "", "", "",
+            ])
+        for it in sec["items"]:
+            table_rows.append([
+                Paragraph(it.description or "", st["LFBody"]),
+                Paragraph(f"{it.quantity:.2f}", ParagraphStyle("r", parent=st["LFBody"], alignment=TA_RIGHT)),
+                Paragraph(it.unit or "", ParagraphStyle("c", parent=st["LFBody"], alignment=TA_CENTER)),
+                Paragraph(_fmt_money(it.unit_price, currency), ParagraphStyle("r", parent=st["LFBody"], alignment=TA_RIGHT)),
+                Paragraph(_fmt_money(it.line_total, currency), ParagraphStyle("r", parent=st["LFValue"], alignment=TA_RIGHT)),
+            ])
+        # Subtotal row only when the section is named AND there's something
+        # to roll up
+        if show_sections and sec["name"] and sec["items"]:
+            subtotal_indices.append(len(table_rows))
+            table_rows.append([
+                Paragraph(
+                    f"Subtotal · {sec['name']}",
+                    ParagraphStyle("subL", parent=st["LFBodySmall"], textColor=BRAND_GRAY, alignment=TA_RIGHT, fontSize=8),
+                ),
+                "", "", "",
+                Paragraph(
+                    _fmt_money(sec["total"], currency),
+                    ParagraphStyle("subV", parent=st["LFValue"], alignment=TA_RIGHT, fontSize=9, textColor=BRAND_DARK),
+                ),
+            ])
+
+    if len(table_rows) == 1:
+        table_rows.append([Paragraph("<i>No line items.</i>", st["LFBodySmall"]), "", "", "", ""])
+
+    table = Table(table_rows, colWidths=[None, 18 * mm, 18 * mm, 28 * mm, 28 * mm])
     style = TableStyle([
         # Header row — green fill, white text
         ("BACKGROUND", (0, 0), (-1, 0), BRAND_GREEN),
@@ -444,10 +483,27 @@ def _items_table(items, st, currency="USD"):
         ("TOPPADDING", (0, 0), (-1, -1), 7),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
     ])
-    # Zebra striping for body rows
-    for i in range(1, len(head) + len(rows)):
+    # Zebra striping for body rows, skipping the section header + subtotal rows
+    special = set(section_indices) | set(subtotal_indices)
+    for i in range(1, len(table_rows)):
+        if i in special:
+            continue
         if i % 2 == 0:
             style.add("BACKGROUND", (0, i), (-1, i), BRAND_BG)
+    # Section header — soft green band, span all columns
+    for i in section_indices:
+        style.add("BACKGROUND", (0, i), (-1, i), colors.HexColor("#EDF6EF"))
+        style.add("SPAN", (0, i), (-1, i))
+        style.add("LINEBELOW", (0, i), (-1, i), 0.4, BRAND_GREEN)
+        style.add("TOPPADDING", (0, i), (-1, i), 10)
+        style.add("BOTTOMPADDING", (0, i), (-1, i), 6)
+    # Subtotal — hairline above + span label cells, value stays in last col
+    for i in subtotal_indices:
+        style.add("LINEABOVE", (0, i), (-1, i), 0.3, BRAND_LINE)
+        style.add("SPAN", (0, i), (3, i))
+        style.add("TOPPADDING", (0, i), (-1, i), 6)
+        style.add("BOTTOMPADDING", (0, i), (-1, i), 8)
+        style.add("ALIGN", (0, i), (3, i), "RIGHT")
     style.add("LINEBELOW", (0, 0), (-1, -1), 0.4, BRAND_LINE)
     table.setStyle(style)
     return table
