@@ -16,13 +16,13 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
-import { useConfirm } from '../components/ConfirmDialog'
   useListProjectsQuery,
   useCreateProjectMutation,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
   useListCustomersQuery,
 } from '../store/api'
+import { useConfirm } from '../components/ConfirmDialog'
 
 // Vite fix for Leaflet's missing default marker icons
 delete L.Icon.Default.prototype._getIconUrl

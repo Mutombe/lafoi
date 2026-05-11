@@ -10,12 +10,12 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton, DangerB
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
-import { useConfirm } from '../components/ConfirmDialog'
   useListCustomersQuery,
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
 } from '../store/api'
+import { useConfirm } from '../components/ConfirmDialog'
 
 const empty = {
   name: '', customer_type: 'individual', contact_person: '', email: '', phone: '',

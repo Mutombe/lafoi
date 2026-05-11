@@ -13,7 +13,6 @@ import AuditLogFeed from '../components/compliance/AuditLogFeed'
 
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
-import { useConfirm } from '../components/ConfirmDialog'
   useListTaxBracketSetsQuery,
   useDeleteTaxBracketSetMutation,
   useUpdateTaxBracketSetMutation,
@@ -26,6 +25,7 @@ import { useConfirm } from '../components/ConfirmDialog'
   useDeleteExchangeRateMutation,
   usePreviewPayeMutation, // re-exported here so the grep verification picks it up
 } from '../store/api'
+import { useConfirm } from '../components/ConfirmDialog'
 
 const TABS = [
   { key: 'paye', label: 'PAYE brackets' },

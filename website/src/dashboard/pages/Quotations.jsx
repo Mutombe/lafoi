@@ -12,7 +12,6 @@ import RecipientPicker, { recipientPayload } from '../components/RecipientPicker
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
-import { useConfirm } from '../components/ConfirmDialog'
   useListQuotationsQuery,
   useCreateQuotationMutation,
   useUpdateQuotationMutation,
@@ -22,6 +21,7 @@ import { useConfirm } from '../components/ConfirmDialog'
   useListCustomersQuery,
   downloadPdf,
 } from '../store/api'
+import { useConfirm } from '../components/ConfirmDialog'
 
 // Default terms block that ships with every new quotation. Editable in the
 // modal so the team can adjust per-quote when needed; mirrors the standard

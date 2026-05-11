@@ -9,12 +9,12 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
-import { useConfirm } from '../components/ConfirmDialog'
   useListSuppliersQuery,
   useCreateSupplierMutation,
   useUpdateSupplierMutation,
   useDeleteSupplierMutation,
 } from '../store/api'
+import { useConfirm } from '../components/ConfirmDialog'
 
 const empty = () => ({
   name: '', contact_person: '', email: '', phone: '',

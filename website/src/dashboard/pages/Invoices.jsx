@@ -12,7 +12,6 @@ import RecipientPicker, { recipientPayload } from '../components/RecipientPicker
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
-import { useConfirm } from '../components/ConfirmDialog'
   useListInvoicesQuery,
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
@@ -22,6 +21,7 @@ import { useConfirm } from '../components/ConfirmDialog'
   useCreateReceiptMutation,
   downloadPdf,
 } from '../store/api'
+import { useConfirm } from '../components/ConfirmDialog'
 
 const empty = () => ({
   project: '', subject: '', issue_date: new Date().toISOString().slice(0, 10),

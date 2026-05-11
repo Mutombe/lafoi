@@ -8,11 +8,11 @@ import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
-import { useConfirm } from '../components/ConfirmDialog'
   useListPublicHolidaysQuery,
   useCreatePublicHolidayMutation,
   useDeletePublicHolidayMutation,
 } from '../store/api'
+import { useConfirm } from '../components/ConfirmDialog'
 
 const PAID_PALETTE = {
   paid: 'bg-lafoi-green/15 text-lafoi-green-dark border-lafoi-green/40',

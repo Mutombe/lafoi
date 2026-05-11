@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from 'react-redux'
 import {
-import { useConfirm } from '../components/ConfirmDialog'
   Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch,
   Package, Warning, QrCode, DownloadSimple, UploadSimple, X,
 } from '@phosphor-icons/react'
+import { useConfirm } from '../components/ConfirmDialog'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
