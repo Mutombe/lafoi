@@ -65,7 +65,7 @@ const empty = () => ({
   tax_rate: 0, discount_amount: 0,
   notes: DEFAULT_QUOTATION_NOTES,
   terms: DEFAULT_QUOTATION_TERMS,
-  items: [{ description: '', quantity: 1, unit: 'm²', unit_price: 0, length: '', width: '' }],
+  items: [{ description: '', qty: 1, length: '', width: '', quantity: 0, unit: 'm²', unit_price: 0 }],
 })
 
 export default function Quotations() {

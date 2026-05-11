@@ -24,7 +24,7 @@ const empty = () => ({
   project: '', subject: '', issue_date: new Date().toISOString().slice(0, 10),
   due_date: '', status: 'draft', currency: 'USD',
   tax_rate: 0, discount_amount: 0, notes: '', terms: '',
-  items: [{ description: '', quantity: 0, unit: 'm²', unit_price: 0, length: '', width: '' }],
+  items: [{ description: '', qty: 1, length: '', width: '', quantity: 0, unit: 'm²', unit_price: 0 }],
 })
 
 export default function Invoices() {
