@@ -405,8 +405,11 @@ def _quotation_recipient(doc):
     }
 
 
-def _items_table(items, st, currency="USD"):
-    head_row = [
+_ITEM_COL_WIDTHS = [None, 18 * mm, 18 * mm, 28 * mm, 28 * mm]
+
+
+def _items_head_row(st):
+    return [
         Paragraph("DESCRIPTION", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8)),
         Paragraph("QTY", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_RIGHT)),
         Paragraph("UNIT", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_CENTER)),
@@ -414,8 +417,121 @@ def _items_table(items, st, currency="USD"):
         Paragraph("LINE TOTAL", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=8, alignment=TA_RIGHT)),
     ]
 
-    # Group items by section while preserving sort order. Items without a
-    # section land in an unnamed "Items" bucket rendered without a header.
+
+def _section_heading(name, line_count, total, st, currency):
+    """Standalone heading flowable rendered above a section's items table.
+
+    Reads as a chapter title — accent stripe on the left, brand-green
+    eyebrow text, item count + section subtotal aligned right.
+    """
+    label = Paragraph(
+        name.upper(),
+        ParagraphStyle(
+            "secName",
+            parent=st["LFEyebrow"],
+            textColor=BRAND_GREEN_DARK,
+            fontSize=11,
+            leading=14,
+        ),
+    )
+    meta = Paragraph(
+        f"{line_count} item{'s' if line_count != 1 else ''} · {_fmt_money(total, currency)}",
+        ParagraphStyle(
+            "secMeta",
+            parent=st["LFBodySmall"],
+            textColor=BRAND_GRAY,
+            alignment=TA_RIGHT,
+            fontSize=8,
+        ),
+    )
+    bar = Table([[label, meta]], colWidths=[None, 60 * mm])
+    bar.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#EDF6EF")),
+        ("LINEBELOW", (0, 0), (-1, -1), 1.4, BRAND_GREEN),
+        ("LEFTPADDING", (0, 0), (0, -1), 12),
+        ("LEFTPADDING", (1, 0), (1, -1), 7),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        # Accent stripe on the left edge
+        ("LINEBEFORE", (0, 0), (0, -1), 3, BRAND_GREEN),
+    ]))
+    return bar
+
+
+def _section_items_table(items_in_section, st, currency, with_header):
+    """Items-only table for a single section. Optionally renders the
+    column header row (skipped when the parent decides to share one)."""
+    table_rows = []
+    if with_header:
+        table_rows.append(_items_head_row(st))
+    for it in items_in_section:
+        table_rows.append([
+            Paragraph(it.description or "", st["LFBody"]),
+            Paragraph(f"{it.quantity:.2f}", ParagraphStyle("r", parent=st["LFBody"], alignment=TA_RIGHT)),
+            Paragraph(it.unit or "", ParagraphStyle("c", parent=st["LFBody"], alignment=TA_CENTER)),
+            Paragraph(_fmt_money(it.unit_price, currency), ParagraphStyle("r", parent=st["LFBody"], alignment=TA_RIGHT)),
+            Paragraph(_fmt_money(it.line_total, currency), ParagraphStyle("r", parent=st["LFValue"], alignment=TA_RIGHT)),
+        ])
+    table = Table(table_rows, colWidths=_ITEM_COL_WIDTHS, repeatRows=1 if with_header else 0)
+    style = TableStyle([
+        ("ALIGN", (1, 0), (1, -1), "RIGHT"),
+        ("ALIGN", (2, 0), (2, -1), "CENTER"),
+        ("ALIGN", (3, 0), (4, -1), "RIGHT"),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 7),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 7),
+        ("TOPPADDING", (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("LINEBELOW", (0, 0), (-1, -1), 0.4, BRAND_LINE),
+    ])
+    if with_header:
+        style.add("BACKGROUND", (0, 0), (-1, 0), BRAND_GREEN)
+        style.add("TEXTCOLOR", (0, 0), (-1, 0), colors.white)
+    # Zebra striping over body rows
+    body_offset = 1 if with_header else 0
+    for i in range(body_offset, len(table_rows)):
+        if (i - body_offset) % 2 == 1:
+            style.add("BACKGROUND", (0, i), (-1, i), BRAND_BG)
+    table.setStyle(style)
+    return table
+
+
+def _section_subtotal(section_name, total, st, currency):
+    """Right-aligned subtotal strip rendered under a section's items table."""
+    row = [
+        Paragraph(
+            f"Subtotal · {section_name}",
+            ParagraphStyle("subL", parent=st["LFBodySmall"], textColor=BRAND_GRAY, alignment=TA_RIGHT, fontSize=8),
+        ),
+        Paragraph(
+            _fmt_money(total, currency),
+            ParagraphStyle("subV", parent=st["LFValue"], alignment=TA_RIGHT, fontSize=10, textColor=BRAND_DARK),
+        ),
+    ]
+    table = Table([row], colWidths=[None, 28 * mm])
+    table.setStyle(TableStyle([
+        ("LINEABOVE", (0, 0), (-1, -1), 0.3, BRAND_LINE),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING", (0, 0), (-1, -1), 7),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 7),
+        ("ALIGN", (0, 0), (-1, -1), "RIGHT"),
+    ]))
+    return table
+
+
+def _items_flowables(items, st, currency="USD"):
+    """Build a list of flowables for line items.
+
+    Items grouped under a named section render as a chapter — a standalone
+    heading bar, the section's items table (with its own column header so
+    page breaks remain readable), and a subtotal strip. Items without a
+    section render as one flat items table at the top.
+    """
+    # Group while preserving insertion order. A new group starts when the
+    # section name changes from the previous row.
     sections = []
     current = None
     for it in items:
@@ -426,87 +542,29 @@ def _items_table(items, st, currency="USD"):
         current["items"].append(it)
         current["total"] += it.line_total or Decimal("0")
 
-    table_rows = [head_row]
-    section_indices = []   # rows where a section header sits
-    subtotal_indices = []  # rows where a section subtotal sits
-
     show_sections = any(s["name"] for s in sections)
 
-    for sec in sections:
+    if not sections:
+        return [_section_items_table([], st, currency, with_header=True)]
+
+    flowables = []
+    for idx, sec in enumerate(sections):
         if show_sections and sec["name"]:
-            section_indices.append(len(table_rows))
-            table_rows.append([
-                Paragraph(
-                    sec["name"].upper(),
-                    ParagraphStyle("sec", parent=st["LFEyebrow"], textColor=BRAND_GREEN_DARK, fontSize=9, leading=11),
-                ),
-                "", "", "", "",
-            ])
-        for it in sec["items"]:
-            table_rows.append([
-                Paragraph(it.description or "", st["LFBody"]),
-                Paragraph(f"{it.quantity:.2f}", ParagraphStyle("r", parent=st["LFBody"], alignment=TA_RIGHT)),
-                Paragraph(it.unit or "", ParagraphStyle("c", parent=st["LFBody"], alignment=TA_CENTER)),
-                Paragraph(_fmt_money(it.unit_price, currency), ParagraphStyle("r", parent=st["LFBody"], alignment=TA_RIGHT)),
-                Paragraph(_fmt_money(it.line_total, currency), ParagraphStyle("r", parent=st["LFValue"], alignment=TA_RIGHT)),
-            ])
-        # Subtotal row only when the section is named AND there's something
-        # to roll up
-        if show_sections and sec["name"] and sec["items"]:
-            subtotal_indices.append(len(table_rows))
-            table_rows.append([
-                Paragraph(
-                    f"Subtotal · {sec['name']}",
-                    ParagraphStyle("subL", parent=st["LFBodySmall"], textColor=BRAND_GRAY, alignment=TA_RIGHT, fontSize=8),
-                ),
-                "", "", "",
-                Paragraph(
-                    _fmt_money(sec["total"], currency),
-                    ParagraphStyle("subV", parent=st["LFValue"], alignment=TA_RIGHT, fontSize=9, textColor=BRAND_DARK),
-                ),
-            ])
+            if idx > 0:
+                flowables.append(Spacer(1, 10))
+            flowables.append(_section_heading(sec["name"], len(sec["items"]), sec["total"], st, currency))
+            flowables.append(Spacer(1, 3))
+            flowables.append(_section_items_table(sec["items"], st, currency, with_header=True))
+            flowables.append(_section_subtotal(sec["name"], sec["total"], st, currency))
+        else:
+            # Unnamed bucket — render the items inline without a heading.
+            if idx > 0:
+                flowables.append(Spacer(1, 6))
+            flowables.append(_section_items_table(sec["items"], st, currency, with_header=True))
 
-    if len(table_rows) == 1:
-        table_rows.append([Paragraph("<i>No line items.</i>", st["LFBodySmall"]), "", "", "", ""])
+    return flowables
 
-    table = Table(table_rows, colWidths=[None, 18 * mm, 18 * mm, 28 * mm, 28 * mm])
-    style = TableStyle([
-        # Header row — green fill, white text
-        ("BACKGROUND", (0, 0), (-1, 0), BRAND_GREEN),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("ALIGN", (1, 0), (1, -1), "RIGHT"),
-        ("ALIGN", (2, 0), (2, -1), "CENTER"),
-        ("ALIGN", (3, 0), (4, -1), "RIGHT"),
-        ("VALIGN", (0, 0), (-1, -1), "TOP"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 7),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 7),
-        ("TOPPADDING", (0, 0), (-1, -1), 7),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
-    ])
-    # Zebra striping for body rows, skipping the section header + subtotal rows
-    special = set(section_indices) | set(subtotal_indices)
-    for i in range(1, len(table_rows)):
-        if i in special:
-            continue
-        if i % 2 == 0:
-            style.add("BACKGROUND", (0, i), (-1, i), BRAND_BG)
-    # Section header — soft green band, span all columns
-    for i in section_indices:
-        style.add("BACKGROUND", (0, i), (-1, i), colors.HexColor("#EDF6EF"))
-        style.add("SPAN", (0, i), (-1, i))
-        style.add("LINEBELOW", (0, i), (-1, i), 0.4, BRAND_GREEN)
-        style.add("TOPPADDING", (0, i), (-1, i), 10)
-        style.add("BOTTOMPADDING", (0, i), (-1, i), 6)
-    # Subtotal — hairline above + span label cells, value stays in last col
-    for i in subtotal_indices:
-        style.add("LINEABOVE", (0, i), (-1, i), 0.3, BRAND_LINE)
-        style.add("SPAN", (0, i), (3, i))
-        style.add("TOPPADDING", (0, i), (-1, i), 6)
-        style.add("BOTTOMPADDING", (0, i), (-1, i), 8)
-        style.add("ALIGN", (0, i), (3, i), "RIGHT")
-    style.add("LINEBELOW", (0, 0), (-1, -1), 0.4, BRAND_LINE)
-    table.setStyle(style)
-    return table
+
 
 
 def _totals_table(doc, st, currency="USD"):
@@ -624,7 +682,7 @@ def render_quotation_pdf(quotation) -> bytes:
         flow.append(Paragraph(quotation.subject, st["LFValue"]))
         flow.append(Spacer(1, 8))
 
-    flow.append(_items_table(quotation.items.all(), st, currency=quotation.currency))
+    flow.extend(_items_flowables(quotation.items.all(), st, currency=quotation.currency))
     flow.append(Spacer(1, 10))
 
     # Right-aligned totals
@@ -704,7 +762,7 @@ def render_invoice_pdf(invoice) -> bytes:
         flow.append(Paragraph(invoice.subject, st["LFValue"]))
         flow.append(Spacer(1, 8))
 
-    flow.append(_items_table(invoice.items.all(), st, currency=invoice.currency))
+    flow.extend(_items_flowables(invoice.items.all(), st, currency=invoice.currency))
     flow.append(Spacer(1, 10))
 
     totals_parts = _totals_table(invoice, st, currency=invoice.currency)
