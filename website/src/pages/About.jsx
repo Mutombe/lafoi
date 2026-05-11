@@ -281,7 +281,7 @@ function Mission() {
                 </div>
                 <div className="border-l border-white/10 pl-4">
                   <p className="font-display font-light text-2xl lg:text-3xl text-white leading-none">
-                    15<span className="text-base lg:text-lg">yr</span>
+                    10<span className="text-base lg:text-lg">yr</span>
                   </p>
                   <p className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
                     Mfr. warranty

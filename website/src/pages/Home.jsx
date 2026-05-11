@@ -1681,7 +1681,7 @@ function WhyLaFoi() {
     {
       icon: ShieldCheck,
       title: 'Durability & Safety',
-      copy: 'Fire-rated B-s1 d0, anti-bacterial finish, fifteen-year manufacturer warranty.',
+      copy: 'Fire-rated B-s1 d0, anti-bacterial finish, ten-year manufacturer warranty.',
     },
     {
       icon: Leaf,

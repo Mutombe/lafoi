@@ -69,7 +69,7 @@ const faqCategories = [
       },
       {
         q: 'How long do stretch ceilings last?',
-        a: 'With proper care, stretch ceilings can last 15 to 25 years. Our products come with a manufacturer warranty up to 10 years on the membrane and a workmanship cover from La Foi Designs.',
+        a: 'With proper care, stretch ceilings can last 20 years or more. Our products come with a manufacturer warranty up to 10 years on the membrane and a workmanship cover from La Foi Designs.',
       },
     ],
   },

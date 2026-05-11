@@ -596,7 +596,7 @@ export const products = [
       'Light transmission': '88% (prismatic) / 72% (opal)',
       'Panel size': '1200 x 600 mm standard',
       'Fire rating': 'B-s1,d0',
-      'UV stability': '15+ years',
+      'UV stability': '10+ years',
           },
     image: U('1600210492486-724fe5c67fb0', 1600, 85),
     gallery: [
