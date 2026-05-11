@@ -14,10 +14,14 @@
   --color-lafoi-cream: #FAFAF8;
   --color-lafoi-dark: #111111;
   --color-lafoi-accent: #C8E6C9;
-  --font-sora: 'Sora', system-ui, sans-serif;
-  --font-display: 'Outfit', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-cabinet: 'Outfit', system-ui, sans-serif;
+  /* One font sitewide, no exceptions. The nav font (Space Grotesk) is now
+     the typeface for every surface: headings, body, kickers, labels. Every
+     legacy font-* token alias resolves to Space Grotesk so existing class
+     usage keeps working without a sweep across the codebase. */
+  --font-sora: 'Space Grotesk', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+  --font-cabinet: 'Space Grotesk', system-ui, sans-serif;
   --font-general: 'Space Grotesk', system-ui, sans-serif;
 }
 
@@ -29,7 +33,7 @@ html {
 }
 
 body {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   /* `clip` (not `hidden`) prevents horizontal scroll without creating a scroll
      container — preserves position:sticky on descendant elements. */
   overflow-x: clip;
@@ -205,21 +209,21 @@ body {
 
 /* Responsive typography */
 .heading-xl {
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1.05;
 }
 
 .heading-lg {
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.1;
 }
 
 .body-text {
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   font-weight: 400;
   line-height: 1.7;
   color: #4A4A4A;

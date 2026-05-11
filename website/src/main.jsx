@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           position="top-right"
           toastOptions={{
             style: {
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Space Grotesk', sans-serif",
               borderRadius: '16px',
               padding: '16px',
             },
