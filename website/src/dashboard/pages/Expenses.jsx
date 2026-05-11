@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch,
   Receipt, Storefront, Calendar, Briefcase, X,
 } from '@phosphor-icons/react'
@@ -68,6 +69,7 @@ const empty = () => ({
 })
 
 export default function Expenses() {
+  const confirm = useConfirm()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -153,7 +155,7 @@ export default function Expenses() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete expense "${row.description}"? This cannot be undone.`)) return
+    if (!(await confirm({ title: 'Delete expense?', message: `"${row.description}" will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

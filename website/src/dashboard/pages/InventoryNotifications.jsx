@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   Plus, Trash, PencilSimple, CircleNotch, BellRinging,
   PaperPlaneTilt, EnvelopeSimple, WhatsappLogo, Bell,
   Warning,
@@ -58,6 +59,7 @@ const fmtDateTime = (iso) => {
 }
 
 export default function InventoryNotifications() {
+  const confirm = useConfirm()
   // ----- Rules -----
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
@@ -135,7 +137,7 @@ export default function InventoryNotifications() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete rule "${row.name}"? Past notifications will keep their record.`)) return
+    if (!(await confirm({ title: 'Delete notification rule?', message: `"${row.name}" will be removed. Past notifications keep their record.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await deleteRule(row.id).unwrap()
       toast.success('Rule removed')

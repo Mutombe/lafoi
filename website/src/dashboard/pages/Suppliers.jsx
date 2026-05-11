@@ -9,6 +9,7 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   useListSuppliersQuery,
   useCreateSupplierMutation,
   useUpdateSupplierMutation,
@@ -22,6 +23,7 @@ const empty = () => ({
 })
 
 export default function Suppliers() {
+  const confirm = useConfirm()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -74,7 +76,7 @@ export default function Suppliers() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete supplier "${row.name}"? Items linked to it will be unlinked.`)) return
+    if (!(await confirm({ title: 'Delete supplier?', message: `"${row.name}" will be removed. Items linked to it will be unlinked.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

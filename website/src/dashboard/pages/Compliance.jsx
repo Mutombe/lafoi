@@ -13,6 +13,7 @@ import AuditLogFeed from '../components/compliance/AuditLogFeed'
 
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   useListTaxBracketSetsQuery,
   useDeleteTaxBracketSetMutation,
   useUpdateTaxBracketSetMutation,
@@ -34,6 +35,7 @@ const TABS = [
 ]
 
 export default function Compliance() {
+  const confirm = useConfirm()
   const [tab, setTab] = useState('paye')
 
   return (
@@ -115,7 +117,7 @@ function PayeTab() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete bracket set "${row.name}"? Historical payslips will keep their snapshotted rates.`)) return
+    if (!(await confirm({ title: 'Delete bracket set?', message: `"${row.name}" will be removed. Historical payslips keep their snapshotted rates.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {
@@ -293,7 +295,7 @@ function StatutoryTab() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete this statutory rate (${row.code_label || row.code})?`)) return
+    if (!(await confirm({ title: 'Delete statutory rate?', message: `${row.code_label || row.code} will be removed.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {
@@ -500,7 +502,7 @@ function ExchangeTab() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete ${row.base}→${row.quote} rate from ${fmtDate(row.as_of)}?`)) return
+    if (!(await confirm({ title: 'Delete exchange rate?', message: `${row.base}→${row.quote} rate from ${fmtDate(row.as_of)} will be removed.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

@@ -16,6 +16,7 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   useListProjectsQuery,
   useCreateProjectMutation,
   useUpdateProjectMutation,
@@ -103,6 +104,7 @@ const empty = {
 }
 
 export default function Projects() {
+  const confirm = useConfirm()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -166,7 +168,7 @@ export default function Projects() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete project ${row.code}? This cannot be undone.`)) return
+    if (!(await confirm({ title: 'Delete project?', message: `Project ${row.code} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

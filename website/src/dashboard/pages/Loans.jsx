@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch, Eye, Bank,
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -53,6 +54,7 @@ const empty = () => ({
 })
 
 export default function Loans() {
+  const confirm = useConfirm()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [statusFilter, setStatusFilter] = useState('')
@@ -114,7 +116,7 @@ export default function Loans() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete ${row.reference}? This cannot be undone.`)) return
+    if (!(await confirm({ title: 'Delete loan?', message: `${row.reference} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

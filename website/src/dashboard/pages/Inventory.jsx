@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from 'react-redux'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch,
   Package, Warning, QrCode, DownloadSimple, UploadSimple, X,
 } from '@phosphor-icons/react'
@@ -47,6 +48,7 @@ const empty = () => ({
 })
 
 export default function Inventory() {
+  const confirm = useConfirm()
   const navigate = useNavigate()
   const store = useStore()
 
@@ -131,7 +133,7 @@ export default function Inventory() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete item "${row.name}"? This cannot be undone.`)) return
+    if (!(await confirm({ title: 'Delete inventory item?', message: `"${row.name}" will be removed permanently. Linked movements stay for audit.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

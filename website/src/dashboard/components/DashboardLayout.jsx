@@ -15,6 +15,7 @@ import {
 import Logo from '../../components/shared/Logo'
 import { logout, selectCurrentUser } from '../store/authSlice'
 import { api } from '../store/api'
+import { ConfirmProvider } from './ConfirmDialog'
 
 /**
  * Sidebar IA — categorised so users aren't faced with a flat 14-item list.
@@ -177,6 +178,7 @@ export default function DashboardLayout() {
   }
 
   return (
+    <ConfirmProvider>
     <div className="min-h-screen bg-lafoi-cream text-lafoi-dark flex font-body">
       {/* Mobile backdrop */}
       {mobileOpen && (
@@ -344,5 +346,6 @@ export default function DashboardLayout() {
         </div>
       </main>
     </div>
+    </ConfirmProvider>
   )
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import {
+import { useConfirm } from './ConfirmDialog'
   PencilSimple, LineSegment, Square, Circle as CircleIcon, ArrowRight,
   TextT, ArrowCounterClockwise, ArrowClockwise, Trash, FloppyDisk,
   CircleNotch,
@@ -98,6 +99,7 @@ function drawShape(ctx, shape) {
 }
 
 export default function DrawingCanvas({ projectId, onSaved, onClose, backgroundUrl = null }) {
+  const confirm = useConfirm()
   const canvasRef = useRef(null)
   const wrapRef = useRef(null)
   const [tool, setTool] = useState('pen')
@@ -198,9 +200,9 @@ export default function DrawingCanvas({ projectId, onSaved, onClose, backgroundU
     setShapes((s) => [...s, first])
     setRedoStack(rest)
   }
-  const clear = () => {
+  const clear = async () => {
     if (shapes.length === 0) return
-    if (!window.confirm('Clear the canvas?')) return
+    if (!(await confirm({ title: 'Clear the canvas?', message: 'Anything you\'ve drawn will be erased.', confirmLabel: 'Clear', danger: true }))) return
     setShapes([])
     setRedoStack([])
   }

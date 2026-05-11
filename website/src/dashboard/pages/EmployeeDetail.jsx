@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   ArrowLeft, Plus, Trash, CircleNotch, IdentificationBadge, Bank, Tray, ChartLineUp, User,
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
@@ -51,6 +52,7 @@ const TABS = [
 ]
 
 export default function EmployeeDetail() {
+  const confirm = useConfirm()
   const { id } = useParams()
   const [tab, setTab] = useState('profile')
 
@@ -199,7 +201,7 @@ function SalaryTab({ employeeId, currency }) {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm('Delete this salary history entry?')) return
+    if (!(await confirm({ title: 'Delete salary entry?', message: 'The salary history record will be removed.', confirmLabel: 'Delete', danger: true }))) return
     try {
       await deleteSH(row.id).unwrap()
       toast.success('Entry removed')

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useStore } from 'react-redux'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   ArrowLeft, ArrowRight, Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Download, Eye,
   ArrowsClockwise, Sparkle, CircleNotch, Check, Lock, ArrowCounterClockwise,
 } from '@phosphor-icons/react'
@@ -56,6 +57,7 @@ const empty = () => ({
 })
 
 export function PayrollList() {
+  const confirm = useConfirm()
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
@@ -104,7 +106,7 @@ export function PayrollList() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete payroll period "${row.name}"? Entries will be removed too.`)) return
+    if (!(await confirm({ title: 'Delete payroll period?', message: `"${row.name}" and every entry inside it will be removed.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {
@@ -250,6 +252,7 @@ export function PayrollList() {
 }
 
 export function PayrollDetail() {
+  const confirm = useConfirm()
   const { id } = useParams()
   const store = useStore()
   const dispatch = useDispatch()
@@ -299,7 +302,7 @@ export function PayrollDetail() {
   }
 
   const handleGenerate = async () => {
-    if (!window.confirm(`Generate draft entries for every active employee not already in this period?`)) return
+    if (!(await confirm({ title: 'Generate entries?', message: 'Draft payroll entries will be created for every active employee not already in this period.', confirmLabel: 'Generate' }))) return
     try {
       const response = await generate(period.id).unwrap()
       const created = response?.created ?? response?.count ?? 0

@@ -12,6 +12,7 @@ import RecipientPicker, { recipientPayload } from '../components/RecipientPicker
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   useListInvoicesQuery,
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
@@ -37,6 +38,7 @@ const empty = () => ({
 })
 
 export default function Invoices() {
+  const confirm = useConfirm()
   const store = useStore()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
@@ -113,7 +115,7 @@ export default function Invoices() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete invoice ${row.number}?`)) return
+    if (!(await confirm({ title: 'Delete invoice?', message: `Invoice ${row.number} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

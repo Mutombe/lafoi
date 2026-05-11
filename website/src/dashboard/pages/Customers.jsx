@@ -10,6 +10,7 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton, DangerB
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   useListCustomersQuery,
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
@@ -22,6 +23,7 @@ const empty = {
 }
 
 export default function Customers() {
+  const confirm = useConfirm()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -76,7 +78,7 @@ export default function Customers() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete customer “${row.name}”? This cannot be undone.`)) return
+    if (!(await confirm({ title: 'Delete customer?', message: `“${row.name}” will be removed permanently. This cannot be undone.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

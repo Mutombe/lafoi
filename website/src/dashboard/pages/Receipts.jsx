@@ -9,8 +9,10 @@ import { Select } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import { useListReceiptsQuery, useDeleteReceiptMutation, downloadPdf } from '../store/api'
+import { useConfirm } from '../components/ConfirmDialog'
 
 export default function Receipts() {
+  const confirm = useConfirm()
   const store = useStore()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
@@ -39,7 +41,7 @@ export default function Receipts() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete receipt ${row.number}? The invoice balance will be recalculated.`)) return
+    if (!(await confirm({ title: 'Delete receipt?', message: `Receipt ${row.number} will be removed. The invoice balance will be recalculated.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

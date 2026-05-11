@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch,
   X, ArrowDown, FilePdf,
 } from '@phosphor-icons/react'
@@ -49,6 +50,7 @@ const emptyLine = (itemId = '', unitCost = 0) => ({
 })
 
 export default function PurchaseOrders() {
+  const confirm = useConfirm()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -131,7 +133,7 @@ export default function PurchaseOrders() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete PO ${row.reference}?`)) return
+    if (!(await confirm({ title: 'Delete purchase order?', message: `PO ${row.reference} will be removed.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

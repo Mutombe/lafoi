@@ -10,6 +10,7 @@ import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   useListEmployeesQuery,
   useCreateEmployeeMutation,
   useUpdateEmployeeMutation,
@@ -33,6 +34,7 @@ const STATUS_PALETTE_EMP = {
 }
 
 export default function Employees() {
+  const confirm = useConfirm()
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
@@ -109,7 +111,7 @@ export default function Employees() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete employee ${row.full_name}? This cannot be undone.`)) return
+    if (!(await confirm({ title: 'Delete employee?', message: `${row.full_name} will be removed permanently. This cannot be undone.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

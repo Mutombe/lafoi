@@ -8,6 +8,7 @@ import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   useListPublicHolidaysQuery,
   useCreatePublicHolidayMutation,
   useDeletePublicHolidayMutation,
@@ -24,6 +25,7 @@ const MONTH_NAMES = [
 ]
 
 export default function Holidays() {
+  const confirm = useConfirm()
   const currentYear = new Date().getFullYear()
   const [year, setYear] = useState(currentYear)
   const [editing, setEditing] = useState(null)
@@ -68,7 +70,7 @@ export default function Holidays() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete "${row.name}"?`)) return
+    if (!(await confirm({ title: 'Delete holiday?', message: `"${row.name}" will be removed from the calendar.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {

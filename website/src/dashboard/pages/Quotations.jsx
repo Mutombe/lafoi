@@ -12,6 +12,7 @@ import RecipientPicker, { recipientPayload } from '../components/RecipientPicker
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   useListQuotationsQuery,
   useCreateQuotationMutation,
   useUpdateQuotationMutation,
@@ -81,6 +82,7 @@ const empty = () => ({
 })
 
 export default function Quotations() {
+  const confirm = useConfirm()
   const store = useStore()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
@@ -156,7 +158,7 @@ export default function Quotations() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete quotation ${row.number}?`)) return
+    if (!(await confirm({ title: 'Delete quotation?', message: `${row.number} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {
@@ -181,7 +183,7 @@ export default function Quotations() {
   }
 
   const handleConvert = async (row) => {
-    if (!window.confirm(`Convert ${row.number} into an invoice?`)) return
+    if (!(await confirm({ title: 'Convert to invoice?', message: `${row.number} will be marked converted, and a draft invoice created from its line items.`, confirmLabel: 'Convert' }))) return
     try {
       const invoice = await convert(row.id).unwrap()
       toast.success('Converted to invoice', { description: invoice?.number })

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   ArrowLeft, Plus, Trash, UploadSimple, FileText, Image as ImageIcon,
   Calendar, Plus as PlusIcon, CircleNotch, CheckCircle, Circle,
   Clock, MapPin, CurrencyDollar, Ruler, PencilSimple, PaintBrush,
@@ -440,6 +441,7 @@ function CoverHero({ project }) {
    ========================================================================= */
 
 export default function ProjectDetail() {
+  const confirm = useConfirm()
   const { id } = useParams()
   const { data: project, isLoading, refetch } = useGetProjectQuery(id)
   const [showUpdate, setShowUpdate] = useState(false)
@@ -1065,6 +1067,7 @@ function _RemovedCostModal({ open, onClose, project, editing, onSaved }) {
    ========================================================================= */
 
 function PhotosGrid({ files, onChange }) {
+  const confirm = useConfirm()
   const [deleteFile] = useDeleteProjectFileMutation()
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -1103,7 +1106,7 @@ function PhotosGrid({ files, onChange }) {
             )}
             <button
               onClick={async () => {
-                if (!window.confirm('Delete this photo?')) return
+                if (!(await confirm({ title: 'Delete photo?', message: 'The photo will be removed from this project.', confirmLabel: 'Delete', danger: true }))) return
                 try {
                   await deleteFile(f.id).unwrap()
                   toast.success('Photo removed', { description: f.title || f.file_name })
@@ -1124,6 +1127,7 @@ function PhotosGrid({ files, onChange }) {
 }
 
 function DocumentsGrid({ files, onChange }) {
+  const confirm = useConfirm()
   const [deleteFile] = useDeleteProjectFileMutation()
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -1152,7 +1156,7 @@ function DocumentsGrid({ files, onChange }) {
             )}
             <button
               onClick={async () => {
-                if (!window.confirm('Delete this file?')) return
+                if (!(await confirm({ title: 'Delete file?', message: 'The file will be removed from this project.', confirmLabel: 'Delete', danger: true }))) return
                 try {
                   await deleteFile(f.id).unwrap()
                   toast.success('File removed', { description: f.title || f.file_name })

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {
+import { useConfirm } from '../components/ConfirmDialog'
   ClockClockwise, Plus, Trash, PencilSimple, MagnifyingGlass,
   CircleNotch, CheckCircle, SignIn, SignOut, MapPin,
 } from '@phosphor-icons/react'
@@ -61,6 +62,7 @@ const liveHours = (clockIn) => {
 }
 
 export default function TimeClock() {
+  const confirm = useConfirm()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -197,7 +199,7 @@ export default function TimeClock() {
   }
 
   const handleDelete = async (row) => {
-    if (!window.confirm(`Delete clock entry for ${row.employee_name}? This cannot be undone.`)) return
+    if (!(await confirm({ title: 'Delete clock entry?', message: `The clock entry for ${row.employee_name} will be removed permanently.`, confirmLabel: 'Delete', danger: true }))) return
     try {
       await applyOptimistic(
         (draft) => {
