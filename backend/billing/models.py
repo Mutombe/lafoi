@@ -144,7 +144,22 @@ class Invoice(_MoneyMixin, models.Model):
         VOID = "void", "Void"
 
     number = models.CharField(max_length=24, unique=True, blank=True)
-    project = models.ForeignKey(Project, on_delete=models.PROTECT, related_name="invoices")
+    # Recipient is one of three shapes (matches Quotation): an existing
+    # project, an existing customer, or a free-form recipient.
+    project = models.ForeignKey(
+        Project, on_delete=models.PROTECT, related_name="invoices",
+        null=True, blank=True,
+    )
+    customer = models.ForeignKey(
+        "crm.Customer", on_delete=models.PROTECT, related_name="invoices",
+        null=True, blank=True,
+    )
+    recipient_name = models.CharField(max_length=200, blank=True)
+    recipient_contact = models.CharField(max_length=200, blank=True)
+    recipient_email = models.EmailField(blank=True)
+    recipient_phone = models.CharField(max_length=32, blank=True)
+    recipient_address = models.TextField(blank=True)
+
     quotation = models.ForeignKey(Quotation, on_delete=models.SET_NULL, null=True, blank=True, related_name="invoices")
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
 

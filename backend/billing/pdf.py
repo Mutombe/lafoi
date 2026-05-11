@@ -386,22 +386,22 @@ def _bill_to(customer, st):
     return parts
 
 
-def _quotation_recipient(quotation):
-    """Resolve the quotation's recipient into something _bill_to can render.
+def _quotation_recipient(doc):
+    """Resolve a Quotation or Invoice's recipient into something _bill_to can render.
 
     Precedence: project.customer -> standalone customer -> free-form
-    recipient dict built from quotation.recipient_* fields.
+    recipient dict built from the doc's recipient_* fields.
     """
-    if quotation.project_id and quotation.project and quotation.project.customer_id:
-        return quotation.project.customer
-    if getattr(quotation, "customer_id", None):
-        return quotation.customer
+    if getattr(doc, "project_id", None) and doc.project and doc.project.customer_id:
+        return doc.project.customer
+    if getattr(doc, "customer_id", None):
+        return doc.customer
     return {
-        "name": quotation.recipient_name,
-        "contact_person": quotation.recipient_contact,
-        "email": quotation.recipient_email,
-        "phone": quotation.recipient_phone,
-        "address": quotation.recipient_address,
+        "name": getattr(doc, "recipient_name", ""),
+        "contact_person": getattr(doc, "recipient_contact", ""),
+        "email": getattr(doc, "recipient_email", ""),
+        "phone": getattr(doc, "recipient_phone", ""),
+        "address": getattr(doc, "recipient_address", ""),
     }
 
 
@@ -616,8 +616,8 @@ def render_invoice_pdf(invoice) -> bytes:
     )
     st = _styles()
 
-    project = invoice.project
-    customer = project.customer if project else None
+    project = invoice.project if invoice.project_id else None
+    customer = _quotation_recipient(invoice)
 
     flow = []
     flow.append(_header_flowable("Invoice", invoice.number, st))
@@ -628,9 +628,10 @@ def render_invoice_pdf(invoice) -> bytes:
     meta_rows = [
         ("Issue date", invoice.issue_date.strftime("%d %b %Y") if invoice.issue_date else "—"),
         ("Due date", invoice.due_date.strftime("%d %b %Y") if invoice.due_date else "—"),
-        ("Project", f"{project.code} — {project.title}" if project else "—"),
-        ("Status", invoice.get_status_display()),
     ]
+    if project:
+        meta_rows.append(("Project", f"{project.code} — {project.title}"))
+    meta_rows.append(("Status", invoice.get_status_display()))
     bill_block = _bill_to(customer, st)
     meta_table = _meta_block(meta_rows, st)
     head_table = Table([[bill_block, meta_table]], colWidths=[None, 80 * mm])
@@ -716,8 +717,8 @@ def render_receipt_pdf(receipt) -> bytes:
     st = _styles()
 
     invoice = receipt.invoice
-    project = invoice.project if invoice else None
-    customer = project.customer if project else None
+    project = (invoice.project if invoice and invoice.project_id else None)
+    customer = _quotation_recipient(invoice) if invoice else None
 
     flow = []
     flow.append(_header_flowable("Receipt", receipt.number, st))
@@ -730,8 +731,9 @@ def render_receipt_pdf(receipt) -> bytes:
         ("Method", receipt.get_method_display()),
         ("Reference", receipt.reference or "—"),
         ("Invoice", invoice.number if invoice else "—"),
-        ("Project", f"{project.code} — {project.title}" if project else "—"),
     ]
+    if project:
+        meta_rows.append(("Project", f"{project.code} — {project.title}"))
     bill_block = _bill_to(customer, st)
     meta_table = _meta_block(meta_rows, st)
     head_table = Table([[bill_block, meta_table]], colWidths=[None, 80 * mm])

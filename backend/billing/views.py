@@ -36,6 +36,12 @@ class QuotationViewSet(viewsets.ModelViewSet):
         with transaction.atomic():
             invoice = Invoice.objects.create(
                 project=quotation.project,
+                customer=quotation.customer,
+                recipient_name=quotation.recipient_name,
+                recipient_contact=quotation.recipient_contact,
+                recipient_email=quotation.recipient_email,
+                recipient_phone=quotation.recipient_phone,
+                recipient_address=quotation.recipient_address,
                 quotation=quotation,
                 status=Invoice.Status.DRAFT,
                 subject=quotation.subject,

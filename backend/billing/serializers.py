@@ -104,12 +104,16 @@ class InvoiceSerializer(serializers.ModelSerializer):
     items = InvoiceItemSerializer(many=True, required=False)
     project_code = serializers.CharField(source="project.code", read_only=True)
     project_title = serializers.CharField(source="project.title", read_only=True)
-    customer_name = serializers.CharField(source="project.customer.name", read_only=True)
+    customer_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Invoice
         fields = (
-            "id", "number", "project", "project_code", "project_title", "customer_name",
+            "id", "number",
+            "project", "project_code", "project_title",
+            "customer", "customer_name",
+            "recipient_name", "recipient_contact", "recipient_email",
+            "recipient_phone", "recipient_address",
             "quotation", "status", "issue_date", "due_date", "subject",
             "currency", "subtotal", "tax_rate", "tax_amount", "discount_amount", "total",
             "amount_paid", "balance_due",
@@ -119,6 +123,21 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "id", "number", "subtotal", "tax_amount", "total", "amount_paid", "balance_due",
             "created_at", "updated_at", "project_code", "project_title", "customer_name",
         )
+
+    def get_customer_name(self, obj):
+        if obj.project_id and obj.project.customer_id:
+            return obj.project.customer.name
+        if obj.customer_id:
+            return obj.customer.name
+        return obj.recipient_name or ""
+
+    def validate(self, attrs):
+        get = lambda key: attrs.get(key, getattr(self.instance, key, None) if self.instance else None)
+        if not (get("project") or get("customer") or (get("recipient_name") or "").strip()):
+            raise serializers.ValidationError(
+                "Pick a project, pick a customer, or fill the free-form recipient name."
+            )
+        return attrs
 
     def _save_items(self, invoice: Invoice, items_data):
         if items_data is None:

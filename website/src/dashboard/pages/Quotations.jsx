@@ -8,6 +8,7 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '.
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import LineItemEditor from '../components/LineItemEditor'
+import RecipientPicker, { recipientPayload } from '../components/RecipientPicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
@@ -114,47 +115,12 @@ export default function Quotations() {
   const handleSave = async (e) => {
     e.preventDefault()
     setError('')
-    // Build the recipient block based on the picker mode so we don't ship
-    // stale values from the other two options.
-    const mode = editing.recipient_mode || 'project'
-    let recipient = {}
-    if (mode === 'project') {
-      if (!editing.project) {
-        setError('Pick a project, or switch to the customer / new recipient mode.')
-        return
-      }
-      recipient = {
-        project: Number(editing.project),
-        customer: null,
-        recipient_name: '', recipient_contact: '', recipient_email: '',
-        recipient_phone: '', recipient_address: '',
-      }
-    } else if (mode === 'customer') {
-      if (!editing.customer) {
-        setError('Pick a customer, or switch to a project / new recipient.')
-        return
-      }
-      recipient = {
-        project: null,
-        customer: Number(editing.customer),
-        recipient_name: '', recipient_contact: '', recipient_email: '',
-        recipient_phone: '', recipient_address: '',
-      }
-    } else {
-      // freeform
-      if (!(editing.recipient_name || '').trim()) {
-        setError('Type at least a recipient name, or switch modes.')
-        return
-      }
-      recipient = {
-        project: null,
-        customer: null,
-        recipient_name: editing.recipient_name.trim(),
-        recipient_contact: editing.recipient_contact || '',
-        recipient_email: editing.recipient_email || '',
-        recipient_phone: editing.recipient_phone || '',
-        recipient_address: editing.recipient_address || '',
-      }
+    let recipient
+    try {
+      recipient = recipientPayload(editing)
+    } catch (msg) {
+      setError(typeof msg === 'string' ? msg : 'Pick a recipient.')
+      return
     }
     const payload = {
       ...recipient,
@@ -365,144 +331,3 @@ export default function Quotations() {
 }
 
 
-/* ============================================================================
-   RecipientPicker — three-mode toggle for who the quotation is written to.
-
-   Mode 'project'  : pick an existing project (default — pulls customer
-                     from the project record).
-   Mode 'customer' : pick a customer without a project yet, e.g. an early
-                     quote before the engagement is scoped.
-   Mode 'freeform' : type a new recipient inline. Useful for cold-lead
-                     quotes, referrals, or one-off clients who aren't in
-                     the customer book yet.
-   ============================================================================ */
-
-function RecipientPicker({ editing, setEditing, projects, customers }) {
-  const mode = editing.recipient_mode || 'project'
-  const setMode = (m) => setEditing({ ...editing, recipient_mode: m })
-
-  const tabs = [
-    { key: 'project',  label: 'Project',        sub: 'Existing project' },
-    { key: 'customer', label: 'Customer',       sub: 'No project yet' },
-    { key: 'freeform', label: 'New recipient',  sub: 'Free-form details' },
-  ]
-
-  return (
-    <div className="rounded-2xl border border-lafoi-dark/10 bg-lafoi-cream/60 p-4">
-      <div className="flex items-center gap-3 mb-3">
-        <span className="block w-6 h-px bg-lafoi-green/60" />
-        <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-green-dark">
-          Quotation for
-        </p>
-      </div>
-
-      {/* Three pills */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {tabs.map((t) => {
-          const active = mode === t.key
-          return (
-            <button
-              key={t.key}
-              type="button"
-              onClick={() => setMode(t.key)}
-              className={`flex flex-col items-start text-left px-4 py-2.5 rounded-2xl border transition-all duration-200 ${
-                active
-                  ? 'bg-lafoi-dark text-white border-lafoi-dark shadow-[0_6px_18px_-10px_rgba(17,17,17,0.4)]'
-                  : 'bg-white text-lafoi-gray border-lafoi-dark/10 hover:border-lafoi-green/40 hover:text-lafoi-dark'
-              }`}
-            >
-              <span className="font-sora text-[11px] tracking-wide font-medium">{t.label}</span>
-              <span className={`text-[10px] mt-0.5 tracking-[0.16em] uppercase ${active ? 'text-white/70' : 'text-lafoi-gray-medium'}`}>
-                {t.sub}
-              </span>
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Mode-specific body */}
-      {mode === 'project' && (
-        <Field label="Project" required>
-          <Select
-            value={editing.project || ''}
-            onChange={(e) => setEditing({ ...editing, project: e.target.value })}
-            required
-          >
-            <option value="">— Select project —</option>
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>{p.code} — {p.title}</option>
-            ))}
-          </Select>
-          <p className="text-[11px] text-lafoi-gray-medium mt-1.5">
-            The bill-to block on the PDF will use the project's customer record.
-          </p>
-        </Field>
-      )}
-
-      {mode === 'customer' && (
-        <Field label="Customer" required>
-          <Select
-            value={editing.customer || ''}
-            onChange={(e) => setEditing({ ...editing, customer: e.target.value })}
-            required
-          >
-            <option value="">— Select customer —</option>
-            {customers.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}{c.contact_person ? ` · ${c.contact_person}` : ''}</option>
-            ))}
-          </Select>
-          <p className="text-[11px] text-lafoi-gray-medium mt-1.5">
-            No project gets linked. You can convert this quotation into a project
-            later when the work is scoped.
-          </p>
-        </Field>
-      )}
-
-      {mode === 'freeform' && (
-        <div className="grid sm:grid-cols-2 gap-3">
-          <Field label="Recipient name" required className="sm:col-span-2">
-            <Input
-              value={editing.recipient_name}
-              onChange={(e) => setEditing({ ...editing, recipient_name: e.target.value })}
-              placeholder="e.g. Tendai Moyo, Borrowdale Residence"
-              required
-            />
-          </Field>
-          <Field label="Contact person">
-            <Input
-              value={editing.recipient_contact}
-              onChange={(e) => setEditing({ ...editing, recipient_contact: e.target.value })}
-              placeholder="e.g. Tendai (Owner)"
-            />
-          </Field>
-          <Field label="Email">
-            <Input
-              type="email"
-              value={editing.recipient_email}
-              onChange={(e) => setEditing({ ...editing, recipient_email: e.target.value })}
-              placeholder="name@example.com"
-            />
-          </Field>
-          <Field label="Phone">
-            <Input
-              value={editing.recipient_phone}
-              onChange={(e) => setEditing({ ...editing, recipient_phone: e.target.value })}
-              placeholder="+263 …"
-            />
-          </Field>
-          <Field label="Address">
-            <Input
-              value={editing.recipient_address}
-              onChange={(e) => setEditing({ ...editing, recipient_address: e.target.value })}
-              placeholder="Suite, street, suburb, city"
-            />
-          </Field>
-          <p className="text-[11px] text-lafoi-gray-medium sm:col-span-2 -mt-1">
-            Nothing here gets saved into your customer book. If this becomes
-            a recurring client, add them under Customers afterwards.
-          </p>
-        </div>
-      )}
-    </div>
-  )
-}

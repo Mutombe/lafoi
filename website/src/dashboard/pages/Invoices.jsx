@@ -8,6 +8,7 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '.
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import LineItemEditor from '../components/LineItemEditor'
+import RecipientPicker, { recipientPayload } from '../components/RecipientPicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import {
@@ -16,6 +17,7 @@ import {
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
   useListProjectsQuery,
+  useListCustomersQuery,
   useCreateReceiptMutation,
   downloadPdf,
 } from '../store/api'
@@ -25,6 +27,13 @@ const empty = () => ({
   due_date: '', status: 'draft', currency: 'USD',
   tax_rate: 0, discount_amount: 0, notes: '', terms: '',
   items: [{ description: '', a: '', b: '', qty: 1, quantity: 1, unit: 'm²', unit_price: 0 }],
+  recipient_mode: 'project',
+  customer: '',
+  recipient_name: '',
+  recipient_contact: '',
+  recipient_email: '',
+  recipient_phone: '',
+  recipient_address: '',
 })
 
 export default function Invoices() {
@@ -48,6 +57,7 @@ export default function Invoices() {
   }
   const { data, isLoading: isFirstLoad, isFetching } = useListInvoicesQuery(queryArgs)
   const { data: projects } = useListProjectsQuery({ page_size: 200 })
+  const { data: customers } = useListCustomersQuery({ page_size: 500 })
 
   const applyOptimistic = useOptimisticListUpdate('listInvoices', queryArgs)
 
@@ -62,8 +72,15 @@ export default function Invoices() {
   const handleSave = async (e) => {
     e.preventDefault()
     setError('')
+    let recipient
+    try {
+      recipient = recipientPayload(editing)
+    } catch (msg) {
+      setError(typeof msg === 'string' ? msg : 'Pick a recipient.')
+      return
+    }
     const payload = {
-      project: Number(editing.project),
+      ...recipient,
       subject: editing.subject || '',
       issue_date: editing.issue_date,
       due_date: editing.due_date || null,
@@ -219,14 +236,17 @@ export default function Invoices() {
         {editing && (
           <form id="inv-form" onSubmit={handleSave} className="grid gap-4">
             {error && <div className="px-3 py-2 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>}
+
+            <RecipientPicker
+              editing={editing}
+              setEditing={setEditing}
+              projects={projects?.results || []}
+              customers={customers?.results || []}
+              documentNoun="invoice"
+            />
+
             <div className="grid sm:grid-cols-2 gap-4">
-              <Field label="Project" required>
-                <Select value={editing.project || ''} onChange={(e) => setEditing({ ...editing, project: e.target.value })} required>
-                  <option value="">— Select project —</option>
-                  {(projects?.results || []).map((p) => <option key={p.id} value={p.id}>{p.code} — {p.title}</option>)}
-                </Select>
-              </Field>
-              <Field label="Subject">
+              <Field label="Subject" className="sm:col-span-2">
                 <Input value={editing.subject} onChange={(e) => setEditing({ ...editing, subject: e.target.value })} />
               </Field>
               <Field label="Issue date" required>
