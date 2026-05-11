@@ -20,11 +20,52 @@ import {
   downloadPdf,
 } from '../store/api'
 
+// Default terms block that ships with every new quotation. Editable in the
+// modal so the team can adjust per-quote when needed; mirrors the standard
+// terms baked into the PDF generator.
+const DEFAULT_QUOTATION_TERMS = `Warranty:
+• Stretch ceiling PVC: 10 years.
+• Delayed or incomplete payments will pause work and void the warranty.
+• Water and electricity must be available on site.
+
+Payment Terms:
+• 90% advance / 10% on completion.
+• All payments made are non-refundable once work has commenced or after completion.
+• Delayed or incomplete payments will pause work and void the warranty.
+• Water and electricity must be available on site.
+
+Lead Time / Waiting Period:
+• The estimated lead time for project commencement is subject to size, design and scope.
+• Small projects under 100 m² typically require 3 to 4 weeks from deposit confirmation to installation start date.
+• Large projects exceeding 100 m² typically require 1 to 2 months.
+• All ceilings are custom-made per client specifications, therefore lead time may differ based on design complexity, material selection and product requirements.
+
+Work Execution:
+• Completion within 10 working days after order, payment and design approval.
+• Delays caused by other contractors or client work are not our responsibility.
+• Scaffolding and site protection to be provided by client (extra if required).
+
+General Terms:
+• Extra work or materials needed on site will be charged separately.
+• Openings for lights, grilles or other fixtures are not included unless quoted.
+• Work based on regular hours (Sunday to Friday); night/weekend cost extra.
+• Variations must be approved before execution.
+• No 'pay-when-paid', bond or security cheques accepted.
+
+Not Included:
+• Spotlights, chandeliers, grilles, gypsum/MDF/aluminium boxes and image designs (unless quoted).
+• Authority fees, approvals or access equipment above 3 m (unless stated).`
+
+const DEFAULT_QUOTATION_NOTES = `Quoted in m². Quantity per line is entered as length × width on site.
+We appreciate your consideration and look forward to delivering a high-quality, lasting ceiling solution.`
+
 const empty = () => ({
   project: '', subject: '', issue_date: new Date().toISOString().slice(0, 10),
   expiry_date: '', status: 'draft', currency: 'USD',
-  tax_rate: 0, discount_amount: 0, notes: '', terms: '',
-  items: [{ description: '', quantity: 1, unit: 'unit', unit_price: 0 }],
+  tax_rate: 0, discount_amount: 0,
+  notes: DEFAULT_QUOTATION_NOTES,
+  terms: DEFAULT_QUOTATION_TERMS,
+  items: [{ description: '', quantity: 1, unit: 'm²', unit_price: 0, length: '', width: '' }],
 })
 
 export default function Quotations() {
