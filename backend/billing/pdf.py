@@ -128,6 +128,146 @@ def _company():
     return getattr(settings, "COMPANY", {})
 
 
+# ---------------------------------------------------------------------------
+# Static reference data printed onto every billing document
+# ---------------------------------------------------------------------------
+
+BANK_DETAILS = {
+    "bank": "CBZ",
+    "branch": "Borrowdale",
+    "account_name": "La Foi Designs (Pvt) Ltd",
+    "usd_account": "02927377770013",
+    "zwg_account": "02927377770023",
+}
+
+# Quotation-only terms blocks. Each entry is (heading, list_of_lines).
+# Rendered as a stack of titled blocks at the bottom of the quotation.
+QUOTATION_TERMS = [
+    (
+        "Warranty",
+        [
+            "Stretch ceiling PVC: 10 years.",
+            "Delayed or incomplete payments will pause work and void the warranty.",
+            "Water and electricity must be available on site.",
+        ],
+    ),
+    (
+        "Payment Terms",
+        [
+            "90% advance / 10% on completion.",
+            "All payments made are non-refundable once work has commenced or after completion.",
+            "Delayed or incomplete payments will pause work and void the warranty.",
+            "Water and electricity must be available on site.",
+        ],
+    ),
+    (
+        "Lead Time / Waiting Period",
+        [
+            "The estimated lead time for project commencement is subject to size, design and scope.",
+            "Small projects under 100 m² typically require 3 to 4 weeks from deposit confirmation to installation start date.",
+            "Large projects exceeding 100 m² typically require 1 to 2 months.",
+            "All ceilings are custom-made per client specifications, therefore lead time may differ based on design complexity, material selection and product requirements.",
+        ],
+    ),
+    (
+        "Work Execution",
+        [
+            "Completion within 10 working days after order, payment and design approval.",
+            "Delays caused by other contractors or client work are not our responsibility.",
+            "Scaffolding and site protection to be provided by client (extra if required).",
+        ],
+    ),
+    (
+        "General Terms",
+        [
+            "Extra work or materials needed on site will be charged separately.",
+            "Openings for lights, grilles or other fixtures are not included unless quoted.",
+            "Work based on regular hours (Sunday to Friday); night/weekend cost extra.",
+            "Variations must be approved before execution.",
+            "No 'pay-when-paid', bond or security cheques accepted.",
+        ],
+    ),
+    (
+        "Not Included",
+        [
+            "Spotlights, chandeliers, grilles, gypsum/MDF/aluminium boxes and image designs (unless quoted).",
+            "Authority fees, approvals or access equipment above 3 m (unless stated).",
+        ],
+    ),
+]
+
+
+def _contact_lines(co: dict) -> list[str]:
+    """Address + phones + email + website, as HTML-safe lines for header use."""
+    lines = []
+    if co.get("address"):
+        lines.append(co["address"])
+    phones = " &middot; ".join(filter(None, [co.get("phone_primary"), co.get("phone_secondary")]))
+    contact = " &middot; ".join(filter(None, [phones, co.get("email")]))
+    if contact:
+        lines.append(contact)
+    if co.get("website"):
+        lines.append(co["website"])
+    return lines
+
+
+def _bank_details_flowable(st):
+    """A bordered block listing bank account info — same layout on invoice, receipt and quotation."""
+    title = Paragraph("BANK DETAILS", st["LFEyebrow"])
+    rows = [
+        ("Bank", BANK_DETAILS["bank"]),
+        ("Branch", BANK_DETAILS["branch"]),
+        ("Account name", BANK_DETAILS["account_name"]),
+        ("USD account", BANK_DETAILS["usd_account"]),
+        ("ZWG account", BANK_DETAILS["zwg_account"]),
+    ]
+    body = []
+    for label, value in rows:
+        body.append([
+            Paragraph(label.upper(), st["LFLabel"]),
+            Paragraph(value, st["LFValue"]),
+        ])
+    inner = Table(body, colWidths=[34 * mm, None])
+    inner.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    wrap = Table([[title], [Spacer(1, 4)], [inner]], colWidths=[None])
+    wrap.setStyle(TableStyle([
+        ("BOX", (0, 0), (-1, -1), 0.6, BRAND_GREEN),
+        ("BACKGROUND", (0, 0), (-1, -1), BRAND_BG),
+        ("LEFTPADDING", (0, 0), (-1, -1), 12),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 12),
+        ("TOPPADDING", (0, 0), (-1, -1), 10),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+    ]))
+    return wrap
+
+
+def _quotation_terms_flowable(st):
+    """Six titled terms blocks. Quotation-only."""
+    parts = []
+    parts.append(Paragraph("TERMS &amp; CONDITIONS", st["LFEyebrow"]))
+    parts.append(Spacer(1, 6))
+    for heading, bullets in QUOTATION_TERMS:
+        parts.append(Paragraph(heading, ParagraphStyle(
+            "TermsHead", parent=st["LFValue"],
+            fontSize=10, textColor=BRAND_GREEN, spaceAfter=2,
+        )))
+        bullet_html = "<br/>".join(f"&bull;&nbsp;&nbsp;{line}" for line in bullets)
+        parts.append(Paragraph(bullet_html, st["LFBodySmall"]))
+        parts.append(Spacer(1, 8))
+    parts.append(Spacer(1, 4))
+    parts.append(Paragraph(
+        "We appreciate your consideration and look forward to working with you to deliver a high-quality, lasting ceiling solution.",
+        ParagraphStyle("TermsOutro", parent=st["LFBodySmall"], textColor=BRAND_DARK, fontSize=8, leading=11),
+    ))
+    return parts
+
+
 def _logo_flowable(width_mm: float = 45):
     """Return an Image flowable for the brand logo, or None if file missing."""
     path = getattr(settings, "BRAND_LOGO_PATH", None)
@@ -151,15 +291,7 @@ def _header_flowable(doc_label: str, doc_number: str, st):
     co = _company()
     logo = _logo_flowable(width_mm=42)
 
-    address_parts = []
-    if co.get("address"):
-        address_parts.append(co["address"])
-    contact = " &middot; ".join(filter(None, [co.get("phone_primary"), co.get("email")]))
-    if contact:
-        address_parts.append(contact)
-    if co.get("website"):
-        address_parts.append(co["website"])
-    address_html = "<br/>".join(address_parts)
+    address_html = "<br/>".join(_contact_lines(co))
 
     left = []
     if logo is not None:
@@ -348,7 +480,8 @@ def _document_footer(canvas, doc):
 
     canvas.setFont("Helvetica", 7)
     canvas.setFillColor(BRAND_GRAY_LIGHT)
-    line = " · ".join(filter(None, [co.get("name"), co.get("phone_primary"), co.get("email"), co.get("website")]))
+    phones = " · ".join(filter(None, [co.get("phone_primary"), co.get("phone_secondary")]))
+    line = " · ".join(filter(None, [co.get("name"), phones, co.get("email"), co.get("website")]))
     canvas.drawString(15 * mm, 12 * mm, line)
     canvas.drawRightString(A4[0] - 15 * mm, 12 * mm, f"Page {canvas.getPageNumber()}")
     canvas.restoreState()
@@ -425,8 +558,14 @@ def render_quotation_pdf(quotation) -> bytes:
         flow.append(Paragraph(quotation.notes.replace("\n", "<br/>"), st["LFBody"]))
         flow.append(Spacer(1, 8))
     if quotation.terms:
-        flow.append(Paragraph("TERMS", st["LFEyebrow"]))
+        flow.append(Paragraph("ADDITIONAL TERMS", st["LFEyebrow"]))
         flow.append(Paragraph(quotation.terms.replace("\n", "<br/>"), st["LFBody"]))
+        flow.append(Spacer(1, 10))
+
+    # Bank details + the standard quotation terms blocks
+    flow.append(_bank_details_flowable(st))
+    flow.append(Spacer(1, 14))
+    flow.extend(_quotation_terms_flowable(st))
 
     doc.build(flow, onFirstPage=_document_footer, onLaterPages=_document_footer)
     return buf.getvalue()
@@ -523,6 +662,9 @@ def render_invoice_pdf(invoice) -> bytes:
     if invoice.terms:
         flow.append(Paragraph("PAYMENT TERMS", st["LFEyebrow"]))
         flow.append(Paragraph(invoice.terms.replace("\n", "<br/>"), st["LFBody"]))
+        flow.append(Spacer(1, 10))
+
+    flow.append(_bank_details_flowable(st))
 
     doc.build(flow, onFirstPage=_document_footer, onLaterPages=_document_footer)
     return buf.getvalue()
@@ -626,6 +768,9 @@ def render_receipt_pdf(receipt) -> bytes:
         flow.append(Spacer(1, 12))
         flow.append(Paragraph("NOTES", st["LFEyebrow"]))
         flow.append(Paragraph(receipt.notes.replace("\n", "<br/>"), st["LFBody"]))
+
+    flow.append(Spacer(1, 14))
+    flow.append(_bank_details_flowable(st))
 
     doc.build(flow, onFirstPage=_document_footer, onLaterPages=_document_footer)
     return buf.getvalue()
