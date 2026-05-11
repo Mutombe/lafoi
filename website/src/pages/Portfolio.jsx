@@ -15,6 +15,7 @@ import VideoShowcase from '../components/ui/VideoShowcase'
 import MagneticCard from '../components/ui/MagneticCard'
 import KineticTextStrip from '../components/ui/KineticTextStrip'
 import { useSEO, breadcrumbsLd } from '../utils/seo'
+import { projects as siteProjects } from '../data/site'
 import { linkifyProse } from '../utils/linkify.jsx'
 
 const PORTFOLIO_HERO_SLIDES = [
@@ -37,101 +38,23 @@ const PORTFOLIO_HERO_SLIDES = [
 
 const categories = ['All', 'Residential', 'Commercial', 'Hospitality', 'Retail']
 
-const projects = [
-  {
-    id: 1,
-    title: 'Borrowdale Residence',
-    category: 'Residential',
-    location: 'Borrowdale',
-    year: '2024',
-    image: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1200&q=80',
-    desc: 'Matte white stretch ceiling with perimeter LED cove lighting in a luxury home.',
-    tall: true,
-    vision: 'Elegant living room with premium ceiling design',
-  },
-  {
-    id: 2,
-    title: 'Hospitality Ballroom',
-    category: 'Hospitality',
-    location: 'CBD, Harare',
-    year: '2024',
-    image: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=1200&q=80',
-    desc: 'Translucent backlit ceiling spanning the entire ballroom with colour-changing LED.',
-    vision: 'Luxurious lobby with backlit ceiling',
-  },
-  {
-    id: 3,
-    title: 'Belgravia Commercial Office',
-    category: 'Commercial',
-    location: 'Belgravia',
-    year: '2024',
-    image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1200&q=80',
-    desc: 'Acoustic micro-perforated ceilings across an open-plan office.',
-    vision: 'Open-plan office with acoustic ceiling',
-  },
-  {
-    id: 4,
-    title: 'Borrowdale Mall Atrium',
-    category: 'Retail',
-    location: 'Harare',
-    year: '2024',
-    image: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=1200&q=80',
-    desc: '3D wave-form ceilings creating dynamic visual flow through the retail space.',
-    tall: true,
-    vision: 'Building with dramatic architectural ceiling',
-  },
-  {
-    id: 5,
-    title: 'Avondale Villa',
-    category: 'Residential',
-    location: 'Avondale',
-    year: '2024',
-    image: 'https://images.unsplash.com/photo-1765434670017-c0d28ecde29a?w=1200&q=80',
-    desc: 'Fibre-optic starry sky ceiling in a master bedroom suite.',
-    vision: 'Modern bedroom with ambient lighting',
-  },
-  {
-    id: 6,
-    title: 'Borrowdale Fine Dining',
-    category: 'Hospitality',
-    location: 'Avondale',
-    year: '2025',
-    image: 'https://images.unsplash.com/photo-1618259715220-a89a4e4da76b?w=1200&q=80',
-    desc: 'Printed cloud ceiling with ambient warm lighting for a fine-dining atmosphere.',
-    vision: 'Country hotel interior with elegant design',
-  },
-  {
-    id: 7,
-    title: 'Highlands Spa & Wellness',
-    category: 'Hospitality',
-    location: 'Harare',
-    year: '2025',
-    image: 'https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=1200&q=80',
-    desc: 'Printed blue sky ceiling over the pool area with moisture-proof stretch membrane.',
-    tall: true,
-    vision: 'Indoor pool with natural light from above',
-  },
-  {
-    id: 8,
-    title: 'Borrowdale Flagship Showroom',
-    category: 'Retail',
-    location: 'Borrowdale',
-    year: '2025',
-    image: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1200&q=80',
-    desc: 'Glossy stretch ceiling with integrated spotlighting for a modern retail showroom.',
-    vision: 'Modern lobby with marble floors and decorative ceiling',
-  },
-  {
-    id: 9,
-    title: 'Highlands Home',
-    category: 'Residential',
-    location: 'Highlands',
-    year: '2025',
-    image: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=1200&q=80',
-    desc: 'Full home installation, living room, bedrooms, and bathroom stretch ceilings.',
-    vision: 'Luxury modern living room with premium ceiling',
-  },
-]
+// Source from the single central projects list so the Portfolio gallery
+// always reflects real La Foi work. Mapped into the shape this masonry
+// component expects: id / title / category / location / year / image /
+// desc / tall / vision. The `tall` flag pattern is preserved by index so
+// the masonry breathes.
+const projects = siteProjects.map((p, i) => ({
+  id: p.slug,
+  slug: p.slug,
+  title: p.title,
+  category: p.category,
+  location: p.location,
+  year: String(p.year),
+  image: p.thumb || p.hero,
+  desc: (p.brief || p.vision || '').slice(0, 200),
+  tall: i % 3 === 0,
+  vision: p.vision,
+}))
 
 export default function Portfolio() {
   const [filter, setFilter] = useState('All')

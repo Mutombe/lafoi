@@ -31,6 +31,8 @@ const navGroups = [
       { name: 'Stretch Ceilings',  path: '/services/stretch-ceiling-installation', icon: SquaresFour, desc: 'Premium membrane systems' },
       { name: 'Lighting Solutions', path: '/services/lighting-solutions',          icon: Lightbulb,   desc: 'Architectural illumination' },
       { name: 'Interior Design',    path: '/services/interior-design',             icon: PaintBrush,  desc: 'Concept to completion' },
+      { name: 'Flooring',           path: '/services/flooring',                    icon: Stack,       desc: 'Hardwood, vinyl, parquet' },
+      { name: 'Epoxy Flooring',     path: '/services/epoxy-flooring',              icon: Drop,        desc: 'Seamless resin systems' },
       { name: 'All Services',       path: '/services',                             icon: Palette,     desc: 'Full service catalog' },
       { name: 'Products',           path: '/products',                             icon: Package,     desc: 'Membranes, lighting & accessories' },
     ],
