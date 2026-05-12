@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from billing.pdf import render_payslip_pdf
+from compliance.permissions import HasModuleAccess
 
 from .models import (
     ClockEntry,
@@ -45,6 +46,7 @@ from .serializers import (
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+    permission_classes = [HasModuleAccess.for_module("employees")]
     filterset_fields = ("status", "department", "pay_frequency")
     search_fields = ("employee_code", "first_name", "last_name", "email", "phone", "department", "job_title")
     ordering_fields = ("hire_date", "first_name", "last_name", "base_salary")
@@ -88,6 +90,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 class PayrollPeriodViewSet(viewsets.ModelViewSet):
     queryset = PayrollPeriod.objects.prefetch_related("entries", "entries__employee").all()
     serializer_class = PayrollPeriodSerializer
+    permission_classes = [HasModuleAccess.for_module("payroll")]
     filterset_fields = ("status",)
     search_fields = ("name",)
     ordering_fields = ("period_end", "created_at", "total_net")
@@ -231,6 +234,7 @@ class PayrollPeriodViewSet(viewsets.ModelViewSet):
 
 
 class PayrollEntryViewSet(viewsets.ModelViewSet):
+    permission_classes = [HasModuleAccess.for_module("payroll")]
     queryset = PayrollEntry.objects.select_related("period", "employee").all()
     serializer_class = PayrollEntrySerializer
     filterset_fields = ("period", "employee")
@@ -280,6 +284,7 @@ class PayrollEntryViewSet(viewsets.ModelViewSet):
 class SalaryHistoryViewSet(viewsets.ModelViewSet):
     queryset = SalaryHistory.objects.select_related("employee").all()
     serializer_class = SalaryHistorySerializer
+    permission_classes = [HasModuleAccess.for_module("payroll")]
     filterset_fields = ("employee",)
     ordering_fields = ("effective_from", "created_at")
 
@@ -290,6 +295,7 @@ class SalaryHistoryViewSet(viewsets.ModelViewSet):
 class EmployeeLoanViewSet(viewsets.ModelViewSet):
     queryset = EmployeeLoan.objects.select_related("employee").prefetch_related("repayments").all()
     serializer_class = EmployeeLoanSerializer
+    permission_classes = [HasModuleAccess.for_module("loans")]
     filterset_fields = ("employee", "status", "kind")
     search_fields = ("reference", "employee__first_name", "employee__last_name", "notes")
     ordering_fields = ("issued_on", "balance", "created_at")
@@ -301,6 +307,7 @@ class EmployeeLoanViewSet(viewsets.ModelViewSet):
 class LoanRepaymentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = LoanRepayment.objects.select_related("loan", "period", "payroll_entry").all()
     serializer_class = LoanRepaymentSerializer
+    permission_classes = [HasModuleAccess.for_module("loans")]
     filterset_fields = ("loan", "period")
     ordering_fields = ("applied_on", "created_at")
 
@@ -308,6 +315,7 @@ class LoanRepaymentViewSet(viewsets.ReadOnlyModelViewSet):
 class LeaveTypeViewSet(viewsets.ModelViewSet):
     queryset = LeaveType.objects.all()
     serializer_class = LeaveTypeSerializer
+    permission_classes = [HasModuleAccess.for_module("leave")]
     filterset_fields = ("is_active", "paid")
     ordering_fields = ("sort_order", "label")
 
@@ -315,12 +323,14 @@ class LeaveTypeViewSet(viewsets.ModelViewSet):
 class LeaveBalanceViewSet(viewsets.ModelViewSet):
     queryset = LeaveBalance.objects.select_related("employee", "leave_type").all()
     serializer_class = LeaveBalanceSerializer
+    permission_classes = [HasModuleAccess.for_module("leave")]
     filterset_fields = ("employee", "leave_type")
 
 
 class LeaveRequestViewSet(viewsets.ModelViewSet):
     queryset = LeaveRequest.objects.select_related("employee", "leave_type", "decision_by").all()
     serializer_class = LeaveRequestSerializer
+    permission_classes = [HasModuleAccess.for_module("leave")]
     filterset_fields = ("employee", "leave_type", "status")
     search_fields = ("employee__first_name", "employee__last_name", "reason")
     ordering_fields = ("start_date", "created_at")
@@ -363,6 +373,7 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
 class PublicHolidayViewSet(viewsets.ModelViewSet):
     queryset = PublicHoliday.objects.all()
     serializer_class = PublicHolidaySerializer
+    permission_classes = [HasModuleAccess.for_module("holidays")]
     filterset_fields = ("is_paid",)
     search_fields = ("name", "notes")
     ordering_fields = ("date",)
@@ -382,7 +393,7 @@ class ClockEntryViewSet(viewsets.ModelViewSet):
 
     queryset = ClockEntry.objects.select_related("employee").all()
     serializer_class = ClockEntrySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("time_clock")]
     filterset_fields = {
         "employee": ["exact"],
         "clock_in": ["gte", "lte"],

@@ -3,6 +3,8 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from compliance.permissions import HasModuleAccess
+
 from .models import Invoice, Quotation, Receipt
 from .pdf import render_invoice_pdf, render_quotation_pdf, render_receipt_pdf
 from .serializers import InvoiceSerializer, QuotationSerializer, ReceiptSerializer
@@ -11,6 +13,7 @@ from .serializers import InvoiceSerializer, QuotationSerializer, ReceiptSerializ
 class QuotationViewSet(viewsets.ModelViewSet):
     queryset = Quotation.objects.select_related("project", "project__customer").prefetch_related("items").all()
     serializer_class = QuotationSerializer
+    permission_classes = [HasModuleAccess.for_module("quotations")]
     filterset_fields = ("status", "project")
     search_fields = ("number", "subject", "project__code", "project__title", "project__customer__name")
     ordering_fields = ("issue_date", "created_at", "total")
@@ -77,6 +80,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         .all()
     )
     serializer_class = InvoiceSerializer
+    permission_classes = [HasModuleAccess.for_module("invoices")]
     filterset_fields = ("status", "project", "quotation")
     search_fields = ("number", "subject", "project__code", "project__title", "project__customer__name")
     ordering_fields = ("issue_date", "due_date", "created_at", "total", "balance_due")
@@ -96,6 +100,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 class ReceiptViewSet(viewsets.ModelViewSet):
     queryset = Receipt.objects.select_related("invoice", "invoice__project", "invoice__project__customer").all()
     serializer_class = ReceiptSerializer
+    permission_classes = [HasModuleAccess.for_module("receipts")]
     filterset_fields = ("invoice", "method")
     search_fields = ("number", "reference", "invoice__number", "invoice__project__customer__name")
     ordering_fields = ("received_at", "created_at", "amount")

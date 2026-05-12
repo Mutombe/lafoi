@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from .engine import compute_statutory
 from .models import AuditLog, ExchangeRate, StatutoryRate, TaxBracketSet
-from .permissions import IsAuthenticatedReadOrAdminWrite
+from .permissions import HasModuleAccess, IsAuthenticatedReadOrAdminWrite
 from .serializers import (
     AuditLogSerializer,
     ExchangeRateSerializer,
@@ -66,6 +66,7 @@ class ExchangeRateViewSet(viewsets.ModelViewSet):
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AuditLog.objects.select_related("actor").all()
     serializer_class = AuditLogSerializer
+    permission_classes = [HasModuleAccess.for_module("audit")]
     filterset_fields = ("action", "model_label", "actor")
     search_fields = ("model_label", "object_id", "actor_username", "object_repr", "summary")
     ordering_fields = ("created_at",)

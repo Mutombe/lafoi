@@ -30,6 +30,8 @@ from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from compliance.permissions import HasModuleAccess
+
 from .models import (
     Category,
     Item,
@@ -73,7 +75,7 @@ def _to_decimal(raw, field_name=None) -> Decimal:
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.select_related('parent').all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     filterset_fields = ('is_active', 'parent')
     search_fields = ('name', 'slug')
     ordering_fields = ('sort_order', 'name', 'created_at')
@@ -82,7 +84,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class StockLocationViewSet(viewsets.ModelViewSet):
     queryset = StockLocation.objects.all()
     serializer_class = StockLocationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     filterset_fields = ('is_active', 'is_default')
     search_fields = ('name', 'address')
     ordering_fields = ('name', 'created_at')
@@ -91,7 +93,7 @@ class StockLocationViewSet(viewsets.ModelViewSet):
 class SupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     filterset_fields = ('is_active',)
     search_fields = ('name', 'contact_person', 'email', 'phone', 'notes')
     ordering_fields = ('name', 'lead_time_days', 'created_at')
@@ -100,7 +102,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.select_related('category', 'supplier').prefetch_related('stocks', 'stocks__location').all()
     serializer_class = ItemSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     filterset_fields = ('category', 'supplier', 'is_active', 'unit', 'currency')
     search_fields = ('sku', 'barcode', 'name', 'description')
@@ -358,7 +360,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 class StockViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Stock.objects.select_related('item', 'location').all()
     serializer_class = StockSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     filterset_fields = ('item', 'location')
     ordering_fields = ('quantity', 'updated_at')
 
@@ -366,7 +368,7 @@ class StockViewSet(viewsets.ReadOnlyModelViewSet):
 class MovementViewSet(viewsets.ModelViewSet):
     queryset = Movement.objects.select_related('item', 'location', 'performed_by').all()
     serializer_class = MovementSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     filterset_fields = {
         'item': ['exact'],
         'location': ['exact'],
@@ -483,7 +485,7 @@ class MovementViewSet(viewsets.ModelViewSet):
 class PurchaseOrderViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.select_related('supplier', 'created_by').prefetch_related('items', 'items__item').all()
     serializer_class = PurchaseOrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     filterset_fields = ('status', 'supplier')
     search_fields = ('reference', 'supplier__name', 'notes')
     ordering_fields = ('created_at', 'expected_date', 'total')
@@ -569,7 +571,7 @@ class NotificationRuleViewSet(viewsets.ModelViewSet):
 
     queryset = NotificationRule.objects.all()
     serializer_class = NotificationRuleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     filterset_fields = ('event', 'channel', 'is_active')
     search_fields = ('name', 'recipient_email', 'recipient_phone', 'notes')
     ordering_fields = ('event', 'channel', 'name', 'created_at')
@@ -591,7 +593,7 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Notification.objects.select_related('rule', 'item').all()
     serializer_class = NotificationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [HasModuleAccess.for_module("inventory")]
     filterset_fields = ('event', 'channel', 'status', 'item', 'rule')
     search_fields = ('recipient', 'subject', 'body', 'error', 'item__sku', 'item__name')
     ordering_fields = ('created_at', 'sent_at', 'status')

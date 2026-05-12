@@ -4,6 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 
+from compliance.permissions import HasModuleAccess
+
 from .models import Customer, Project, ProjectCost, ProjectFile, ProjectUpdate
 from .serializers import (
     CustomerSerializer,
@@ -18,6 +20,7 @@ from .serializers import (
 class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
     queryset = Customer.objects.all()
+    permission_classes = [HasModuleAccess.for_module("customers")]
     filterset_fields = ("customer_type", "city", "country")
     search_fields = ("name", "contact_person", "email", "phone", "city", "address")
     ordering_fields = ("created_at", "name")
@@ -31,6 +34,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.select_related("customer", "project_manager").all()
+    permission_classes = [HasModuleAccess.for_module("projects")]
     filterset_fields = ("status", "category", "customer", "project_manager")
     search_fields = ("code", "title", "description", "site_address", "customer__name")
     ordering_fields = ("created_at", "start_date", "target_end_date", "progress")
@@ -81,6 +85,7 @@ class ProjectCostViewSet(viewsets.ModelViewSet):
     """
     serializer_class = ProjectCostSerializer
     queryset = ProjectCost.objects.select_related("project", "created_by").all()
+    permission_classes = [HasModuleAccess.for_module("expenses")]
     filterset_fields = {
         "project": ["exact", "isnull"],
         "category": ["exact"],
@@ -100,6 +105,7 @@ class ProjectCostViewSet(viewsets.ModelViewSet):
 class ProjectUpdateViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectUpdateSerializer
     queryset = ProjectUpdate.objects.select_related("project", "author").all()
+    permission_classes = [HasModuleAccess.for_module("projects")]
     filterset_fields = ("project",)
     ordering_fields = ("created_at",)
     parser_classes = (JSONParser, FormParser, MultiPartParser)
@@ -122,6 +128,7 @@ class ProjectUpdateViewSet(viewsets.ModelViewSet):
 class ProjectFileViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectFileSerializer
     queryset = ProjectFile.objects.select_related("project", "uploaded_by").all()
+    permission_classes = [HasModuleAccess.for_module("projects")]
     filterset_fields = ("project", "kind")
     ordering_fields = ("uploaded_at",)
     parser_classes = (MultiPartParser, FormParser, JSONParser)
