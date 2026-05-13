@@ -6,6 +6,36 @@ import { toast } from 'sonner'
 import PageHeader from '../components/PageHeader'
 import { Field, Input, PrimaryButton, SecondaryButton } from '../components/FormField'
 import { fmtDate } from '../components/DataTable'
+
+// Format an ISO datetime as "Today at 14:23", "Yesterday at 09:05",
+// "11 May 2026 · 14:23", and tack on a relative hint ("2 hours ago") in
+// brackets if it's within the last week. Falls back to "Never" when null.
+function fmtSignIn(iso) {
+  if (!iso) return 'Never'
+  let d
+  try { d = new Date(iso) } catch { return iso }
+  if (Number.isNaN(d.getTime())) return iso
+  const now = new Date()
+  const sameDay = d.toDateString() === now.toDateString()
+  const yest = new Date(now); yest.setDate(now.getDate() - 1)
+  const isYesterday = d.toDateString() === yest.toDateString()
+  const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const date = sameDay ? 'Today'
+    : isYesterday ? 'Yesterday'
+    : d.toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })
+
+  // Relative hint within the last week.
+  const diffMs = now - d
+  const mins = Math.floor(diffMs / 60000)
+  let rel = ''
+  if (diffMs < 0) rel = ''
+  else if (mins < 1) rel = 'just now'
+  else if (mins < 60) rel = `${mins} min${mins === 1 ? '' : 's'} ago`
+  else if (mins < 60 * 24) rel = `${Math.floor(mins / 60)}h ago`
+  else if (mins < 60 * 24 * 7) rel = `${Math.floor(mins / (60 * 24))}d ago`
+
+  return `${date} · ${time}${rel ? `  (${rel})` : ''}`
+}
 import {
   useMeQuery,
   useUpdateMeMutation,
@@ -151,7 +181,7 @@ export default function Profile() {
               <Row icon={IdentificationCard} label="Role"          value={me.role} />
               <Row icon={ShieldCheck}         label="Account"       value={me.is_active ? 'Active' : 'Disabled'} />
               <Row icon={UserCircle}          label="Joined"        value={fmtDate(me.date_joined)} />
-              <Row icon={Key}                 label="Last sign-in"  value={me.last_login ? fmtDate(me.last_login) : 'Never'} />
+              <Row icon={Key}                 label="Last sign-in"  value={fmtSignIn(me.last_login)} />
             </div>
           </div>
 

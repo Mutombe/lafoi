@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -63,5 +64,10 @@ class LafoiTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
+        # SimpleJWT doesn't touch `last_login` on token issuance — it has to
+        # be done explicitly here for the Profile page (and any audit work)
+        # to show meaningful sign-in timestamps. Only fires on full token
+        # *obtain*, not on refresh, which is exactly what we want.
+        update_last_login(None, self.user)
         data["user"] = UserSerializer(self.user, context=self.context).data
         return data
