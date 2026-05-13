@@ -701,6 +701,13 @@ def render_quotation_pdf(quotation) -> bytes:
     flow.append(totals_block)
     flow.append(Spacer(1, 16))
 
+    # Bank details land immediately after the totals so the payment
+    # instructions read continuously with the amount owed.
+    flow.append(_bank_details_flowable(st))
+    flow.append(Spacer(1, 16))
+
+    # Terms & conditions follow — free-form notes, then any additional terms
+    # the user added per-quote, then the standard La Foi quotation T&Cs.
     if quotation.notes:
         flow.append(Paragraph("NOTES", st["LFEyebrow"]))
         flow.append(Paragraph(quotation.notes.replace("\n", "<br/>"), st["LFBody"]))
@@ -709,10 +716,6 @@ def render_quotation_pdf(quotation) -> bytes:
         flow.append(Paragraph("ADDITIONAL TERMS", st["LFEyebrow"]))
         flow.append(Paragraph(quotation.terms.replace("\n", "<br/>"), st["LFBody"]))
         flow.append(Spacer(1, 10))
-
-    # Bank details + the standard quotation terms blocks
-    flow.append(_bank_details_flowable(st))
-    flow.append(Spacer(1, 14))
     flow.extend(_quotation_terms_flowable(st))
 
     doc.build(flow, onFirstPage=_document_footer, onLaterPages=_document_footer)
@@ -804,6 +807,11 @@ def render_invoice_pdf(invoice) -> bytes:
     flow.append(totals_block)
     flow.append(Spacer(1, 16))
 
+    # Bank details first — payment instructions sit immediately under the
+    # balance due so the recipient doesn't have to hunt for them.
+    flow.append(_bank_details_flowable(st))
+    flow.append(Spacer(1, 16))
+
     if invoice.notes:
         flow.append(Paragraph("NOTES", st["LFEyebrow"]))
         flow.append(Paragraph(invoice.notes.replace("\n", "<br/>"), st["LFBody"]))
@@ -812,8 +820,6 @@ def render_invoice_pdf(invoice) -> bytes:
         flow.append(Paragraph("PAYMENT TERMS", st["LFEyebrow"]))
         flow.append(Paragraph(invoice.terms.replace("\n", "<br/>"), st["LFBody"]))
         flow.append(Spacer(1, 10))
-
-    flow.append(_bank_details_flowable(st))
 
     doc.build(flow, onFirstPage=_document_footer, onLaterPages=_document_footer)
     return buf.getvalue()
