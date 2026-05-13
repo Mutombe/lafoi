@@ -17,6 +17,7 @@ import Logo from '../../components/shared/Logo'
 import { logout, selectCurrentUser } from '../store/authSlice'
 import { api } from '../store/api'
 import { ConfirmProvider } from './ConfirmDialog'
+import SessionExpiredModal from './SessionExpiredModal'
 
 /**
  * Sidebar IA — categorised so users aren't faced with a flat 14-item list.
@@ -182,6 +183,7 @@ export default function DashboardLayout() {
 
   return (
     <ConfirmProvider>
+    <SessionExpiredModal />
     <div className="min-h-screen bg-lafoi-cream text-lafoi-dark flex font-body">
       {/* Mobile backdrop */}
       {mobileOpen && (

@@ -32,16 +32,29 @@ const UNIT_OPTIONS = [
   { value: 'day',   label: 'day' },
 ]
 
-const newRow = (section = '') => ({
+const newRow = (section = '', { is_lump_sum = false, description = '', unit_price = 0 } = {}) => ({
   section,
-  description: '',
+  description,
   a: '',
   b: '',
   qty: 1,
-  unit: 'm²',
-  unit_price: 0,
+  unit: is_lump_sum ? 'lot' : 'm²',
+  unit_price,
   quantity: 1,
+  // UI-only flag. When true the row hides A × B × Qty and unit and is sent
+  // as quantity=1 + unit_price=X — a flat fee for things like Labour or
+  // Transport that aren't priced by area.
+  is_lump_sum,
 })
+
+// Convenience used by parent pages (Quotations / Invoices) to pre-seed
+// Labour + Transport on every new document.
+export function defaultLumpSumLines() {
+  return [
+    newRow('', { is_lump_sum: true, description: 'Labour' }),
+    newRow('', { is_lump_sum: true, description: 'Transport' }),
+  ]
+}
 
 function asNum(v) {
   const n = Number(v)
@@ -101,6 +114,26 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
   }
 
   const removeRow = (idx) => onChange(items.filter((_, i) => i !== idx))
+
+  // Flip a row between measured (A × B × Qty) and lump-sum (flat price).
+  const toggleLumpSum = (idx) => {
+    const next = items.slice()
+    const cur = next[idx]
+    const becomingLump = !cur.is_lump_sum
+    next[idx] = {
+      ...cur,
+      is_lump_sum: becomingLump,
+      a: becomingLump ? '' : cur.a,
+      b: becomingLump ? '' : cur.b,
+      qty: becomingLump ? 1 : (cur.qty || 1),
+      unit: becomingLump ? 'lot' : (cur.unit === 'lot' ? 'm²' : cur.unit),
+      quantity: 1,
+    }
+    if (!becomingLump) {
+      next[idx].quantity = +computeEffective(next[idx]).toFixed(2)
+    }
+    onChange(next)
+  }
 
   // Group items by section while preserving order. A new group starts every
   // time the section name changes from the previous row.
@@ -245,6 +278,7 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
               <tbody>
                 {groupItems.map((it) => {
                   const idx = it._idx
+                  const lump = !!it.is_lump_sum
                   return (
                     <tr key={idx} className="border-b border-lafoi-dark/[0.05] last:border-b-0 align-top">
                       <td className="px-2 py-2">
@@ -253,54 +287,82 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
                           onChange={(s) => set(idx, 'description', s)}
                           onPick={(catalog) => fillFromCatalog(idx, catalog)}
                           currency={currency}
-                          placeholder="Type or pick from catalog (e.g. Star Ceiling)"
+                          placeholder={lump ? 'Description (e.g. Labour, Transport)' : 'Type or pick from catalog (e.g. Star Ceiling)'}
                         />
-                        {it.catalog_item && (
-                          <p className="mt-1 text-[10px] font-sora tracking-[0.18em] uppercase text-lafoi-green-dark/70">
-                            From catalog
-                          </p>
-                        )}
-                      </td>
-                      <td className="px-2 py-2">
-                        <div className="flex items-center gap-1 justify-end">
-                          <Input
-                            type="number" step="0.01" min="0"
-                            value={it.a}
-                            onChange={(e) => set(idx, 'a', e.target.value)}
-                            placeholder="A"
-                            className="text-right !px-2 !w-16"
-                            aria-label="Size A"
-                          />
-                          <X size={9} weight="bold" className="text-lafoi-gray-medium shrink-0" />
-                          <Input
-                            type="number" step="0.01" min="0"
-                            value={it.b}
-                            onChange={(e) => set(idx, 'b', e.target.value)}
-                            placeholder="B"
-                            className="text-right !px-2 !w-16"
-                            aria-label="Size B"
-                          />
-                          <X size={9} weight="bold" className="text-lafoi-gray-medium shrink-0" />
-                          <Input
-                            type="number" step="0.01" min="0"
-                            value={it.qty}
-                            onChange={(e) => set(idx, 'qty', e.target.value)}
-                            placeholder="Qty"
-                            className="text-right !px-2 !w-16"
-                            aria-label="Quantity"
-                          />
+                        <div className="mt-1 flex items-center gap-2">
+                          {it.catalog_item && (
+                            <span className="text-[10px] font-sora tracking-[0.18em] uppercase text-lafoi-green-dark/70">
+                              From catalog
+                            </span>
+                          )}
+                          {/* Mode toggle — switch a row between measured area
+                              pricing (A × B × Qty) and a flat lump-sum amount. */}
+                          <button
+                            type="button"
+                            onClick={() => toggleLumpSum(idx)}
+                            className={`text-[10px] font-sora tracking-[0.16em] uppercase px-2 py-0.5 rounded-full border transition-colors ${
+                              lump
+                                ? 'bg-lafoi-cream text-lafoi-gray-medium border-lafoi-dark/15 hover:text-lafoi-green hover:border-lafoi-green/30'
+                                : 'bg-lafoi-green/10 text-lafoi-green-dark border-lafoi-green/30 hover:bg-lafoi-green/20'
+                            }`}
+                            title={lump ? 'Switch to measured (A × B × Qty)' : 'Switch to lump-sum (flat price)'}
+                          >
+                            {lump ? '↺ Measured' : 'Lump sum'}
+                          </button>
                         </div>
-                        <p className="mt-1 text-[10px] font-sora text-lafoi-gray-medium text-right tabular-nums">
-                          = {formulaLabel(it)} = {Number(it.quantity || 0).toFixed(2)} {it.unit}
-                        </p>
                       </td>
-                      <td className="px-2 py-2">
-                        <Select value={it.unit} onChange={(e) => set(idx, 'unit', e.target.value)}>
-                          {UNIT_OPTIONS.map((u) => (
-                            <option key={u.value} value={u.value}>{u.label}</option>
-                          ))}
-                        </Select>
-                      </td>
+                      {lump ? (
+                        <>
+                          <td className="px-2 py-2" colSpan={2}>
+                            <div className="h-full flex items-center justify-center text-[11px] font-sora tracking-[0.18em] uppercase text-lafoi-gray-medium">
+                              Flat price · no measurement
+                            </div>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="px-2 py-2">
+                            <div className="flex items-center gap-1 justify-end">
+                              <Input
+                                type="number" step="0.01" min="0"
+                                value={it.a}
+                                onChange={(e) => set(idx, 'a', e.target.value)}
+                                placeholder="A"
+                                className="text-right !px-2 !w-16"
+                                aria-label="Size A"
+                              />
+                              <X size={9} weight="bold" className="text-lafoi-gray-medium shrink-0" />
+                              <Input
+                                type="number" step="0.01" min="0"
+                                value={it.b}
+                                onChange={(e) => set(idx, 'b', e.target.value)}
+                                placeholder="B"
+                                className="text-right !px-2 !w-16"
+                                aria-label="Size B"
+                              />
+                              <X size={9} weight="bold" className="text-lafoi-gray-medium shrink-0" />
+                              <Input
+                                type="number" step="0.01" min="0"
+                                value={it.qty}
+                                onChange={(e) => set(idx, 'qty', e.target.value)}
+                                placeholder="Qty"
+                                className="text-right !px-2 !w-16"
+                                aria-label="Quantity"
+                              />
+                            </div>
+                            <p className="mt-1 text-[10px] font-sora text-lafoi-gray-medium text-right tabular-nums">
+                              = {formulaLabel(it)} = {Number(it.quantity || 0).toFixed(2)} {it.unit}
+                            </p>
+                          </td>
+                          <td className="px-2 py-2">
+                            <Select value={it.unit} onChange={(e) => set(idx, 'unit', e.target.value)}>
+                              {UNIT_OPTIONS.map((u) => (
+                                <option key={u.value} value={u.value}>{u.label}</option>
+                              ))}
+                            </Select>
+                          </td>
+                        </>
+                      )}
                       <td className="px-2 py-2">
                         <Input
                           type="number" step="0.01"

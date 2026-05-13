@@ -7,7 +7,7 @@ import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
-import LineItemEditor from '../components/LineItemEditor'
+import LineItemEditor, { defaultLumpSumLines } from '../components/LineItemEditor'
 import RecipientPicker, { recipientPayload } from '../components/RecipientPicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticRow from '../hooks/useOptimisticRow'
@@ -68,7 +68,12 @@ const empty = () => ({
   tax_rate: 0, discount_amount: 0,
   notes: DEFAULT_QUOTATION_NOTES,
   terms: DEFAULT_QUOTATION_TERMS,
-  items: [{ description: '', a: '', b: '', qty: 1, quantity: 1, unit: 'm²', unit_price: 0 }],
+  // Every new quotation lands with two flat-rate lines pre-filled (Labour
+  // and Transport). The admin sets prices or trashes them as needed.
+  items: [
+    { description: '', a: '', b: '', qty: 1, quantity: 1, unit: 'm²', unit_price: 0, is_lump_sum: false },
+    ...defaultLumpSumLines(),
+  ],
   // Recipient mode + free-form fields. mode is one of 'project', 'customer',
   // 'freeform'. The corresponding payload field is set on save; the other two
   // are cleared so we don't leak old data.

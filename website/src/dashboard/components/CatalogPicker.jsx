@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Cube, Wrench, MagnifyingGlass, Plus, CircleNotch } from '@phosphor-icons/react'
 
 import { useListCatalogQuery, useCreateCatalogItemMutation, useBumpCatalogUsageMutation } from '../store/api'
@@ -40,6 +41,45 @@ export default function CatalogPicker({
   const inputRef = useRef(null)
   const listRef = useRef(null)
 
+  // Dropdown position — measured from the input's bounding rect so the
+  // floating list (portalled to <body>) doesn't get clipped by any modal /
+  // overflow ancestor. Uses fixed positioning, so the rect's viewport-
+  // relative coordinates plug in directly.
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 0, openUp: false })
+
+  const recomputePosition = () => {
+    const el = inputRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const spaceBelow = window.innerHeight - rect.bottom
+    const desiredHeight = 320
+    const openUp = spaceBelow < 200 && rect.top > spaceBelow
+    setPos({
+      top: openUp ? Math.max(8, rect.top - 4) : rect.bottom + 4,
+      left: rect.left,
+      width: rect.width,
+      openUp,
+    })
+  }
+
+  useLayoutEffect(() => {
+    if (!open) return
+    recomputePosition()
+  }, [open])
+
+  // Track scroll + resize so the dropdown follows the input when the page or
+  // any scrollable ancestor (modal body) moves.
+  useEffect(() => {
+    if (!open) return
+    const handler = () => recomputePosition()
+    window.addEventListener('resize', handler)
+    window.addEventListener('scroll', handler, true)  // capture → catches nested scrolls too
+    return () => {
+      window.removeEventListener('resize', handler)
+      window.removeEventListener('scroll', handler, true)
+    }
+  }, [open])
+
   const debounced = useDebouncedValue(value || '', 180)
 
   // Always fetch a small slice so we can show "popular items" when empty,
@@ -59,11 +99,14 @@ export default function CatalogPicker({
   const [bumpUsage] = useBumpCatalogUsageMutation()
   const [creating, setCreating] = useState(false)
 
-  // Close on outside click.
+  // Close on outside click — the portalled dropdown lives outside wrapRef so
+  // we check both the wrap (input) and the list (dropdown).
   useEffect(() => {
     if (!open) return
     const handler = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false)
+      const insideInput = wrapRef.current?.contains(e.target)
+      const insideList = listRef.current?.contains(e.target)
+      if (!insideInput && !insideList) setOpen(false)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
@@ -155,10 +198,19 @@ export default function CatalogPicker({
         className={`w-full px-3 py-2 rounded-lg bg-white border border-lafoi-dark/12 text-sm focus:border-lafoi-green focus:outline-none ${inputProps.className || ''}`}
       />
 
-      {open && (
+      {open && typeof document !== 'undefined' && createPortal(
         <div
           ref={listRef}
-          className="absolute z-50 left-0 right-0 mt-1 max-h-[320px] overflow-y-auto rounded-xl border border-lafoi-dark/12 bg-white shadow-[0_10px_30px_-12px_rgba(17,17,17,0.15)] py-1"
+          style={{
+            position: 'fixed',
+            top: pos.openUp ? undefined : pos.top,
+            bottom: pos.openUp ? (window.innerHeight - pos.top) : undefined,
+            left: pos.left,
+            width: pos.width,
+            zIndex: 250,
+            maxHeight: '320px',
+          }}
+          className="overflow-y-auto rounded-xl border border-lafoi-dark/12 bg-white shadow-[0_18px_42px_-12px_rgba(17,17,17,0.25)] py-1"
         >
           {/* Catalog matches */}
           {matches.length === 0 && !isFetching && !canCreateInline && (
@@ -231,7 +283,8 @@ export default function CatalogPicker({
           <div className="px-3 py-1.5 border-t border-lafoi-dark/8 text-[10px] tracking-[0.18em] uppercase text-lafoi-gray-medium font-sora flex items-center gap-1.5">
             <MagnifyingGlass size={10} /> ↑↓ navigate · enter to pick · esc to close
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )

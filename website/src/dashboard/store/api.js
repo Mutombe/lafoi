@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { logout, setCredentials } from './authSlice'
+import { logout, markSessionExpired, setCredentials } from './authSlice'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000/api'
 
@@ -13,10 +13,17 @@ const baseQuery = fetchBaseQuery({
 })
 
 /**
- * Wraps baseQuery so a 401 triggers a single refresh attempt; on failure
- * we log the user out so they're booted to /dashboard/login.
+ * Wraps baseQuery so a 401 triggers a single refresh attempt; on failure we
+ * mark the session as expired and let the global SessionExpiredModal handle
+ * the re-login flow. Keeping tokens + user in state means the dashboard
+ * stays mounted and any in-progress form work isn't lost — only the
+ * pending API call fails.
  */
 const baseQueryWithReauth = async (args, api, extraOptions) => {
+  // Don't waste a network round-trip refreshing into a known-dead session.
+  if (api.getState().auth?.sessionExpired) {
+    return await baseQuery(args, api, extraOptions)
+  }
   let result = await baseQuery(args, api, extraOptions)
   if (result.error && result.error.status === 401) {
     const refresh = api.getState().auth?.refresh
@@ -30,10 +37,10 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         api.dispatch(setCredentials({ access: refreshResult.data.access, refresh: refreshResult.data.refresh ?? refresh }))
         result = await baseQuery(args, api, extraOptions)
       } else {
-        api.dispatch(logout())
+        api.dispatch(markSessionExpired())
       }
     } else {
-      api.dispatch(logout())
+      api.dispatch(markSessionExpired())
     }
   }
   return result

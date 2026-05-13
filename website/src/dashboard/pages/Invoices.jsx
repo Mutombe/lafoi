@@ -7,7 +7,7 @@ import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
-import LineItemEditor from '../components/LineItemEditor'
+import LineItemEditor, { defaultLumpSumLines } from '../components/LineItemEditor'
 import RecipientPicker, { recipientPayload } from '../components/RecipientPicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticRow from '../hooks/useOptimisticRow'
@@ -27,7 +27,10 @@ const empty = () => ({
   project: '', subject: '', issue_date: new Date().toISOString().slice(0, 10),
   due_date: '', status: 'draft', currency: 'USD',
   tax_rate: 0, discount_amount: 0, notes: '', terms: '',
-  items: [{ description: '', a: '', b: '', qty: 1, quantity: 1, unit: 'm²', unit_price: 0 }],
+  items: [
+    { description: '', a: '', b: '', qty: 1, quantity: 1, unit: 'm²', unit_price: 0, is_lump_sum: false },
+    ...defaultLumpSumLines(),
+  ],
   recipient_mode: 'project',
   customer: '',
   recipient_name: '',

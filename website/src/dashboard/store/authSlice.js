@@ -18,6 +18,7 @@ const initialState = persisted || {
   access: null,
   refresh: null,
   user: null,
+  sessionExpired: false,
 }
 
 const authSlice = createSlice({
@@ -29,6 +30,8 @@ const authSlice = createSlice({
       if (access !== undefined) state.access = access
       if (refresh !== undefined) state.refresh = refresh
       if (user !== undefined) state.user = user
+      // Any successful credential set clears the expired flag.
+      state.sessionExpired = false
       try {
         localStorage.setItem(
           STORAGE_KEY,
@@ -36,10 +39,14 @@ const authSlice = createSlice({
         )
       } catch {}
     },
+    markSessionExpired: (state) => {
+      state.sessionExpired = true
+    },
     logout: (state) => {
       state.access = null
       state.refresh = null
       state.user = null
+      state.sessionExpired = false
       try {
         localStorage.removeItem(STORAGE_KEY)
       } catch {}
@@ -47,9 +54,10 @@ const authSlice = createSlice({
   },
 })
 
-export const { setCredentials, logout } = authSlice.actions
+export const { setCredentials, markSessionExpired, logout } = authSlice.actions
 export default authSlice.reducer
 
 export const selectAuth = (s) => s.auth
 export const selectCurrentUser = (s) => s.auth.user
 export const selectIsAuthenticated = (s) => Boolean(s.auth.access)
+export const selectSessionExpired = (s) => Boolean(s.auth?.sessionExpired)
