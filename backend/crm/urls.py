@@ -1,7 +1,9 @@
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    CatalogItemViewSet,
     CustomerViewSet,
+    IncomeViewSet,
     ProjectCostViewSet,
     ProjectFileViewSet,
     ProjectUpdateViewSet,
@@ -16,5 +18,7 @@ router.register("project-files", ProjectFileViewSet, basename="project-file")
 router.register("expenses", ProjectCostViewSet, basename="expense")
 # Legacy alias so existing dashboard builds don't 404 mid-deploy.
 router.register("project-costs", ProjectCostViewSet, basename="project-cost")
+router.register("income", IncomeViewSet, basename="income")
+router.register("catalog", CatalogItemViewSet, basename="catalog")
 
 urlpatterns = router.urls

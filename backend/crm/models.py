@@ -271,3 +271,144 @@ class ProjectCost(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.project.code}: {self.description} ({self.currency} {self.amount})"
+
+
+# ============================================================================
+# INCOME — money in. Generic ledger for every receivable channel: invoice
+# receipts (mirrored from billing.Receipt via signal), cash sales, loans
+# received, owner capital, refunds, interest, rentals, etc. The Expenses
+# dashboard sums Income + Expense to produce net cashflow.
+# ============================================================================
+
+class Income(models.Model):
+    class Source(models.TextChoices):
+        INVOICE_RECEIPT = "invoice_receipt", "Invoice receipt"
+        CASH_SALE = "cash_sale", "Cash sale"
+        LOAN_RECEIVED = "loan_received", "Loan received"
+        OWNER_CAPITAL = "owner_capital", "Owner capital injection"
+        REFUND = "refund", "Refund / rebate"
+        INTEREST = "interest", "Interest earned"
+        RENTAL = "rental", "Rental / sublease"
+        OTHER = "other", "Other"
+
+    class Method(models.TextChoices):
+        CASH = "cash", "Cash"
+        BANK_TRANSFER = "bank_transfer", "Bank transfer"
+        MOBILE_MONEY = "mobile_money", "Mobile money"
+        CHEQUE = "cheque", "Cheque"
+        CARD = "card", "Card"
+        OTHER = "other", "Other"
+
+    source = models.CharField(
+        max_length=24, choices=Source.choices, default=Source.CASH_SALE,
+        help_text="What channel this money came through.",
+    )
+    description = models.CharField(max_length=240, blank=True)
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    currency = models.CharField(max_length=8, default="USD")
+    received_on = models.DateField(help_text="Date the money was received.")
+    method = models.CharField(
+        max_length=20, choices=Method.choices, default=Method.BANK_TRANSFER, blank=True,
+    )
+    payer = models.CharField(
+        max_length=200, blank=True,
+        help_text="Who paid. 'Walk-in client', 'CBZ Bank', a customer name, etc.",
+    )
+    reference = models.CharField(
+        max_length=120, blank=True,
+        help_text="Bank reference, deposit slip number, EcoCash txn id…",
+    )
+    receipt_url = models.URLField(
+        blank=True,
+        help_text="Link to a scanned bank slip / deposit (DO Spaces).",
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="incomes",
+        help_text="Optional. Attribute to a project when relevant.",
+    )
+    receipt = models.OneToOneField(
+        "billing.Receipt",
+        on_delete=models.CASCADE,
+        null=True, blank=True,
+        related_name="income",
+        help_text="Set automatically when this Income mirrors an invoice receipt.",
+    )
+    notes = models.TextField(blank=True)
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="incomes_recorded",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-received_on", "-created_at")
+        indexes = [
+            models.Index(fields=["received_on"]),
+            models.Index(fields=["source"]),
+            models.Index(fields=["currency"]),
+        ]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.get_source_display()} · {self.currency} {self.amount} on {self.received_on}"
+
+
+# ============================================================================
+# CATALOG — reusable products & services library used to populate line items
+# on quotations / invoices. Each entry has a default unit + unit price the
+# line-item editor pre-fills when selected, while remaining free-form
+# editable per line.
+# ============================================================================
+
+class CatalogItem(models.Model):
+    class Kind(models.TextChoices):
+        PRODUCT = "product", "Product"
+        SERVICE = "service", "Service"
+
+    kind = models.CharField(max_length=16, choices=Kind.choices, default=Kind.SERVICE)
+    name = models.CharField(max_length=200)
+    short_code = models.CharField(
+        max_length=40, blank=True, db_index=True,
+        help_text="Internal SKU / shorthand to recognise the item quickly.",
+    )
+    description = models.TextField(
+        blank=True,
+        help_text="Long-form description; surfaces verbatim on the quote/invoice line.",
+    )
+    default_unit = models.CharField(max_length=16, default="m²")
+    default_unit_price = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
+    currency = models.CharField(max_length=8, default="USD")
+    image = models.ImageField(blank=True, null=True, upload_to="catalog/")
+    tags = models.JSONField(default=list, blank=True)
+    is_active = models.BooleanField(default=True)
+    sort_order = models.IntegerField(default=0)
+    notes = models.TextField(blank=True)
+    times_used = models.IntegerField(
+        default=0,
+        help_text="Bumped each time the item is invoked in a quotation/invoice line.",
+    )
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="catalog_items_created",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("sort_order", "name")
+        indexes = [
+            models.Index(fields=["kind"]),
+            models.Index(fields=["is_active"]),
+        ]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.name} ({self.kind})"

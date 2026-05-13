@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { Plus, Trash, X } from '@phosphor-icons/react'
 
 import { Input, Select, SecondaryButton } from './FormField'
+import CatalogPicker from './CatalogPicker'
 
 /**
  * Truly flexible line-item editor with section chapters.
@@ -79,6 +80,26 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
     }
     onChange(next)
   }
+
+  // When the user invokes a catalog item, fill description / unit / unit price
+  // on that row in one shot. Keep A/B/Qty untouched so the in-situ measurement
+  // they've already entered (e.g. 4.2 × 3.8) isn't lost.
+  const fillFromCatalog = (idx, item) => {
+    const next = items.slice()
+    const description = item.description?.trim()
+      ? `${item.name} — ${item.description}`
+      : item.name
+    next[idx] = {
+      ...next[idx],
+      description,
+      unit: item.default_unit || next[idx].unit || 'unit',
+      unit_price: Number(item.default_unit_price) || 0,
+      catalog_item: item.id,  // tracked so we can show "from catalog" on the row
+    }
+    next[idx].quantity = +computeEffective(next[idx]).toFixed(2)
+    onChange(next)
+  }
+
   const removeRow = (idx) => onChange(items.filter((_, i) => i !== idx))
 
   // Group items by section while preserving order. A new group starts every
@@ -227,11 +248,18 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
                   return (
                     <tr key={idx} className="border-b border-lafoi-dark/[0.05] last:border-b-0 align-top">
                       <td className="px-2 py-2">
-                        <Input
+                        <CatalogPicker
                           value={it.description}
-                          onChange={(e) => set(idx, 'description', e.target.value)}
-                          placeholder="e.g. Matte stretch ceiling"
+                          onChange={(s) => set(idx, 'description', s)}
+                          onPick={(catalog) => fillFromCatalog(idx, catalog)}
+                          currency={currency}
+                          placeholder="Type or pick from catalog (e.g. Star Ceiling)"
                         />
+                        {it.catalog_item && (
+                          <p className="mt-1 text-[10px] font-sora tracking-[0.18em] uppercase text-lafoi-green-dark/70">
+                            From catalog
+                          </p>
+                        )}
                       </td>
                       <td className="px-2 py-2">
                         <div className="flex items-center gap-1 justify-end">

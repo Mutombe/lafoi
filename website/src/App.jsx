@@ -57,6 +57,8 @@ const DashPurchaseOrders = lazy(() => import('./dashboard/pages/PurchaseOrders')
 const DashBurnRate = lazy(() => import('./dashboard/pages/BurnRate'))
 const DashInventoryNotifications = lazy(() => import('./dashboard/pages/InventoryNotifications'))
 const DashExpenses = lazy(() => import('./dashboard/pages/Expenses'))
+const DashIncome = lazy(() => import('./dashboard/pages/Income'))
+const DashCatalog = lazy(() => import('./dashboard/pages/Catalog'))
 const DashProfile = lazy(() => import('./dashboard/pages/Profile'))
 
 export default function App() {
@@ -85,6 +87,8 @@ export default function App() {
             <Route path="invoices" element={<DashInvoices />} />
             <Route path="receipts" element={<DashReceipts />} />
             <Route path="expenses" element={<DashExpenses />} />
+            <Route path="income" element={<DashIncome />} />
+            <Route path="catalog" element={<DashCatalog />} />
             <Route path="employees" element={<DashEmployees />} />
             <Route path="employees/:id" element={<DashEmployeeDetail />} />
             <Route path="payroll" element={<DashPayrollList />} />

@@ -6,9 +6,11 @@ from rest_framework.response import Response
 
 from compliance.permissions import HasModuleAccess
 
-from .models import Customer, Project, ProjectCost, ProjectFile, ProjectUpdate
+from .models import CatalogItem, Customer, Income, Project, ProjectCost, ProjectFile, ProjectUpdate
 from .serializers import (
+    CatalogItemSerializer,
     CustomerSerializer,
+    IncomeSerializer,
     ProjectCostSerializer,
     ProjectDetailSerializer,
     ProjectFileSerializer,
@@ -135,3 +137,61 @@ class ProjectFileViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(uploaded_by=self.request.user if self.request.user.is_authenticated else None)
+
+
+class IncomeViewSet(viewsets.ModelViewSet):
+    """Global income ledger — every shilling that comes in.
+
+    Invoice receipts mirror into this table automatically via signal so the
+    Expenses dashboard can sum a single source of truth for cashflow.
+    """
+    serializer_class = IncomeSerializer
+    queryset = Income.objects.select_related("project", "receipt", "receipt__invoice", "created_by").all()
+    permission_classes = [HasModuleAccess.for_module("expenses")]
+    filterset_fields = {
+        "project": ["exact", "isnull"],
+        "source": ["exact"],
+        "currency": ["exact"],
+        "method": ["exact"],
+        "received_on": ["gte", "lte"],
+    }
+    search_fields = ("description", "payer", "reference", "notes", "receipt__number")
+    ordering_fields = ("received_on", "amount", "created_at")
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user if self.request.user.is_authenticated else None)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        # `project__isnull=true` query param convenience: DRF parses string
+        # "true"/"false"/"True"/"1" inconsistently across filter backends, so
+        # we coerce here when present.
+        only_global = self.request.query_params.get("project__isnull")
+        if only_global in ("true", "True", "1"):
+            qs = qs.filter(project__isnull=True)
+        elif only_global in ("false", "False", "0"):
+            qs = qs.filter(project__isnull=False)
+        return qs
+
+
+class CatalogItemViewSet(viewsets.ModelViewSet):
+    """Products + services library for line-item invocation in quotations."""
+    serializer_class = CatalogItemSerializer
+    queryset = CatalogItem.objects.all()
+    permission_classes = [HasModuleAccess.for_module("catalog")]
+    filterset_fields = ("kind", "is_active")
+    search_fields = ("name", "short_code", "description", "tags")
+    ordering_fields = ("sort_order", "name", "default_unit_price", "times_used", "updated_at")
+    parser_classes = (JSONParser, FormParser, MultiPartParser)
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user if self.request.user.is_authenticated else None)
+
+    @action(detail=True, methods=["post"], url_path="bump-usage")
+    def bump_usage(self, request, pk=None):
+        """Increment usage counter — called by the line-item editor when a
+        catalog item is invoked into a quotation/invoice line."""
+        item = self.get_object()
+        CatalogItem.objects.filter(pk=item.pk).update(times_used=item.times_used + 1)
+        item.refresh_from_db(fields=["times_used"])
+        return Response({"times_used": item.times_used})

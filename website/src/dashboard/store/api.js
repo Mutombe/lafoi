@@ -53,6 +53,7 @@ export const api = createApi({
   tagTypes: [
     'Auth', 'User',
     'Customer', 'Project', 'ProjectFile', 'ProjectUpdate', 'ProjectCost', 'Expense',
+    'Income', 'CatalogItem',
     'Quotation', 'Invoice', 'Receipt',
     'Employee', 'PayrollPeriod', 'PayrollEntry',
     'TaxBracketSet', 'StatutoryRate', 'ExchangeRate', 'AuditLog',
@@ -511,6 +512,54 @@ export const api = createApi({
       invalidatesTags: ['Expense', 'Project'],
     }),
 
+    // ---------- Income (global cashflow ledger; mirrors invoice receipts) -----
+    listIncome: b.query({
+      query: (params = {}) => ({ url: 'income/', params }),
+      providesTags: ['Income'],
+    }),
+    getIncome: b.query({
+      query: (id) => `income/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'Income', id }],
+    }),
+    createIncome: b.mutation({
+      query: (body) => ({ url: 'income/', method: 'POST', body }),
+      invalidatesTags: ['Income'],
+    }),
+    updateIncome: b.mutation({
+      query: ({ id, ...body }) => ({ url: `income/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['Income', { type: 'Income', id }],
+    }),
+    deleteIncome: b.mutation({
+      query: (id) => ({ url: `income/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['Income'],
+    }),
+
+    // ---------- Catalog (products + services library) ----------
+    listCatalog: b.query({
+      query: (params = {}) => ({ url: 'catalog/', params }),
+      providesTags: ['CatalogItem'],
+    }),
+    getCatalogItem: b.query({
+      query: (id) => `catalog/${id}/`,
+      providesTags: (r, e, id) => [{ type: 'CatalogItem', id }],
+    }),
+    createCatalogItem: b.mutation({
+      query: (body) => ({ url: 'catalog/', method: 'POST', body }),
+      invalidatesTags: ['CatalogItem'],
+    }),
+    updateCatalogItem: b.mutation({
+      query: ({ id, ...body }) => ({ url: `catalog/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: (r, e, { id }) => ['CatalogItem', { type: 'CatalogItem', id }],
+    }),
+    deleteCatalogItem: b.mutation({
+      query: (id) => ({ url: `catalog/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['CatalogItem'],
+    }),
+    bumpCatalogUsage: b.mutation({
+      query: (id) => ({ url: `catalog/${id}/bump-usage/`, method: 'POST' }),
+      invalidatesTags: (r, e, id) => [{ type: 'CatalogItem', id }],
+    }),
+
     // ---------- Project map ----------
     projectsMap: b.query({
       query: () => 'projects/map/',
@@ -740,6 +789,8 @@ export const {
   useEmployeeYtdQuery,
   useListProjectCostsQuery, useCreateProjectCostMutation, useUpdateProjectCostMutation, useDeleteProjectCostMutation,
   useListExpensesQuery, useGetExpenseQuery, useCreateExpenseMutation, useUpdateExpenseMutation, useDeleteExpenseMutation,
+  useListIncomeQuery, useGetIncomeQuery, useCreateIncomeMutation, useUpdateIncomeMutation, useDeleteIncomeMutation,
+  useListCatalogQuery, useGetCatalogItemQuery, useCreateCatalogItemMutation, useUpdateCatalogItemMutation, useDeleteCatalogItemMutation, useBumpCatalogUsageMutation,
   useProjectsMapQuery,
   useListModulesQuery, useSetUserModulesMutation, useResetUserPasswordMutation, useToggleUserActiveMutation,
   useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation,

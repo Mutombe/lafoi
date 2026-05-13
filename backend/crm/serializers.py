@@ -3,7 +3,7 @@ from decimal import Decimal
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer
-from .models import Customer, Project, ProjectCost, ProjectFile, ProjectUpdate
+from .models import CatalogItem, Customer, Income, Project, ProjectCost, ProjectFile, ProjectUpdate
 
 
 class ProjectCostSerializer(serializers.ModelSerializer):
@@ -128,6 +128,62 @@ class ProjectSerializer(serializers.ModelSerializer):
             return None
         spent = Decimal(self.get_costs_total(obj))
         return str((obj.budget or Decimal("0")) - spent)
+
+
+class IncomeSerializer(serializers.ModelSerializer):
+    created_by = UserSerializer(read_only=True)
+    source_label = serializers.CharField(source="get_source_display", read_only=True)
+    method_label = serializers.CharField(source="get_method_display", read_only=True)
+    project_code = serializers.CharField(source="project.code", read_only=True)
+    project_title = serializers.CharField(source="project.title", read_only=True)
+    receipt_number = serializers.CharField(source="receipt.number", read_only=True)
+    invoice_number = serializers.CharField(source="receipt.invoice.number", read_only=True)
+
+    class Meta:
+        model = Income
+        fields = (
+            "id",
+            "source", "source_label",
+            "description",
+            "amount", "currency",
+            "received_on",
+            "method", "method_label",
+            "payer", "reference", "receipt_url",
+            "project", "project_code", "project_title",
+            "receipt", "receipt_number", "invoice_number",
+            "notes",
+            "created_by", "created_at", "updated_at",
+        )
+        read_only_fields = (
+            "id", "source_label", "method_label",
+            "project_code", "project_title",
+            "receipt", "receipt_number", "invoice_number",
+            "created_by", "created_at", "updated_at",
+        )
+
+
+class CatalogItemSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+    kind_label = serializers.CharField(source="get_kind_display", read_only=True)
+
+    class Meta:
+        model = CatalogItem
+        fields = (
+            "id", "kind", "kind_label", "name", "short_code", "description",
+            "default_unit", "default_unit_price", "currency",
+            "image", "image_url", "tags", "is_active", "sort_order", "notes",
+            "times_used", "created_at", "updated_at",
+        )
+        read_only_fields = (
+            "id", "kind_label", "image_url", "times_used", "created_at", "updated_at",
+        )
+
+    def get_image_url(self, obj):
+        if not obj.image:
+            return None
+        request = self.context.get("request")
+        url = obj.image.url
+        return request.build_absolute_uri(url) if request else url
 
 
 class ProjectDetailSerializer(ProjectSerializer):

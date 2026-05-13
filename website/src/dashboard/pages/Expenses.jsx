@@ -19,7 +19,9 @@ import {
   useUpdateExpenseMutation,
   useDeleteExpenseMutation,
   useListProjectsQuery,
+  useListIncomeQuery,
 } from '../store/api'
+import { ArrowDown, ArrowUp, Scales } from '@phosphor-icons/react'
 
 const CATEGORIES = [
   ['materials', 'Materials'],
@@ -110,6 +112,55 @@ export default function Expenses() {
     () => rows.reduce((s, r) => s + Number(r.amount || 0), 0),
     [rows],
   )
+
+  // Cashflow summary: pulls income + expenses for the current date range so
+  // the strip at the top of the page tells the user where they stand.
+  // Both queries respect the same project filter so the projected scope
+  // matches the filter strip.
+  const cashflowArgs = useMemo(() => {
+    const args = { page: 1, page_size: 500 }
+    if (projectFilter === '__none__') args.project__isnull = true
+    else if (projectFilter) args.project = projectFilter
+    if (dateFrom) args.incurred_on__gte = dateFrom
+    if (dateTo) args.incurred_on__lte = dateTo
+    return args
+  }, [projectFilter, dateFrom, dateTo])
+
+  const incomeArgs = useMemo(() => {
+    const args = { page: 1, page_size: 500 }
+    if (projectFilter === '__none__') args.project__isnull = true
+    else if (projectFilter) args.project = projectFilter
+    if (dateFrom) args.received_on__gte = dateFrom
+    if (dateTo) args.received_on__lte = dateTo
+    return args
+  }, [projectFilter, dateFrom, dateTo])
+
+  const { data: cashflowExpensesData } = useListExpensesQuery(cashflowArgs)
+  const { data: incomeData } = useListIncomeQuery(incomeArgs)
+
+  const expensesByCurrency = useMemo(() => {
+    const m = {}
+    ;(cashflowExpensesData?.results || []).forEach((r) => {
+      const c = r.currency || 'USD'
+      m[c] = (m[c] || 0) + Number(r.amount || 0)
+    })
+    return m
+  }, [cashflowExpensesData])
+
+  const incomeByCurrency = useMemo(() => {
+    const m = {}
+    ;(incomeData?.results || []).forEach((r) => {
+      const c = r.currency || 'USD'
+      m[c] = (m[c] || 0) + Number(r.amount || 0)
+    })
+    return m
+  }, [incomeData])
+
+  const currencies = useMemo(() => {
+    const s = new Set([...Object.keys(incomeByCurrency), ...Object.keys(expensesByCurrency)])
+    if (s.size === 0) s.add('USD')
+    return Array.from(s).sort()
+  }, [incomeByCurrency, expensesByCurrency])
 
   const [createExpense] = useCreateExpenseMutation()
   const [updateExpense] = useUpdateExpenseMutation()
@@ -305,7 +356,45 @@ export default function Expenses() {
         )}
       </div>
 
-      {/* Page-level total badge */}
+      {/* Cashflow summary — Income vs Expenses vs Net, per currency, for the
+          current filter range. Same project filter applies to both queries so
+          the comparison is apples-to-apples. */}
+      <div className="mb-6 grid sm:grid-cols-3 gap-3">
+        {currencies.map((cur) => {
+          const inc = incomeByCurrency[cur] || 0
+          const exp = expensesByCurrency[cur] || 0
+          const net = inc - exp
+          const positive = net >= 0
+          return (
+            <React.Fragment key={cur}>
+              <Card
+                tone="green"
+                eyebrow={`Income · ${cur}`}
+                value={fmtMoney(inc, cur)}
+                icon={ArrowDown}
+                href="/dashboard/income"
+                hint={`${(incomeData?.results || []).filter((r) => (r.currency || 'USD') === cur).length} entries`}
+              />
+              <Card
+                tone="red"
+                eyebrow={`Expenses · ${cur}`}
+                value={fmtMoney(exp, cur)}
+                icon={ArrowUp}
+                hint={`${(cashflowExpensesData?.results || []).filter((r) => (r.currency || 'USD') === cur).length} entries`}
+              />
+              <Card
+                tone={positive ? 'green' : 'red'}
+                eyebrow={`Net · ${cur}`}
+                value={(positive ? '+' : '−') + fmtMoney(Math.abs(net), cur).replace(/^\S+\s/, cur + ' ')}
+                icon={Scales}
+                emphasised
+                hint={positive ? 'Cash positive' : 'Spending exceeds income'}
+              />
+            </React.Fragment>
+          )
+        })}
+      </div>
+
       {data && (
         <div className="mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lafoi-cream border border-lafoi-dark/10">
           <span className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium">
@@ -422,5 +511,28 @@ export default function Expenses() {
         )}
       </Modal>
     </div>
+  )
+}
+
+function Card({ tone = 'green', eyebrow, value, icon: Icon, href, hint, emphasised = false }) {
+  const toneCls = tone === 'green'
+    ? 'bg-lafoi-green/[0.06] border-lafoi-green/25 text-lafoi-green-dark'
+    : 'bg-red-50 border-red-200 text-red-700'
+  const Wrap = href ? Link : 'div'
+  const wrapProps = href ? { to: href } : {}
+  return (
+    <Wrap
+      {...wrapProps}
+      className={`block rounded-2xl border p-4 transition-colors ${toneCls} ${href ? 'hover:brightness-95' : ''}`}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <p className="font-sora text-[9px] tracking-[0.28em] uppercase opacity-70">{eyebrow}</p>
+        {Icon && <Icon size={14} weight="bold" className="opacity-70" />}
+      </div>
+      <p className={`mt-2 tabular-nums ${emphasised ? 'font-display text-2xl' : 'font-display text-xl'}`}>{value}</p>
+      {hint && (
+        <p className="mt-1 text-[10px] font-sora tracking-[0.18em] uppercase opacity-60">{hint}</p>
+      )}
+    </Wrap>
   )
 }
