@@ -40,6 +40,17 @@ class UserPasswordResetSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, min_length=8)
 
 
+class UserSelfUpdateSerializer(serializers.ModelSerializer):
+    """Fields a signed-in user may edit on their OWN account.
+
+    Excludes role / is_active / is_staff / module_access — those stay
+    admin-only via the regular UserViewSet update path."""
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "email", "phone", "job_title")
+
+
 class LafoiTokenObtainPairSerializer(TokenObtainPairSerializer):
     """Adds user object to the response so the frontend doesn't need a follow-up call."""
 

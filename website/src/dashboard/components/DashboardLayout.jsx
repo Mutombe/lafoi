@@ -204,18 +204,23 @@ export default function DashboardLayout() {
           </p>
         </div>
 
-        {/* User card */}
-        <div className="px-6 py-5 border-b border-white/8">
+        {/* User card → click through to self-service profile */}
+        <Link
+          to="/dashboard/profile"
+          className="block px-6 py-5 border-b border-white/8 hover:bg-white/5 transition-colors group"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-lafoi-green/25 border border-lafoi-green/40 flex items-center justify-center font-display text-lg text-lafoi-green-light">
               {user?.first_name?.[0] || user?.username?.[0] || 'L'}
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-sora text-sm font-medium text-white truncate">{user?.display_name || user?.username || '—'}</p>
-              <p className="text-[10px] tracking-[0.22em] uppercase text-white/40 mt-0.5 truncate">{user?.role || 'staff'}</p>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-white/40 mt-0.5 truncate">
+                {user?.role || 'staff'} · <span className="text-white/55 group-hover:text-lafoi-green-light transition-colors">View profile</span>
+              </p>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Nav — pinned Overview, then collapsible category groups */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">

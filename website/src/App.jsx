@@ -57,6 +57,7 @@ const DashPurchaseOrders = lazy(() => import('./dashboard/pages/PurchaseOrders')
 const DashBurnRate = lazy(() => import('./dashboard/pages/BurnRate'))
 const DashInventoryNotifications = lazy(() => import('./dashboard/pages/InventoryNotifications'))
 const DashExpenses = lazy(() => import('./dashboard/pages/Expenses'))
+const DashProfile = lazy(() => import('./dashboard/pages/Profile'))
 
 export default function App() {
   const location = useLocation()
@@ -102,6 +103,7 @@ export default function App() {
             <Route path="settings/compliance" element={<DashCompliance />} />
             <Route path="map" element={<DashStudioMap />} />
             <Route path="users" element={<DashUsers />} />
+            <Route path="profile" element={<DashProfile />} />
           </Route>
         </Routes>
       </Suspense>

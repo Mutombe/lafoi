@@ -10,6 +10,7 @@ from .serializers import (
     LafoiTokenObtainPairSerializer,
     UserCreateSerializer,
     UserPasswordResetSerializer,
+    UserSelfUpdateSerializer,
     UserSerializer,
 )
 
@@ -58,9 +59,33 @@ class UserViewSet(viewsets.ModelViewSet):
                 raise ValidationError("Cannot delete the last administrator.")
         instance.delete()
 
-    @action(detail=False, methods=["get"], url_path="me", permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=["get", "patch"], url_path="me", permission_classes=[permissions.IsAuthenticated])
     def me(self, request):
+        """GET → return the current user. PATCH → let the user update their own
+        profile (first_name, last_name, email, phone, job_title). Role, active
+        status and module access can only be changed by an administrator."""
+        if request.method == "PATCH":
+            ser = UserSelfUpdateSerializer(request.user, data=request.data, partial=True)
+            ser.is_valid(raise_exception=True)
+            ser.save()
         return Response(UserSerializer(request.user).data)
+
+    @action(detail=False, methods=["post"], url_path="change-password", permission_classes=[permissions.IsAuthenticated])
+    def change_password(self, request):
+        """Self-service password change. Body: { current_password, new_password }.
+        Verifies the current password before applying the new one — distinct
+        from the admin reset endpoint which doesn't require the old password."""
+        current = request.data.get("current_password") or ""
+        new = request.data.get("new_password") or ""
+        if not request.user.check_password(current):
+            raise ValidationError({"current_password": "Wrong current password."})
+        if len(new) < 8:
+            raise ValidationError({"new_password": "Must be at least 8 characters."})
+        if new == current:
+            raise ValidationError({"new_password": "Pick a password you haven't used."})
+        request.user.set_password(new)
+        request.user.save(update_fields=["password"])
+        return Response({"detail": "Password updated."})
 
     @action(detail=False, methods=["get"], url_path="modules", permission_classes=[permissions.IsAuthenticated])
     def modules(self, request):

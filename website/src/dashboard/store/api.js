@@ -75,6 +75,13 @@ export const api = createApi({
       query: () => 'auth/users/me/',
       providesTags: ['Auth'],
     }),
+    updateMe: b.mutation({
+      query: (body) => ({ url: 'auth/users/me/', method: 'PATCH', body }),
+      invalidatesTags: ['Auth', 'User'],
+    }),
+    changePassword: b.mutation({
+      query: (body) => ({ url: 'auth/users/change-password/', method: 'POST', body }),
+    }),
     listUsers: b.query({
       query: (params = {}) => ({ url: 'auth/users/', params }),
       providesTags: ['User'],
@@ -706,7 +713,7 @@ export const api = createApi({
 })
 
 export const {
-  useLoginMutation, useMeQuery, useListUsersQuery,
+  useLoginMutation, useMeQuery, useUpdateMeMutation, useChangePasswordMutation, useListUsersQuery,
   useListCustomersQuery, useGetCustomerQuery, useCreateCustomerMutation, useUpdateCustomerMutation, useDeleteCustomerMutation,
   useListProjectsQuery, useGetProjectQuery, useCreateProjectMutation, useUpdateProjectMutation, useDeleteProjectMutation,
   useListProjectUpdatesQuery, useCreateProjectUpdateMutation,
