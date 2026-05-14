@@ -21,6 +21,16 @@ class Customer(models.Model):
     address = models.TextField(blank=True)
     city = models.CharField(max_length=120, blank=True, default="Harare")
     country = models.CharField(max_length=120, blank=True, default="Zimbabwe")
+    # Tax registration — surfaces on quotation / invoice bill-to blocks for
+    # VAT-registered clients (ZIMRA requires the BP/TIN on tax invoices).
+    vat_number = models.CharField(
+        max_length=40, blank=True,
+        help_text="VAT registration number, if the client is VAT-registered.",
+    )
+    tin_number = models.CharField(
+        max_length=40, blank=True,
+        help_text="Taxpayer Identification Number (ZIMRA TIN / BP number).",
+    )
     notes = models.TextField(blank=True)
     tags = models.JSONField(default=list, blank=True)
 

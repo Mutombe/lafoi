@@ -8,7 +8,7 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '.
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import LineItemEditor, { defaultLumpSumLines } from '../components/LineItemEditor'
-import RecipientPicker, { recipientPayload } from '../components/RecipientPicker'
+import RecipientPicker, { recipientPayload, customerFromRecipient } from '../components/RecipientPicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticRow from '../hooks/useOptimisticRow'
 import {
@@ -18,6 +18,7 @@ import {
   useDeleteInvoiceMutation,
   useListProjectsQuery,
   useListCustomersQuery,
+  useCreateCustomerMutation,
   useCreateReceiptMutation,
   downloadPdf,
 } from '../store/api'
@@ -38,6 +39,9 @@ const empty = () => ({
   recipient_email: '',
   recipient_phone: '',
   recipient_address: '',
+  recipient_vat: '',
+  recipient_tin: '',
+  save_as_customer: false,
 })
 
 export default function Invoices() {
@@ -70,10 +74,11 @@ export default function Invoices() {
   const [updateI] = useUpdateInvoiceMutation()
   const [deleteI] = useDeleteInvoiceMutation()
   const [createReceipt] = useCreateReceiptMutation()
+  const [createCustomer] = useCreateCustomerMutation()
 
   const isNew = editing && !editing.id
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault()
     setError('')
     let recipient
@@ -83,6 +88,26 @@ export default function Invoices() {
       setError(typeof msg === 'string' ? msg : 'Pick a recipient.')
       return
     }
+
+    // "Also add to Customers" on a free-form recipient — create the customer
+    // first, then link the invoice to it.
+    const newCustomerPayload = customerFromRecipient(editing)
+    if (newCustomerPayload) {
+      try {
+        const created = await createCustomer(newCustomerPayload).unwrap()
+        recipient = {
+          project: null,
+          customer: created.id,
+          recipient_name: '', recipient_contact: '', recipient_email: '',
+          recipient_phone: '', recipient_address: '', recipient_vat: '', recipient_tin: '',
+        }
+      } catch (err) {
+        const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Could not save recipient as a customer.'
+        setError(msg)
+        return
+      }
+    }
+
     const payload = {
       ...recipient,
       subject: editing.subject || '',

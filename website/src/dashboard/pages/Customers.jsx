@@ -19,7 +19,8 @@ import { useConfirm } from '../components/ConfirmDialog'
 
 const empty = {
   name: '', customer_type: 'individual', contact_person: '', email: '', phone: '',
-  alt_phone: '', address: '', city: 'Harare', country: 'Zimbabwe', notes: '',
+  alt_phone: '', address: '', city: 'Harare', country: 'Zimbabwe',
+  vat_number: '', tin_number: '', notes: '',
 }
 
 export default function Customers() {
@@ -58,6 +59,8 @@ export default function Customers() {
       address: editing.address || '',
       city: editing.city || '',
       country: editing.country || '',
+      vat_number: editing.vat_number || '',
+      tin_number: editing.tin_number || '',
       notes: editing.notes || '',
     }
     const wasNew = isNew
@@ -192,6 +195,12 @@ export default function Customers() {
             </Field>
             <Field label="Country">
               <Input value={editing.country} onChange={(e) => setEditing({ ...editing, country: e.target.value })} />
+            </Field>
+            <Field label="VAT number">
+              <Input value={editing.vat_number} onChange={(e) => setEditing({ ...editing, vat_number: e.target.value })} placeholder="VAT registration no." />
+            </Field>
+            <Field label="TIN / BP number">
+              <Input value={editing.tin_number} onChange={(e) => setEditing({ ...editing, tin_number: e.target.value })} placeholder="ZIMRA TIN / BP number" />
             </Field>
             <Field label="Address" className="sm:col-span-2">
               <Textarea value={editing.address} onChange={(e) => setEditing({ ...editing, address: e.target.value })} rows={2} />

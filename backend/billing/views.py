@@ -45,6 +45,8 @@ class QuotationViewSet(viewsets.ModelViewSet):
                 recipient_email=quotation.recipient_email,
                 recipient_phone=quotation.recipient_phone,
                 recipient_address=quotation.recipient_address,
+                recipient_vat=quotation.recipient_vat,
+                recipient_tin=quotation.recipient_tin,
                 quotation=quotation,
                 status=Invoice.Status.DRAFT,
                 subject=quotation.subject,

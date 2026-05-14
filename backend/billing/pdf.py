@@ -383,6 +383,13 @@ def _bill_to(customer, st):
     address = get("address")
     if address:
         parts.append(Paragraph(address.replace("\n", "<br/>"), st["LFBodySmall"]))
+    # Tax registration — VAT then TIN, each on its own line, only when set.
+    vat = get("vat_number") or get("recipient_vat")
+    if vat:
+        parts.append(Paragraph(f"VAT No: {vat}", st["LFBodySmall"]))
+    tin = get("tin_number") or get("recipient_tin")
+    if tin:
+        parts.append(Paragraph(f"TIN: {tin}", st["LFBodySmall"]))
     return parts
 
 
@@ -402,6 +409,8 @@ def _quotation_recipient(doc):
         "email": getattr(doc, "recipient_email", ""),
         "phone": getattr(doc, "recipient_phone", ""),
         "address": getattr(doc, "recipient_address", ""),
+        "recipient_vat": getattr(doc, "recipient_vat", ""),
+        "recipient_tin": getattr(doc, "recipient_tin", ""),
     }
 
 

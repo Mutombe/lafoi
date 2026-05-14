@@ -80,6 +80,8 @@ class Quotation(_MoneyMixin, models.Model):
     recipient_email = models.EmailField(blank=True)
     recipient_phone = models.CharField(max_length=32, blank=True)
     recipient_address = models.TextField(blank=True)
+    recipient_vat = models.CharField(max_length=40, blank=True, help_text="Free-form recipient VAT number.")
+    recipient_tin = models.CharField(max_length=40, blank=True, help_text="Free-form recipient TIN / BP number.")
 
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
 
@@ -163,6 +165,8 @@ class Invoice(_MoneyMixin, models.Model):
     recipient_email = models.EmailField(blank=True)
     recipient_phone = models.CharField(max_length=32, blank=True)
     recipient_address = models.TextField(blank=True)
+    recipient_vat = models.CharField(max_length=40, blank=True)
+    recipient_tin = models.CharField(max_length=40, blank=True)
 
     quotation = models.ForeignKey(Quotation, on_delete=models.SET_NULL, null=True, blank=True, related_name="invoices")
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)

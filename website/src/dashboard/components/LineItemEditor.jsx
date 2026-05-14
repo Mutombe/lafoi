@@ -32,7 +32,7 @@ const UNIT_OPTIONS = [
   { value: 'day',   label: 'day' },
 ]
 
-const newRow = (section = '', { is_lump_sum = false, description = '', unit_price = 0 } = {}) => ({
+const newRow = (section = '', { is_lump_sum = false, description = '', unit_price = 0, pricing_mode = 'flat', percent = 0 } = {}) => ({
   section,
   description,
   a: '',
@@ -41,19 +41,50 @@ const newRow = (section = '', { is_lump_sum = false, description = '', unit_pric
   unit: is_lump_sum ? 'lot' : 'm²',
   unit_price,
   quantity: 1,
-  // UI-only flag. When true the row hides A × B × Qty and unit and is sent
-  // as quantity=1 + unit_price=X — a flat fee for things like Labour or
-  // Transport that aren't priced by area.
+  // UI-only flags. is_lump_sum hides A × B × Qty + unit and sends the row as
+  // quantity=1 + unit_price=X. For lump-sum rows, pricing_mode is 'flat'
+  // (type the amount) or 'percent' (amount auto-fills as `percent`% of the
+  // measured subtotal — used for Labour, typically 30% of project cost).
   is_lump_sum,
+  pricing_mode,
+  percent,
 })
 
 // Convenience used by parent pages (Quotations / Invoices) to pre-seed
-// Labour + Transport on every new document.
+// Labour + Transport on every new document. Labour defaults to 30%-of-
+// project pricing; Transport is a flat amount.
 export function defaultLumpSumLines() {
   return [
-    newRow('', { is_lump_sum: true, description: 'Labour' }),
-    newRow('', { is_lump_sum: true, description: 'Transport' }),
+    newRow('', { is_lump_sum: true, description: 'Labour', pricing_mode: 'percent', percent: 30 }),
+    newRow('', { is_lump_sum: true, description: 'Transport', pricing_mode: 'flat' }),
   ]
+}
+
+// Sum of every measured (non-lump-sum) line — this is "the project cost"
+// that percentage-priced lump-sum rows (Labour) are computed against.
+function measuredSubtotal(items) {
+  return items.reduce((s, it) => {
+    if (it.is_lump_sum) return s
+    return s + (Number(it.quantity) || 0) * (Number(it.unit_price) || 0)
+  }, 0)
+}
+
+// Re-derive unit_price for every percentage-priced lump-sum row. Called on
+// every edit so Labour stays in lock-step with the measured lines.
+function recalcPercentRows(items) {
+  const base = measuredSubtotal(items)
+  let changed = false
+  const next = items.map((it) => {
+    if (it.is_lump_sum && it.pricing_mode === 'percent') {
+      const computed = +(((Number(it.percent) || 0) / 100) * base).toFixed(2)
+      if (computed !== Number(it.unit_price)) {
+        changed = true
+        return { ...it, unit_price: computed, quantity: 1 }
+      }
+    }
+    return it
+  })
+  return changed ? next : items
 }
 
 function asNum(v) {
@@ -85,13 +116,17 @@ function fmtCur(amount, currency) {
 }
 
 export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
+  // Every mutation routes through emit() so percentage-priced rows (Labour)
+  // are recomputed against the latest measured subtotal before bubbling up.
+  const emit = (next) => onChange(recalcPercentRows(next))
+
   const set = (idx, key, value) => {
     const next = items.slice()
     next[idx] = { ...next[idx], [key]: value }
     if (key === 'a' || key === 'b' || key === 'qty' || key === 'unit') {
       next[idx].quantity = +computeEffective(next[idx]).toFixed(2)
     }
-    onChange(next)
+    emit(next)
   }
 
   // When the user invokes a catalog item, fill description / unit / unit price
@@ -110,10 +145,10 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
       catalog_item: item.id,  // tracked so we can show "from catalog" on the row
     }
     next[idx].quantity = +computeEffective(next[idx]).toFixed(2)
-    onChange(next)
+    emit(next)
   }
 
-  const removeRow = (idx) => onChange(items.filter((_, i) => i !== idx))
+  const removeRow = (idx) => emit(items.filter((_, i) => i !== idx))
 
   // Flip a row between measured (A × B × Qty) and lump-sum (flat price).
   const toggleLumpSum = (idx) => {
@@ -128,11 +163,25 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
       qty: becomingLump ? 1 : (cur.qty || 1),
       unit: becomingLump ? 'lot' : (cur.unit === 'lot' ? 'm²' : cur.unit),
       quantity: 1,
+      pricing_mode: becomingLump ? (cur.pricing_mode || 'flat') : 'flat',
     }
     if (!becomingLump) {
       next[idx].quantity = +computeEffective(next[idx]).toFixed(2)
     }
-    onChange(next)
+    emit(next)
+  }
+
+  // Switch a lump-sum row between flat-amount and percentage-of-project
+  // pricing. Defaults the percentage to 30 the first time percent is chosen.
+  const setLumpMode = (idx, mode) => {
+    const next = items.slice()
+    const cur = next[idx]
+    next[idx] = {
+      ...cur,
+      pricing_mode: mode,
+      percent: mode === 'percent' ? (Number(cur.percent) > 0 ? cur.percent : 30) : cur.percent,
+    }
+    emit(next)
   }
 
   // Group items by section while preserving order. A new group starts every
@@ -156,6 +205,8 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
 
   const lineTotal = (it) => Number(it.quantity || 0) * Number(it.unit_price || 0)
   const grandTotal = items.reduce((s, it) => s + lineTotal(it), 0)
+  // "Project cost" base for percentage-priced rows (Labour).
+  const projectBase = measuredSubtotal(items)
 
   // Rename a section: rewrites the section field on every row in that group.
   const renameSection = (groupIdx, name) => {
@@ -165,7 +216,7 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
     target.indices.forEach((i) => {
       next[i] = { ...next[i], section: name }
     })
-    onChange(next)
+    emit(next)
   }
 
   // Append a new line at the end of a group (inherits that group's section).
@@ -174,14 +225,14 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
     const insertAt = target ? target.indices[target.indices.length - 1] + 1 : items.length
     const next = items.slice()
     next.splice(insertAt, 0, newRow(target?.section || ''))
-    onChange(next)
+    emit(next)
   }
 
   const removeSection = (groupIdx) => {
     const target = groups[groupIdx]
     if (!target) return
     const drop = new Set(target.indices)
-    onChange(items.filter((_, i) => !drop.has(i)))
+    emit(items.filter((_, i) => !drop.has(i)))
   }
 
   // "Add section" — appends a fresh group with one blank line and a
@@ -196,7 +247,7 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
       n += 1
       name = `Section ${n}`
     }
-    onChange([...items, newRow(name)])
+    emit([...items, newRow(name)])
   }
 
   const empty = items.length === 0
@@ -207,7 +258,7 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
         <div className="rounded-2xl border border-dashed border-lafoi-dark/15 px-6 py-10 text-center">
           <p className="text-sm text-lafoi-gray-medium font-sora">No line items yet.</p>
           <div className="mt-3 inline-flex gap-2">
-            <SecondaryButton type="button" onClick={() => onChange([newRow('')])}>
+            <SecondaryButton type="button" onClick={() => emit([newRow('')])}>
               <Plus size={13} weight="bold" /> Add line
             </SecondaryButton>
             <SecondaryButton type="button" onClick={addNewSection}>
@@ -279,6 +330,7 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
                 {groupItems.map((it) => {
                   const idx = it._idx
                   const lump = !!it.is_lump_sum
+                  const isPercent = lump && it.pricing_mode === 'percent'
                   return (
                     <tr key={idx} className="border-b border-lafoi-dark/[0.05] last:border-b-0 align-top">
                       <td className="px-2 py-2">
@@ -314,8 +366,46 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
                       {lump ? (
                         <>
                           <td className="px-2 py-2" colSpan={2}>
-                            <div className="h-full flex items-center justify-center text-[11px] font-sora tracking-[0.18em] uppercase text-lafoi-gray-medium">
-                              Flat price · no measurement
+                            <div className="flex flex-col items-center gap-1.5">
+                              {/* Flat vs % of project toggle */}
+                              <div className="inline-flex rounded-lg border border-lafoi-dark/12 overflow-hidden">
+                                <button
+                                  type="button"
+                                  onClick={() => setLumpMode(idx, 'flat')}
+                                  className={`px-2.5 py-1 text-[10px] font-sora tracking-[0.14em] uppercase transition-colors ${
+                                    !isPercent ? 'bg-lafoi-dark text-white' : 'bg-white text-lafoi-gray hover:bg-lafoi-cream'
+                                  }`}
+                                >
+                                  Flat
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setLumpMode(idx, 'percent')}
+                                  className={`px-2.5 py-1 text-[10px] font-sora tracking-[0.14em] uppercase transition-colors border-l border-lafoi-dark/12 ${
+                                    isPercent ? 'bg-lafoi-dark text-white' : 'bg-white text-lafoi-gray hover:bg-lafoi-cream'
+                                  }`}
+                                >
+                                  % of project
+                                </button>
+                              </div>
+                              {isPercent ? (
+                                <div className="flex items-center gap-1.5">
+                                  <Input
+                                    type="number" step="1" min="0" max="100"
+                                    value={it.percent}
+                                    onChange={(e) => set(idx, 'percent', e.target.value)}
+                                    className="text-right !px-2 !w-16"
+                                    aria-label="Percentage of project cost"
+                                  />
+                                  <span className="text-xs font-sora text-lafoi-gray-medium">
+                                    % of {fmtCur(projectBase, currency)}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-[10px] font-sora tracking-[0.18em] uppercase text-lafoi-gray-medium">
+                                  Flat price · no measurement
+                                </span>
+                              )}
                             </div>
                           </td>
                         </>
@@ -364,12 +454,21 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
                         </>
                       )}
                       <td className="px-2 py-2">
-                        <Input
-                          type="number" step="0.01"
-                          value={it.unit_price}
-                          onChange={(e) => set(idx, 'unit_price', e.target.value)}
-                          className="text-right"
-                        />
+                        {isPercent ? (
+                          <div
+                            className="px-3 py-2 rounded-lg bg-lafoi-cream border border-lafoi-dark/10 text-right text-sm font-sora tabular-nums text-lafoi-gray"
+                            title="Auto-filled from the percentage of project cost"
+                          >
+                            {fmtCur(Number(it.unit_price) || 0, currency)}
+                          </div>
+                        ) : (
+                          <Input
+                            type="number" step="0.01"
+                            value={it.unit_price}
+                            onChange={(e) => set(idx, 'unit_price', e.target.value)}
+                            className="text-right"
+                          />
+                        )}
                       </td>
                       <td className="px-3 py-2 text-right tabular-nums font-sora">
                         {fmtCur(lineTotal(it), currency)}

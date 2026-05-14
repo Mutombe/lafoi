@@ -82,26 +82,35 @@ export default function RecipientPicker({
         </Field>
       )}
 
-      {mode === 'customer' && (
-        <Field label="Customer" required>
-          <Select
-            value={editing.customer || ''}
-            onChange={(e) => setEditing({ ...editing, customer: e.target.value })}
-            required
-          >
-            <option value="">— Select customer —</option>
-            {customers.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}{c.contact_person ? ` · ${c.contact_person}` : ''}
-              </option>
-            ))}
-          </Select>
-          <p className="text-[11px] text-lafoi-gray-medium mt-1.5">
-            No project gets linked. You can wire this {documentNoun} to a project
-            later when the work is scoped.
-          </p>
-        </Field>
-      )}
+      {mode === 'customer' && (() => {
+        const picked = customers.find((c) => String(c.id) === String(editing.customer))
+        return (
+          <Field label="Customer" required>
+            <Select
+              value={editing.customer || ''}
+              onChange={(e) => setEditing({ ...editing, customer: e.target.value })}
+              required
+            >
+              <option value="">— Select customer —</option>
+              {customers.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}{c.contact_person ? ` · ${c.contact_person}` : ''}
+                </option>
+              ))}
+            </Select>
+            {picked && (picked.vat_number || picked.tin_number) && (
+              <p className="text-[11px] text-lafoi-gray-medium mt-1.5 flex flex-wrap gap-x-3">
+                {picked.vat_number && <span>VAT: <strong className="text-lafoi-dark">{picked.vat_number}</strong></span>}
+                {picked.tin_number && <span>TIN: <strong className="text-lafoi-dark">{picked.tin_number}</strong></span>}
+              </p>
+            )}
+            <p className="text-[11px] text-lafoi-gray-medium mt-1.5">
+              No project gets linked. You can wire this {documentNoun} to a project
+              later when the work is scoped.
+            </p>
+          </Field>
+        )
+      })()}
 
       {mode === 'freeform' && (
         <div className="grid sm:grid-cols-2 gap-3">
@@ -142,10 +151,46 @@ export default function RecipientPicker({
               placeholder="Suite, street, suburb, city"
             />
           </Field>
-          <p className="text-[11px] text-lafoi-gray-medium sm:col-span-2 -mt-1">
-            Nothing here gets saved into your customer book. If this becomes a
-            recurring client, add them under Customers afterwards.
-          </p>
+          <Field label="VAT number">
+            <Input
+              value={editing.recipient_vat || ''}
+              onChange={(e) => setEditing({ ...editing, recipient_vat: e.target.value })}
+              placeholder="VAT registration no."
+            />
+          </Field>
+          <Field label="TIN / BP number">
+            <Input
+              value={editing.recipient_tin || ''}
+              onChange={(e) => setEditing({ ...editing, recipient_tin: e.target.value })}
+              placeholder="ZIMRA TIN / BP number"
+            />
+          </Field>
+
+          {/* Promote this free-form recipient into the customer book on save. */}
+          <label className="sm:col-span-2 mt-0.5 flex items-start gap-2.5 px-3 py-2.5 rounded-xl bg-white border border-lafoi-dark/10 cursor-pointer hover:border-lafoi-green/40 transition-colors">
+            <input
+              type="checkbox"
+              checked={!!editing.save_as_customer}
+              onChange={(e) => setEditing({ ...editing, save_as_customer: e.target.checked })}
+              className="w-4 h-4 mt-0.5 accent-lafoi-green shrink-0"
+            />
+            <span>
+              <span className="font-sora text-[13px] font-medium text-lafoi-dark">
+                Also add to Customers
+              </span>
+              <span className="block text-[11px] text-lafoi-gray-medium mt-0.5">
+                Saves this recipient into your customer book and links the {documentNoun} to
+                that new customer record — so next time you can just pick them.
+              </span>
+            </span>
+          </label>
+
+          {!editing.save_as_customer && (
+            <p className="text-[11px] text-lafoi-gray-medium sm:col-span-2 -mt-1">
+              Left unticked, these details live only on this {documentNoun} and aren't
+              saved to your customer book.
+            </p>
+          )}
         </div>
       )}
     </div>
@@ -157,25 +202,20 @@ export default function RecipientPicker({
  * Throws an error string when the active mode's required field is empty.
  * Use in handleSave to keep the inline error messages consistent.
  */
+const BLANK_RECIPIENT = {
+  recipient_name: '', recipient_contact: '', recipient_email: '',
+  recipient_phone: '', recipient_address: '', recipient_vat: '', recipient_tin: '',
+}
+
 export function recipientPayload(editing) {
   const mode = editing.recipient_mode || 'project'
   if (mode === 'project') {
     if (!editing.project) throw 'Pick a project, or switch to the customer / new recipient mode.'
-    return {
-      project: Number(editing.project),
-      customer: null,
-      recipient_name: '', recipient_contact: '', recipient_email: '',
-      recipient_phone: '', recipient_address: '',
-    }
+    return { project: Number(editing.project), customer: null, ...BLANK_RECIPIENT }
   }
   if (mode === 'customer') {
     if (!editing.customer) throw 'Pick a customer, or switch to a project / new recipient.'
-    return {
-      project: null,
-      customer: Number(editing.customer),
-      recipient_name: '', recipient_contact: '', recipient_email: '',
-      recipient_phone: '', recipient_address: '',
-    }
+    return { project: null, customer: Number(editing.customer), ...BLANK_RECIPIENT }
   }
   if (!(editing.recipient_name || '').trim()) {
     throw 'Type at least a recipient name, or switch modes.'
@@ -188,6 +228,30 @@ export function recipientPayload(editing) {
     recipient_email: editing.recipient_email || '',
     recipient_phone: editing.recipient_phone || '',
     recipient_address: editing.recipient_address || '',
+    recipient_vat: editing.recipient_vat || '',
+    recipient_tin: editing.recipient_tin || '',
+  }
+}
+
+/**
+ * When a free-form recipient is being promoted to a customer, build the
+ * Customer create payload. Returns null when not applicable (wrong mode or
+ * checkbox unticked).
+ */
+export function customerFromRecipient(editing) {
+  if ((editing.recipient_mode || 'project') !== 'freeform') return null
+  if (!editing.save_as_customer) return null
+  const name = (editing.recipient_name || '').trim()
+  if (!name) return null
+  return {
+    name,
+    customer_type: 'individual',
+    contact_person: editing.recipient_contact || '',
+    email: editing.recipient_email || '',
+    phone: editing.recipient_phone || '',
+    address: editing.recipient_address || '',
+    vat_number: editing.recipient_vat || '',
+    tin_number: editing.recipient_tin || '',
   }
 }
 
@@ -208,5 +272,8 @@ export function recipientFormStateFromDoc(doc) {
     recipient_email: doc?.recipient_email || '',
     recipient_phone: doc?.recipient_phone || '',
     recipient_address: doc?.recipient_address || '',
+    recipient_vat: doc?.recipient_vat || '',
+    recipient_tin: doc?.recipient_tin || '',
+    save_as_customer: false,
   }
 }
