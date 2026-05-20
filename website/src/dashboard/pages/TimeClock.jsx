@@ -100,7 +100,10 @@ export default function TimeClock() {
     return args
   }, [page, pageSize, debouncedSearch, employeeFilter, dateFrom, dateTo])
 
-  const { data: empData } = useListEmployeesQuery({ page: 1, page_size: 250 })
+  // Only active staff in the pickers — terminated rows (old test data,
+  // duplicates) stay in the DB for payroll history but shouldn't be
+  // clock-in targets.
+  const { data: empData } = useListEmployeesQuery({ page: 1, page_size: 250, status: 'active' })
   const { data, isLoading: isFirstLoad } = useGetClockEntriesQuery(queryArgs)
 
   // Today's strip pulls a focused query so it doesn't depend on the user's
