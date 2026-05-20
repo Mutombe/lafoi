@@ -4,6 +4,7 @@ import { useStore } from 'react-redux'
 import {
   Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch,
   Package, Warning, QrCode, DownloadSimple, UploadSimple, X,
+  ArrowDown, ArrowUp,
 } from '@phosphor-icons/react'
 import { useConfirm } from '../components/ConfirmDialog'
 import { toast } from 'sonner'
@@ -23,6 +24,8 @@ import {
   useDeleteItemMutation,
   useListInventoryCategoriesQuery,
   useListSuppliersQuery,
+  useListStockLocationsQuery,
+  useCreateMovementMutation,
   useImportItemsCsvMutation,
   useLazyLookupItemByBarcodeQuery,
   downloadFile,
@@ -41,8 +44,8 @@ const UNITS = [
 ]
 
 const empty = () => ({
-  name: '', barcode: '', category: '', supplier: '', unit: 'piece',
-  cost_price: 0, sale_price: 0, currency: 'USD',
+  name: '', barcode: '', size_spec: '',
+  category: '', supplier: '', unit: 'piece',
   reorder_threshold: 0, reorder_quantity: 0,
   description: '', image_url: '', is_active: true,
 })
@@ -88,8 +91,51 @@ export default function Inventory() {
   const [createItem] = useCreateItemMutation()
   const [updateItem] = useUpdateItemMutation()
   const [deleteItem] = useDeleteItemMutation()
+  const [createMovement] = useCreateMovementMutation()
   const [importCsv, importState] = useImportItemsCsvMutation()
   const [triggerLookup, lookupState] = useLazyLookupItemByBarcodeQuery()
+
+  const { data: locData } = useListStockLocationsQuery({ page: 1, page_size: 100 })
+  const locations = locData?.results || []
+
+  // Quick stock-movement dialog state. When set, opens a small modal that
+  // posts a Movement against the selected item with the chosen direction.
+  const [movement, setMovement] = useState(null)
+  const openMovement = (item, direction) => {
+    const defaultLoc = locations.find((l) => l.is_default) || locations[0]
+    setMovement({
+      item,
+      direction,                          // 'in' | 'out'
+      quantity: '',
+      location: defaultLoc?.id || '',
+      occurred_at: new Date().toISOString().slice(0, 10),
+      reference: '',
+    })
+  }
+  const handleMovementSave = async (e) => {
+    e.preventDefault()
+    if (!movement.location) { toast.error('Pick a location'); return }
+    const qty = Number(movement.quantity)
+    if (!qty || qty <= 0) { toast.error('Quantity must be a positive number'); return }
+    const signed = movement.direction === 'in' ? qty : -qty
+    const body = {
+      item: movement.item.id,
+      location: movement.location,
+      quantity: String(signed),
+      reason: movement.direction === 'in' ? 'receive' : 'issue',
+      reference: movement.reference || '',
+      occurred_at: `${movement.occurred_at}T12:00:00`,
+    }
+    const wasIn = movement.direction === 'in'
+    setMovement(null)
+    try {
+      await createMovement(body).unwrap()
+      toast.success(wasIn ? 'Stock in recorded' : 'Stock out recorded')
+    } catch (err) {
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Could not record movement.'
+      toast.error('Movement failed', { description: msg })
+    }
+  }
 
   const isNew = editing && !editing.id
 
@@ -103,12 +149,10 @@ export default function Inventory() {
     const payload = {
       name: editing.name?.trim(),
       barcode: editing.barcode?.trim() || '',
+      size_spec: editing.size_spec?.trim() || '',
       category: editing.category || null,
       supplier: editing.supplier || null,
       unit: editing.unit || 'piece',
-      cost_price: Number(editing.cost_price) || 0,
-      sale_price: Number(editing.sale_price) || 0,
-      currency: editing.currency || 'USD',
       reorder_threshold: Number(editing.reorder_threshold) || 0,
       reorder_quantity: Number(editing.reorder_quantity) || 0,
       description: editing.description || '',
@@ -125,8 +169,14 @@ export default function Inventory() {
         tempRow: {
           ...payload,
           sku: '…',
-          on_hand: 0,
-          is_low_stock: false,
+          on_hand: '0',
+          balance: '0',
+          total_in: '0',
+          total_out: '0',
+          last_in_date: null,
+          last_out_date: null,
+          is_low_stock: payload.reorder_threshold > 0,
+          stock_level: 'low',
           category_name: matchedCategory?.name || '',
           supplier_name: matchedSupplier?.name || '',
         },
@@ -215,6 +265,22 @@ export default function Inventory() {
     }
   }
 
+  // Stock-level → ring colour. Three bands, centred on reorder_threshold.
+  const stockTone = (lvl) => {
+    if (lvl === 'high') return { dot: 'bg-lafoi-green', text: 'text-lafoi-green-dark', ring: 'bg-lafoi-green/15 border-lafoi-green/40' }
+    if (lvl === 'medium') return { dot: 'bg-blue-500', text: 'text-blue-700', ring: 'bg-blue-50 border-blue-200' }
+    return { dot: 'bg-red-500', text: 'text-red-700', ring: 'bg-red-50 border-red-200' }
+  }
+  const stockLabel = (lvl) => (lvl === 'high' ? 'Healthy' : lvl === 'medium' ? 'Caution' : 'Reorder')
+
+  const fmtQty = (q, u) => `${Number(q || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}${u ? ` ${u}` : ''}`
+  const fmtShortDate = (iso) => {
+    if (!iso) return null
+    try {
+      return new Date(iso).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })
+    } catch { return iso }
+  }
+
   const columns = [
     {
       key: 'name', label: 'Item', priority: 'high',
@@ -229,26 +295,58 @@ export default function Inventory() {
           )}
           <div className="min-w-0">
             <p className="font-sora text-sm font-medium truncate">{r.name}</p>
-            <p className="text-[11px] text-lafoi-gray-medium truncate font-sora">{r.sku}{r.barcode ? ` · ${r.barcode}` : ''}</p>
+            <p className="text-[11px] text-lafoi-gray-medium truncate font-sora">
+              {r.sku}
+              {r.category_name ? ` · ${r.category_name}` : ''}
+              {r.barcode ? ` · ${r.barcode}` : ''}
+            </p>
           </div>
         </div>
       ),
     },
     {
-      key: 'category', label: 'Category', priority: 'medium',
-      render: (r) => r.category_name || <span className="text-lafoi-gray-medium">—</span>,
+      key: 'size_spec', label: 'Size / Spec', priority: 'medium',
+      render: (r) => r.size_spec
+        ? <span className="text-xs font-sora text-lafoi-dark">{r.size_spec}</span>
+        : <span className="text-xs text-lafoi-gray-medium">—</span>,
     },
     {
-      key: 'on_hand', label: 'On hand', priority: 'high',
-      render: (r) => (
-        <div className="flex items-center gap-2 tabular-nums">
-          <span className="font-sora text-sm">{Number(r.on_hand || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
-          <span className="text-[11px] text-lafoi-gray-medium">{r.unit}</span>
-          {r.is_low_stock && (
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-sora tracking-[0.18em] uppercase">
-              <Warning size={10} weight="bold" /> Low
+      key: 'balance', label: 'Balance', priority: 'high',
+      render: (r) => {
+        const tone = stockTone(r.stock_level || 'low')
+        return (
+          <div className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full border ${tone.ring}`}>
+            <span className={`w-2 h-2 rounded-full ${tone.dot}`} />
+            <span className={`font-sora text-sm tabular-nums ${tone.text}`}>
+              {fmtQty(r.balance ?? r.on_hand, r.unit)}
             </span>
-          )}
+          </div>
+        )
+      },
+    },
+    {
+      key: 'in', label: 'In', priority: 'medium',
+      render: (r) => (
+        <div className="text-xs font-sora">
+          <p className="tabular-nums text-lafoi-green-dark">
+            {fmtQty(r.total_in, r.unit)}
+          </p>
+          <p className="text-[10px] text-lafoi-gray-medium mt-0.5">
+            {r.last_in_date ? `last ${fmtShortDate(r.last_in_date)}` : '—'}
+          </p>
+        </div>
+      ),
+    },
+    {
+      key: 'out', label: 'Out', priority: 'medium',
+      render: (r) => (
+        <div className="text-xs font-sora">
+          <p className="tabular-nums text-red-700">
+            {fmtQty(r.total_out, r.unit)}
+          </p>
+          <p className="text-[10px] text-lafoi-gray-medium mt-0.5">
+            {r.last_out_date ? `last ${fmtShortDate(r.last_out_date)}` : '—'}
+          </p>
         </div>
       ),
     },
@@ -256,27 +354,32 @@ export default function Inventory() {
       key: 'reorder_threshold', label: 'Reorder at', priority: 'low',
       render: (r) => (
         <span className="text-xs font-sora tabular-nums text-lafoi-gray">
-          {Number(r.reorder_threshold || 0).toLocaleString()}
+          {fmtQty(r.reorder_threshold, r.unit)}
         </span>
       ),
     },
     {
-      key: 'cost_sale', label: 'Cost / Sale', priority: 'medium',
-      render: (r) => (
-        <div className="text-xs font-sora tabular-nums">
-          <p>{fmtMoney(r.cost_price, r.currency)}</p>
-          <p className="text-lafoi-gray-medium">{fmtMoney(r.sale_price, r.currency)}</p>
-        </div>
-      ),
-    },
-    {
-      key: 'supplier_name', label: 'Supplier', priority: 'low',
+      key: 'supplier_name', label: 'Supplier', priority: 'desktop',
       render: (r) => r.supplier_name || <span className="text-lafoi-gray-medium">—</span>,
     },
     {
       key: 'actions', label: '', priority: 'high',
       render: (r) => (
         <div className="flex justify-end gap-1">
+          <button
+            onClick={(e) => { e.stopPropagation(); openMovement(r, 'in') }}
+            className="p-2 rounded-lg hover:bg-lafoi-green/10 text-lafoi-gray hover:text-lafoi-green-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"
+            title="Stock in"
+          >
+            <ArrowDown size={14} weight="bold" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); openMovement(r, 'out') }}
+            className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"
+            title="Stock out"
+          >
+            <ArrowUp size={14} weight="bold" />
+          </button>
           <button
             onClick={(e) => { e.stopPropagation(); setEditing(r) }}
             className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"
@@ -411,6 +514,9 @@ export default function Inventory() {
             <Field label="Name" required className="sm:col-span-2">
               <Input value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} required />
             </Field>
+            <Field label="Size / Spec" hint='Physical spec — e.g. "5m × 1.8m", "60W cool white".'>
+              <Input value={editing.size_spec || ''} onChange={(e) => setEditing({ ...editing, size_spec: e.target.value })} placeholder="Optional" />
+            </Field>
             <Field label="Barcode / QR">
               <Input value={editing.barcode} onChange={(e) => setEditing({ ...editing, barcode: e.target.value })} placeholder="Optional" />
             </Field>
@@ -429,21 +535,6 @@ export default function Inventory() {
               <Select value={editing.supplier || ''} onChange={(e) => setEditing({ ...editing, supplier: e.target.value })}>
                 <option value="">— None —</option>
                 {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </Select>
-            </Field>
-            <Field label="Cost price">
-              <Input type="number" step="0.01" min="0" value={editing.cost_price}
-                onChange={(e) => setEditing({ ...editing, cost_price: e.target.value })} />
-            </Field>
-            <Field label="Sale price">
-              <Input type="number" step="0.01" min="0" value={editing.sale_price}
-                onChange={(e) => setEditing({ ...editing, sale_price: e.target.value })} />
-            </Field>
-            <Field label="Currency">
-              <Select value={editing.currency || 'USD'} onChange={(e) => setEditing({ ...editing, currency: e.target.value })}>
-                <option value="USD">USD</option>
-                <option value="ZWG">ZWG</option>
-                <option value="ZAR">ZAR</option>
               </Select>
             </Field>
             <Field label="Reorder threshold" hint="Flag as low stock at or below this quantity.">
@@ -522,6 +613,73 @@ export default function Inventory() {
         onClose={() => setScannerOpen(false)}
         onDetect={handleScannerHit}
       />
+
+      {/* Quick stock-in / stock-out — records a Movement against the item.
+          The aggregated In/Out columns refresh via the InventoryItem cache
+          invalidation already baked into createMovement. */}
+      <Modal
+        open={!!movement}
+        onClose={() => setMovement(null)}
+        title={movement
+          ? `${movement.direction === 'in' ? 'Stock in' : 'Stock out'} — ${movement.item.name}`
+          : ''}
+        size="md"
+        footer={
+          <>
+            <SecondaryButton type="button" onClick={() => setMovement(null)}>Cancel</SecondaryButton>
+            <PrimaryButton form="mov-form" type="submit">
+              Record {movement?.direction === 'in' ? 'in' : 'out'}
+            </PrimaryButton>
+          </>
+        }
+      >
+        {movement && (
+          <form id="mov-form" onSubmit={handleMovementSave} className="grid sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2 px-3 py-2.5 rounded-xl bg-lafoi-cream text-sm">
+              <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-0.5">
+                Current balance
+              </p>
+              <p className="font-display text-lg">
+                {fmtQty(movement.item.balance ?? movement.item.on_hand, movement.item.unit)}
+              </p>
+            </div>
+            <Field label={`Quantity ${movement.direction === 'in' ? 'received' : 'issued'}`} required>
+              <Input
+                type="number" step="0.01" min="0"
+                value={movement.quantity}
+                onChange={(e) => setMovement({ ...movement, quantity: e.target.value })}
+                required
+                autoFocus
+              />
+            </Field>
+            <Field label="Date" required>
+              <Input
+                type="date"
+                value={movement.occurred_at}
+                onChange={(e) => setMovement({ ...movement, occurred_at: e.target.value })}
+                required
+              />
+            </Field>
+            <Field label="Location" required>
+              <Select
+                value={movement.location}
+                onChange={(e) => setMovement({ ...movement, location: e.target.value })}
+                required
+              >
+                <option value="">— Pick a location —</option>
+                {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+              </Select>
+            </Field>
+            <Field label="Reference">
+              <Input
+                value={movement.reference}
+                onChange={(e) => setMovement({ ...movement, reference: e.target.value })}
+                placeholder="PO ref, project code, supplier slip…"
+              />
+            </Field>
+          </form>
+        )}
+      </Modal>
     </div>
   )
 }

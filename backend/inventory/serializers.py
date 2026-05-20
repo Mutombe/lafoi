@@ -84,33 +84,98 @@ class ItemSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     supplier_name = serializers.CharField(source='supplier.name', read_only=True)
     on_hand = serializers.SerializerMethodField()
+    balance = serializers.SerializerMethodField()
     is_low_stock = serializers.SerializerMethodField()
+    # Aggregates from the Movement ledger so the dashboard can show In/Out
+    # cumulative totals + last activity dates without an extra round-trip.
+    total_in = serializers.SerializerMethodField()
+    total_out = serializers.SerializerMethodField()
+    last_in_date = serializers.SerializerMethodField()
+    last_out_date = serializers.SerializerMethodField()
+    # 'high' | 'medium' | 'low' for the colour-coded stock indicator. Three
+    # bands centred on reorder_threshold: > 2× threshold = high (green),
+    # threshold..2× threshold = medium (blue), below threshold = low (red).
+    stock_level = serializers.SerializerMethodField()
     stocks = StockSerializer(many=True, read_only=True)
 
     class Meta:
         model = Item
         fields = (
-            'id', 'sku', 'barcode', 'name',
+            'id', 'sku', 'barcode', 'name', 'size_spec',
             'category', 'category_name',
             'supplier', 'supplier_name',
             'unit', 'cost_price', 'sale_price', 'currency',
             'reorder_threshold', 'reorder_quantity',
             'description', 'image_url', 'is_active',
-            'on_hand', 'is_low_stock',
+            'on_hand', 'balance', 'is_low_stock', 'stock_level',
+            'total_in', 'total_out', 'last_in_date', 'last_out_date',
             'stocks',
             'created_at', 'updated_at',
         )
         read_only_fields = (
             'id', 'sku', 'category_name', 'supplier_name',
-            'on_hand', 'is_low_stock', 'stocks',
+            'on_hand', 'balance', 'is_low_stock', 'stock_level',
+            'total_in', 'total_out', 'last_in_date', 'last_out_date',
+            'stocks',
             'created_at', 'updated_at',
         )
 
     def get_on_hand(self, obj):
         return str(obj.on_hand)
 
+    def get_balance(self, obj):
+        return str(obj.on_hand)
+
     def get_is_low_stock(self, obj):
         return obj.is_low_stock
+
+    # ----- Movement aggregates ------------------------------------------------
+    # Cached on the instance per request so the same ItemViewSet list page
+    # doesn't recompute Sum/Max four times per row.
+    def _movements_summary(self, obj):
+        cache = self.context.setdefault('_item_summaries', {})
+        if obj.id in cache:
+            return cache[obj.id]
+        qs = obj.movements.all()
+        positive = qs.filter(quantity__gt=0)
+        negative = qs.filter(quantity__lt=0)
+        from django.db.models import Sum, Max
+        from decimal import Decimal
+        summary = {
+            'total_in':  positive.aggregate(s=Sum('quantity'))['s'] or Decimal('0'),
+            'total_out': abs(negative.aggregate(s=Sum('quantity'))['s'] or Decimal('0')),
+            'last_in':   positive.aggregate(m=Max('occurred_at'))['m'],
+            'last_out':  negative.aggregate(m=Max('occurred_at'))['m'],
+        }
+        cache[obj.id] = summary
+        return summary
+
+    def get_total_in(self, obj):
+        return str(self._movements_summary(obj)['total_in'])
+
+    def get_total_out(self, obj):
+        return str(self._movements_summary(obj)['total_out'])
+
+    def get_last_in_date(self, obj):
+        d = self._movements_summary(obj)['last_in']
+        return d.date().isoformat() if d else None
+
+    def get_last_out_date(self, obj):
+        d = self._movements_summary(obj)['last_out']
+        return d.date().isoformat() if d else None
+
+    def get_stock_level(self, obj):
+        on_hand = obj.on_hand
+        threshold = obj.reorder_threshold or 0
+        if threshold <= 0:
+            # No threshold configured — use a sane fallback: in stock → high,
+            # zero → low.
+            return 'high' if on_hand > 0 else 'low'
+        if on_hand < threshold:
+            return 'low'
+        if on_hand < threshold * 2:
+            return 'medium'
+        return 'high'
 
 
 class MovementSerializer(serializers.ModelSerializer):

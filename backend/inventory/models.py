@@ -129,7 +129,14 @@ class Item(models.Model):
         Supplier, null=True, blank=True, on_delete=models.SET_NULL, related_name='items',
     )
     unit = models.CharField(max_length=8, choices=UNIT_CHOICES, default='piece')
+    # Size / specification — free-text describing physical spec (e.g.
+    # "5m × 1.8m", "60W cool white", "Φ50mm matte"). Kept optional so legacy
+    # items don't need backfill.
+    size_spec = models.CharField(max_length=120, blank=True)
 
+    # Legacy pricing fields kept on the model so historical purchase orders
+    # and item creates that pre-date the new schema don't break. The
+    # dashboard UI no longer surfaces them — inventory is now stock-only.
     cost_price = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0'))
     sale_price = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0'))
     currency = models.CharField(max_length=8, default='USD')
