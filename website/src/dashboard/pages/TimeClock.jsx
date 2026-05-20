@@ -10,6 +10,7 @@ import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
+import EmployeePicker from '../components/EmployeePicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import CountUp from '../../components/ui/CountUp'
@@ -332,18 +333,13 @@ export default function TimeClock() {
           </div>
           <form onSubmit={handleClockIn} className="grid sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
             <Field label="Employee" className="lg:col-span-4">
-              <Select
+              <EmployeePicker
+                employees={employees}
                 value={pickEmployee}
-                onChange={(e) => setPickEmployee(e.target.value)}
+                onChange={setPickEmployee}
+                placeholder="Type a name or code…"
                 required
-              >
-                <option value="">Select…</option>
-                {employees.map((emp) => (
-                  <option key={emp.id} value={emp.id}>
-                    {emp.full_name || `${emp.first_name} ${emp.last_name}`} · {emp.employee_code}
-                  </option>
-                ))}
-              </Select>
+              />
             </Field>
             <Field label="Location (optional)" className="lg:col-span-3">
               <Input
@@ -394,20 +390,14 @@ export default function TimeClock() {
             />
           </div>
         </div>
-        <div className="min-w-[180px]">
+        <div className="min-w-[220px]">
           <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-1.5">Employee</p>
-          <select
+          <EmployeePicker
+            employees={employees}
             value={employeeFilter}
-            onChange={(e) => setEmployeeFilter(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body"
-          >
-            <option value="">All employees</option>
-            {employees.map((emp) => (
-              <option key={emp.id} value={emp.id}>
-                {emp.full_name || `${emp.first_name} ${emp.last_name}`}
-              </option>
-            ))}
-          </select>
+            onChange={setEmployeeFilter}
+            placeholder="All employees"
+          />
         </div>
         <div>
           <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-1.5">From</p>
