@@ -43,6 +43,24 @@ from .serializers import (
 )
 
 
+def _is_admin(user):
+    return bool(getattr(user, "is_superuser", False) or getattr(user, "role", "") == "admin")
+
+
+def _employee_for_user(user):
+    """Resolve the Employee record that belongs to a signed-in user.
+
+    The two tables aren't FK-linked, so we match on email (case-insensitive).
+    Returns None when the user has no matching active employee record."""
+    email = (getattr(user, "email", "") or "").strip()
+    if not email:
+        return None
+    return (
+        Employee.objects.filter(email__iexact=email, status="active").first()
+        or Employee.objects.filter(email__iexact=email).first()
+    )
+
+
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
@@ -50,6 +68,18 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     filterset_fields = ("status", "department", "pay_frequency")
     search_fields = ("employee_code", "first_name", "last_name", "email", "phone", "department", "job_title")
     ordering_fields = ("hire_date", "first_name", "last_name", "base_salary")
+
+    @action(detail=False, methods=["get"], url_path="me", permission_classes=[IsAuthenticated])
+    def me(self, request):
+        """The signed-in user's own Employee record, matched by email.
+
+        Auth-only (no employees-module gate) so staff can resolve their own
+        identity for the Time Clock without seeing the rest of the team.
+        Returns 204 when the user has no employee record on file."""
+        emp = _employee_for_user(request.user)
+        if not emp:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(EmployeeSerializer(emp).data)
 
     @action(detail=True, methods=["get"], url_path="ytd")
     def ytd(self, request, pk=None):
@@ -403,9 +433,28 @@ class ClockEntryViewSet(viewsets.ModelViewSet):
     )
     ordering_fields = ("clock_in", "clock_out", "created_at")
 
+    def get_queryset(self):
+        """Admins see the whole roster's entries; everyone else sees only
+        their own clock history."""
+        qs = super().get_queryset()
+        user = self.request.user
+        if _is_admin(user):
+            return qs
+        emp = _employee_for_user(user)
+        return qs.filter(employee=emp) if emp else qs.none()
+
     @action(detail=False, methods=["post"], url_path="clock_in")
     def clock_in_action(self, request):
         employee_id = request.data.get("employee")
+        # Non-admins can only clock themselves in — ignore any employee id
+        # they pass and resolve it from their own account.
+        if not _is_admin(request.user):
+            own = _employee_for_user(request.user)
+            if not own:
+                raise ValidationError({
+                    "detail": "Your account isn't linked to an employee record. Ask an administrator.",
+                })
+            employee_id = own.pk
         if not employee_id:
             raise ValidationError({"employee": "This field is required."})
         try:

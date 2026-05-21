@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
 import {
   ClockClockwise, Plus, Trash, PencilSimple, MagnifyingGlass,
-  CircleNotch, CheckCircle, SignIn, SignOut, MapPin,
+  CircleNotch, CheckCircle, SignIn, SignOut, MapPin, User,
 } from '@phosphor-icons/react'
 import { useConfirm } from '../components/ConfirmDialog'
 import { toast } from 'sonner'
+import { selectCurrentUser } from '../store/authSlice'
 
 import PageHeader from '../components/PageHeader'
 import DataTable, { fmtDate } from '../components/DataTable'
@@ -16,6 +18,7 @@ import useOptimisticListUpdate from '../hooks/useOptimisticListUpdate'
 import CountUp from '../../components/ui/CountUp'
 import {
   useListEmployeesQuery,
+  useMyEmployeeQuery,
   useGetClockEntriesQuery,
   useClockInMutation,
   useClockOutMutation,
@@ -64,6 +67,10 @@ const liveHours = (clockIn) => {
 
 export default function TimeClock() {
   const confirm = useConfirm()
+  const currentUser = useSelector(selectCurrentUser)
+  // Admins (and superusers) run the clock for the whole roster. Everyone
+  // else only ever clocks themselves — they never see other people's names.
+  const isAdmin = currentUser?.role === 'admin' || currentUser?.is_superuser
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -102,8 +109,13 @@ export default function TimeClock() {
 
   // Only active staff in the pickers — terminated rows (old test data,
   // duplicates) stay in the DB for payroll history but shouldn't be
-  // clock-in targets.
-  const { data: empData } = useListEmployeesQuery({ page: 1, page_size: 250, status: 'active' })
+  // clock-in targets. Staff don't have employees-module access, so they
+  // skip the full list and resolve only their own record instead.
+  const { data: empData } = useListEmployeesQuery(
+    { page: 1, page_size: 250, status: 'active' },
+    { skip: !isAdmin },
+  )
+  const { data: myEmployee, isLoading: myEmployeeLoading } = useMyEmployeeQuery(undefined, { skip: isAdmin })
   const { data, isLoading: isFirstLoad } = useGetClockEntriesQuery(queryArgs)
 
   // Today's strip pulls a focused query so it doesn't depend on the user's
@@ -118,6 +130,16 @@ export default function TimeClock() {
 
   const employees = empData?.results || []
   const rows = data?.results || []
+
+  // Staff: lock the clock-in form to their own employee record. Auto-select
+  // it the moment it resolves so they never touch a picker.
+  useEffect(() => {
+    if (!isAdmin && myEmployee?.id) {
+      setPickEmployee(String(myEmployee.id))
+    }
+  }, [isAdmin, myEmployee])
+  // A staff user whose account isn't linked to any employee record.
+  const staffNoRecord = !isAdmin && !myEmployeeLoading && !myEmployee?.id
   const todayRows = todayData?.results || []
 
   // Open shifts (no clock_out) — used for the banner + roster count
@@ -151,19 +173,29 @@ export default function TimeClock() {
 
   const handleClockIn = async (e) => {
     e.preventDefault()
-    if (!pickEmployee) {
+    if (staffNoRecord) {
+      toast.error('Your account isn’t linked to an employee record', { description: 'Ask an administrator to link it.' })
+      return
+    }
+    if (isAdmin && !pickEmployee) {
       toast.error('Pick an employee first')
       return
     }
     try {
-      const created = await clockIn({
-        employee: pickEmployee,
+      await clockIn({
+        // Backend ignores `employee` for non-admins and resolves it from
+        // the signed-in account — but we send it anyway for admins.
+        employee: pickEmployee || (myEmployee?.id ?? ''),
         location: pickLocation || '',
         notes: pickNotes || '',
       }).unwrap()
-      const name = employees.find((emp) => String(emp.id) === String(pickEmployee))?.full_name || ''
+      const name = isAdmin
+        ? (employees.find((emp) => String(emp.id) === String(pickEmployee))?.full_name || '')
+        : (myEmployee?.full_name || '')
       toast.success(`Clocked in${name ? ` — ${name}` : ''}`, { description: pickLocation || undefined })
-      setPickEmployee('')
+      // Admins clear the picker to clock the next person; staff stay locked
+      // to themselves.
+      if (isAdmin) setPickEmployee('')
       setPickLocation('')
       setPickNotes('')
     } catch (err) {
@@ -294,7 +326,9 @@ export default function TimeClock() {
       <PageHeader
         eyebrow="Time Clock"
         title="Shifts in and out."
-        description="Record when employees start and end their shifts. Hours roll up to the payroll period summary — but never auto-deduct."
+        description={isAdmin
+          ? 'Record when employees start and end their shifts. Hours roll up to the payroll period summary — but never auto-deduct.'
+          : 'Clock in when you start, out when you finish. Your hours roll up to the payroll summary — they never auto-deduct.'}
       />
 
       {/* ---------- Quick action card --------------------------------------- */}
@@ -331,18 +365,40 @@ export default function TimeClock() {
           <div className="flex items-center gap-3 mb-4">
             <ClockClockwise size={18} className="text-lafoi-green" />
             <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray-medium">
-              Clock someone in
+              {isAdmin ? 'Clock someone in' : 'Clock yourself in'}
             </p>
           </div>
           <form onSubmit={handleClockIn} className="grid sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
             <Field label="Employee" className="lg:col-span-4">
-              <EmployeePicker
-                employees={employees}
-                value={pickEmployee}
-                onChange={setPickEmployee}
-                placeholder="Type a name or code…"
-                required
-              />
+              {isAdmin ? (
+                <EmployeePicker
+                  employees={employees}
+                  value={pickEmployee}
+                  onChange={setPickEmployee}
+                  placeholder="Type a name or code…"
+                  required
+                />
+              ) : staffNoRecord ? (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
+                  <User size={14} weight="regular" className="shrink-0" />
+                  <span>No employee record linked to your account</span>
+                </div>
+              ) : (
+                // Staff: name is fixed to themselves — read-only chip.
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-lafoi-green/[0.06] border border-lafoi-green/25 text-sm">
+                  <span className="inline-flex w-7 h-7 rounded-lg bg-lafoi-green/15 text-lafoi-green-dark items-center justify-center shrink-0 font-display text-sm">
+                    {(myEmployee?.full_name?.trim()?.[0] || '?').toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-sora text-sm font-medium text-lafoi-dark truncate">
+                      {myEmployee?.full_name || '—'}
+                    </p>
+                    <p className="text-[10px] font-sora tracking-[0.18em] uppercase text-lafoi-green-dark">
+                      That's you
+                    </p>
+                  </div>
+                </div>
+              )}
             </Field>
             <Field label="Location (optional)" className="lg:col-span-3">
               <Input
@@ -361,7 +417,7 @@ export default function TimeClock() {
             <div className="lg:col-span-2">
               <button
                 type="submit"
-                disabled={clockInState.isLoading}
+                disabled={clockInState.isLoading || staffNoRecord}
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-lafoi-green text-white font-sora text-sm font-medium hover:bg-lafoi-green-dark transition-colors disabled:opacity-60"
               >
                 {clockInState.isLoading ? <CircleNotch size={14} className="animate-spin" /> : <SignIn size={14} weight="bold" />}
@@ -393,15 +449,17 @@ export default function TimeClock() {
             />
           </div>
         </div>
-        <div className="min-w-[220px]">
-          <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-1.5">Employee</p>
-          <EmployeePicker
-            employees={employees}
-            value={employeeFilter}
-            onChange={setEmployeeFilter}
-            placeholder="All employees"
-          />
-        </div>
+        {isAdmin && (
+          <div className="min-w-[220px]">
+            <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-1.5">Employee</p>
+            <EmployeePicker
+              employees={employees}
+              value={employeeFilter}
+              onChange={setEmployeeFilter}
+              placeholder="All employees"
+            />
+          </div>
+        )}
         <div>
           <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-1.5">From</p>
           <input

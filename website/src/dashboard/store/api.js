@@ -236,6 +236,12 @@ export const api = createApi({
       query: (params = {}) => ({ url: 'employees/', params }),
       providesTags: ['Employee'],
     }),
+    // The signed-in user's own Employee record (matched by email). Auth-only
+    // — staff use this for the Time Clock without needing employees access.
+    myEmployee: b.query({
+      query: () => 'employees/me/',
+      providesTags: ['Employee'],
+    }),
     getEmployee: b.query({
       query: (id) => `employees/${id}/`,
       providesTags: (r, e, id) => [{ type: 'Employee', id }],
@@ -777,7 +783,7 @@ export const {
   useListQuotationsQuery, useGetQuotationQuery, useCreateQuotationMutation, useUpdateQuotationMutation, useDeleteQuotationMutation, useConvertQuotationToInvoiceMutation,
   useListInvoicesQuery, useGetInvoiceQuery, useCreateInvoiceMutation, useUpdateInvoiceMutation, useDeleteInvoiceMutation,
   useListReceiptsQuery, useCreateReceiptMutation, useDeleteReceiptMutation,
-  useListEmployeesQuery, useGetEmployeeQuery, useCreateEmployeeMutation, useUpdateEmployeeMutation, useDeleteEmployeeMutation,
+  useListEmployeesQuery, useMyEmployeeQuery, useGetEmployeeQuery, useCreateEmployeeMutation, useUpdateEmployeeMutation, useDeleteEmployeeMutation,
   useListPayrollPeriodsQuery, useGetPayrollPeriodQuery, useCreatePayrollPeriodMutation, useUpdatePayrollPeriodMutation, useDeletePayrollPeriodMutation, useGeneratePayrollEntriesMutation,
   useListPayrollEntriesQuery, useUpdatePayrollEntryMutation,
   useListTaxBracketSetsQuery, useGetTaxBracketSetQuery, useCreateTaxBracketSetMutation, useUpdateTaxBracketSetMutation, useDeleteTaxBracketSetMutation, usePreviewPayeMutation,
