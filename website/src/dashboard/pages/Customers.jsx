@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch, MapPinLine, X } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
-import DataTable, { fmtDate } from '../components/DataTable'
+import DataTable, { fmtDate, StatusBadge } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton, DangerButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
@@ -21,6 +21,21 @@ const empty = {
   name: '', customer_type: 'individual', contact_person: '', email: '', phone: '',
   alt_phone: '', address: '', city: 'Harare', country: 'Zimbabwe',
   vat_number: '', tin_number: '', notes: '',
+  // Site visit defaults to "not required" — adding a customer never silently
+  // raises a task.
+  site_visit_status: 'not_required', site_visit_date: '', site_visit_notes: '',
+}
+
+const SITE_VISIT_OPTIONS = [
+  ['not_required', 'Not required'],
+  ['required', 'To be done'],
+  ['done', 'Done'],
+]
+
+const SITE_VISIT_PALETTE = {
+  'Not required': 'bg-lafoi-cream text-lafoi-gray border-lafoi-dark/10',
+  'To be done':   'bg-amber-50 text-amber-700 border-amber-200',
+  'Done':         'bg-lafoi-green/15 text-lafoi-green-dark border-lafoi-green/40',
 }
 
 export default function Customers() {
@@ -32,11 +47,23 @@ export default function Customers() {
   const [editing, setEditing] = useState(null) // null | {} (for new) | row
   const [error, setError] = useState('')
 
-  // Reset to page 1 only when the debounced query actually changes.
-  useEffect(() => { setPage(1) }, [debouncedSearch])
+  // '' = all; otherwise filter to a site_visit_status.
+  const [siteVisitFilter, setSiteVisitFilter] = useState('')
 
-  const queryArgs = { page, page_size: pageSize, search: debouncedSearch || undefined }
+  // Reset to page 1 only when the debounced query actually changes.
+  useEffect(() => { setPage(1) }, [debouncedSearch, siteVisitFilter])
+
+  const queryArgs = {
+    page, page_size: pageSize,
+    search: debouncedSearch || undefined,
+    site_visit_status: siteVisitFilter || undefined,
+  }
   const { data, isLoading: isFirstLoad, isFetching } = useListCustomersQuery(queryArgs)
+
+  // Standing count of customers awaiting a site visit — the in-app
+  // "notification" for admins. Cheap: page_size 1, we only read .count.
+  const { data: pendingVisits } = useListCustomersQuery({ site_visit_status: 'required', page_size: 1 })
+  const pendingVisitCount = pendingVisits?.count || 0
 
   const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listCustomers', queryArgs)
 
@@ -61,6 +88,9 @@ export default function Customers() {
       country: editing.country || '',
       vat_number: editing.vat_number || '',
       tin_number: editing.tin_number || '',
+      site_visit_status: editing.site_visit_status || 'not_required',
+      site_visit_date: editing.site_visit_date || null,
+      site_visit_notes: editing.site_visit_notes || '',
       notes: editing.notes || '',
     }
     const wasNew = isNew
@@ -109,6 +139,19 @@ export default function Customers() {
     { key: 'city', label: 'City', priority: 'low' },
     { key: 'phone', label: 'Phone', priority: 'medium' },
     { key: 'project_count', label: 'Projects', priority: 'medium', mobileLabel: 'Projects', render: (r) => r.project_count ?? 0 },
+    { key: 'site_visit', label: 'Site visit', priority: 'medium', mobileLabel: 'Site visit', render: (r) => {
+      const status = r.site_visit_status || 'not_required'
+      if (status === 'not_required') return <span className="text-xs text-lafoi-gray-medium">—</span>
+      const label = r.site_visit_label || (SITE_VISIT_OPTIONS.find(([v]) => v === status) || [])[1] || status
+      return (
+        <div>
+          <StatusBadge status={label} palette={SITE_VISIT_PALETTE} />
+          {r.site_visit_date && (
+            <p className="text-[10px] text-lafoi-gray-medium mt-1 tabular-nums">{fmtDate(r.site_visit_date)}</p>
+          )}
+        </div>
+      )
+    }},
     { key: 'created_at', label: 'Added', priority: 'low', render: (r) => fmtDate(r.created_at) },
     { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
@@ -126,6 +169,16 @@ export default function Customers() {
         description="Every individual, company and institution the studio works with."
         actions={
           <>
+            <Select
+              value={siteVisitFilter}
+              onChange={(e) => setSiteVisitFilter(e.target.value)}
+              className="w-44"
+            >
+              <option value="">All site visits</option>
+              <option value="required">Site visit due</option>
+              <option value="done">Site visit done</option>
+              <option value="not_required">No visit needed</option>
+            </Select>
             <div className="relative">
               <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
               <input
@@ -139,6 +192,31 @@ export default function Customers() {
           </>
         }
       />
+
+      {/* Site-visit notice — the in-app alert for admins. Click to filter
+          the table down to the customers awaiting a visit. */}
+      {pendingVisitCount > 0 && (
+        <button
+          type="button"
+          onClick={() => setSiteVisitFilter(siteVisitFilter === 'required' ? '' : 'required')}
+          className="mb-4 w-full flex items-center gap-3 rounded-2xl bg-amber-50 border border-amber-200 px-4 py-3 text-left hover:bg-amber-100/60 transition-colors"
+        >
+          <span className="inline-flex w-9 h-9 rounded-xl bg-amber-100 text-amber-700 items-center justify-center shrink-0">
+            <MapPinLine size={18} weight="bold" />
+          </span>
+          <div className="flex-1 min-w-0">
+            <p className="font-sora text-sm font-medium text-amber-900">
+              {pendingVisitCount} customer{pendingVisitCount === 1 ? '' : 's'} awaiting a site visit
+            </p>
+            <p className="text-[11px] text-amber-700">
+              {siteVisitFilter === 'required'
+                ? 'Filtered to them now — click to clear'
+                : 'Click to review them'}
+            </p>
+          </div>
+          {siteVisitFilter === 'required' && <X size={14} className="text-amber-700 shrink-0" />}
+        </button>
+      )}
 
       <DataTable
         columns={columns}
@@ -205,6 +283,53 @@ export default function Customers() {
             <Field label="Address" className="sm:col-span-2">
               <Textarea value={editing.address} onChange={(e) => setEditing({ ...editing, address: e.target.value })} rows={2} />
             </Field>
+
+            {/* Site visit — 3-state, defaults to "Not required". */}
+            <Field label="Site visit" className="sm:col-span-2">
+              <div className="flex flex-wrap gap-2">
+                {SITE_VISIT_OPTIONS.map(([val, lbl]) => {
+                  const active = (editing.site_visit_status || 'not_required') === val
+                  return (
+                    <button
+                      key={val}
+                      type="button"
+                      onClick={() => setEditing({ ...editing, site_visit_status: val })}
+                      className={`px-3.5 py-2 rounded-xl border text-sm font-sora transition-colors ${
+                        active
+                          ? 'bg-lafoi-dark text-white border-lafoi-dark'
+                          : 'bg-white text-lafoi-gray border-lafoi-dark/12 hover:border-lafoi-green/40 hover:text-lafoi-dark'
+                      }`}
+                    >
+                      {lbl}
+                    </button>
+                  )
+                })}
+              </div>
+              <p className="text-[11px] text-lafoi-gray-medium mt-1.5">
+                Set to <strong>To be done</strong> to flag this customer for an admin site visit —
+                they'll show in the site-visit alert on this page. Default is <strong>Not required</strong>.
+              </p>
+            </Field>
+
+            {editing.site_visit_status && editing.site_visit_status !== 'not_required' && (
+              <>
+                <Field label={editing.site_visit_status === 'done' ? 'Date visited' : 'Scheduled / target date'}>
+                  <Input
+                    type="date"
+                    value={editing.site_visit_date || ''}
+                    onChange={(e) => setEditing({ ...editing, site_visit_date: e.target.value })}
+                  />
+                </Field>
+                <Field label="Site visit notes">
+                  <Input
+                    value={editing.site_visit_notes || ''}
+                    onChange={(e) => setEditing({ ...editing, site_visit_notes: e.target.value })}
+                    placeholder="Access, what to assess, who to meet…"
+                  />
+                </Field>
+              </>
+            )}
+
             <Field label="Notes" className="sm:col-span-2">
               <Textarea value={editing.notes} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} rows={3} />
             </Field>

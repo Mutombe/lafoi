@@ -23,7 +23,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
     queryset = Customer.objects.all()
     permission_classes = [HasModuleAccess.for_module("customers")]
-    filterset_fields = ("customer_type", "city", "country")
+    filterset_fields = ("customer_type", "city", "country", "site_visit_status")
     search_fields = ("name", "contact_person", "email", "phone", "city", "address")
     ordering_fields = ("created_at", "name")
 

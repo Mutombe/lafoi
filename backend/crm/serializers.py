@@ -38,6 +38,7 @@ class ProjectCostSerializer(serializers.ModelSerializer):
 
 class CustomerSerializer(serializers.ModelSerializer):
     project_count = serializers.IntegerField(read_only=True)
+    site_visit_label = serializers.CharField(source="get_site_visit_status_display", read_only=True)
 
     class Meta:
         model = Customer
@@ -45,10 +46,11 @@ class CustomerSerializer(serializers.ModelSerializer):
             "id", "name", "customer_type", "contact_person", "email", "phone",
             "alt_phone", "address", "city", "country",
             "vat_number", "tin_number",
+            "site_visit_status", "site_visit_label", "site_visit_date", "site_visit_notes",
             "notes", "tags",
             "project_count", "created_at", "updated_at",
         )
-        read_only_fields = ("id", "created_at", "updated_at", "project_count")
+        read_only_fields = ("id", "created_at", "updated_at", "project_count", "site_visit_label")
 
 
 class ProjectFileSerializer(serializers.ModelSerializer):

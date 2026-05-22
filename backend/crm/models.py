@@ -12,6 +12,14 @@ class Customer(models.Model):
         BUSINESS = "business", "Business"
         INSTITUTION = "institution", "Institution"
 
+    class SiteVisit(models.TextChoices):
+        # A single status carries all three states a site visit can be in —
+        # cleaner than a yes/no switch, which can't tell "needs a visit"
+        # apart from "visit already done".
+        NOT_REQUIRED = "not_required", "Not required"
+        REQUIRED = "required", "To be done"
+        DONE = "done", "Done"
+
     name = models.CharField(max_length=200)
     customer_type = models.CharField(max_length=16, choices=Type.choices, default=Type.INDIVIDUAL)
     contact_person = models.CharField(max_length=200, blank=True)
@@ -31,6 +39,19 @@ class Customer(models.Model):
         max_length=40, blank=True,
         help_text="Taxpayer Identification Number (ZIMRA TIN / BP number).",
     )
+    # Site visit — does the studio need to physically visit this customer's
+    # site before quoting / installing? Defaults to NOT_REQUIRED so adding a
+    # customer never silently raises a task. Flipping it to REQUIRED is what
+    # surfaces the customer in the "site visits due" list admins watch.
+    site_visit_status = models.CharField(
+        max_length=16, choices=SiteVisit.choices, default=SiteVisit.NOT_REQUIRED,
+    )
+    site_visit_date = models.DateField(
+        null=True, blank=True,
+        help_text="When the visit is scheduled for, or the date it was done.",
+    )
+    site_visit_notes = models.TextField(blank=True)
+
     notes = models.TextField(blank=True)
     tags = models.JSONField(default=list, blank=True)
 
@@ -45,6 +66,7 @@ class Customer(models.Model):
         indexes = [
             models.Index(fields=["name"]),
             models.Index(fields=["customer_type"]),
+            models.Index(fields=["site_visit_status"]),
         ]
 
     def __str__(self) -> str:  # pragma: no cover
