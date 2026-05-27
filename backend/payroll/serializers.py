@@ -28,6 +28,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "base_salary", "pay_frequency", "currency",
             "currency_split",
             "default_allowances", "default_deductions",
+            "home_address",
+            "next_of_kin_name", "next_of_kin_relationship",
+            "next_of_kin_phone", "next_of_kin_email",
             "bank_name", "bank_account",
             "notes", "created_at", "updated_at",
         )

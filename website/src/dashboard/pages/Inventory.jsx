@@ -4,7 +4,7 @@ import { useStore } from 'react-redux'
 import {
   Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch,
   Package, Warning, QrCode, DownloadSimple, UploadSimple, X,
-  ArrowDown, ArrowUp,
+  ArrowDown, ArrowUp, Scales,
 } from '@phosphor-icons/react'
 import { useConfirm } from '../components/ConfirmDialog'
 import { toast } from 'sonner'
@@ -98,39 +98,75 @@ export default function Inventory() {
   const { data: locData } = useListStockLocationsQuery({ page: 1, page_size: 100 })
   const locations = locData?.results || []
 
-  // Quick stock-movement dialog state. When set, opens a small modal that
-  // posts a Movement against the selected item with the chosen direction.
+  // Quick stock-movement dialog state. Three modes: 'in' (receive), 'out'
+  // (issue), and 'adjust' (set the balance to a specific number — for
+  // stock-takes / corrections). Every save posts a Movement so the change
+  // is audit-trailed with the current user via Movement.performed_by.
   const [movement, setMovement] = useState(null)
   const openMovement = (item, direction) => {
     const defaultLoc = locations.find((l) => l.is_default) || locations[0]
+    const current = Number(item.balance ?? item.on_hand ?? 0)
     setMovement({
       item,
-      direction,                          // 'in' | 'out'
-      quantity: '',
+      direction,                          // 'in' | 'out' | 'adjust'
+      // For 'adjust' the quantity field holds the NEW target balance.
+      // We default it to the current value so the delta is 0 until the
+      // user changes it — making accidental presses harmless.
+      quantity: direction === 'adjust' ? String(current) : '',
       location: defaultLoc?.id || '',
       occurred_at: new Date().toISOString().slice(0, 10),
       reference: '',
+      reason_note: '',
     })
   }
   const handleMovementSave = async (e) => {
     e.preventDefault()
     if (!movement.location) { toast.error('Pick a location'); return }
     const qty = Number(movement.quantity)
-    if (!qty || qty <= 0) { toast.error('Quantity must be a positive number'); return }
-    const signed = movement.direction === 'in' ? qty : -qty
+
+    let signed, reason, successLabel
+    if (movement.direction === 'adjust') {
+      // Compute the delta from current balance. Skip the post if there's
+      // no change so we don't pollute the ledger with no-ops.
+      const current = Number(movement.item.balance ?? movement.item.on_hand ?? 0)
+      if (!Number.isFinite(qty) || qty < 0) { toast.error('New balance must be 0 or more'); return }
+      signed = qty - current
+      if (signed === 0) {
+        setMovement(null)
+        toast.message('No change — balance is already that amount')
+        return
+      }
+      reason = 'adjust'
+      successLabel = signed > 0
+        ? `Balance increased by ${signed}`
+        : `Balance reduced by ${Math.abs(signed)}`
+    } else {
+      if (!qty || qty <= 0) { toast.error('Quantity must be a positive number'); return }
+      signed = movement.direction === 'in' ? qty : -qty
+      reason = movement.direction === 'in' ? 'receive' : 'issue'
+      successLabel = movement.direction === 'in' ? 'Stock in recorded' : 'Stock out recorded'
+    }
+
+    // Attach the user-typed reason note onto the movement so the audit log
+    // explains WHY the change was made, not just who & when.
+    const refBits = []
+    if (movement.reference) refBits.push(movement.reference)
+    if (movement.reason_note) refBits.push(movement.reason_note)
+    const reference = refBits.join(' · ').slice(0, 120)
+
     const body = {
       item: movement.item.id,
       location: movement.location,
       quantity: String(signed),
-      reason: movement.direction === 'in' ? 'receive' : 'issue',
-      reference: movement.reference || '',
+      reason,
+      reference,
+      notes: movement.reason_note || '',
       occurred_at: `${movement.occurred_at}T12:00:00`,
     }
-    const wasIn = movement.direction === 'in'
     setMovement(null)
     try {
       await createMovement(body).unwrap()
-      toast.success(wasIn ? 'Stock in recorded' : 'Stock out recorded')
+      toast.success(successLabel)
     } catch (err) {
       const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Could not record movement.'
       toast.error('Movement failed', { description: msg })
@@ -381,6 +417,13 @@ export default function Inventory() {
             <ArrowUp size={14} weight="bold" />
           </button>
           <button
+            onClick={(e) => { e.stopPropagation(); openMovement(r, 'adjust') }}
+            className="p-2 rounded-lg hover:bg-amber-50 text-lafoi-gray hover:text-amber-700 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"
+            title="Adjust balance (stock-take)"
+          >
+            <Scales size={14} weight="bold" />
+          </button>
+          <button
             onClick={(e) => { e.stopPropagation(); setEditing(r) }}
             className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"
             title="Edit"
@@ -620,65 +663,107 @@ export default function Inventory() {
       <Modal
         open={!!movement}
         onClose={() => setMovement(null)}
-        title={movement
-          ? `${movement.direction === 'in' ? 'Stock in' : 'Stock out'} — ${movement.item.name}`
-          : ''}
+        title={movement ? (() => {
+          if (movement.direction === 'in') return `Stock in — ${movement.item.name}`
+          if (movement.direction === 'out') return `Stock out — ${movement.item.name}`
+          return `Adjust balance — ${movement.item.name}`
+        })() : ''}
         size="md"
         footer={
           <>
             <SecondaryButton type="button" onClick={() => setMovement(null)}>Cancel</SecondaryButton>
             <PrimaryButton form="mov-form" type="submit">
-              Record {movement?.direction === 'in' ? 'in' : 'out'}
+              {movement?.direction === 'in' && 'Record in'}
+              {movement?.direction === 'out' && 'Record out'}
+              {movement?.direction === 'adjust' && 'Save adjustment'}
             </PrimaryButton>
           </>
         }
       >
-        {movement && (
-          <form id="mov-form" onSubmit={handleMovementSave} className="grid sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2 px-3 py-2.5 rounded-xl bg-lafoi-cream text-sm">
-              <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-0.5">
-                Current balance
-              </p>
-              <p className="font-display text-lg">
-                {fmtQty(movement.item.balance ?? movement.item.on_hand, movement.item.unit)}
-              </p>
-            </div>
-            <Field label={`Quantity ${movement.direction === 'in' ? 'received' : 'issued'}`} required>
-              <Input
-                type="number" step="0.01" min="0"
-                value={movement.quantity}
-                onChange={(e) => setMovement({ ...movement, quantity: e.target.value })}
-                required
-                autoFocus
-              />
-            </Field>
-            <Field label="Date" required>
-              <Input
-                type="date"
-                value={movement.occurred_at}
-                onChange={(e) => setMovement({ ...movement, occurred_at: e.target.value })}
-                required
-              />
-            </Field>
-            <Field label="Location" required>
-              <Select
-                value={movement.location}
-                onChange={(e) => setMovement({ ...movement, location: e.target.value })}
+        {movement && (() => {
+          const adjust = movement.direction === 'adjust'
+          const current = Number(movement.item.balance ?? movement.item.on_hand ?? 0)
+          const target = Number(movement.quantity)
+          const delta = adjust && Number.isFinite(target) ? target - current : null
+          return (
+            <form id="mov-form" onSubmit={handleMovementSave} className="grid sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2 px-3 py-2.5 rounded-xl bg-lafoi-cream text-sm">
+                <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-0.5">
+                  Current balance
+                </p>
+                <p className="font-display text-lg">
+                  {fmtQty(current, movement.item.unit)}
+                </p>
+              </div>
+
+              {adjust && (
+                <div className="sm:col-span-2 px-3 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-sm">
+                  <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-amber-800 mb-1">
+                    Audit trail
+                  </p>
+                  <p className="text-[12px] font-body text-amber-900">
+                    Adjustments post as a tracked stock movement against this item —
+                    who made it, when, and the delta. Use this for stock-takes,
+                    breakages or to correct a wrong opening balance.
+                  </p>
+                </div>
+              )}
+
+              <Field
+                label={
+                  adjust ? 'New balance'
+                  : movement.direction === 'in' ? 'Quantity received'
+                  : 'Quantity issued'
+                }
                 required
               >
-                <option value="">— Pick a location —</option>
-                {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
-              </Select>
-            </Field>
-            <Field label="Reference">
-              <Input
-                value={movement.reference}
-                onChange={(e) => setMovement({ ...movement, reference: e.target.value })}
-                placeholder="PO ref, project code, supplier slip…"
-              />
-            </Field>
-          </form>
-        )}
+                <Input
+                  type="number" step="0.01" min="0"
+                  value={movement.quantity}
+                  onChange={(e) => setMovement({ ...movement, quantity: e.target.value })}
+                  required
+                  autoFocus
+                />
+                {adjust && delta !== null && delta !== 0 && (
+                  <p className={`mt-1 text-[11px] font-sora tabular-nums ${delta > 0 ? 'text-lafoi-green-dark' : 'text-red-700'}`}>
+                    Δ {delta > 0 ? '+' : ''}{delta} {movement.item.unit}
+                  </p>
+                )}
+              </Field>
+              <Field label="Date" required>
+                <Input
+                  type="date"
+                  value={movement.occurred_at}
+                  onChange={(e) => setMovement({ ...movement, occurred_at: e.target.value })}
+                  required
+                />
+              </Field>
+              <Field label="Location" required>
+                <Select
+                  value={movement.location}
+                  onChange={(e) => setMovement({ ...movement, location: e.target.value })}
+                  required
+                >
+                  <option value="">— Pick a location —</option>
+                  {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </Select>
+              </Field>
+              <Field label={adjust ? 'Reason' : 'Reference'} required={adjust}>
+                <Input
+                  value={adjust ? (movement.reason_note || '') : (movement.reference || '')}
+                  onChange={(e) => setMovement({
+                    ...movement,
+                    [adjust ? 'reason_note' : 'reference']: e.target.value,
+                  })}
+                  placeholder={adjust
+                    ? 'e.g. Stock-take, breakage, returned to supplier'
+                    : 'PO ref, project code, supplier slip…'}
+                  required={adjust}
+                />
+              </Field>
+            </form>
+          )
+        })()}
       </Modal>
     </div>
   )

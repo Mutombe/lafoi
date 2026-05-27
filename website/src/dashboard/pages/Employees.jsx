@@ -24,6 +24,9 @@ const empty = () => ({
   hire_date: new Date().toISOString().slice(0, 10), end_date: '',
   status: 'active', base_salary: 0, pay_frequency: 'monthly', currency: 'USD',
   default_allowances: [], default_deductions: [],
+  home_address: '',
+  next_of_kin_name: '', next_of_kin_relationship: '',
+  next_of_kin_phone: '', next_of_kin_email: '',
   bank_name: '', bank_account: '', notes: '',
 })
 
@@ -90,6 +93,11 @@ export default function Employees() {
       pay_frequency: editing.pay_frequency || 'monthly',
       default_allowances: editing.default_allowances || [],
       default_deductions: editing.default_deductions || [],
+      home_address: editing.home_address || '',
+      next_of_kin_name: editing.next_of_kin_name || '',
+      next_of_kin_relationship: editing.next_of_kin_relationship || '',
+      next_of_kin_phone: editing.next_of_kin_phone || '',
+      next_of_kin_email: editing.next_of_kin_email || '',
       bank_name: editing.bank_name || '', bank_account: editing.bank_account || '',
       notes: editing.notes || '',
     }
@@ -285,6 +293,49 @@ export default function Employees() {
             </Field>
             <Field label="Bank account">
               <Input value={editing.bank_account} onChange={(e) => setEditing({ ...editing, bank_account: e.target.value })} />
+            </Field>
+
+            {/* Home address + next of kin */}
+            <div className="sm:col-span-2 pt-2 border-t border-lafoi-dark/8">
+              <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray mb-3">
+                Home & emergency contact
+              </p>
+            </div>
+            <Field label="Home address" className="sm:col-span-2">
+              <Textarea
+                value={editing.home_address || ''}
+                onChange={(e) => setEditing({ ...editing, home_address: e.target.value })}
+                rows={2}
+                placeholder="Street, suburb, city"
+              />
+            </Field>
+            <Field label="Next of kin — name">
+              <Input
+                value={editing.next_of_kin_name || ''}
+                onChange={(e) => setEditing({ ...editing, next_of_kin_name: e.target.value })}
+                placeholder="Full name"
+              />
+            </Field>
+            <Field label="Relationship">
+              <Input
+                value={editing.next_of_kin_relationship || ''}
+                onChange={(e) => setEditing({ ...editing, next_of_kin_relationship: e.target.value })}
+                placeholder="e.g. Spouse, Mother, Brother"
+              />
+            </Field>
+            <Field label="Next of kin — phone">
+              <Input
+                value={editing.next_of_kin_phone || ''}
+                onChange={(e) => setEditing({ ...editing, next_of_kin_phone: e.target.value })}
+                placeholder="+263 …"
+              />
+            </Field>
+            <Field label="Next of kin — email">
+              <Input
+                type="email"
+                value={editing.next_of_kin_email || ''}
+                onChange={(e) => setEditing({ ...editing, next_of_kin_email: e.target.value })}
+              />
             </Field>
 
             {/* Allowances + Deductions templates */}

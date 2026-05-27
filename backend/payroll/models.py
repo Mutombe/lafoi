@@ -48,6 +48,20 @@ class Employee(models.Model):
     default_allowances = models.JSONField(default=list, blank=True, help_text="[{name, amount}] applied per period by default")
     default_deductions = models.JSONField(default=list, blank=True, help_text="[{name, amount}] applied per period by default")
 
+    # Where the employee actually lives — used for HR records and for
+    # logistics when sending things to them.
+    home_address = models.TextField(blank=True)
+
+    # Next of kin — emergency contact. Stored on the employee record so HR
+    # has it on file without joining another table.
+    next_of_kin_name = models.CharField(max_length=200, blank=True)
+    next_of_kin_relationship = models.CharField(
+        max_length=60, blank=True,
+        help_text="e.g. Spouse, Mother, Brother, Friend.",
+    )
+    next_of_kin_phone = models.CharField(max_length=32, blank=True)
+    next_of_kin_email = models.EmailField(blank=True)
+
     bank_name = models.CharField(max_length=120, blank=True)
     # Encrypted at rest via Fernet (see compliance.fields.EncryptedTextField)
     bank_account = EncryptedTextField(blank=True)
