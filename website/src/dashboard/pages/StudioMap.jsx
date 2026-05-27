@@ -38,32 +38,37 @@ const FILTERS = [
 ]
 
 /**
- * Custom div-icon: a status-coloured dot wrapped in a progress ring.
- * SVG ring uses stroke-dasharray to indicate completion percent.
+ * Custom div-icon: a status-coloured progress ring with the percentage
+ * number rendered inside. The ring's filled arc and the text both share
+ * the status colour so the marker reads at a glance.
  */
 function buildMarkerIcon(status, progress = 0) {
   const color = STATUS_HEX[status] || '#1A8A2E'
-  const safe = Math.max(0, Math.min(100, progress))
-  const r = 14
+  const safe = Math.max(0, Math.min(100, Math.round(Number(progress) || 0)))
+  const size = 42
+  const cx = size / 2
+  const r = 16
   const c = 2 * Math.PI * r
   const offset = c - (safe / 100) * c
+  // Slightly smaller text at 100% so "100%" doesn't overflow the ring.
+  const fontSize = safe >= 100 ? 10 : 11
   const html = `
-    <div style="position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center;">
-      <svg width="36" height="36" style="position:absolute;inset:0;transform:rotate(-90deg);">
-        <circle cx="18" cy="18" r="${r}" fill="white" stroke="rgba(17,17,17,0.10)" stroke-width="3"/>
-        <circle cx="18" cy="18" r="${r}" fill="none" stroke="${color}" stroke-width="3"
+    <div style="position:relative;width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.18));">
+      <svg width="${size}" height="${size}" style="position:absolute;inset:0;transform:rotate(-90deg);">
+        <circle cx="${cx}" cy="${cx}" r="${r}" fill="white" stroke="rgba(17,17,17,0.08)" stroke-width="3"/>
+        <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="${color}" stroke-width="3"
           stroke-linecap="round"
           stroke-dasharray="${c}" stroke-dashoffset="${offset}"/>
       </svg>
-      <span style="position:relative;width:14px;height:14px;border-radius:9999px;background:${color};box-shadow:0 0 0 3px rgba(255,255,255,0.95),0 1px 6px rgba(0,0,0,0.18);"></span>
+      <span style="position:relative;font-family:'Sora',system-ui,-apple-system,sans-serif;font-size:${fontSize}px;font-weight:600;color:${color};line-height:1;letter-spacing:-0.02em;">${safe}%</span>
     </div>
   `
   return L.divIcon({
     className: 'lafoi-map-marker',
     html,
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-    popupAnchor: [0, -16],
+    iconSize: [size, size],
+    iconAnchor: [cx, cx],
+    popupAnchor: [0, -(cx - 4)],
   })
 }
 
