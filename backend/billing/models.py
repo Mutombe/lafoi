@@ -14,10 +14,27 @@ from crm.models import Project
 
 
 def _generate_number(prefix: str, model: type) -> str:
-    """Return the next document number for the given model + year."""
+    """Return the next document number for the given model + year.
+
+    Important: we derive the next index from the MAX of the existing
+    suffixes rather than count(). Using count() collided as soon as any
+    document was deleted — the count lagged behind the largest existing
+    suffix and the next save tried to reuse a taken number, raising
+    IntegrityError on the unique constraint. Parsing the suffix gives a
+    monotonically-increasing series even after deletes.
+    """
     year = timezone.now().year
-    count = model.objects.filter(number__startswith=f"{prefix}-{year}-").count() + 1
-    return f"{prefix}-{year}-{count:04d}"
+    stub = f"{prefix}-{year}-"
+    highest = 0
+    for n in model.objects.filter(number__startswith=stub).values_list("number", flat=True):
+        tail = (n or "").rsplit("-", 1)[-1]
+        try:
+            i = int(tail)
+            if i > highest:
+                highest = i
+        except (TypeError, ValueError):
+            continue
+    return f"{stub}{highest + 1:04d}"
 
 
 class _MoneyMixin(models.Model):
