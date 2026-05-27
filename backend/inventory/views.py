@@ -110,15 +110,22 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        # Compute on_hand + the In/Out aggregates the serializer surfaces, all
+        # at the SQL layer with conditional aggregates. One query covers the
+        # whole list — without this, the serializer's per-row aggregate calls
+        # ran 4 round-trips per item which made a 50-row page take 12-20s on
+        # the remote Neon DB.
+        qs = qs.annotate(
+            ann_on_hand=Sum('stocks__quantity', distinct=False),
+            ann_total_in=Sum('movements__quantity', filter=Q(movements__quantity__gt=0)),
+            ann_total_out_signed=Sum('movements__quantity', filter=Q(movements__quantity__lt=0)),
+            ann_last_in=Max('movements__occurred_at', filter=Q(movements__quantity__gt=0)),
+            ann_last_out=Max('movements__occurred_at', filter=Q(movements__quantity__lt=0)),
+        )
         low_stock = self.request.query_params.get('low_stock')
         if low_stock and str(low_stock).lower() in ('1', 'true', 'yes'):
-            # Compute on_hand at the SQL level so this filter scales beyond a
-            # few thousand items. Items with no stock rows resolve to 0.
-            qs = qs.annotate(_on_hand=Sum('stocks__quantity'))
-            # NOTE: Coalesce — items with no stock rows have _on_hand = NULL.
-            #       NULL is treated as 0 for the threshold check.
             qs = qs.filter(reorder_threshold__gt=0).filter(
-                Q(_on_hand__lte=F('reorder_threshold')) | Q(_on_hand__isnull=True)
+                Q(ann_on_hand__lte=F('reorder_threshold')) | Q(ann_on_hand__isnull=True)
             ).order_by('name')
         return qs
 

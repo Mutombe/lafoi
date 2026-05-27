@@ -120,57 +120,68 @@ class ItemSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at',
         )
 
+    # All of the following prefer the SQL annotation set by
+    # ItemViewSet.get_queryset (one query for the whole list). When the
+    # annotation isn't present (e.g. a single-item retrieve from elsewhere)
+    # we fall through to the property — correct but slow.
+    #
+    # Subtlety: an annotation can be present and STILL be None (an item
+    # with no positive movements has ann_total_in == None). We use hasattr
+    # to detect presence, so a legit None doesn't fall back into a query.
+    def _on_hand(self, obj):
+        if hasattr(obj, 'ann_on_hand'):
+            return obj.ann_on_hand or 0
+        return obj.on_hand
+
     def get_on_hand(self, obj):
-        return str(obj.on_hand)
+        return str(self._on_hand(obj))
 
     def get_balance(self, obj):
-        return str(obj.on_hand)
+        return str(self._on_hand(obj))
 
     def get_is_low_stock(self, obj):
-        return obj.is_low_stock
-
-    # ----- Movement aggregates ------------------------------------------------
-    # Cached on the instance per request so the same ItemViewSet list page
-    # doesn't recompute Sum/Max four times per row.
-    def _movements_summary(self, obj):
-        cache = self.context.setdefault('_item_summaries', {})
-        if obj.id in cache:
-            return cache[obj.id]
-        qs = obj.movements.all()
-        positive = qs.filter(quantity__gt=0)
-        negative = qs.filter(quantity__lt=0)
-        from django.db.models import Sum, Max
-        from decimal import Decimal
-        summary = {
-            'total_in':  positive.aggregate(s=Sum('quantity'))['s'] or Decimal('0'),
-            'total_out': abs(negative.aggregate(s=Sum('quantity'))['s'] or Decimal('0')),
-            'last_in':   positive.aggregate(m=Max('occurred_at'))['m'],
-            'last_out':  negative.aggregate(m=Max('occurred_at'))['m'],
-        }
-        cache[obj.id] = summary
-        return summary
+        threshold = obj.reorder_threshold or 0
+        if threshold <= 0:
+            return False
+        return self._on_hand(obj) <= threshold
 
     def get_total_in(self, obj):
-        return str(self._movements_summary(obj)['total_in'])
+        from decimal import Decimal
+        if hasattr(obj, 'ann_total_in'):
+            return str(obj.ann_total_in or Decimal('0'))
+        from django.db.models import Sum
+        v = obj.movements.filter(quantity__gt=0).aggregate(s=Sum('quantity'))['s']
+        return str(v or Decimal('0'))
 
     def get_total_out(self, obj):
-        return str(self._movements_summary(obj)['total_out'])
+        from decimal import Decimal
+        if hasattr(obj, 'ann_total_out_signed'):
+            return str(abs(obj.ann_total_out_signed or Decimal('0')))
+        from django.db.models import Sum
+        v = obj.movements.filter(quantity__lt=0).aggregate(s=Sum('quantity'))['s']
+        return str(abs(v or Decimal('0')))
 
     def get_last_in_date(self, obj):
-        d = self._movements_summary(obj)['last_in']
+        if hasattr(obj, 'ann_last_in'):
+            d = obj.ann_last_in
+        else:
+            from django.db.models import Max
+            d = obj.movements.filter(quantity__gt=0).aggregate(m=Max('occurred_at'))['m']
         return d.date().isoformat() if d else None
 
     def get_last_out_date(self, obj):
-        d = self._movements_summary(obj)['last_out']
+        if hasattr(obj, 'ann_last_out'):
+            d = obj.ann_last_out
+        else:
+            from django.db.models import Max
+            d = obj.movements.filter(quantity__lt=0).aggregate(m=Max('occurred_at'))['m']
         return d.date().isoformat() if d else None
 
     def get_stock_level(self, obj):
-        on_hand = obj.on_hand
+        on_hand = self._on_hand(obj)
         threshold = obj.reorder_threshold or 0
         if threshold <= 0:
-            # No threshold configured — use a sane fallback: in stock → high,
-            # zero → low.
-            return 'high' if on_hand > 0 else 'low'
+            return 'high' if (on_hand or 0) > 0 else 'low'
         if on_hand < threshold:
             return 'low'
         if on_hand < threshold * 2:
