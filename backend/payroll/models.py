@@ -41,6 +41,11 @@ class Employee(models.Model):
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.ACTIVE)
 
     base_salary = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
+    # Flat transport allowance paid alongside the base salary. Kept as its
+    # own column (rather than just an entry in default_allowances) because
+    # the team wants it surfaced as a first-class field on the employee
+    # table, with the row's total = base + transport.
+    transport_allowance = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
     pay_frequency = models.CharField(max_length=16, choices=PayFrequency.choices, default=PayFrequency.MONTHLY)
     currency = models.CharField(max_length=8, default="USD")
 

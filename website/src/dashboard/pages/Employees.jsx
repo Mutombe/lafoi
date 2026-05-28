@@ -22,7 +22,8 @@ const empty = () => ({
   first_name: '', last_name: '', email: '', phone: '',
   national_id: '', tax_id: '', job_title: '', department: '',
   hire_date: new Date().toISOString().slice(0, 10), end_date: '',
-  status: 'active', base_salary: 0, pay_frequency: 'monthly', currency: 'USD',
+  status: 'active', base_salary: 0, transport_allowance: 0,
+  pay_frequency: 'monthly', currency: 'USD',
   default_allowances: [], default_deductions: [],
   home_address: '',
   next_of_kin_name: '', next_of_kin_relationship: '',
@@ -90,6 +91,7 @@ export default function Employees() {
       hire_date: editing.hire_date || null, end_date: editing.end_date || null,
       status: editing.status, currency: editing.currency || 'USD',
       base_salary: Number(editing.base_salary) || 0,
+      transport_allowance: Number(editing.transport_allowance) || 0,
       pay_frequency: editing.pay_frequency || 'monthly',
       default_allowances: editing.default_allowances || [],
       default_deductions: editing.default_deductions || [],
@@ -154,7 +156,6 @@ export default function Employees() {
       </div>
     )},
     { key: 'department', label: 'Department', priority: 'low' },
-    { key: 'base_salary', label: 'Base salary', priority: 'medium', mobileLabel: 'Salary', render: (r) => <span className="tabular-nums">{fmtMoney(r.base_salary, r.currency)}</span> },
     { key: 'loans', label: 'Loans', priority: 'desktop', render: (r) => {
       const info = loanByEmployee.get(r.id)
       if (!info) return <span className="text-lafoi-gray-medium text-xs">—</span>
@@ -169,6 +170,18 @@ export default function Employees() {
     }},
     { key: 'hire_date', label: 'Hired', priority: 'desktop', render: (r) => fmtDate(r.hire_date) },
     { key: 'status', label: 'Status', priority: 'high', render: (r) => <StatusBadge status={r.status} palette={STATUS_PALETTE_EMP} /> },
+    // Salary, Transport, Total live at the far right per the team's
+    // request — pay block sits adjacent to the row actions so the most
+    // commonly-referenced numbers are last on the row.
+    { key: 'base_salary', label: 'Salary', priority: 'medium', mobileLabel: 'Salary', cellClassName: 'text-right', className: 'text-right',
+      render: (r) => <span className="tabular-nums">{fmtMoney(r.base_salary, r.currency)}</span> },
+    { key: 'transport_allowance', label: 'Transport', priority: 'medium', mobileLabel: 'Transport', cellClassName: 'text-right', className: 'text-right',
+      render: (r) => <span className="tabular-nums">{fmtMoney(r.transport_allowance, r.currency)}</span> },
+    { key: 'total_remuneration', label: 'Total', priority: 'high', mobileLabel: 'Total', cellClassName: 'text-right', className: 'text-right',
+      render: (r) => {
+        const total = r.total_remuneration ?? (Number(r.base_salary || 0) + Number(r.transport_allowance || 0))
+        return <span className="tabular-nums font-medium text-lafoi-dark">{fmtMoney(total, r.currency)}</span>
+      } },
     { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
         <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
@@ -274,6 +287,13 @@ export default function Employees() {
             </Field>
             <Field label="Base salary">
               <Input type="number" step="0.01" value={editing.base_salary} onChange={(e) => setEditing({ ...editing, base_salary: e.target.value })} />
+            </Field>
+            <Field label="Transport allowance" hint="Added to base salary to give the row total.">
+              <Input
+                type="number" step="0.01"
+                value={editing.transport_allowance ?? 0}
+                onChange={(e) => setEditing({ ...editing, transport_allowance: e.target.value })}
+              />
             </Field>
             <Field label="Pay frequency">
               <Select value={editing.pay_frequency} onChange={(e) => setEditing({ ...editing, pay_frequency: e.target.value })}>

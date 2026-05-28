@@ -130,6 +130,14 @@ function ProfileTab({ emp }) {
     ['Hire date', fmtDate(emp.hire_date)],
     ['End date', emp.end_date ? fmtDate(emp.end_date) : '—'],
     ['Base salary', fmtMoney(emp.base_salary, emp.currency)],
+    ['Transport allowance', fmtMoney(emp.transport_allowance, emp.currency)],
+    ['Total (salary + transport)',
+      fmtMoney(
+        emp.total_remuneration ??
+          (Number(emp.base_salary || 0) + Number(emp.transport_allowance || 0)),
+        emp.currency,
+      ),
+    ],
     ['Pay frequency', emp.pay_frequency || 'monthly'],
     ['Bank name', emp.bank_name || '—'],
     ['Bank account', emp.bank_account || '—'],

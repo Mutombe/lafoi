@@ -18,6 +18,9 @@ from .models import (
 
 class EmployeeSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(read_only=True)
+    # base_salary + transport_allowance, computed on the server so the
+    # table never has to recompute and the value can't drift out of sync.
+    total_remuneration = serializers.SerializerMethodField()
 
     class Meta:
         model = Employee
@@ -25,7 +28,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "id", "employee_code", "first_name", "last_name", "full_name",
             "email", "phone", "national_id", "tax_id", "job_title", "department",
             "hire_date", "end_date", "status",
-            "base_salary", "pay_frequency", "currency",
+            "base_salary", "transport_allowance", "total_remuneration",
+            "pay_frequency", "currency",
             "currency_split",
             "default_allowances", "default_deductions",
             "home_address",
@@ -34,7 +38,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "bank_name", "bank_account",
             "notes", "created_at", "updated_at",
         )
-        read_only_fields = ("id", "employee_code", "full_name", "created_at", "updated_at")
+        read_only_fields = ("id", "employee_code", "full_name", "total_remuneration", "created_at", "updated_at")
+
+    def get_total_remuneration(self, obj):
+        from decimal import Decimal
+        return str((obj.base_salary or Decimal("0")) + (obj.transport_allowance or Decimal("0")))
 
 
 class PayrollEntrySerializer(serializers.ModelSerializer):
