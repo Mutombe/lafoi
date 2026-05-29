@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   ArrowLeft, Plus, Trash, CircleNotch, IdentificationBadge, Bank, Tray, ChartLineUp, User,
+  PencilSimple, X as XIcon,
 } from '@phosphor-icons/react'
 import { useConfirm } from '../components/ConfirmDialog'
 import { toast } from 'sonner'
@@ -13,6 +14,7 @@ import Skeleton, { SkeletonStat, SkeletonPageHeader } from '../components/Skelet
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import {
   useGetEmployeeQuery,
+  useUpdateEmployeeMutation,
   useListSalaryHistoryQuery,
   useCreateSalaryHistoryMutation,
   useDeleteSalaryHistoryMutation,
@@ -122,74 +124,229 @@ export default function EmployeeDetail() {
 }
 
 function ProfileTab({ emp }) {
-  const computedTotal = Number(emp.base_salary || 0) + Number(emp.transport_allowance || 0)
-  const storedTotal = Number(emp.total_remuneration || 0)
-  // True when the stored Total differs from base + transport — i.e. HR
-  // typed in an override. We surface this on the card so people don't
-  // think the numbers are out of sync by mistake.
-  const totalOverridden = storedTotal > 0 && +storedTotal.toFixed(2) !== +computedTotal.toFixed(2)
+  const [mode, setMode] = useState('view')                  // 'view' | 'edit'
+  const [form, setForm] = useState(null)
+  const [updateEmployee, { isLoading: saving }] = useUpdateEmployeeMutation()
+
+  // Open the edit form pre-populated from `emp`, detecting whether the
+  // stored total differs from base+transport so the override flag is set
+  // correctly (mirrors the same logic in the Employees-page modal).
+  const startEdit = () => {
+    const base = Number(emp.base_salary || 0)
+    const transport = Number(emp.transport_allowance || 0)
+    const total = Number(emp.total_remuneration || 0)
+    setForm({
+      ...emp,
+      _total_overridden: total > 0 && +total.toFixed(2) !== +(base + transport).toFixed(2),
+    })
+    setMode('edit')
+  }
+  const cancel = () => { setMode('view'); setForm(null) }
+
+  const save = async () => {
+    const payload = {
+      first_name: form.first_name?.trim(),
+      last_name: form.last_name?.trim(),
+      email: form.email || '',
+      phone: form.phone || '',
+      national_id: form.national_id || '',
+      tax_id: form.tax_id || '',
+      job_title: form.job_title || '',
+      department: form.department || '',
+      hire_date: form.hire_date || null,
+      end_date: form.end_date || null,
+      status: form.status,
+      pay_frequency: form.pay_frequency || 'monthly',
+      currency: form.currency || 'USD',
+      base_salary: Number(form.base_salary) || 0,
+      transport_allowance: Number(form.transport_allowance) || 0,
+      total_remuneration: Number(form.total_remuneration) || 0,
+      home_address: form.home_address || '',
+      next_of_kin_name: form.next_of_kin_name || '',
+      next_of_kin_relationship: form.next_of_kin_relationship || '',
+      next_of_kin_phone: form.next_of_kin_phone || '',
+      next_of_kin_email: form.next_of_kin_email || '',
+      bank_name: form.bank_name || '',
+      bank_account: form.bank_account || '',
+      notes: form.notes || '',
+    }
+    try {
+      await updateEmployee({ id: emp.id, ...payload }).unwrap()
+      toast.success('Employee updated')
+      setMode('view')
+      setForm(null)
+    } catch (err) {
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Save failed.'
+      toast.error('Could not save', { description: msg })
+    }
+  }
+
+  const editing = mode === 'edit'
+  const v = editing ? form : emp
+
+  // Pay auto-sync — identical to the Employees-page modal so the same
+  // override/auto-fill semantics hold here.
+  const computedTotal = +(Number(v?.base_salary || 0) + Number(v?.transport_allowance || 0)).toFixed(2)
+  const storedTotal = Number(v?.total_remuneration || 0)
+  const totalOverridden = editing
+    ? !!form._total_overridden
+    : storedTotal > 0 && +storedTotal.toFixed(2) !== computedTotal
+
+  const updatePay = (patch) => {
+    const next = { ...form, ...patch }
+    if (!form._total_overridden && (patch.base_salary !== undefined || patch.transport_allowance !== undefined)) {
+      next.total_remuneration = +(Number(next.base_salary || 0) + Number(next.transport_allowance || 0)).toFixed(2)
+    }
+    setForm(next)
+  }
+
+  // Small renderer: read-only span in view, Input in edit.
+  const Cell = ({ value, onChange, type = 'text', placeholder, render }) => {
+    if (!editing) return render ? render(value) : <span className="text-sm font-sora text-lafoi-dark">{value || '—'}</span>
+    if (type === 'textarea') return <Textarea value={value || ''} onChange={(e) => onChange(e.target.value)} rows={2} placeholder={placeholder} />
+    return <Input type={type} value={value ?? ''} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
+  }
+  const Pick = ({ value, onChange, options }) => {
+    if (!editing) return <span className="text-sm font-sora text-lafoi-dark capitalize">{String(value || '—').replace('_', ' ')}</span>
+    return (
+      <Select value={value || ''} onChange={(e) => onChange(e.target.value)}>
+        {options.map(([val, lbl]) => <option key={val} value={val}>{lbl}</option>)}
+      </Select>
+    )
+  }
 
   const sections = [
     {
       title: 'Identity',
       fields: [
-        ['Email', emp.email || '—'],
-        ['Phone', emp.phone || '—'],
-        ['National ID', emp.national_id || '—'],
-        ['Tax / PAYE number', emp.tax_id || '—'],
+        ...(editing ? [
+          ['First name', <Cell value={v.first_name} onChange={(val) => setForm({ ...form, first_name: val })} />],
+          ['Last name',  <Cell value={v.last_name}  onChange={(val) => setForm({ ...form, last_name:  val })} />],
+        ] : []),
+        ['Email',            <Cell value={v.email}       onChange={(val) => setForm({ ...form, email: val })} type="email" />],
+        ['Phone',            <Cell value={v.phone}       onChange={(val) => setForm({ ...form, phone: val })} />],
+        ['National ID',      <Cell value={v.national_id} onChange={(val) => setForm({ ...form, national_id: val })} />],
+        ['Tax / PAYE number',<Cell value={v.tax_id}      onChange={(val) => setForm({ ...form, tax_id: val })} />],
       ],
     },
     {
       title: 'Employment',
       fields: [
-        ['Job title', emp.job_title || '—'],
-        ['Department', emp.department || '—'],
-        ['Hire date', fmtDate(emp.hire_date)],
-        ['End date', emp.end_date ? fmtDate(emp.end_date) : '—'],
-        ['Status', (emp.status || 'active').replace('_', ' ')],
-        ['Pay frequency', emp.pay_frequency || 'monthly'],
+        ['Job title',  <Cell value={v.job_title}  onChange={(val) => setForm({ ...form, job_title: val })} />],
+        ['Department', <Cell value={v.department} onChange={(val) => setForm({ ...form, department: val })} />],
+        ['Hire date',  editing
+          ? <Cell type="date" value={v.hire_date || ''} onChange={(val) => setForm({ ...form, hire_date: val })} />
+          : <span className="text-sm font-sora">{fmtDate(v.hire_date)}</span>],
+        ['End date',   editing
+          ? <Cell type="date" value={v.end_date || ''} onChange={(val) => setForm({ ...form, end_date: val })} />
+          : <span className="text-sm font-sora">{v.end_date ? fmtDate(v.end_date) : '—'}</span>],
+        ['Status',         <Pick value={v.status} onChange={(val) => setForm({ ...form, status: val })}
+          options={[['active', 'Active'], ['on_leave', 'On leave'], ['terminated', 'Terminated']]} />],
+        ['Pay frequency',  <Pick value={v.pay_frequency || 'monthly'} onChange={(val) => setForm({ ...form, pay_frequency: val })}
+          options={[['monthly', 'Monthly'], ['biweekly', 'Biweekly'], ['weekly', 'Weekly']]} />],
       ],
     },
     {
       title: 'Home & emergency contact',
       fields: [
-        ['Home address', emp.home_address || '—'],
-        ['Next of kin', emp.next_of_kin_name || '—'],
-        ['Relationship', emp.next_of_kin_relationship || '—'],
-        ['Next of kin phone', emp.next_of_kin_phone || '—'],
-        ['Next of kin email', emp.next_of_kin_email || '—'],
+        ['Home address',
+          editing
+            ? <Textarea value={v.home_address || ''} onChange={(e) => setForm({ ...form, home_address: e.target.value })} rows={2} placeholder="Street, suburb, city" />
+            : <span className="text-sm font-sora text-lafoi-dark whitespace-pre-line">{v.home_address || '—'}</span>,
+        ],
+        ['Next of kin',        <Cell value={v.next_of_kin_name}         onChange={(val) => setForm({ ...form, next_of_kin_name: val })}         placeholder="Full name" />],
+        ['Relationship',       <Cell value={v.next_of_kin_relationship} onChange={(val) => setForm({ ...form, next_of_kin_relationship: val })} placeholder="e.g. Spouse" />],
+        ['Next of kin phone',  <Cell value={v.next_of_kin_phone}        onChange={(val) => setForm({ ...form, next_of_kin_phone: val })}        placeholder="+263 …" />],
+        ['Next of kin email',  <Cell value={v.next_of_kin_email}        onChange={(val) => setForm({ ...form, next_of_kin_email: val })}        type="email" />],
       ],
     },
-    // Pay & banking lives last, with its own subtle green accent so the
-    // money block reads as the "important final cluster".
     {
       title: 'Pay & banking',
       accent: 'green',
       fields: [
-        ['Currency', emp.currency || 'USD'],
-        ['Base salary', fmtMoney(emp.base_salary, emp.currency)],
-        ['Transport allowance', fmtMoney(emp.transport_allowance, emp.currency)],
+        ['Currency',           <Pick value={v.currency || 'USD'} onChange={(val) => setForm({ ...form, currency: val })}
+          options={[['USD', 'USD'], ['ZWL', 'ZWL'], ['ZAR', 'ZAR']]} />],
+        ['Base salary',
+          editing
+            ? <Input type="number" step="0.01" value={v.base_salary ?? 0} onChange={(e) => updatePay({ base_salary: e.target.value })} />
+            : <span className="text-sm font-sora tabular-nums">{fmtMoney(v.base_salary, v.currency)}</span>,
+        ],
+        ['Transport allowance',
+          editing
+            ? <Input type="number" step="0.01" value={v.transport_allowance ?? 0} onChange={(e) => updatePay({ transport_allowance: e.target.value })} />
+            : <span className="text-sm font-sora tabular-nums">{fmtMoney(v.transport_allowance, v.currency)}</span>,
+        ],
         [
           totalOverridden ? 'Total (manual override)' : 'Total',
-          (
-            <span className="inline-flex items-baseline gap-2">
-              <span className="font-medium">{fmtMoney(storedTotal || computedTotal, emp.currency)}</span>
-              {totalOverridden && (
-                <span className="text-[10px] font-sora tracking-[0.18em] uppercase text-amber-700">
-                  base + transport = {fmtMoney(computedTotal, emp.currency)}
+          editing
+            ? (
+              <div>
+                <Input
+                  type="number" step="0.01"
+                  value={v.total_remuneration ?? 0}
+                  onChange={(e) => setForm({ ...form, total_remuneration: e.target.value, _total_overridden: true })}
+                  className="!font-medium"
+                />
+                <p className="mt-1 text-[10px] font-sora tracking-[0.18em] uppercase text-lafoi-gray-medium">
+                  {form._total_overridden
+                    ? <>Manually set · base + transport = {fmtMoney(computedTotal, v.currency)}</>
+                    : <>Auto-fills from base + transport</>}
+                </p>
+                {form._total_overridden && Number(v.total_remuneration) !== computedTotal && (
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, total_remuneration: computedTotal, _total_overridden: false })}
+                    className="mt-1 text-[11px] font-sora tracking-[0.16em] uppercase text-lafoi-green hover:text-lafoi-green-dark"
+                  >
+                    ↺ Auto-fill from base + transport
+                  </button>
+                )}
+              </div>
+            )
+            : (
+              <span className="inline-flex items-baseline gap-2">
+                <span className="text-sm font-sora font-medium tabular-nums text-lafoi-dark">
+                  {fmtMoney(storedTotal || computedTotal, v.currency)}
                 </span>
-              )}
-            </span>
-          ),
+                {totalOverridden && (
+                  <span className="text-[10px] font-sora tracking-[0.18em] uppercase text-amber-700">
+                    base + transport = {fmtMoney(computedTotal, v.currency)}
+                  </span>
+                )}
+              </span>
+            ),
         ],
-        ['Bank name', emp.bank_name || '—'],
-        ['Bank account', emp.bank_account || '—'],
+        ['Bank name',    <Cell value={v.bank_name}    onChange={(val) => setForm({ ...form, bank_name: val })} />],
+        ['Bank account', <Cell value={v.bank_account} onChange={(val) => setForm({ ...form, bank_account: val })} />],
       ],
     },
   ]
 
   return (
     <div className="space-y-5">
+      {/* Edit / Save / Cancel toolbar */}
+      <div className="flex items-center justify-between gap-2 -mt-2">
+        <p className="text-xs font-sora tracking-[0.18em] uppercase text-lafoi-gray-medium">
+          {editing ? 'Editing profile' : 'Profile details'}
+        </p>
+        <div className="flex items-center gap-2">
+          {!editing ? (
+            <PrimaryButton type="button" onClick={startEdit}>
+              <PencilSimple size={13} weight="bold" /> Edit profile
+            </PrimaryButton>
+          ) : (
+            <>
+              <SecondaryButton type="button" onClick={cancel} disabled={saving}>
+                <XIcon size={13} /> Cancel
+              </SecondaryButton>
+              <PrimaryButton type="button" onClick={save} disabled={saving}>
+                {saving ? <><CircleNotch size={13} className="animate-spin" /> Saving…</> : 'Save changes'}
+              </PrimaryButton>
+            </>
+          )}
+        </div>
+      </div>
+
       {sections.map((sec) => {
         const green = sec.accent === 'green'
         return (
@@ -204,9 +361,9 @@ function ProfileTab({ emp }) {
             </div>
             <dl className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-lafoi-dark/[0.06]">
               {sec.fields.map(([label, value], idx) => (
-                <div key={label} className={`px-5 py-4 ${idx >= 2 ? 'sm:border-t sm:border-lafoi-dark/[0.06]' : ''}`}>
-                  <dt className="font-sora text-[10px] tracking-[0.24em] uppercase text-lafoi-gray-medium">{label}</dt>
-                  <dd className="mt-1 text-sm font-sora text-lafoi-dark">{value}</dd>
+                <div key={label + idx} className={`px-5 py-4 ${idx >= 2 ? 'sm:border-t sm:border-lafoi-dark/[0.06]' : ''}`}>
+                  <dt className="font-sora text-[10px] tracking-[0.24em] uppercase text-lafoi-gray-medium mb-1.5">{label}</dt>
+                  <dd>{value}</dd>
                 </div>
               ))}
             </dl>
@@ -214,17 +371,19 @@ function ProfileTab({ emp }) {
         )
       })}
 
-      {emp.notes && (
-        <div className="rounded-2xl border border-lafoi-dark/10 bg-white p-5">
-          <p className="font-sora text-[10px] tracking-[0.32em] uppercase text-lafoi-gray-medium">Notes</p>
-          <p className="mt-2 text-sm text-lafoi-gray whitespace-pre-line">{emp.notes}</p>
-        </div>
-      )}
-
-      <div className="flex items-center justify-end">
-        <Link to="/dashboard/employees" className="text-xs font-sora tracking-wider text-lafoi-gray hover:text-lafoi-green">
-          Edit on the Employees page →
-        </Link>
+      {/* Notes — full width, editable */}
+      <div className="rounded-2xl border border-lafoi-dark/10 bg-white p-5">
+        <p className="font-sora text-[10px] tracking-[0.32em] uppercase text-lafoi-gray-medium mb-2">Notes</p>
+        {editing ? (
+          <Textarea
+            value={form.notes || ''}
+            onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            rows={3}
+            placeholder="Anything HR should remember about this employee."
+          />
+        ) : (
+          <p className="text-sm text-lafoi-gray whitespace-pre-line">{emp.notes || '—'}</p>
+        )}
       </div>
     </div>
   )
