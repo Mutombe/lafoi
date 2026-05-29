@@ -18,9 +18,9 @@ from .models import (
 
 class EmployeeSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(read_only=True)
-    # base_salary + transport_allowance, computed on the server so the
-    # table never has to recompute and the value can't drift out of sync.
-    total_remuneration = serializers.SerializerMethodField()
+    # total_remuneration is a stored field — writeable, defaults to
+    # base+transport on the model's save() when left blank or zero, so
+    # HR can override the sum when needed without breaking the math.
 
     class Meta:
         model = Employee
@@ -38,11 +38,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "bank_name", "bank_account",
             "notes", "created_at", "updated_at",
         )
-        read_only_fields = ("id", "employee_code", "full_name", "total_remuneration", "created_at", "updated_at")
-
-    def get_total_remuneration(self, obj):
-        from decimal import Decimal
-        return str((obj.base_salary or Decimal("0")) + (obj.transport_allowance or Decimal("0")))
+        read_only_fields = ("id", "employee_code", "full_name", "created_at", "updated_at")
 
 
 class PayrollEntrySerializer(serializers.ModelSerializer):

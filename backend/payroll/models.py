@@ -46,6 +46,14 @@ class Employee(models.Model):
     # the team wants it surfaced as a first-class field on the employee
     # table, with the row's total = base + transport.
     transport_allowance = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
+    # Total pay. Stored rather than purely computed so HR can override the
+    # base+transport sum when needed (e.g. when the boss agrees a round
+    # final number and HR fills in the breakdown after). When left at 0
+    # on save it auto-fills to base+transport.
+    total_remuneration = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0"),
+        help_text="Auto-fills to base + transport when saved as 0.",
+    )
     pay_frequency = models.CharField(max_length=16, choices=PayFrequency.choices, default=PayFrequency.MONTHLY)
     currency = models.CharField(max_length=8, default="USD")
 
@@ -91,6 +99,10 @@ class Employee(models.Model):
         if not self.employee_code:
             count = Employee.objects.count() + 1
             self.employee_code = f"EMP-{count:04d}"
+        # Auto-fill total when the caller didn't set it (or left it at 0).
+        # A non-zero value is taken as an explicit override and preserved.
+        if not self.total_remuneration:
+            self.total_remuneration = (self.base_salary or Decimal("0")) + (self.transport_allowance or Decimal("0"))
         super().save(*args, **kwargs)
 
     @property

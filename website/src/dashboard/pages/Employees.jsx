@@ -22,7 +22,7 @@ const empty = () => ({
   first_name: '', last_name: '', email: '', phone: '',
   national_id: '', tax_id: '', job_title: '', department: '',
   hire_date: new Date().toISOString().slice(0, 10), end_date: '',
-  status: 'active', base_salary: 0, transport_allowance: 0,
+  status: 'active', base_salary: 0, transport_allowance: 0, total_remuneration: 0,
   pay_frequency: 'monthly', currency: 'USD',
   default_allowances: [], default_deductions: [],
   home_address: '',
@@ -92,6 +92,7 @@ export default function Employees() {
       status: editing.status, currency: editing.currency || 'USD',
       base_salary: Number(editing.base_salary) || 0,
       transport_allowance: Number(editing.transport_allowance) || 0,
+      total_remuneration: Number(editing.total_remuneration) || 0,
       pay_frequency: editing.pay_frequency || 'monthly',
       default_allowances: editing.default_allowances || [],
       default_deductions: editing.default_deductions || [],
@@ -147,6 +148,18 @@ export default function Employees() {
   const removeItem = (key, idx) => setEditing({ ...editing, [key]: (editing[key] || []).filter((_, i) => i !== idx) })
   const addItem = (key) => setEditing({ ...editing, [key]: [...(editing[key] || []), { name: '', amount: 0 }] })
 
+  // Wrap setEditing(row) so existing rows pick up the right override state:
+  // if the stored total doesn't match base + transport, treat it as already
+  // overridden so editing base/transport doesn't silently wipe the manual
+  // total the user set previously.
+  const openEdit = (r) => {
+    const base = Number(r.base_salary || 0)
+    const transport = Number(r.transport_allowance || 0)
+    const total = Number(r.total_remuneration || 0)
+    const overridden = total > 0 && total !== +(base + transport).toFixed(2)
+    setEditing({ ...r, _total_overridden: overridden })
+  }
+
   const columns = [
     { key: 'employee_code', label: 'Code', priority: 'medium', render: (r) => <span className="font-sora text-xs">{r.employee_code}</span> },
     { key: 'full_name', label: 'Name', priority: 'high', mobileLabel: 'Name', render: (r) => (
@@ -184,7 +197,7 @@ export default function Employees() {
       } },
     { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
-        <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
+        <button onClick={(e) => { e.stopPropagation(); openEdit(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
         <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
       </div>
     )},
@@ -243,10 +256,26 @@ export default function Employees() {
           </>
         }
       >
-        {editing && (
+        {editing && (() => {
+          // Total auto-syncs to base + transport UNTIL the user types into
+          // Total directly. After that, manual override sticks; the small
+          // "Auto-fill" link resets it. _total_overridden is UI-only and is
+          // stripped before the payload is sent.
+          const computedTotal = +(Number(editing.base_salary || 0) + Number(editing.transport_allowance || 0)).toFixed(2)
+          const overridden = !!editing._total_overridden
+          const updatePay = (patch) => {
+            const next = { ...editing, ...patch }
+            if (!overridden && (patch.base_salary !== undefined || patch.transport_allowance !== undefined)) {
+              next.total_remuneration = +(Number(next.base_salary || 0) + Number(next.transport_allowance || 0)).toFixed(2)
+            }
+            setEditing(next)
+          }
+          return (
           <form id="emp-form" onSubmit={handleSave} className="grid sm:grid-cols-2 gap-4">
             {error && <div className="sm:col-span-2 px-3 py-2 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>}
 
+            {/* ─── Identity ─────────────────────────────────────────── */}
+            <SectionHeader>Identity</SectionHeader>
             <Field label="First name" required>
               <Input value={editing.first_name} onChange={(e) => setEditing({ ...editing, first_name: e.target.value })} required />
             </Field>
@@ -259,6 +288,15 @@ export default function Employees() {
             <Field label="Phone">
               <Input value={editing.phone} onChange={(e) => setEditing({ ...editing, phone: e.target.value })} />
             </Field>
+            <Field label="National ID">
+              <Input value={editing.national_id} onChange={(e) => setEditing({ ...editing, national_id: e.target.value })} />
+            </Field>
+            <Field label="Tax / PAYE number">
+              <Input value={editing.tax_id} onChange={(e) => setEditing({ ...editing, tax_id: e.target.value })} />
+            </Field>
+
+            {/* ─── Employment ───────────────────────────────────────── */}
+            <SectionHeader>Employment</SectionHeader>
             <Field label="Job title">
               <Input value={editing.job_title} onChange={(e) => setEditing({ ...editing, job_title: e.target.value })} />
             </Field>
@@ -278,49 +316,9 @@ export default function Employees() {
                 <option value="terminated">Terminated</option>
               </Select>
             </Field>
-            <Field label="Currency">
-              <Select value={editing.currency} onChange={(e) => setEditing({ ...editing, currency: e.target.value })}>
-                <option value="USD">USD</option>
-                <option value="ZWL">ZWL</option>
-                <option value="ZAR">ZAR</option>
-              </Select>
-            </Field>
-            <Field label="Base salary">
-              <Input type="number" step="0.01" value={editing.base_salary} onChange={(e) => setEditing({ ...editing, base_salary: e.target.value })} />
-            </Field>
-            <Field label="Transport allowance" hint="Added to base salary to give the row total.">
-              <Input
-                type="number" step="0.01"
-                value={editing.transport_allowance ?? 0}
-                onChange={(e) => setEditing({ ...editing, transport_allowance: e.target.value })}
-              />
-            </Field>
-            <Field label="Pay frequency">
-              <Select value={editing.pay_frequency} onChange={(e) => setEditing({ ...editing, pay_frequency: e.target.value })}>
-                <option value="monthly">Monthly</option>
-                <option value="biweekly">Biweekly</option>
-                <option value="weekly">Weekly</option>
-              </Select>
-            </Field>
-            <Field label="National ID">
-              <Input value={editing.national_id} onChange={(e) => setEditing({ ...editing, national_id: e.target.value })} />
-            </Field>
-            <Field label="Tax / PAYE number">
-              <Input value={editing.tax_id} onChange={(e) => setEditing({ ...editing, tax_id: e.target.value })} />
-            </Field>
-            <Field label="Bank name">
-              <Input value={editing.bank_name} onChange={(e) => setEditing({ ...editing, bank_name: e.target.value })} />
-            </Field>
-            <Field label="Bank account">
-              <Input value={editing.bank_account} onChange={(e) => setEditing({ ...editing, bank_account: e.target.value })} />
-            </Field>
 
-            {/* Home address + next of kin */}
-            <div className="sm:col-span-2 pt-2 border-t border-lafoi-dark/8">
-              <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray mb-3">
-                Home & emergency contact
-              </p>
-            </div>
+            {/* ─── Home & emergency contact ─────────────────────────── */}
+            <SectionHeader>Home & emergency contact</SectionHeader>
             <Field label="Home address" className="sm:col-span-2">
               <Textarea
                 value={editing.home_address || ''}
@@ -358,13 +356,79 @@ export default function Employees() {
               />
             </Field>
 
-            {/* Allowances + Deductions templates */}
+            {/* ─── Notes (sits ahead of pay so the form ends on money) ─ */}
+            <Field label="Notes" className="sm:col-span-2">
+              <Textarea value={editing.notes} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} rows={2} />
+            </Field>
+
+            {/* ─── Pay & banking (last) ─────────────────────────────── */}
+            <SectionHeader tone="green">Pay & banking</SectionHeader>
+            <Field label="Currency">
+              <Select value={editing.currency} onChange={(e) => setEditing({ ...editing, currency: e.target.value })}>
+                <option value="USD">USD</option>
+                <option value="ZWL">ZWL</option>
+                <option value="ZAR">ZAR</option>
+              </Select>
+            </Field>
+            <Field label="Pay frequency">
+              <Select value={editing.pay_frequency} onChange={(e) => setEditing({ ...editing, pay_frequency: e.target.value })}>
+                <option value="monthly">Monthly</option>
+                <option value="biweekly">Biweekly</option>
+                <option value="weekly">Weekly</option>
+              </Select>
+            </Field>
+            <Field label="Base salary">
+              <Input
+                type="number" step="0.01"
+                value={editing.base_salary}
+                onChange={(e) => updatePay({ base_salary: e.target.value })}
+              />
+            </Field>
+            <Field label="Transport allowance">
+              <Input
+                type="number" step="0.01"
+                value={editing.transport_allowance ?? 0}
+                onChange={(e) => updatePay({ transport_allowance: e.target.value })}
+              />
+            </Field>
+            <Field
+              label="Total"
+              className="sm:col-span-2"
+              hint={
+                overridden
+                  ? `Manually set. Base + transport would total ${computedTotal}.`
+                  : 'Auto-fills from base + transport. Type to override.'
+              }
+            >
+              <Input
+                type="number" step="0.01"
+                value={editing.total_remuneration ?? 0}
+                onChange={(e) => setEditing({ ...editing, total_remuneration: e.target.value, _total_overridden: true })}
+                className="!font-medium"
+              />
+              {overridden && Number(editing.total_remuneration) !== computedTotal && (
+                <button
+                  type="button"
+                  onClick={() => setEditing({ ...editing, total_remuneration: computedTotal, _total_overridden: false })}
+                  className="mt-1.5 text-[11px] font-sora tracking-[0.16em] uppercase text-lafoi-green hover:text-lafoi-green-dark"
+                >
+                  ↺ Auto-fill from base + transport
+                </button>
+              )}
+            </Field>
+            <Field label="Bank name">
+              <Input value={editing.bank_name} onChange={(e) => setEditing({ ...editing, bank_name: e.target.value })} />
+            </Field>
+            <Field label="Bank account">
+              <Input value={editing.bank_account} onChange={(e) => setEditing({ ...editing, bank_account: e.target.value })} />
+            </Field>
+
             <div className="sm:col-span-2">
               <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray mb-2">Default allowances (each pay period)</p>
               <div className="space-y-2">
                 {(editing.default_allowances || []).map((a, idx) => (
                   <div key={idx} className="grid grid-cols-12 gap-2">
-                    <Input className="col-span-7" value={a.name || ''} onChange={(e) => upsertItem('default_allowances', idx, { name: e.target.value })} placeholder="Name (e.g. Transport)" />
+                    <Input className="col-span-7" value={a.name || ''} onChange={(e) => upsertItem('default_allowances', idx, { name: e.target.value })} placeholder="Name (e.g. Housing)" />
                     <Input className="col-span-4 text-right" type="number" step="0.01" value={a.amount || 0} onChange={(e) => upsertItem('default_allowances', idx, { amount: e.target.value })} />
                     <button type="button" onClick={() => removeItem('default_allowances', idx)} className="col-span-1 text-lafoi-gray hover:text-red-600"><Trash size={14} /></button>
                   </div>
@@ -385,13 +449,24 @@ export default function Employees() {
                 <SecondaryButton type="button" onClick={() => addItem('default_deductions')} className="!py-2 !px-3"><Plus size={13} weight="bold" /> Add deduction</SecondaryButton>
               </div>
             </div>
-
-            <Field label="Notes" className="sm:col-span-2">
-              <Textarea value={editing.notes} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} rows={2} />
-            </Field>
           </form>
-        )}
+          )
+        })()}
       </Modal>
+    </div>
+  )
+}
+
+/** Section divider used to group modal fields. Spans both columns so the
+ *  header sits on its own row. Use `tone="green"` for the Pay section so
+ *  the money block reads as the "last and important" cluster. */
+function SectionHeader({ children, tone }) {
+  const green = tone === 'green'
+  return (
+    <div className={`sm:col-span-2 mt-3 pt-3 ${green ? 'border-t-2 border-lafoi-green/30' : 'border-t border-lafoi-dark/10'}`}>
+      <p className={`font-sora text-[10px] tracking-[0.32em] uppercase ${green ? 'text-lafoi-green-dark' : 'text-lafoi-gray-medium'}`}>
+        {children}
+      </p>
     </div>
   )
 }

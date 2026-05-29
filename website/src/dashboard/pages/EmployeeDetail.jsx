@@ -122,43 +122,106 @@ export default function EmployeeDetail() {
 }
 
 function ProfileTab({ emp }) {
-  const fields = [
-    ['Email', emp.email || '—'],
-    ['Phone', emp.phone || '—'],
-    ['National ID', emp.national_id || '—'],
-    ['Tax / PAYE number', emp.tax_id || '—'],
-    ['Hire date', fmtDate(emp.hire_date)],
-    ['End date', emp.end_date ? fmtDate(emp.end_date) : '—'],
-    ['Base salary', fmtMoney(emp.base_salary, emp.currency)],
-    ['Transport allowance', fmtMoney(emp.transport_allowance, emp.currency)],
-    ['Total (salary + transport)',
-      fmtMoney(
-        emp.total_remuneration ??
-          (Number(emp.base_salary || 0) + Number(emp.transport_allowance || 0)),
-        emp.currency,
-      ),
-    ],
-    ['Pay frequency', emp.pay_frequency || 'monthly'],
-    ['Bank name', emp.bank_name || '—'],
-    ['Bank account', emp.bank_account || '—'],
+  const computedTotal = Number(emp.base_salary || 0) + Number(emp.transport_allowance || 0)
+  const storedTotal = Number(emp.total_remuneration || 0)
+  // True when the stored Total differs from base + transport — i.e. HR
+  // typed in an override. We surface this on the card so people don't
+  // think the numbers are out of sync by mistake.
+  const totalOverridden = storedTotal > 0 && +storedTotal.toFixed(2) !== +computedTotal.toFixed(2)
+
+  const sections = [
+    {
+      title: 'Identity',
+      fields: [
+        ['Email', emp.email || '—'],
+        ['Phone', emp.phone || '—'],
+        ['National ID', emp.national_id || '—'],
+        ['Tax / PAYE number', emp.tax_id || '—'],
+      ],
+    },
+    {
+      title: 'Employment',
+      fields: [
+        ['Job title', emp.job_title || '—'],
+        ['Department', emp.department || '—'],
+        ['Hire date', fmtDate(emp.hire_date)],
+        ['End date', emp.end_date ? fmtDate(emp.end_date) : '—'],
+        ['Status', (emp.status || 'active').replace('_', ' ')],
+        ['Pay frequency', emp.pay_frequency || 'monthly'],
+      ],
+    },
+    {
+      title: 'Home & emergency contact',
+      fields: [
+        ['Home address', emp.home_address || '—'],
+        ['Next of kin', emp.next_of_kin_name || '—'],
+        ['Relationship', emp.next_of_kin_relationship || '—'],
+        ['Next of kin phone', emp.next_of_kin_phone || '—'],
+        ['Next of kin email', emp.next_of_kin_email || '—'],
+      ],
+    },
+    // Pay & banking lives last, with its own subtle green accent so the
+    // money block reads as the "important final cluster".
+    {
+      title: 'Pay & banking',
+      accent: 'green',
+      fields: [
+        ['Currency', emp.currency || 'USD'],
+        ['Base salary', fmtMoney(emp.base_salary, emp.currency)],
+        ['Transport allowance', fmtMoney(emp.transport_allowance, emp.currency)],
+        [
+          totalOverridden ? 'Total (manual override)' : 'Total',
+          (
+            <span className="inline-flex items-baseline gap-2">
+              <span className="font-medium">{fmtMoney(storedTotal || computedTotal, emp.currency)}</span>
+              {totalOverridden && (
+                <span className="text-[10px] font-sora tracking-[0.18em] uppercase text-amber-700">
+                  base + transport = {fmtMoney(computedTotal, emp.currency)}
+                </span>
+              )}
+            </span>
+          ),
+        ],
+        ['Bank name', emp.bank_name || '—'],
+        ['Bank account', emp.bank_account || '—'],
+      ],
+    },
   ]
+
   return (
-    <div className="rounded-2xl border border-lafoi-dark/10 bg-white">
-      <dl className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-lafoi-dark/[0.06]">
-        {fields.map(([label, value], idx) => (
-          <div key={label} className={`px-5 py-4 ${idx >= 2 ? 'sm:border-t sm:border-lafoi-dark/[0.06]' : ''}`}>
-            <dt className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray-medium">{label}</dt>
-            <dd className="mt-1 text-sm font-sora">{value}</dd>
+    <div className="space-y-5">
+      {sections.map((sec) => {
+        const green = sec.accent === 'green'
+        return (
+          <div
+            key={sec.title}
+            className={`rounded-2xl border bg-white overflow-hidden ${green ? 'border-lafoi-green/30 shadow-[0_1px_2px_rgba(26,138,46,0.06)]' : 'border-lafoi-dark/10'}`}
+          >
+            <div className={`px-5 py-3 border-b ${green ? 'bg-lafoi-green/[0.06] border-lafoi-green/20' : 'bg-lafoi-cream/40 border-lafoi-dark/[0.06]'}`}>
+              <p className={`font-sora text-[10px] tracking-[0.32em] uppercase ${green ? 'text-lafoi-green-dark' : 'text-lafoi-gray-medium'}`}>
+                {sec.title}
+              </p>
+            </div>
+            <dl className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-lafoi-dark/[0.06]">
+              {sec.fields.map(([label, value], idx) => (
+                <div key={label} className={`px-5 py-4 ${idx >= 2 ? 'sm:border-t sm:border-lafoi-dark/[0.06]' : ''}`}>
+                  <dt className="font-sora text-[10px] tracking-[0.24em] uppercase text-lafoi-gray-medium">{label}</dt>
+                  <dd className="mt-1 text-sm font-sora text-lafoi-dark">{value}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
-        ))}
-      </dl>
+        )
+      })}
+
       {emp.notes && (
-        <div className="px-5 py-4 border-t border-lafoi-dark/[0.06]">
-          <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray-medium">Notes</p>
-          <p className="mt-1 text-sm text-lafoi-gray">{emp.notes}</p>
+        <div className="rounded-2xl border border-lafoi-dark/10 bg-white p-5">
+          <p className="font-sora text-[10px] tracking-[0.32em] uppercase text-lafoi-gray-medium">Notes</p>
+          <p className="mt-2 text-sm text-lafoi-gray whitespace-pre-line">{emp.notes}</p>
         </div>
       )}
-      <div className="px-5 py-4 border-t border-lafoi-dark/[0.06] flex items-center justify-end">
+
+      <div className="flex items-center justify-end">
         <Link to="/dashboard/employees" className="text-xs font-sora tracking-wider text-lafoi-gray hover:text-lafoi-green">
           Edit on the Employees page →
         </Link>
