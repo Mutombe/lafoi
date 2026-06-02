@@ -24,7 +24,6 @@ import VideoShowcase from '../components/ui/VideoShowcase'
 import ScrollReveal from '../components/ui/ScrollReveal'
 import MagneticCard from '../components/ui/MagneticCard'
 import KineticTextStrip from '../components/ui/KineticTextStrip'
-import AnimatedHeading from '../components/ui/AnimatedHeading'
 import CountUpUI from '../components/ui/CountUp'
 import { useSEO, breadcrumbsLd } from '../utils/seo'
 import { products, projects } from '../data/site'
@@ -485,21 +484,10 @@ function Manifesto() {
               className="font-display text-white tracking-[-0.025em] text-[2.4rem] sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem]"
               style={{ fontVariationSettings: '"opsz" 144', lineHeight: '1.04' }}
             >
-              <AnimatedHeading
-                as="span"
-                text="We believe a ceiling is the"
-                className="block font-light"
-                staggerChildren={0.05}
-              />
-              <AnimatedHeading
-                as="span"
-                text="sixth surface,"
-                className="block italic font-light text-lafoi-green-light mt-1"
-                delay={0.3}
-                staggerChildren={0.05}
-              />
+              <span className="block font-light">We believe a ceiling is the</span>
+              <span className="block italic font-light text-lafoi-green-light mt-1">sixth surface,</span>
               <span className="block font-light mt-2 text-white/90 leading-[1.2] text-[1.8rem] sm:text-[2.4rem] lg:text-[2.4rem] xl:text-[2.6rem]">
-                the one most often forgotten, and the one
+                the one most often forgotten is the one
                 <span className="italic text-white/95"> with the most to give.</span>
               </span>
             </h2>
@@ -1624,7 +1612,7 @@ function VideoShowcaseSection() {
             <AnimatedSection delay={0.2}>
               <p className="mt-6 max-w-xl text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
                 {linkifyProse(
-                  'Short captures from the studio floor, stretch membranes tensioned, lighting solutions calibrated, photographic membranes finished and signed off. The kind of detail that hides between the photographs in our portfolio.'
+                  'Every finished ceiling begins long before the final photograph. From measuring and shaping stretch membranes, to integrating lighting solutions and installing photographic membranes with precision, each stage is part of a workflow built around detail, balance, and craftsmanship. What appears effortless in our portfolio is the result of careful planning, technical execution, and hours spent perfecting the spaces above you.'
                 )}
               </p>
             </AnimatedSection>
