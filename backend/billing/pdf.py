@@ -715,17 +715,23 @@ def render_quotation_pdf(quotation) -> bytes:
     flow.append(_bank_details_flowable(st))
     flow.append(Spacer(1, 16))
 
-    # Terms & conditions follow — free-form notes, then any additional terms
-    # the user added per-quote, then the standard La Foi quotation T&Cs.
+    # Terms & conditions. The editable `terms` field is the single source
+    # of truth — the modal pre-fills it with the standard La Foi terms and
+    # the user can amend per quote. We render EITHER the saved terms OR the
+    # hardcoded standard block, never both (printing both duplicated the
+    # T&Cs on the PDF even though the editor only showed one set).
     if quotation.notes:
         flow.append(Paragraph("NOTES", st["LFEyebrow"]))
         flow.append(Paragraph(quotation.notes.replace("\n", "<br/>"), st["LFBody"]))
         flow.append(Spacer(1, 8))
-    if quotation.terms:
-        flow.append(Paragraph("ADDITIONAL TERMS", st["LFEyebrow"]))
+    if quotation.terms and quotation.terms.strip():
+        flow.append(Paragraph("TERMS &amp; CONDITIONS", st["LFEyebrow"]))
         flow.append(Paragraph(quotation.terms.replace("\n", "<br/>"), st["LFBody"]))
         flow.append(Spacer(1, 10))
-    flow.extend(_quotation_terms_flowable(st))
+    else:
+        # No per-quote terms saved — fall back to the standard block so a
+        # quote is never sent without T&Cs.
+        flow.extend(_quotation_terms_flowable(st))
 
     doc.build(flow, onFirstPage=_document_footer, onLaterPages=_document_footer)
     return buf.getvalue()
