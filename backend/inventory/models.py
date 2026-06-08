@@ -168,13 +168,18 @@ class Item(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.sku:
-            count = Item.objects.count() + 1
-            # Loop until we find a free SKU — defensive against races / manual
-            # inserts that have already taken ITM-NNNNN.
-            sku = f"ITM-{count:05d}"
+            # Next index from the highest existing SKU (gap-safe), then a
+            # defensive loop past any taken code (races / manual inserts).
+            highest = 0
+            for sku in Item.objects.filter(sku__startswith="ITM-").values_list("sku", flat=True):
+                tail = (sku or "").rsplit("-", 1)[-1]
+                if tail.isdigit():
+                    highest = max(highest, int(tail))
+            n = highest + 1
+            sku = f"ITM-{n:05d}"
             while Item.objects.filter(sku=sku).exists():
-                count += 1
-                sku = f"ITM-{count:05d}"
+                n += 1
+                sku = f"ITM-{n:05d}"
             self.sku = sku
         super().save(*args, **kwargs)
 
@@ -306,11 +311,16 @@ class PurchaseOrder(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.reference:
-            count = PurchaseOrder.objects.count() + 1
-            ref = f"PO-{count:05d}"
+            highest = 0
+            for ref in PurchaseOrder.objects.filter(reference__startswith="PO-").values_list("reference", flat=True):
+                tail = (ref or "").rsplit("-", 1)[-1]
+                if tail.isdigit():
+                    highest = max(highest, int(tail))
+            n = highest + 1
+            ref = f"PO-{n:05d}"
             while PurchaseOrder.objects.filter(reference=ref).exists():
-                count += 1
-                ref = f"PO-{count:05d}"
+                n += 1
+                ref = f"PO-{n:05d}"
             self.reference = ref
         super().save(*args, **kwargs)
 

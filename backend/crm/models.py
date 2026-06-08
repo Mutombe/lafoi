@@ -142,8 +142,20 @@ class Project(models.Model):
     def save(self, *args, **kwargs):
         if not self.code:
             year = timezone.now().year
-            count = Project.objects.filter(code__startswith=f"LF-{year}-").count() + 1
-            self.code = f"LF-{year}-{count:04d}"
+            prefix = f"LF-{year}-"
+            # max+1 within this year's codes (gap-safe — count()+1 collided
+            # after a delete), plus a defensive loop past any taken code.
+            highest = 0
+            for code in Project.objects.filter(code__startswith=prefix).values_list("code", flat=True):
+                tail = (code or "").rsplit("-", 1)[-1]
+                if tail.isdigit():
+                    highest = max(highest, int(tail))
+            n = highest + 1
+            code = f"{prefix}{n:04d}"
+            while Project.objects.filter(code=code).exists():
+                n += 1
+                code = f"{prefix}{n:04d}"
+            self.code = code
         # clamp progress
         if self.progress is not None:
             self.progress = max(0, min(100, int(self.progress)))

@@ -97,8 +97,22 @@ class Employee(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.employee_code:
-            count = Employee.objects.count() + 1
-            self.employee_code = f"EMP-{count:04d}"
+            # Derive the next index from the HIGHEST existing code, not
+            # count(). count()+1 collided the moment any employee was deleted
+            # (or codes had gaps), reusing a taken code → IntegrityError on
+            # the unique constraint. Parsing max+1 is gap-safe.
+            highest = 0
+            for code in Employee.objects.filter(employee_code__startswith="EMP-").values_list("employee_code", flat=True):
+                tail = (code or "").rsplit("-", 1)[-1]
+                if tail.isdigit():
+                    highest = max(highest, int(tail))
+            n = highest + 1
+            code = f"EMP-{n:04d}"
+            # Defensive: skip past any code that somehow already exists.
+            while Employee.objects.filter(employee_code=code).exists():
+                n += 1
+                code = f"EMP-{n:04d}"
+            self.employee_code = code
         # Auto-fill total when the caller didn't set it (or left it at 0).
         # A non-zero value is taken as an explicit override and preserved.
         if not self.total_remuneration:
@@ -522,8 +536,18 @@ class EmployeeLoan(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.reference:
-            count = EmployeeLoan.objects.count() + 1
-            self.reference = f"LN-{count:04d}"
+            # max+1 (gap-safe), with a defensive loop past any taken ref.
+            highest = 0
+            for ref in EmployeeLoan.objects.filter(reference__startswith="LN-").values_list("reference", flat=True):
+                tail = (ref or "").rsplit("-", 1)[-1]
+                if tail.isdigit():
+                    highest = max(highest, int(tail))
+            n = highest + 1
+            ref = f"LN-{n:04d}"
+            while EmployeeLoan.objects.filter(reference=ref).exists():
+                n += 1
+                ref = f"LN-{n:04d}"
+            self.reference = ref
         if self.balance == Decimal("0") and not self.pk:
             # initial balance = principal at issuance
             self.balance = self.principal
