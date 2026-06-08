@@ -511,8 +511,16 @@ export function PayrollDetail() {
                   </div>
                 </td>
                 <td className="px-3 py-2 tabular-nums">{fmtMoney(en.base_salary, en.employee_currency)}</td>
-                <td className="px-3 py-2 tabular-nums text-lafoi-green-dark">+ {fmtMoney(en.total_allowances, en.employee_currency)}</td>
-                <td className="px-3 py-2 tabular-nums text-red-600">− {fmtMoney(en.total_deductions, en.employee_currency)}</td>
+                <td className="px-3 py-2 tabular-nums">
+                  {Number(en.total_allowances) > 0
+                    ? <span className="text-lafoi-green-dark">+ {fmtMoney(en.total_allowances, en.employee_currency)}</span>
+                    : <span className="text-lafoi-gray-medium">—</span>}
+                </td>
+                <td className="px-3 py-2 tabular-nums">
+                  {Number(en.total_deductions) > 0
+                    ? <span className="text-red-600">− {fmtMoney(en.total_deductions, en.employee_currency)}</span>
+                    : <span className="text-lafoi-gray-medium">—</span>}
+                </td>
                 <td className="px-3 py-2 tabular-nums">{fmtMoney(en.gross, en.employee_currency)}</td>
                 <td className="px-3 py-2 tabular-nums font-semibold">{fmtMoney(en.net, en.employee_currency)}</td>
                 <td className="px-3 py-2">
