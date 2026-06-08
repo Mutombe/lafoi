@@ -238,9 +238,11 @@ class PayrollEntry(models.Model):
     # so future changes to the employee don't retroactively re-allocate this entry.
     currency_split = models.JSONField(default=list, blank=True)
 
-    # Whether to auto-compute statutory deductions on save. Set False for
-    # custom/edge-case adjustments (e.g. retroactive period regeneration).
-    auto_compute_statutory = models.BooleanField(default=True)
+    # Whether to apply Zimbabwe statutory deductions (PAYE, AIDS levy, NSSA)
+    # to this payslip. Defaults to OFF — statutory deductions are opt-in, so
+    # a payslip only carries them when the user explicitly turns them on. When
+    # off, the statutory fields are forced to zero on every recompute.
+    auto_compute_statutory = models.BooleanField(default=False)
 
     # Computed
     total_allowances = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
@@ -303,7 +305,7 @@ class PayrollEntry(models.Model):
         )
         self.gross = (self.base_salary or Decimal("0")) + self.overtime_amount + self.total_allowances
 
-        # ---- statutory side (auto, unless caller has opted out) ----
+        # ---- statutory side — opt-in only ----
         if self.auto_compute_statutory:
             try:
                 from compliance.engine import compute_statutory  # local import to avoid cycle at app load
@@ -319,6 +321,16 @@ class PayrollEntry(models.Model):
                 self.tax_calc_snapshot = result.snapshot
             except Exception as exc:  # pragma: no cover — never fail save() on stat issues
                 self.tax_calc_snapshot = {"error": str(exc)}
+        else:
+            # Statutory turned off — force every statutory field to zero so a
+            # payslip that previously carried PAYE/NSSA is fully cleared when
+            # the user opts out.
+            self.paye = Decimal("0")
+            self.aids_levy = Decimal("0")
+            self.nssa_employee = Decimal("0")
+            self.nssa_employer = Decimal("0")
+            self.statutory_total = Decimal("0")
+            self.tax_calc_snapshot = {}
 
         # ---- final totals ----
         self.total_deductions = custom_deductions + (self.statutory_total or Decimal("0"))

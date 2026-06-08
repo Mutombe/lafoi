@@ -121,8 +121,11 @@ export default function PayrollGuide() {
           <p className="font-sora font-semibold text-lafoi-dark pt-1">a) Gross pay — what they earn</p>
           <Formula>Gross = Base salary + Overtime (hours × rate) + All allowances</Formula>
 
-          <p className="font-sora font-semibold text-lafoi-dark pt-1">b) Statutory deductions — worked out automatically</p>
-          <p>From the gross, the system applies Zimbabwe statutory deductions using the tax tables (see step 6):</p>
+          <p className="font-sora font-semibold text-lafoi-dark pt-1">b) Statutory deductions — only if you turn them on</p>
+          <p>
+            Zimbabwe statutory deductions are <Term>off by default</Term>. A payslip carries no PAYE/NSSA unless you tick{' '}
+            <Term>"Apply statutory deductions"</Term> when editing that payslip. When turned on, they're worked out from the gross using the tax tables (see step 6):
+          </p>
           <ul className="list-disc pl-5 space-y-1.5">
             <li><Term>PAYE</Term> — income tax. The gross is matched to a tax bracket; tax = gross × rate − the bracket's fixed deduction.</li>
             <li><Term>AIDS levy</Term> — a percentage (usually 3%) <em>of the PAYE</em>, not of gross.</li>
@@ -145,9 +148,9 @@ export default function PayrollGuide() {
 
           <div className="space-y-3 pt-1">
             <div className="rounded-xl border border-lafoi-dark/10 p-4">
-              <p className="font-sora font-semibold text-lafoi-dark mb-1">1 · Statutory deductions <span className="font-normal text-lafoi-gray-medium text-xs">— automatic, by law</span></p>
+              <p className="font-sora font-semibold text-lafoi-dark mb-1">1 · Statutory deductions <span className="font-normal text-lafoi-gray-medium text-xs">— opt-in, off by default</span></p>
               <p className="text-[13px]">
-                <Term>PAYE</Term>, <Term>AIDS levy</Term> and <Term>NSSA (employee)</Term>. You never type these in — the system works them out from the gross using the tax tables (step 6). They change automatically whenever the gross changes.
+                <Term>PAYE</Term>, <Term>AIDS levy</Term> and <Term>NSSA (employee)</Term>. These are <Term>not applied unless you ask for them</Term>: open the payslip and tick <Term>"Apply statutory deductions"</Term>. When on, you never type the amounts — the system works them out from the gross using the tax tables (step 6). Leave it off and the payslip has no tax deductions at all.
               </p>
             </div>
 
@@ -255,9 +258,9 @@ export default function PayrollGuide() {
               </thead>
               <tbody className="divide-y divide-lafoi-dark/[0.06]">
                 {[
-                  ['Base salary, allowances or overtime', 'Gross → which raises PAYE, AIDS levy, NSSA and the net.'],
-                  ['Employee currency', 'Which tax tables apply (USD and ZWG have different brackets).'],
-                  ['Tax tables (Tax & Compliance)', 'PAYE, AIDS levy and NSSA on every new/re-saved payslip.'],
+                  ['Base salary, allowances or overtime', 'Gross → and the net. (Also PAYE/NSSA, but only if statutory is turned on for that payslip.)'],
+                  ['Ticking “Apply statutory deductions”', 'Adds PAYE + AIDS levy + NSSA to that payslip. Unticking removes them. Off by default.'],
+                  ['Employee currency', 'Which tax tables apply when statutory is on (USD and ZWG have different brackets).'],
                   ['A custom deduction', 'Total deductions → lowers net. Does not affect statutory.'],
                   ['An active loan', 'Adds an automatic repayment deduction → lowers net, reduces the loan balance.'],
                   ['Employee status to inactive', 'They are no longer pulled into new pay runs.'],
@@ -283,8 +286,8 @@ export default function PayrollGuide() {
           </div>
           <div className="px-5 sm:px-6 py-5 space-y-4 text-sm text-lafoi-gray font-body leading-[1.7]">
             {[
-              ['A payslip shows PAYE or NSSA as 0 — why?',
-               'The tax tables for that employee’s currency (or that pay date) haven’t been set up. Add them under Settings → Tax & Compliance, then regenerate or re-save the entry.'],
+              ['A payslip shows no PAYE or NSSA — why?',
+               'Statutory deductions are off by default. Open the payslip and tick “Apply statutory deductions” to add them. If you ticked it and they’re still 0, the tax tables for that currency/date haven’t been set up under Settings → Tax & Compliance.'],
               ['I changed an employee’s salary but the payslip didn’t update.',
                'Entries are a snapshot taken when generated. Open that employee’s entry and re-save it, or regenerate, to pull in the new figure.'],
               ['My edits won’t save.',
