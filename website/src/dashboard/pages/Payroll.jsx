@@ -3,7 +3,7 @@ import { useDispatch, useStore } from 'react-redux'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft, ArrowRight, Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Download, Eye,
-  ArrowsClockwise, Sparkle, CircleNotch, Check, Lock, ArrowCounterClockwise,
+  ArrowsClockwise, Sparkle, CircleNotch, Check, Lock, ArrowCounterClockwise, BookOpen, Question,
 } from '@phosphor-icons/react'
 import { useConfirm } from '../components/ConfirmDialog'
 import { toast } from 'sonner'
@@ -166,6 +166,12 @@ export function PayrollList() {
         description="Create a period, generate entries from active employees, edit per-person line items, then export payslips."
         actions={
           <>
+            <Link
+              to="/dashboard/payroll/guide"
+              className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white border border-lafoi-dark/12 text-sm font-sora text-lafoi-gray hover:border-lafoi-green hover:text-lafoi-green transition-colors"
+            >
+              <BookOpen size={14} weight="bold" /> How payroll works
+            </Link>
             <div className="relative">
               <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
               <input
@@ -179,6 +185,23 @@ export function PayrollList() {
           </>
         }
       />
+
+      {/* First-time helper banner pointing at the guide */}
+      <div className="mb-4 px-4 py-3 rounded-2xl bg-lafoi-cream/70 border border-lafoi-dark/10 flex items-start gap-3">
+        <span className="mt-0.5 inline-flex items-center justify-center w-7 h-7 rounded-full bg-lafoi-dark text-white shrink-0">
+          <Question size={13} weight="bold" />
+        </span>
+        <div className="flex-1 text-sm text-lafoi-dark">
+          <p className="font-sora font-medium">New to payroll, or not sure what affects what?</p>
+          <p className="text-xs text-lafoi-gray mt-0.5">
+            Read{' '}
+            <Link to="/dashboard/payroll/guide" className="font-medium text-lafoi-green hover:text-lafoi-green-dark underline underline-offset-2">
+              How payroll works
+            </Link>{' '}
+            — it walks through the whole pay run, how each number is calculated, and the approval workflow.
+          </p>
+        </div>
+      </div>
 
       {/* How-to-download hint — payslips live inside each period */}
       <div className="mb-5 px-4 py-3 rounded-2xl bg-lafoi-green/[0.04] border border-lafoi-green/20 flex items-start gap-3">
@@ -431,6 +454,13 @@ export function PayrollDetail() {
         description={`${fmtDate(period.period_start)} → ${fmtDate(period.period_end)}`}
         actions={
           <>
+            <Link
+              to="/dashboard/payroll/guide"
+              className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-white border border-lafoi-dark/12 text-sm font-sora text-lafoi-gray hover:border-lafoi-green hover:text-lafoi-green transition-colors"
+              title="How payroll works"
+            >
+              <BookOpen size={14} weight="bold" /> <span className="hidden sm:inline">Guide</span>
+            </Link>
             <SecondaryButton onClick={handleBankFile}>
               <Download size={14} weight="bold" /> Bank file
             </SecondaryButton>

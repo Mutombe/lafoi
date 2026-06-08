@@ -42,6 +42,7 @@ const DashPayrollList = lazy(() =>
 const DashPayrollDetail = lazy(() =>
   import('./dashboard/pages/Payroll').then((m) => ({ default: m.PayrollDetail })),
 )
+const DashPayrollGuide = lazy(() => import('./dashboard/pages/PayrollGuide'))
 const DashLoans = lazy(() => import('./dashboard/pages/Loans'))
 const DashLeave = lazy(() => import('./dashboard/pages/Leave'))
 const DashHolidays = lazy(() => import('./dashboard/pages/Holidays'))
@@ -92,6 +93,7 @@ export default function App() {
             <Route path="employees" element={<DashEmployees />} />
             <Route path="employees/:id" element={<DashEmployeeDetail />} />
             <Route path="payroll" element={<DashPayrollList />} />
+            <Route path="payroll/guide" element={<DashPayrollGuide />} />
             <Route path="payroll/:id" element={<DashPayrollDetail />} />
             <Route path="loans" element={<DashLoans />} />
             <Route path="leave" element={<DashLeave />} />
