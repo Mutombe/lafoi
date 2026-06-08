@@ -137,11 +137,51 @@ export default function PayrollGuide() {
           </p>
         </Section>
 
-        {/* 5 — Loans */}
-        <Section icon={Coins} num="5" title="Loans repay themselves">
+        {/* 5 — Deductions explained */}
+        <Section icon={Coins} num="5" title="Deductions, explained">
           <p>
-            If an employee has an <Term>active loan or advance</Term> (set up on the Loans page), its instalment is added to that payslip's deductions automatically when entries are generated or saved — capped at the remaining balance. You don't add loan repayments by hand. Each repayment reduces the loan's outstanding balance.
+            A deduction is anything taken <em>off</em> the gross before it reaches the employee's account. On a payslip there are <Term>three kinds</Term>, and they all add up into one <Term>Total deductions</Term> figure:
           </p>
+
+          <div className="space-y-3 pt-1">
+            <div className="rounded-xl border border-lafoi-dark/10 p-4">
+              <p className="font-sora font-semibold text-lafoi-dark mb-1">1 · Statutory deductions <span className="font-normal text-lafoi-gray-medium text-xs">— automatic, by law</span></p>
+              <p className="text-[13px]">
+                <Term>PAYE</Term>, <Term>AIDS levy</Term> and <Term>NSSA (employee)</Term>. You never type these in — the system works them out from the gross using the tax tables (step 6). They change automatically whenever the gross changes.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-lafoi-dark/10 p-4">
+              <p className="font-sora font-semibold text-lafoi-dark mb-1">2 · Custom deductions <span className="font-normal text-lafoi-gray-medium text-xs">— things you decide</span></p>
+              <p className="text-[13px]">
+                A list of <Term>name + amount</Term> lines, e.g. <em>Pension</em>, <em>Union dues</em>, <em>Salary advance</em>, <em>Damages</em>. They come from two places:
+              </p>
+              <ul className="list-disc pl-5 space-y-1 mt-1.5 text-[13px]">
+                <li>
+                  <Term>Default deductions</Term> on the employee's record — these recur, so they're copied onto every payslip automatically. Use these for anything that happens every month.
+                </li>
+                <li>
+                  <Term>One-off deductions</Term> you add to a single payslip — open that employee's entry in the period and add a line. It only affects that one pay run.
+                </li>
+              </ul>
+            </div>
+
+            <div className="rounded-xl border border-lafoi-dark/10 p-4">
+              <p className="font-sora font-semibold text-lafoi-dark mb-1">3 · Loan repayments <span className="font-normal text-lafoi-gray-medium text-xs">— automatic from the Loans page</span></p>
+              <p className="text-[13px]">
+                If an employee has an <Term>active loan or advance</Term>, its instalment is added to the deductions automatically — capped at the remaining balance, and never started before the loan's first-repayment period. You don't add these by hand; each one paid reduces the loan's outstanding balance. They show on the payslip tagged with the loan reference.
+              </p>
+            </div>
+          </div>
+
+          <p className="font-sora font-semibold text-lafoi-dark pt-2">How they combine</p>
+          <Formula>Total deductions = Custom + Loan repayments + Statutory (PAYE + AIDS + NSSA)</Formula>
+          <Formula>Net pay = Gross − Total deductions</Formula>
+          <ul className="list-disc pl-5 space-y-1.5">
+            <li>Adding a custom deduction lowers the net but <em>does not</em> change PAYE/NSSA — statutory is worked out from the gross, before custom deductions.</li>
+            <li>Net pay can never go below zero. If deductions would exceed the gross, the payslip floors the net at 0 (the shortfall isn't carried forward).</li>
+            <li>To add a deduction to <em>everyone</em> going forward, put it on each employee's Default deductions. To add it to one person this month only, edit their entry inside the period.</li>
+          </ul>
         </Section>
 
         {/* 6 — Tax tables */}

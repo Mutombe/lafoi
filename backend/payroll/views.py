@@ -4,6 +4,7 @@ from datetime import date
 from decimal import Decimal
 
 from django.db import transaction
+from django.db.models import ProtectedError
 from django.http import HttpResponse
 from django.utils import timezone
 from rest_framework import status, viewsets
@@ -68,6 +69,37 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     filterset_fields = ("status", "department", "pay_frequency")
     search_fields = ("employee_code", "first_name", "last_name", "email", "phone", "department", "job_title")
     ordering_fields = ("hire_date", "first_name", "last_name", "base_salary")
+
+    def destroy(self, request, *args, **kwargs):
+        """Hard-delete an employee — but only when nothing references them.
+
+        PayrollEntry (and other records) point at Employee with PROTECT, so a
+        DELETE on an employee with payroll history raises ProtectedError. We
+        catch it and return a clean 409 telling the user to terminate the
+        employee instead, which keeps their payslip history intact for audit.
+        """
+        instance = self.get_object()
+        try:
+            self.perform_destroy(instance)
+        except ProtectedError:
+            blockers = []
+            entries = instance.payroll_entries.count()
+            loans = instance.loans.count() if hasattr(instance, "loans") else 0
+            clocks = instance.clock_entries.count() if hasattr(instance, "clock_entries") else 0
+            if entries:
+                blockers.append(f"{entries} payslip{'s' if entries != 1 else ''}")
+            if loans:
+                blockers.append(f"{loans} loan{'s' if loans != 1 else ''}")
+            if clocks:
+                blockers.append(f"{clocks} clock entr{'ies' if clocks != 1 else 'y'}")
+            detail = (
+                f"{instance.full_name} can't be deleted because they have "
+                f"{', '.join(blockers) if blockers else 'linked records'} on file. "
+                "Set their status to Terminated instead — this hides them from "
+                "active lists while keeping their history for audit."
+            )
+            return Response({"detail": detail}, status=status.HTTP_409_CONFLICT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=["get"], url_path="me", permission_classes=[IsAuthenticated])
     def me(self, request):
