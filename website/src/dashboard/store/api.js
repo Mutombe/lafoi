@@ -59,7 +59,7 @@ export const api = createApi({
   refetchOnMountOrArgChange: false,
   tagTypes: [
     'Auth', 'User',
-    'Customer', 'Project', 'ProjectFile', 'ProjectUpdate', 'ProjectCost', 'Expense',
+    'Customer', 'CustomerFile', 'Project', 'ProjectFile', 'ProjectUpdate', 'ProjectCost', 'Expense', 'ExpensePayment',
     'Income', 'CatalogItem',
     'Quotation', 'Invoice', 'Receipt',
     'Employee', 'PayrollPeriod', 'PayrollEntry',
@@ -167,6 +167,34 @@ export const api = createApi({
     deleteProjectFile: b.mutation({
       query: (id) => ({ url: `project-files/${id}/`, method: 'DELETE' }),
       invalidatesTags: ['ProjectFile', 'Project'],
+    }),
+
+    // ---------- Customer files (drawings / photos / documents) ----------
+    listCustomerFiles: b.query({
+      query: (params = {}) => ({ url: 'customer-files/', params }),
+      providesTags: ['CustomerFile'],
+    }),
+    uploadCustomerFile: b.mutation({
+      query: (formData) => ({ url: 'customer-files/', method: 'POST', body: formData }),
+      invalidatesTags: ['CustomerFile', 'Customer'],
+    }),
+    deleteCustomerFile: b.mutation({
+      query: (id) => ({ url: `customer-files/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['CustomerFile', 'Customer'],
+    }),
+
+    // ---------- Expense part-payments ----------
+    listExpensePayments: b.query({
+      query: (params = {}) => ({ url: 'expense-payments/', params }),
+      providesTags: ['ExpensePayment'],
+    }),
+    createExpensePayment: b.mutation({
+      query: (body) => ({ url: 'expense-payments/', method: 'POST', body }),
+      invalidatesTags: ['ExpensePayment', 'Expense'],
+    }),
+    deleteExpensePayment: b.mutation({
+      query: (id) => ({ url: `expense-payments/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['ExpensePayment', 'Expense'],
     }),
 
     // ---------- Quotations ----------
@@ -780,6 +808,8 @@ export const {
   useListProjectsQuery, useGetProjectQuery, useCreateProjectMutation, useUpdateProjectMutation, useDeleteProjectMutation,
   useListProjectUpdatesQuery, useCreateProjectUpdateMutation,
   useListProjectFilesQuery, useUploadProjectFileMutation, useDeleteProjectFileMutation,
+  useListCustomerFilesQuery, useUploadCustomerFileMutation, useDeleteCustomerFileMutation,
+  useListExpensePaymentsQuery, useCreateExpensePaymentMutation, useDeleteExpensePaymentMutation,
   useListQuotationsQuery, useGetQuotationQuery, useCreateQuotationMutation, useUpdateQuotationMutation, useDeleteQuotationMutation, useConvertQuotationToInvoiceMutation,
   useListInvoicesQuery, useGetInvoiceQuery, useCreateInvoiceMutation, useUpdateInvoiceMutation, useDeleteInvoiceMutation,
   useListReceiptsQuery, useCreateReceiptMutation, useDeleteReceiptMutation,

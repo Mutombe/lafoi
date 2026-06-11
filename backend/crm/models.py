@@ -316,6 +316,91 @@ class ProjectCost(models.Model):
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.project.code}: {self.description} ({self.currency} {self.amount})"
 
+    # ---- Part-payment helpers ----
+    @property
+    def amount_paid(self) -> Decimal:
+        return self.payments.aggregate(s=models.Sum("amount"))["s"] or Decimal("0")  # type: ignore[attr-defined]
+
+    @property
+    def balance_due(self) -> Decimal:
+        return (self.amount or Decimal("0")) - self.amount_paid
+
+    @property
+    def payment_status(self) -> str:
+        """'paid' | 'partial' | 'unpaid' from recorded payments."""
+        paid = self.amount_paid
+        total = self.amount or Decimal("0")
+        if paid <= Decimal("0"):
+            return "unpaid"
+        if paid >= total:
+            return "paid"
+        return "partial"
+
+
+class ExpensePayment(models.Model):
+    """A single payment made against an expense. Lets the studio pay a
+    supplier/service provider in parts — e.g. 50% deposit now, 50% on
+    completion — and track the running balance, mirroring how billing
+    Receipts pay down an Invoice.
+    """
+
+    class Method(models.TextChoices):
+        CASH = "cash", "Cash"
+        BANK_TRANSFER = "bank_transfer", "Bank transfer"
+        MOBILE_MONEY = "mobile_money", "Mobile money"
+        CARD = "card", "Card"
+        CHEQUE = "cheque", "Cheque"
+        OTHER = "other", "Other"
+
+    expense = models.ForeignKey(ProjectCost, on_delete=models.CASCADE, related_name="payments")
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    paid_on = models.DateField(help_text="Date this part-payment was made.")
+    method = models.CharField(max_length=16, choices=Method.choices, default=Method.BANK_TRANSFER, blank=True)
+    reference = models.CharField(max_length=120, blank=True, help_text="Bank ref, txn id, cheque #…")
+    note = models.CharField(max_length=200, blank=True, help_text="e.g. 'Deposit', 'Final on completion'.")
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="expense_payments",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("paid_on", "created_at")
+        indexes = [models.Index(fields=["expense", "paid_on"])]
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.expense_id}: {self.amount} on {self.paid_on}"
+
+
+class CustomerFile(models.Model):
+    """Drawings, photos and documents attached to a customer — mirrors
+    ProjectFile but hung off a Customer instead of a Project."""
+
+    class Kind(models.TextChoices):
+        DRAWING = "drawing", "Drawing / Plan"
+        PHOTO = "photo", "Photo"
+        DOCUMENT = "document", "Document"
+        OTHER = "other", "Other"
+
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="files")
+    kind = models.CharField(max_length=16, choices=Kind.choices, default=Kind.DRAWING)
+    title = models.CharField(max_length=200, blank=True)
+    file = models.FileField(upload_to="customer_files/")
+    description = models.TextField(blank=True)
+
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="customer_files",
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-uploaded_at",)
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.kind}: {self.title or self.file.name}"
+
 
 # ============================================================================
 # INCOME — money in. Generic ledger for every receivable channel: invoice

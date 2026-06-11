@@ -29,6 +29,7 @@ const DashboardLayout = lazy(() => import('./dashboard/components/DashboardLayou
 const Login = lazy(() => import('./dashboard/pages/Login'))
 const Overview = lazy(() => import('./dashboard/pages/Overview'))
 const DashCustomers = lazy(() => import('./dashboard/pages/Customers'))
+const DashCustomerDetail = lazy(() => import('./dashboard/pages/CustomerDetail'))
 const DashProjects = lazy(() => import('./dashboard/pages/Projects'))
 const DashProjectDetail = lazy(() => import('./dashboard/pages/ProjectDetail'))
 const DashQuotations = lazy(() => import('./dashboard/pages/Quotations'))
@@ -82,6 +83,7 @@ export default function App() {
           >
             <Route index element={<Overview />} />
             <Route path="customers" element={<DashCustomers />} />
+            <Route path="customers/:id" element={<DashCustomerDetail />} />
             <Route path="projects" element={<DashProjects />} />
             <Route path="projects/:id" element={<DashProjectDetail />} />
             <Route path="quotations" element={<DashQuotations />} />

@@ -8,7 +8,7 @@ import { useConfirm } from '../components/ConfirmDialog'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
-import DataTable, { fmtDate, fmtMoney } from '../components/DataTable'
+import DataTable, { fmtDate, fmtMoney, StatusBadge } from '../components/DataTable'
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import useDebouncedValue from '../hooks/useDebouncedValue'
@@ -20,8 +20,17 @@ import {
   useDeleteExpenseMutation,
   useListProjectsQuery,
   useListIncomeQuery,
+  useCreateExpensePaymentMutation,
+  useDeleteExpensePaymentMutation,
 } from '../store/api'
-import { ArrowDown, ArrowUp, Scales } from '@phosphor-icons/react'
+import { ArrowDown, ArrowUp, Scales, Wallet, Coins as CoinsIcon } from '@phosphor-icons/react'
+
+const PAY_STATUS_PALETTE = {
+  paid:    'bg-lafoi-green/15 text-lafoi-green-dark border-lafoi-green/40',
+  partial: 'bg-amber-50 text-amber-700 border-amber-200',
+  unpaid:  'bg-red-50 text-red-700 border-red-200',
+}
+const PAY_STATUS_LABEL = { paid: 'Paid', partial: 'Part-paid', unpaid: 'Unpaid' }
 
 const CATEGORIES = [
   ['materials', 'Materials'],
@@ -165,6 +174,56 @@ export default function Expenses() {
   const [createExpense] = useCreateExpenseMutation()
   const [updateExpense] = useUpdateExpenseMutation()
   const [deleteExpense] = useDeleteExpenseMutation()
+  const [createPayment, paymentState] = useCreateExpensePaymentMutation()
+  const [deletePayment] = useDeleteExpensePaymentMutation()
+
+  // Record-payment dialog. `paying` stores the expense id + form fields; the
+  // live expense (with its current payments) is looked up from `rows` so the
+  // modal stays fresh after a payment is added or removed.
+  const [paying, setPaying] = useState(null)
+  const payingExpense = useMemo(
+    () => (paying ? rows.find((r) => r.id === paying.expenseId) : null),
+    [paying, rows],
+  )
+  const openPayment = (expense) => {
+    const balance = Number(expense.balance_due ?? expense.amount ?? 0)
+    setPaying({
+      expenseId: expense.id,
+      currency: expense.currency,
+      amount: balance > 0 ? String(balance) : '',
+      paid_on: todayISO(),
+      method: 'bank_transfer',
+      reference: '',
+      note: '',
+    })
+  }
+  const handlePaymentSave = async (e) => {
+    e.preventDefault()
+    const amt = Number(paying.amount)
+    if (!amt || amt <= 0) { toast.error('Enter a payment amount'); return }
+    try {
+      await createPayment({
+        expense: paying.expenseId,
+        amount: amt,
+        paid_on: paying.paid_on,
+        method: paying.method || '',
+        reference: paying.reference || '',
+        note: paying.note || '',
+      }).unwrap()
+      toast.success('Payment recorded', { description: fmtMoney(amt, paying.currency) })
+      // Reset the amount + reference for a possible next part-payment; keep
+      // the dialog open so the user sees the updated balance.
+      setPaying((cur) => cur ? { ...cur, amount: '', reference: '', note: '' } : cur)
+    } catch (err) {
+      const msg = err?.data ? Object.values(err.data).flat().join(' ') : 'Could not record payment.'
+      toast.error('Payment failed', { description: msg })
+    }
+  }
+  const handleDeletePayment = async (p) => {
+    if (!(await confirm({ title: 'Remove this payment?', message: `${fmtMoney(p.amount, paying?.currency)} on ${fmtDate(p.paid_on)} will be removed.`, confirmLabel: 'Remove', danger: true }))) return
+    try { await deletePayment(p.id).unwrap(); toast.success('Payment removed') }
+    catch { toast.error('Could not remove payment') }
+  }
 
   const isNew = editing && !editing.id
 
@@ -258,23 +317,48 @@ export default function Expenses() {
       ),
     },
     {
+      key: 'payment', label: 'Payment', priority: 'high',
+      render: (r) => {
+        const status = r.payment_status || 'unpaid'
+        const balance = Number(r.balance_due ?? r.amount ?? 0)
+        return (
+          <div>
+            <StatusBadge status={PAY_STATUS_LABEL[status] || status} palette={PAY_STATUS_PALETTE} />
+            {status === 'partial' && (
+              <p className="text-[10px] text-amber-700 mt-1 tabular-nums">
+                {fmtMoney(r.amount_paid, r.currency)} paid · {fmtMoney(balance, r.currency)} due
+              </p>
+            )}
+          </div>
+        )
+      },
+    },
+    {
       key: 'incurred_on', label: 'Incurred', priority: 'medium',
       render: (r) => fmtDate(r.incurred_on),
-    },
-    {
-      key: 'paid_on', label: 'Paid', priority: 'low',
-      render: (r) => r.paid_on
-        ? fmtDate(r.paid_on)
-        : <span className="text-[11px] font-sora text-amber-700">Pending</span>,
-    },
-    {
-      key: 'payment_method', label: 'Method', priority: 'low',
-      render: (r) => <span className="text-xs capitalize">{(r.payment_method_label || r.payment_method || '—').toLowerCase()}</span>,
     },
     {
       key: 'actions', label: '', priority: 'high',
       render: (r) => (
         <div className="flex justify-end gap-1">
+          {(r.payment_status || 'unpaid') !== 'paid' && (
+            <button
+              onClick={(e) => { e.stopPropagation(); openPayment(r) }}
+              title="Record a payment"
+              className="p-2 rounded-lg hover:bg-lafoi-green/10 text-lafoi-gray hover:text-lafoi-green-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"
+            >
+              <Wallet size={14} weight="bold" />
+            </button>
+          )}
+          {(r.payment_status || 'unpaid') === 'paid' && (
+            <button
+              onClick={(e) => { e.stopPropagation(); openPayment(r) }}
+              title="Payment history"
+              className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"
+            >
+              <Wallet size={14} />
+            </button>
+          )}
           <button onClick={(e) => { e.stopPropagation(); setEditing({ ...r }) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
           <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
         </div>
@@ -509,6 +593,97 @@ export default function Expenses() {
             </Field>
           </form>
         )}
+      </Modal>
+
+      {/* Record-payment / part-payment modal */}
+      <Modal
+        open={!!paying}
+        onClose={() => setPaying(null)}
+        title={payingExpense ? `Payments — ${payingExpense.description}` : 'Record payment'}
+        size="md"
+        footer={
+          <>
+            <SecondaryButton type="button" onClick={() => setPaying(null)}>Done</SecondaryButton>
+            <PrimaryButton form="pay-form" type="submit" disabled={paymentState.isLoading}>
+              {paymentState.isLoading ? <><CircleNotch size={14} className="animate-spin" /> Saving…</> : 'Record payment'}
+            </PrimaryButton>
+          </>
+        }
+      >
+        {paying && payingExpense && (() => {
+          const total = Number(payingExpense.amount || 0)
+          const paid = Number(payingExpense.amount_paid || 0)
+          const balance = Number(payingExpense.balance_due ?? (total - paid))
+          const cur = payingExpense.currency
+          const pct = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 0
+          const payments = payingExpense.payments || []
+          return (
+            <div className="grid gap-4">
+              {/* Balance summary */}
+              <div className="rounded-xl bg-lafoi-cream px-4 py-3">
+                <div className="flex items-end justify-between gap-3">
+                  <div>
+                    <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium">Total agreed</p>
+                    <p className="font-display text-xl">{fmtMoney(total, cur)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium">Balance due</p>
+                    <p className={`font-display text-xl ${balance <= 0 ? 'text-lafoi-green-dark' : 'text-amber-700'}`}>{fmtMoney(balance, cur)}</p>
+                  </div>
+                </div>
+                <div className="mt-2.5 h-1.5 rounded-full bg-lafoi-dark/8 overflow-hidden">
+                  <div className="h-full rounded-full bg-lafoi-green" style={{ width: `${pct}%` }} />
+                </div>
+                <p className="mt-1 text-[11px] font-sora text-lafoi-gray-medium tabular-nums">{fmtMoney(paid, cur)} paid · {pct}%</p>
+              </div>
+
+              {/* Existing payments */}
+              {payments.length > 0 && (
+                <div>
+                  <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray-medium mb-2">Payments so far</p>
+                  <ul className="rounded-xl border border-lafoi-dark/10 divide-y divide-lafoi-dark/[0.06]">
+                    {payments.map((p) => (
+                      <li key={p.id} className="flex items-center gap-3 px-3 py-2 text-sm">
+                        <CoinsIcon size={14} className="text-lafoi-green-dark shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-sora tabular-nums">{fmtMoney(p.amount, cur)}</p>
+                          <p className="text-[11px] text-lafoi-gray-medium">
+                            {fmtDate(p.paid_on)}{p.note ? ` · ${p.note}` : ''}{p.method_label ? ` · ${p.method_label}` : ''}
+                          </p>
+                        </div>
+                        <button type="button" onClick={() => handleDeletePayment(p)} className="p-1.5 rounded-lg text-lafoi-gray hover:text-red-600 hover:bg-red-50" title="Remove">
+                          <Trash size={13} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* New payment form */}
+              <form id="pay-form" onSubmit={handlePaymentSave} className="grid sm:grid-cols-2 gap-4 pt-1 border-t border-lafoi-dark/8">
+                <Field label="Amount" required className="sm:col-span-2">
+                  <Input type="number" step="0.01" min="0" value={paying.amount} onChange={(e) => setPaying({ ...paying, amount: e.target.value })} required autoFocus
+                    placeholder={balance > 0 ? `Balance is ${fmtMoney(balance, cur)}` : ''} />
+                </Field>
+                <Field label="Date" required>
+                  <Input type="date" value={paying.paid_on} onChange={(e) => setPaying({ ...paying, paid_on: e.target.value })} required />
+                </Field>
+                <Field label="Method">
+                  <Select value={paying.method} onChange={(e) => setPaying({ ...paying, method: e.target.value })}>
+                    {PAYMENT_METHODS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+                  </Select>
+                </Field>
+                <Field label="Note">
+                  <Input value={paying.note} onChange={(e) => setPaying({ ...paying, note: e.target.value })} placeholder="e.g. Deposit, Final on completion" />
+                </Field>
+                <Field label="Reference">
+                  <Input value={paying.reference} onChange={(e) => setPaying({ ...paying, reference: e.target.value })} placeholder="Bank ref, cheque #…" />
+                </Field>
+              </form>
+            </div>
+          )
+        })()}
       </Modal>
     </div>
   )

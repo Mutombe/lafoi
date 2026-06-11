@@ -6,10 +6,16 @@ from rest_framework.response import Response
 
 from compliance.permissions import HasModuleAccess
 
-from .models import CatalogItem, Customer, Income, Project, ProjectCost, ProjectFile, ProjectUpdate
+from .models import (
+    CatalogItem, Customer, CustomerFile, ExpensePayment, Income,
+    Project, ProjectCost, ProjectFile, ProjectUpdate,
+)
 from .serializers import (
     CatalogItemSerializer,
+    CustomerDetailSerializer,
+    CustomerFileSerializer,
     CustomerSerializer,
+    ExpensePaymentSerializer,
     IncomeSerializer,
     ProjectCostSerializer,
     ProjectDetailSerializer,
@@ -27,8 +33,40 @@ class CustomerViewSet(viewsets.ModelViewSet):
     search_fields = ("name", "contact_person", "email", "phone", "city", "address")
     ordering_fields = ("created_at", "name")
 
+    def get_serializer_class(self):
+        # Detail view nests the customer's uploaded files.
+        if self.action == "retrieve":
+            return CustomerDetailSerializer
+        return CustomerSerializer
+
     def get_queryset(self):
-        return Customer.objects.annotate(project_count=Count("projects")).order_by("-created_at")
+        qs = Customer.objects.annotate(project_count=Count("projects")).order_by("-created_at")
+        if self.action == "retrieve":
+            qs = qs.prefetch_related("files", "files__uploaded_by")
+        return qs
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user if self.request.user.is_authenticated else None)
+
+
+class CustomerFileViewSet(viewsets.ModelViewSet):
+    serializer_class = CustomerFileSerializer
+    queryset = CustomerFile.objects.select_related("customer", "uploaded_by").all()
+    permission_classes = [HasModuleAccess.for_module("customers")]
+    filterset_fields = ("customer", "kind")
+    ordering_fields = ("uploaded_at",)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
+
+    def perform_create(self, serializer):
+        serializer.save(uploaded_by=self.request.user if self.request.user.is_authenticated else None)
+
+
+class ExpensePaymentViewSet(viewsets.ModelViewSet):
+    serializer_class = ExpensePaymentSerializer
+    queryset = ExpensePayment.objects.select_related("expense", "created_by").all()
+    permission_classes = [HasModuleAccess.for_module("expenses")]
+    filterset_fields = ("expense",)
+    ordering_fields = ("paid_on", "created_at")
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user if self.request.user.is_authenticated else None)

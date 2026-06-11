@@ -3,7 +3,24 @@ from decimal import Decimal
 from rest_framework import serializers
 
 from accounts.serializers import UserSerializer
-from .models import CatalogItem, Customer, Income, Project, ProjectCost, ProjectFile, ProjectUpdate
+from .models import (
+    CatalogItem, Customer, CustomerFile, ExpensePayment, Income,
+    Project, ProjectCost, ProjectFile, ProjectUpdate,
+)
+
+
+class ExpensePaymentSerializer(serializers.ModelSerializer):
+    created_by = UserSerializer(read_only=True)
+    method_label = serializers.CharField(source="get_method_display", read_only=True)
+
+    class Meta:
+        model = ExpensePayment
+        fields = (
+            "id", "expense", "amount", "paid_on",
+            "method", "method_label", "reference", "note",
+            "created_by", "created_at",
+        )
+        read_only_fields = ("id", "method_label", "created_by", "created_at")
 
 
 class ProjectCostSerializer(serializers.ModelSerializer):
@@ -12,6 +29,11 @@ class ProjectCostSerializer(serializers.ModelSerializer):
     payment_method_label = serializers.CharField(source="get_payment_method_display", read_only=True)
     project_code = serializers.CharField(source="project.code", read_only=True)
     project_title = serializers.CharField(source="project.title", read_only=True)
+    # Part-payment rollups (computed from related ExpensePayment rows).
+    amount_paid = serializers.SerializerMethodField()
+    balance_due = serializers.SerializerMethodField()
+    payment_status = serializers.CharField(read_only=True)
+    payments = ExpensePaymentSerializer(many=True, read_only=True)
 
     class Meta:
         model = ProjectCost
@@ -21,6 +43,7 @@ class ProjectCostSerializer(serializers.ModelSerializer):
             "description",
             "category", "category_label",
             "amount", "tax_amount", "currency",
+            "amount_paid", "balance_due", "payment_status", "payments",
             "incurred_on", "paid_on",
             "payment_method", "payment_method_label",
             "supplier",
@@ -32,8 +55,15 @@ class ProjectCostSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id", "category_label", "payment_method_label",
             "project_code", "project_title",
+            "amount_paid", "balance_due", "payment_status", "payments",
             "created_by", "created_at", "updated_at",
         )
+
+    def get_amount_paid(self, obj):
+        return str(obj.amount_paid)
+
+    def get_balance_due(self, obj):
+        return str(obj.balance_due)
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -51,6 +81,38 @@ class CustomerSerializer(serializers.ModelSerializer):
             "project_count", "created_at", "updated_at",
         )
         read_only_fields = ("id", "created_at", "updated_at", "project_count", "site_visit_label")
+
+
+class CustomerFileSerializer(serializers.ModelSerializer):
+    uploaded_by = UserSerializer(read_only=True)
+    file_url = serializers.SerializerMethodField()
+    file_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CustomerFile
+        fields = (
+            "id", "customer", "kind", "title", "file", "file_url", "file_name",
+            "description", "uploaded_by", "uploaded_at",
+        )
+        read_only_fields = ("id", "uploaded_by", "uploaded_at", "file_url", "file_name")
+
+    def get_file_url(self, obj):
+        if not obj.file:
+            return None
+        request = self.context.get("request")
+        url = obj.file.url
+        return request.build_absolute_uri(url) if request else url
+
+    def get_file_name(self, obj):
+        return obj.file.name.rsplit("/", 1)[-1] if obj.file else None
+
+
+class CustomerDetailSerializer(CustomerSerializer):
+    """Customer with nested files for the detail page."""
+    files = CustomerFileSerializer(many=True, read_only=True)
+
+    class Meta(CustomerSerializer.Meta):
+        fields = CustomerSerializer.Meta.fields + ("files",)
 
 
 class ProjectFileSerializer(serializers.ModelSerializer):

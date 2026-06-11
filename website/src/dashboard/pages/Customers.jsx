@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch, MapPinLine, X } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch, MapPinLine, X, Eye } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
@@ -131,7 +131,7 @@ export default function Customers() {
   const columns = [
     { key: 'name', label: 'Customer', priority: 'high', mobileLabel: 'Customer', render: (r) => (
       <div>
-        <p className="font-sora text-sm font-medium">{r.name}</p>
+        <Link to={`/dashboard/customers/${r.id}`} onClick={(e) => e.stopPropagation()} className="font-sora text-sm font-medium hover:text-lafoi-green">{r.name}</Link>
         <p className="text-xs text-lafoi-gray-medium">{r.contact_person || r.email || r.phone || '—'}</p>
       </div>
     )},
@@ -155,6 +155,7 @@ export default function Customers() {
     { key: 'created_at', label: 'Added', priority: 'low', render: (r) => fmtDate(r.created_at) },
     { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
+        <Link to={`/dashboard/customers/${r.id}`} onClick={(e) => e.stopPropagation()} title="Open detail + files" className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Eye size={14} /></Link>
         <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
         <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
       </div>
