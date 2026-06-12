@@ -23,6 +23,7 @@ const Careers = lazy(() => import('./pages/Careers'))
 const FAQ = lazy(() => import('./pages/FAQ'))
 const Blog = lazy(() => import('./pages/Blog'))
 const Shop = lazy(() => import('./pages/Shop'))
+const Launch = lazy(() => import('./pages/Launch'))
 
 // Dashboard
 const DashboardLayout = lazy(() => import('./dashboard/components/DashboardLayout'))
@@ -139,6 +140,7 @@ export default function App() {
               <Route path="/faq" element={<FAQ />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/shop" element={<Shop />} />
+              <Route path="/launch" element={<Launch />} />
             </Routes>
           </Suspense>
         </AnimatePresence>

@@ -19,6 +19,7 @@ const navGroups = [
   {
     label: 'Discover',
     items: [
+      { name: 'Official Launch', path: '/launch', icon: Star, desc: 'Our company launch — 13 June 2026' },
       { name: 'Our Story', path: '/about', icon: Sparkle, desc: 'The journey behind La Foi' },
       { name: 'Portfolio', path: '/portfolio', icon: Camera, desc: 'Stunning transformations' },
       { name: 'Projects', path: '/projects', icon: Camera, desc: 'Case studies & transformations' },
