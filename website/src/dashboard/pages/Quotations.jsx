@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useStore } from 'react-redux'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, CircleNotch } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, CircleNotch, Copy } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
@@ -8,6 +8,7 @@ import DataTable, { fmtDate, fmtMoney, StatusBadge, STATUS_PALETTE_DOC } from '.
 import Modal from '../components/Modal'
 import { Field, Input, Textarea, Select, PrimaryButton, SecondaryButton } from '../components/FormField'
 import LineItemEditor, { defaultLumpSumLines } from '../components/LineItemEditor'
+import MergeQuotationsPanel from '../components/MergeQuotationsPanel'
 import RecipientPicker, { recipientPayload, customerFromRecipient } from '../components/RecipientPicker'
 import useDebouncedValue from '../hooks/useDebouncedValue'
 import useOptimisticRow from '../hooks/useOptimisticRow'
@@ -17,6 +18,7 @@ import {
   useUpdateQuotationMutation,
   useDeleteQuotationMutation,
   useConvertQuotationToInvoiceMutation,
+  useDuplicateQuotationMutation,
   useListProjectsQuery,
   useListCustomersQuery,
   useCreateCustomerMutation,
@@ -119,6 +121,7 @@ export default function Quotations() {
   const [updateQ] = useUpdateQuotationMutation()
   const [deleteQ] = useDeleteQuotationMutation()
   const [convert] = useConvertQuotationToInvoiceMutation()
+  const [duplicateQ] = useDuplicateQuotationMutation()
   const [createCustomer] = useCreateCustomerMutation()
 
   const isNew = editing && !editing.id
@@ -229,6 +232,24 @@ export default function Quotations() {
     catch (e) { toast.error('PDF download failed', { description: e.message }) }
   }
 
+  const handleDuplicate = async (row) => {
+    if (!(await confirm({
+      title: 'Duplicate quotation?',
+      message: `A new draft with its own number will be created from ${row.number}, copying every line item. The original stays untouched.`,
+      confirmLabel: 'Duplicate',
+    }))) return
+    const t = toast.loading('Duplicating…', { description: row.number })
+    try {
+      const clone = await duplicateQ(row.id).unwrap()
+      toast.success('Quotation duplicated', { id: t, description: `New draft ${clone.number}` })
+      // Drop the admin straight into the fresh copy to edit + download.
+      setEditing(clone)
+    } catch (e) {
+      const msg = e?.data ? Object.values(e.data).flat().join(' ') : 'Could not duplicate quotation.'
+      toast.error('Duplicate failed', { id: t, description: msg })
+    }
+  }
+
   const handleConvert = async (row) => {
     if (!(await confirm({ title: 'Convert to invoice?', message: `${row.number} will be marked converted, and a draft invoice created from its line items.`, confirmLabel: 'Convert' }))) return
     optimisticAction({
@@ -280,6 +301,7 @@ export default function Quotations() {
     { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
         <button title="PDF" onClick={(e) => { e.stopPropagation(); handlePdf(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><DownloadSimple size={14} /></button>
+        <button title="Duplicate (new number)" onClick={(e) => { e.stopPropagation(); handleDuplicate(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Copy size={14} /></button>
         <button title="Convert to invoice" onClick={(e) => { e.stopPropagation(); handleConvert(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><ArrowsClockwise size={14} /></button>
         <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
         <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
@@ -383,6 +405,12 @@ export default function Quotations() {
 
             <div>
               <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray mb-2">Line items</p>
+              <div className="mb-3">
+                <MergeQuotationsPanel
+                  excludeId={editing.id}
+                  onAdd={(rows) => setEditing((cur) => ({ ...cur, items: [...(cur.items || []), ...rows] }))}
+                />
+              </div>
               <LineItemEditor
                 items={editing.items}
                 onChange={(items) => setEditing({ ...editing, items })}

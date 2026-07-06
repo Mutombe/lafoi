@@ -222,6 +222,10 @@ export const api = createApi({
       query: (id) => ({ url: `quotations/${id}/convert-to-invoice/`, method: 'POST' }),
       invalidatesTags: ['Quotation', 'Invoice'],
     }),
+    duplicateQuotation: b.mutation({
+      query: (id) => ({ url: `quotations/${id}/duplicate/`, method: 'POST' }),
+      invalidatesTags: ['Quotation'],
+    }),
 
     // ---------- Invoices ----------
     listInvoices: b.query({
@@ -810,7 +814,7 @@ export const {
   useListProjectFilesQuery, useUploadProjectFileMutation, useDeleteProjectFileMutation,
   useListCustomerFilesQuery, useUploadCustomerFileMutation, useDeleteCustomerFileMutation,
   useListExpensePaymentsQuery, useCreateExpensePaymentMutation, useDeleteExpensePaymentMutation,
-  useListQuotationsQuery, useGetQuotationQuery, useCreateQuotationMutation, useUpdateQuotationMutation, useDeleteQuotationMutation, useConvertQuotationToInvoiceMutation,
+  useListQuotationsQuery, useGetQuotationQuery, useCreateQuotationMutation, useUpdateQuotationMutation, useDeleteQuotationMutation, useConvertQuotationToInvoiceMutation, useDuplicateQuotationMutation,
   useListInvoicesQuery, useGetInvoiceQuery, useCreateInvoiceMutation, useUpdateInvoiceMutation, useDeleteInvoiceMutation,
   useListReceiptsQuery, useCreateReceiptMutation, useDeleteReceiptMutation,
   useListEmployeesQuery, useMyEmployeeQuery, useGetEmployeeQuery, useCreateEmployeeMutation, useUpdateEmployeeMutation, useDeleteEmployeeMutation,
