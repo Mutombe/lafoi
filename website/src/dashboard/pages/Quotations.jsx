@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useStore } from 'react-redux'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, CircleNotch, Copy } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, ArrowsClockwise, CircleNotch, Copy, FileText } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
@@ -18,6 +18,7 @@ import {
   useUpdateQuotationMutation,
   useDeleteQuotationMutation,
   useConvertQuotationToInvoiceMutation,
+  useConvertQuotationToProformaMutation,
   useDuplicateQuotationMutation,
   useListProjectsQuery,
   useListCustomersQuery,
@@ -121,6 +122,7 @@ export default function Quotations() {
   const [updateQ] = useUpdateQuotationMutation()
   const [deleteQ] = useDeleteQuotationMutation()
   const [convert] = useConvertQuotationToInvoiceMutation()
+  const [convertProforma] = useConvertQuotationToProformaMutation()
   const [duplicateQ] = useDuplicateQuotationMutation()
   const [createCustomer] = useCreateCustomerMutation()
 
@@ -263,6 +265,18 @@ export default function Quotations() {
     }).catch(() => {})
   }
 
+  const handleConvertProforma = async (row) => {
+    if (!(await confirm({ title: 'Create proforma invoice?', message: `A proforma invoice (PI- number) will be created from ${row.number}'s line items. The quotation stays open — a proforma is a preliminary bill.`, confirmLabel: 'Create proforma' }))) return
+    const t = toast.loading('Creating proforma…', { description: row.number })
+    try {
+      const inv = await convertProforma(row.id).unwrap()
+      toast.success('Proforma invoice created', { id: t, description: `${inv.number} — find it in Invoices` })
+    } catch (e) {
+      const msg = e?.data ? Object.values(e.data).flat().join(' ') : 'Could not create proforma.'
+      toast.error('Proforma failed', { id: t, description: msg })
+    }
+  }
+
   const columns = [
     { key: 'number', label: 'Number', priority: 'high', mobileLabel: 'Number', render: (r) => <span className="font-sora text-xs">{r.number}</span> },
     {
@@ -302,6 +316,7 @@ export default function Quotations() {
       <div className="flex justify-end gap-1">
         <button title="PDF" onClick={(e) => { e.stopPropagation(); handlePdf(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><DownloadSimple size={14} /></button>
         <button title="Duplicate (new number)" onClick={(e) => { e.stopPropagation(); handleDuplicate(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Copy size={14} /></button>
+        <button title="Create proforma invoice" onClick={(e) => { e.stopPropagation(); handleConvertProforma(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><FileText size={14} /></button>
         <button title="Convert to invoice" onClick={(e) => { e.stopPropagation(); handleConvert(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><ArrowsClockwise size={14} /></button>
         <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
         <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>

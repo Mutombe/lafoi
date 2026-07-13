@@ -222,6 +222,10 @@ export const api = createApi({
       query: (id) => ({ url: `quotations/${id}/convert-to-invoice/`, method: 'POST' }),
       invalidatesTags: ['Quotation', 'Invoice'],
     }),
+    convertQuotationToProforma: b.mutation({
+      query: (id) => ({ url: `quotations/${id}/convert-to-proforma/`, method: 'POST' }),
+      invalidatesTags: ['Quotation', 'Invoice'],
+    }),
     duplicateQuotation: b.mutation({
       query: (id) => ({ url: `quotations/${id}/duplicate/`, method: 'POST' }),
       invalidatesTags: ['Quotation'],
@@ -247,6 +251,10 @@ export const api = createApi({
     deleteInvoice: b.mutation({
       query: (id) => ({ url: `invoices/${id}/`, method: 'DELETE' }),
       invalidatesTags: ['Invoice'],
+    }),
+    promoteInvoiceToInvoice: b.mutation({
+      query: (id) => ({ url: `invoices/${id}/promote-to-invoice/`, method: 'POST' }),
+      invalidatesTags: (r, e, id) => ['Invoice', { type: 'Invoice', id }],
     }),
 
     // ---------- Receipts ----------
@@ -814,8 +822,8 @@ export const {
   useListProjectFilesQuery, useUploadProjectFileMutation, useDeleteProjectFileMutation,
   useListCustomerFilesQuery, useUploadCustomerFileMutation, useDeleteCustomerFileMutation,
   useListExpensePaymentsQuery, useCreateExpensePaymentMutation, useDeleteExpensePaymentMutation,
-  useListQuotationsQuery, useGetQuotationQuery, useCreateQuotationMutation, useUpdateQuotationMutation, useDeleteQuotationMutation, useConvertQuotationToInvoiceMutation, useDuplicateQuotationMutation,
-  useListInvoicesQuery, useGetInvoiceQuery, useCreateInvoiceMutation, useUpdateInvoiceMutation, useDeleteInvoiceMutation,
+  useListQuotationsQuery, useGetQuotationQuery, useCreateQuotationMutation, useUpdateQuotationMutation, useDeleteQuotationMutation, useConvertQuotationToInvoiceMutation, useConvertQuotationToProformaMutation, useDuplicateQuotationMutation,
+  useListInvoicesQuery, useGetInvoiceQuery, useCreateInvoiceMutation, useUpdateInvoiceMutation, useDeleteInvoiceMutation, usePromoteInvoiceToInvoiceMutation,
   useListReceiptsQuery, useCreateReceiptMutation, useDeleteReceiptMutation,
   useListEmployeesQuery, useMyEmployeeQuery, useGetEmployeeQuery, useCreateEmployeeMutation, useUpdateEmployeeMutation, useDeleteEmployeeMutation,
   useListPayrollPeriodsQuery, useGetPayrollPeriodQuery, useCreatePayrollPeriodMutation, useUpdatePayrollPeriodMutation, useDeletePayrollPeriodMutation, useGeneratePayrollEntriesMutation,

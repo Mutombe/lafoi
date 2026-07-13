@@ -737,13 +737,16 @@ def render_quotation_pdf(quotation) -> bytes:
     return buf.getvalue()
 
 
-def render_invoice_pdf(invoice) -> bytes:
+def render_invoice_pdf(invoice, doc_label: str = "Invoice", doc_number: str | None = None) -> bytes:
+    # doc_label / doc_number let callers render the same invoice as a variant
+    # document — e.g. a "Proforma Invoice" — without a separate template.
+    number = doc_number or invoice.number
     buf = io.BytesIO()
     doc = SimpleDocTemplate(
         buf, pagesize=A4,
         leftMargin=15 * mm, rightMargin=15 * mm,
         topMargin=15 * mm, bottomMargin=22 * mm,
-        title=f"Invoice {invoice.number}",
+        title=f"{doc_label} {number}",
         author=_company().get("name", "La Foi Designs"),
     )
     st = _styles()
@@ -752,7 +755,7 @@ def render_invoice_pdf(invoice) -> bytes:
     customer = _quotation_recipient(invoice)
 
     flow = []
-    flow.append(_header_flowable("Invoice", invoice.number, st))
+    flow.append(_header_flowable(doc_label, number, st))
     flow.append(Spacer(1, 6))
     flow.append(_hr(1.2, BRAND_GREEN))
     flow.append(Spacer(1, 12))

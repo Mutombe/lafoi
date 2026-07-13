@@ -109,7 +109,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = (
-            "id", "number",
+            "id", "number", "kind", "doc_label",
             "project", "project_code", "project_title",
             "customer", "customer_name",
             "recipient_name", "recipient_contact", "recipient_email",
@@ -120,7 +120,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "notes", "terms", "items", "created_at", "updated_at",
         )
         read_only_fields = (
-            "id", "number", "subtotal", "tax_amount", "total", "amount_paid", "balance_due",
+            "id", "number", "doc_label", "subtotal", "tax_amount", "total", "amount_paid", "balance_due",
             "created_at", "updated_at", "project_code", "project_title", "customer_name",
         )
 

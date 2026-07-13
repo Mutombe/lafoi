@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useStore } from 'react-redux'
-import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Receipt as ReceiptIcon, CircleNotch } from '@phosphor-icons/react'
+import { Plus, Trash, PencilSimple, MagnifyingGlass, DownloadSimple, Receipt as ReceiptIcon, CircleNotch, ArrowsClockwise } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 import PageHeader from '../components/PageHeader'
@@ -16,6 +16,7 @@ import {
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
+  usePromoteInvoiceToInvoiceMutation,
   useListProjectsQuery,
   useListCustomersQuery,
   useCreateCustomerMutation,
@@ -26,7 +27,7 @@ import { useConfirm } from '../components/ConfirmDialog'
 
 const empty = () => ({
   project: '', subject: '', issue_date: new Date().toISOString().slice(0, 10),
-  due_date: '', status: 'draft', currency: 'USD',
+  due_date: '', status: 'draft', currency: 'USD', kind: 'invoice',
   tax_rate: 0, discount_amount: 0, notes: '', terms: '',
   items: [
     { description: '', a: '', b: '', qty: 1, quantity: 1, unit: 'm²', unit_price: 0, is_lump_sum: false },
@@ -73,6 +74,7 @@ export default function Invoices() {
   const [createI] = useCreateInvoiceMutation()
   const [updateI] = useUpdateInvoiceMutation()
   const [deleteI] = useDeleteInvoiceMutation()
+  const [promoteI] = usePromoteInvoiceToInvoiceMutation()
   const [createReceipt] = useCreateReceiptMutation()
   const [createCustomer] = useCreateCustomerMutation()
 
@@ -110,6 +112,7 @@ export default function Invoices() {
 
     const payload = {
       ...recipient,
+      kind: editing.kind || 'invoice',
       subject: editing.subject || '',
       issue_date: editing.issue_date,
       due_date: editing.due_date || null,
@@ -176,6 +179,18 @@ export default function Invoices() {
     }).catch(() => {})
   }
 
+  const handlePromote = async (row) => {
+    if (!(await confirm({ title: 'Promote to real invoice?', message: `${row.number} will become a real invoice with a fresh INV- number. The proforma number is retired.`, confirmLabel: 'Promote' }))) return
+    const t = toast.loading('Promoting…', { description: row.number })
+    try {
+      const inv = await promoteI(row.id).unwrap()
+      toast.success('Promoted to invoice', { id: t, description: `Now ${inv.number}` })
+    } catch (e) {
+      const msg = e?.data ? Object.values(e.data).flat().join(' ') : 'Could not promote.'
+      toast.error('Promote failed', { id: t, description: msg })
+    }
+  }
+
   const handlePdf = async (row) => {
     try {
       await downloadPdf(`invoices/${row.id}/pdf/`, `${row.number}.pdf`, store.getState)
@@ -214,7 +229,14 @@ export default function Invoices() {
   }
 
   const columns = [
-    { key: 'number', label: 'Number', priority: 'high', mobileLabel: 'Number', render: (r) => <span className="font-sora text-xs">{r.number}</span> },
+    { key: 'number', label: 'Number', priority: 'high', mobileLabel: 'Number', render: (r) => (
+      <span className="font-sora text-xs inline-flex items-center gap-1.5">
+        {r.number}
+        {r.kind === 'proforma' && (
+          <span className="text-[9px] tracking-[0.14em] uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">Proforma</span>
+        )}
+      </span>
+    ) },
     {
       key: 'recipient',
       label: 'Recipient',
@@ -250,6 +272,9 @@ export default function Invoices() {
     { key: 'actions', label: '', priority: 'high', render: (r) => (
       <div className="flex justify-end gap-1">
         <button title="PDF" onClick={(e) => { e.stopPropagation(); handlePdf(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><DownloadSimple size={14} /></button>
+        {r.kind === 'proforma' && (
+          <button title="Promote to real invoice" onClick={(e) => { e.stopPropagation(); handlePromote(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><ArrowsClockwise size={14} /></button>
+        )}
         <button title="Record payment" onClick={(e) => { e.stopPropagation(); setPaying({ invoice: r, amount: r.balance_due, method: 'bank_transfer', reference: '', received_at: new Date().toISOString().slice(0, 10), notes: '' }) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-green min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><ReceiptIcon size={14} /></button>
         <button onClick={(e) => { e.stopPropagation(); setEditing(r) }} className="p-2 rounded-lg hover:bg-lafoi-cream text-lafoi-gray hover:text-lafoi-dark min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><PencilSimple size={14} /></button>
         <button onClick={(e) => { e.stopPropagation(); handleDelete(r) }} className="p-2 rounded-lg hover:bg-red-50 text-lafoi-gray hover:text-red-600 min-w-[36px] min-h-[36px] inline-flex items-center justify-center"><Trash size={14} /></button>
@@ -300,7 +325,7 @@ export default function Invoices() {
       <Modal
         open={!!editing}
         onClose={() => setEditing(null)}
-        title={isNew ? 'New invoice' : `Edit ${editing?.number}`}
+        title={isNew ? (editing?.kind === 'proforma' ? 'New proforma invoice' : 'New invoice') : `Edit ${editing?.number}`}
         size="xl"
         footer={
           <>
@@ -322,6 +347,14 @@ export default function Invoices() {
             />
 
             <div className="grid sm:grid-cols-2 gap-4">
+              {isNew && (
+                <Field label="Document type" className="sm:col-span-2">
+                  <Select value={editing.kind} onChange={(e) => setEditing({ ...editing, kind: e.target.value })}>
+                    <option value="invoice">Invoice (real invoice — INV number)</option>
+                    <option value="proforma">Proforma invoice (preliminary bill — PI number)</option>
+                  </Select>
+                </Field>
+              )}
               <Field label="Subject" className="sm:col-span-2">
                 <Input value={editing.subject} onChange={(e) => setEditing({ ...editing, subject: e.target.value })} />
               </Field>

@@ -166,7 +166,19 @@ class Invoice(_MoneyMixin, models.Model):
         OVERDUE = "overdue", "Overdue"
         VOID = "void", "Void"
 
+    class Kind(models.TextChoices):
+        INVOICE = "invoice", "Invoice"
+        PROFORMA = "proforma", "Proforma Invoice"
+
     number = models.CharField(max_length=24, unique=True, blank=True)
+    # A proforma invoice is a preliminary bill issued before a sale is firm.
+    # It shares every field with a real invoice but uses its own PI- number
+    # series, renders a "PROFORMA INVOICE" heading, and never counts as a
+    # booked sale. It can later be promoted to a real invoice.
+    kind = models.CharField(
+        max_length=12, choices=Kind.choices, default=Kind.INVOICE,
+        help_text="'proforma' for a preliminary bill (PI- series); 'invoice' for a real invoice (INV- series).",
+    )
     # Recipient is one of three shapes (matches Quotation): an existing
     # project, an existing customer, or a free-form recipient.
     project = models.ForeignKey(
@@ -214,8 +226,14 @@ class Invoice(_MoneyMixin, models.Model):
 
     def save(self, *args, **kwargs):
         if not self.number:
-            self.number = _generate_number("INV", Invoice)
+            prefix = "PI" if self.kind == self.Kind.PROFORMA else "INV"
+            self.number = _generate_number(prefix, Invoice)
         super().save(*args, **kwargs)
+
+    @property
+    def doc_label(self) -> str:
+        """Human title for the document — drives the PDF heading."""
+        return "Proforma Invoice" if self.kind == self.Kind.PROFORMA else "Invoice"
 
     def recompute_balance(self) -> None:
         paid = self.receipts.aggregate(  # type: ignore[attr-defined]
