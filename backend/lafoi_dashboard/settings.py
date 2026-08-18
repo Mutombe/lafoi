@@ -9,6 +9,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY", default="dev-insecure")
 DEBUG = config("DEBUG", default=False, cast=bool)
+# Master kill-switch. Set SYSTEM_SUSPENDED=true (env var) to lock the whole
+# platform behind a "Lafoi system is suspended." notice; false restores it.
+SYSTEM_SUSPENDED = config("SYSTEM_SUSPENDED", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
 # Render injects the public host of this service via RENDER_EXTERNAL_HOSTNAME.
@@ -42,6 +45,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    # Global suspension gate — when SYSTEM_SUSPENDED is on, short-circuits every
+    # request with "Lafoi system is suspended." Placed right after CORS so the
+    # 503 still carries CORS headers and the browser can read it.
+    "lafoi_dashboard.middleware.SystemSuspendedMiddleware",
     "django.middleware.security.SecurityMiddleware",
     # WhiteNoise serves collected static files in production. Must come right
     # after SecurityMiddleware per the WhiteNoise docs.

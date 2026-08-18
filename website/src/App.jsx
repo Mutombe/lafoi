@@ -8,6 +8,7 @@ import LoadingScreen from './components/shared/LoadingScreen'
 import { CartProvider } from './store/cart'
 import CartDrawer from './components/shop/CartDrawer'
 import RequireAuth from './dashboard/components/RequireAuth'
+import SuspensionGate from './dashboard/components/SuspensionGate'
 
 // Public pages
 const Home = lazy(() => import('./pages/Home'))
@@ -71,9 +72,10 @@ export default function App() {
   // Dashboard runs OUTSIDE the public Layout so it has its own chrome.
   if (isDashboard) {
     return (
-      <Suspense fallback={<LoadingScreen />}>
-        <Routes>
-          <Route path="/dashboard/login" element={<Login />} />
+      <SuspensionGate>
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes>
+            <Route path="/dashboard/login" element={<Login />} />
           <Route
             path="/dashboard"
             element={
@@ -114,8 +116,9 @@ export default function App() {
             <Route path="users" element={<DashUsers />} />
             <Route path="profile" element={<DashProfile />} />
           </Route>
-        </Routes>
-      </Suspense>
+          </Routes>
+        </Suspense>
+      </SuspensionGate>
     )
   }
 

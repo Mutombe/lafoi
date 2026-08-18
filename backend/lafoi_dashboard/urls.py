@@ -11,9 +11,16 @@ def healthz(_request):
     return JsonResponse({"status": "ok"})
 
 
+def system_status(_request):
+    """Public probe the frontend polls to decide whether to show the
+    suspension screen. Stays reachable even while the platform is suspended."""
+    return JsonResponse({"suspended": settings.SYSTEM_SUSPENDED})
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("healthz", healthz),
+    path("api/system/status", system_status),
     path("api/auth/", include("accounts.urls")),
     path("api/", include("crm.urls")),
     path("api/", include("billing.urls")),
