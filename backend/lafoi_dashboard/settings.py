@@ -9,9 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY", default="dev-insecure")
 DEBUG = config("DEBUG", default=False, cast=bool)
-# Master kill-switch. Set SYSTEM_SUSPENDED=true (env var) to lock the whole
-# platform behind a "Lafoi system is suspended." notice; false restores it.
-SYSTEM_SUSPENDED = config("SYSTEM_SUSPENDED", default=False, cast=bool)
+# Master kill-switch. Locks the whole platform behind a "Lafoi system is
+# suspended." notice. Currently defaulted ON (suspension active). To restore
+# service, set the env var SYSTEM_SUSPENDED=false on the host (it overrides this
+# default) or flip this default back to False.
+SYSTEM_SUSPENDED = config("SYSTEM_SUSPENDED", default=True, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
 # Render injects the public host of this service via RENDER_EXTERNAL_HOSTNAME.
