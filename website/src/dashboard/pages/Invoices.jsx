@@ -233,7 +233,7 @@ export default function Invoices() {
       <span className="font-sora text-xs inline-flex items-center gap-1.5">
         {r.number}
         {r.kind === 'proforma' && (
-          <span className="text-[9px] tracking-[0.14em] uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">Proforma</span>
+          <span className="whitespace-nowrap text-[9px] tracking-[0.14em] uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">Proforma</span>
         )}
       </span>
     ) },

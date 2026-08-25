@@ -750,7 +750,7 @@ function CostsTable({ costs, readonly = false }) {
       render: (r) => {
         const cls = (COST_CATEGORY_PALETTE[r.category] || COST_CATEGORY_PALETTE.other).pill
         return (
-          <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${cls}`}>
+          <span className={`whitespace-nowrap inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${cls}`}>
             {r.category_label || r.category}
           </span>
         )

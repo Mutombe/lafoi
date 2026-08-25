@@ -254,7 +254,7 @@ function RequestsTab() {
               <button
                 key={f.key || 'all'}
                 onClick={() => setStatusFilter(f.key)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-sora tracking-wider uppercase border transition-colors ${
+                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-sora tracking-wider uppercase border transition-colors ${
                   active
                     ? 'bg-lafoi-dark text-white border-lafoi-dark'
                     : 'bg-white text-lafoi-gray border-lafoi-dark/12 hover:border-lafoi-green hover:text-lafoi-green'
@@ -419,7 +419,7 @@ function BalancesTab() {
               onClick={() => setEditing({ ...b })}
               className="text-left rounded-2xl border border-lafoi-dark/10 bg-white hover:border-lafoi-green/40 hover:shadow-[0_4px_16px_rgba(17,17,17,0.04)] transition-all p-5 group"
             >
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[9px] font-sora tracking-[0.22em] uppercase ${palette}`}>
+              <span className={`whitespace-nowrap inline-flex items-center px-2 py-0.5 rounded-full border text-[9px] font-sora tracking-[0.22em] uppercase ${palette}`}>
                 {b.leave_type_label || b.leave_type_code}
               </span>
               <div className="mt-3 flex items-baseline gap-1.5">

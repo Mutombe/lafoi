@@ -309,7 +309,7 @@ export default function Inventory() {
   }
   const stockLabel = (lvl) => (lvl === 'high' ? 'Healthy' : lvl === 'medium' ? 'Caution' : 'Reorder')
 
-  const fmtQty = (q, u) => `${Number(q || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}${u ? ` ${u}` : ''}`
+  const fmtQty = (q, u) => `${Number(q || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}${u ? ` ${u}` : ''}`
   const fmtShortDate = (iso) => {
     if (!iso) return null
     try {
@@ -351,9 +351,9 @@ export default function Inventory() {
       render: (r) => {
         const tone = stockTone(r.stock_level || 'low')
         return (
-          <div className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full border ${tone.ring}`}>
-            <span className={`w-2 h-2 rounded-full ${tone.dot}`} />
-            <span className={`font-sora text-sm tabular-nums ${tone.text}`}>
+          <div className={`inline-flex items-center whitespace-nowrap gap-2 px-2.5 py-1 rounded-full border ${tone.ring}`}>
+            <span className={`w-2 h-2 shrink-0 rounded-full ${tone.dot}`} />
+            <span className={`font-sora text-sm tabular-nums whitespace-nowrap ${tone.text}`}>
               {fmtQty(r.balance ?? r.on_hand, r.unit)}
             </span>
           </div>
@@ -632,7 +632,7 @@ export default function Inventory() {
             type="file"
             accept=".csv,text/csv"
             onChange={(e) => setImportFile(e.target.files?.[0] || null)}
-            className="block w-full text-sm font-body file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-lafoi-cream file:text-lafoi-dark file:font-sora file:text-xs file:tracking-[0.16em] file:uppercase file:cursor-pointer"
+            className="whitespace-nowrap block w-full text-sm font-body file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-lafoi-cream file:text-lafoi-dark file:font-sora file:text-xs file:tracking-[0.16em] file:uppercase file:cursor-pointer"
           />
           {importResult && (
             <div className="rounded-xl border border-lafoi-dark/10 p-3 text-sm font-body bg-lafoi-cream/60">

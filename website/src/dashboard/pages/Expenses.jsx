@@ -297,7 +297,7 @@ export default function Expenses() {
           <p className="text-[11px] text-lafoi-gray-medium mt-0.5 flex flex-wrap items-center gap-x-1.5">
             <span className="capitalize">{r.category_label || r.category}</span>
             {r.supplier && (<>· <Storefront size={11} weight="regular" /> {r.supplier}</>)}
-            {r.is_billable && (<span className="ml-1 px-1.5 py-0.5 rounded-full bg-lafoi-green/10 text-lafoi-green-dark text-[9px] font-sora font-medium tracking-wide uppercase">Billable</span>)}
+            {r.is_billable && (<span className="whitespace-nowrap ml-1 px-1.5 py-0.5 rounded-full bg-lafoi-green/10 text-lafoi-green-dark text-[9px] font-sora font-medium tracking-wide uppercase">Billable</span>)}
           </p>
         </div>
       ),

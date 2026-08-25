@@ -185,7 +185,7 @@ export default function InventoryNotifications() {
     {
       key: 'event', label: 'Event', priority: 'high',
       render: (r) => (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-lafoi-cream border border-lafoi-dark/10 text-[10px] font-sora tracking-[0.18em] uppercase">
+        <span className="whitespace-nowrap inline-flex items-center px-2 py-0.5 rounded-full bg-lafoi-cream border border-lafoi-dark/10 text-[10px] font-sora tracking-[0.18em] uppercase">
           {r.event_label || r.event}
         </span>
       ),
@@ -248,7 +248,7 @@ export default function InventoryNotifications() {
     {
       key: 'event', label: 'Event', priority: 'high',
       render: (r) => (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-lafoi-cream border border-lafoi-dark/10 text-[10px] font-sora tracking-[0.18em] uppercase">
+        <span className="whitespace-nowrap inline-flex items-center px-2 py-0.5 rounded-full bg-lafoi-cream border border-lafoi-dark/10 text-[10px] font-sora tracking-[0.18em] uppercase">
           {r.event}
         </span>
       ),

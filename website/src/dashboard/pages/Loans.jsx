@@ -247,7 +247,7 @@ export default function Loans() {
             <button
               key={f.key || 'all'}
               onClick={() => setStatusFilter(f.key)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-sora tracking-wider uppercase border transition-colors ${
+              className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-sora tracking-wider uppercase border transition-colors ${
                 active
                   ? 'bg-lafoi-dark text-white border-lafoi-dark'
                   : 'bg-white text-lafoi-gray border-lafoi-dark/12 hover:border-lafoi-green hover:text-lafoi-green'

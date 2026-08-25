@@ -152,7 +152,7 @@ export default function StudioMap() {
                 key={f.key}
                 type="button"
                 onClick={() => setFilter(f.key)}
-                className={`px-3 py-1.5 rounded-full text-[11px] font-sora tracking-[0.18em] uppercase transition-colors border ${
+                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-sora tracking-[0.18em] uppercase transition-colors border ${
                   filter === f.key
                     ? 'bg-lafoi-dark text-white border-lafoi-dark'
                     : 'bg-white text-lafoi-gray border-lafoi-dark/12 hover:border-lafoi-green hover:text-lafoi-green'

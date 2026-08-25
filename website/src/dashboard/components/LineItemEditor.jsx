@@ -352,7 +352,7 @@ export default function LineItemEditor({ items, onChange, currency = 'USD' }) {
                           <button
                             type="button"
                             onClick={() => toggleLumpSum(idx)}
-                            className={`text-[10px] font-sora tracking-[0.16em] uppercase px-2 py-0.5 rounded-full border transition-colors ${
+                            className={`whitespace-nowrap text-[10px] font-sora tracking-[0.16em] uppercase px-2 py-0.5 rounded-full border transition-colors ${
                               lump
                                 ? 'bg-lafoi-cream text-lafoi-gray-medium border-lafoi-dark/15 hover:text-lafoi-green hover:border-lafoi-green/30'
                                 : 'bg-lafoi-green/10 text-lafoi-green-dark border-lafoi-green/30 hover:bg-lafoi-green/20'

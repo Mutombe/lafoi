@@ -338,7 +338,9 @@ export const STATUS_PALETTE_PAYROLL = {
 
 export const fmtMoney = (amount, currency = 'USD') => {
   const n = Number(amount || 0)
-  return `${currency} ${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  // Non-breaking space between currency and amount so "USD 150.00" never wraps
+  // to two lines in a narrow table column.
+  return `${currency} ${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
 export const fmtDate = (s) => {

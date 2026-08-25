@@ -134,12 +134,12 @@ function UserCard({ user, modules, onEdit, onResetPwd, onDelete, currentUser, ap
           </p>
           <p className="text-xs text-lafoi-gray-medium truncate">@{user.username}</p>
           <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-            <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${
+            <span className={`whitespace-nowrap inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${
               ROLE_PALETTE[user.role] || ROLE_PALETTE.staff
             }`}>
               {user.role}
             </span>
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-sora tracking-[0.18em] uppercase ${
+            <span className={`whitespace-nowrap inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-sora tracking-[0.18em] uppercase ${
               user.is_active
                 ? 'bg-lafoi-green/10 text-lafoi-green-dark'
                 : 'bg-lafoi-gray-light text-lafoi-gray'
@@ -476,7 +476,7 @@ export default function Users() {
               key={r.key}
               type="button"
               onClick={() => setRoleFilter(r.key)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-sora tracking-[0.18em] uppercase transition-colors border ${
+              className={`whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-sora tracking-[0.18em] uppercase transition-colors border ${
                 roleFilter === r.key
                   ? 'bg-lafoi-dark text-white border-lafoi-dark'
                   : 'bg-white text-lafoi-gray border-lafoi-dark/12 hover:border-lafoi-green hover:text-lafoi-green'

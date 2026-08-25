@@ -62,7 +62,7 @@ export default function BurnRate() {
               <button
                 key={w.value}
                 onClick={() => setDays(w.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-sora tracking-[0.18em] uppercase transition-colors ${
+                className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-sora tracking-[0.18em] uppercase transition-colors ${
                   days === w.value ? 'bg-lafoi-dark text-white' : 'text-lafoi-gray-medium hover:text-lafoi-dark'
                 }`}
               >

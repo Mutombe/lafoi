@@ -173,9 +173,9 @@ export default function Employees() {
       const info = loanByEmployee.get(r.id)
       if (!info) return <span className="text-lafoi-gray-medium text-xs">—</span>
       return (
-        <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs">
-          <Bank size={11} className="text-blue-700" />
-          <span className="font-sora text-blue-700">
+        <div className="inline-flex items-center whitespace-nowrap gap-1.5 px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs">
+          <Bank size={11} className="shrink-0 text-blue-700" />
+          <span className="font-sora text-blue-700 whitespace-nowrap">
             {info.count} active · {fmtMoney(info.balance, info.currency)}
           </span>
         </div>

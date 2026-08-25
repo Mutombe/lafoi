@@ -127,7 +127,7 @@ export default function Movements() {
     {
       key: 'reason', label: 'Reason', priority: 'medium',
       render: (r) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${REASON_BADGE[r.reason] || ''}`}>
+        <span className={`whitespace-nowrap inline-flex items-center px-2 py-0.5 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${REASON_BADGE[r.reason] || ''}`}>
           {r.reason}
         </span>
       ),

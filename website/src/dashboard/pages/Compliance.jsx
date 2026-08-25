@@ -54,7 +54,7 @@ export default function Compliance() {
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
-                className={`px-4 py-2 rounded-full font-sora text-[11px] tracking-[0.2em] uppercase transition-all ${
+                className={`whitespace-nowrap px-4 py-2 rounded-full font-sora text-[11px] tracking-[0.2em] uppercase transition-all ${
                   active
                     ? 'bg-lafoi-dark text-white shadow-sm'
                     : 'text-lafoi-gray hover:text-lafoi-dark'

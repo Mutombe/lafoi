@@ -199,7 +199,7 @@ export default function Profile() {
             ) : (
               <div className="flex flex-wrap gap-1.5">
                 {moduleKeys.map((k) => (
-                  <span key={k} className="inline-flex items-center px-2 py-1 rounded-full bg-lafoi-green/10 text-lafoi-green-dark border border-lafoi-green/25 text-[10px] font-sora tracking-[0.18em] uppercase">
+                  <span key={k} className="whitespace-nowrap inline-flex items-center px-2 py-1 rounded-full bg-lafoi-green/10 text-lafoi-green-dark border border-lafoi-green/25 text-[10px] font-sora tracking-[0.18em] uppercase">
                     {k.replace(/_/g, ' ')}
                   </span>
                 ))}

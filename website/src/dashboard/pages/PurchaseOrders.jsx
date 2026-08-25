@@ -329,7 +329,7 @@ export default function PurchaseOrders() {
           <button
             key={f.key || 'all'}
             onClick={() => setStatusFilter(f.key)}
-            className={`px-3 py-1.5 rounded-full text-xs font-sora tracking-[0.18em] uppercase transition-colors border ${
+            className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-sora tracking-[0.18em] uppercase transition-colors border ${
               statusFilter === f.key
                 ? 'bg-lafoi-dark text-white border-lafoi-dark'
                 : 'bg-white border-lafoi-dark/10 text-lafoi-gray-medium hover:text-lafoi-dark'
@@ -405,7 +405,7 @@ export default function PurchaseOrders() {
               <div className="px-4 py-3 border-b border-lafoi-dark/[0.08] flex items-center justify-between">
                 <p className="font-sora text-[11px] tracking-[0.22em] uppercase text-lafoi-gray-medium">Line items</p>
                 <button type="button" onClick={addLine}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-lafoi-cream text-lafoi-dark text-xs font-sora tracking-[0.16em] uppercase hover:bg-lafoi-green/15">
+                  className="whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-lafoi-cream text-lafoi-dark text-xs font-sora tracking-[0.16em] uppercase hover:bg-lafoi-green/15">
                   <Plus size={12} weight="bold" /> Add line
                 </button>
               </div>

@@ -167,8 +167,8 @@ export default function Catalog() {
     {
       key: 'is_active', label: 'Status', priority: 'medium',
       render: (r) => r.is_active
-        ? <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-lafoi-green/10 text-lafoi-green-dark border border-lafoi-green/25 text-[10px] font-sora tracking-[0.18em] uppercase">Active</span>
-        : <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-lafoi-gray-light text-lafoi-gray border border-lafoi-dark/10 text-[10px] font-sora tracking-[0.18em] uppercase">Inactive</span>,
+        ? <span className="whitespace-nowrap inline-flex items-center px-2 py-0.5 rounded-full bg-lafoi-green/10 text-lafoi-green-dark border border-lafoi-green/25 text-[10px] font-sora tracking-[0.18em] uppercase">Active</span>
+        : <span className="whitespace-nowrap inline-flex items-center px-2 py-0.5 rounded-full bg-lafoi-gray-light text-lafoi-gray border border-lafoi-dark/10 text-[10px] font-sora tracking-[0.18em] uppercase">Inactive</span>,
     },
     {
       key: 'actions', label: '', priority: 'high',
