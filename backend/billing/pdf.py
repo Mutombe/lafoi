@@ -999,7 +999,7 @@ def render_payslip_pdf(entry) -> bytes:
     earnings_rows = [
         [Paragraph("EARNINGS", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=9)),
          Paragraph("AMOUNT", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=9, alignment=TA_RIGHT))],
-        [Paragraph("Base salary", st["LFBody"]), Paragraph(_fmt_money(entry.base_salary, emp.currency), ParagraphStyle("r", parent=st["LFValue"], alignment=TA_RIGHT))],
+        [Paragraph("Base salary", st["LFBody"]), Paragraph(_fmt_money(entry.basic_pay, emp.currency), ParagraphStyle("r", parent=st["LFValue"], alignment=TA_RIGHT))],
     ]
     if entry.overtime_amount and float(entry.overtime_amount) > 0:
         earnings_rows.append([

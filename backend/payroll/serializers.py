@@ -57,15 +57,15 @@ class PayrollEntrySerializer(serializers.ModelSerializer):
             "allowances", "deductions",
             # Statutory (auto-computed via compliance.engine)
             "paye", "aids_levy", "nssa_employee", "nssa_employer", "statutory_total",
-            "tax_calc_snapshot", "currency_split", "auto_compute_statutory",
+            "tax_calc_snapshot", "currency_split", "auto_compute_statutory", "salary_is_net",
             # Totals
-            "total_allowances", "total_deductions", "gross", "net",
+            "total_allowances", "total_deductions", "gross", "net", "basic_pay",
             "total_clock_hours",
             "notes", "paid_on",
             "created_at", "updated_at",
         )
         read_only_fields = ("id", "overtime_amount", "total_allowances", "total_deductions",
-                             "gross", "net",
+                             "gross", "net", "basic_pay",
                              "paye", "aids_levy", "nssa_employee", "nssa_employer",
                              "statutory_total", "tax_calc_snapshot",
                              "total_clock_hours",

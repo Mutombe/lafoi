@@ -347,6 +347,7 @@ export function PayrollDetail() {
         allowances: editingEntry.allowances || [],
         deductions: editingEntry.deductions || [],
         auto_compute_statutory: !!editingEntry.auto_compute_statutory,
+        salary_is_net: editingEntry.salary_is_net !== false,
         notes: editingEntry.notes || '',
         paid_on: editingEntry.paid_on || null,
       }).unwrap()
@@ -601,27 +602,50 @@ export function PayrollDetail() {
                 <SecondaryButton type="button" onClick={() => addItem('allowances')} className="!py-2 !px-3"><Plus size={13} weight="bold" /> Add allowance</SecondaryButton>
               </div>
             </div>
-            {/* Statutory deductions — opt-in. Off by default; only applied
-                when the user ticks this. */}
+            {/* Salary-is-net (gross-up) — on by default. The salary field is the
+                take-home; the payslip grosses it up so deductions net back to it. */}
             <div className="sm:col-span-2">
               <label className="flex items-start gap-3 px-4 py-3 rounded-xl bg-lafoi-cream/60 border border-lafoi-dark/10 cursor-pointer hover:border-lafoi-green/40 transition-colors">
                 <input
                   type="checkbox"
-                  checked={!!editingEntry.auto_compute_statutory}
-                  onChange={(e) => setEditingEntry({ ...editingEntry, auto_compute_statutory: e.target.checked })}
+                  checked={editingEntry.salary_is_net !== false}
+                  onChange={(e) => setEditingEntry({ ...editingEntry, salary_is_net: e.target.checked })}
                   className="w-4 h-4 mt-0.5 accent-lafoi-green shrink-0"
                 />
                 <span>
                   <span className="font-sora text-[13px] font-medium text-lafoi-dark">
-                    Apply statutory deductions (PAYE, AIDS levy, NSSA)
+                    Salary is take-home (gross up on the payslip)
                   </span>
                   <span className="block text-[11px] text-lafoi-gray-medium mt-0.5">
-                    Off by default. Tick to deduct Zimbabwe statutory taxes from this payslip,
-                    calculated from the tax tables. Leave unticked for no tax deductions.
+                    On by default. The salary above is what the employee actually receives — the
+                    payslip reverse-calculates a higher gross so the PAYE/AIDS/NSSA shown net back
+                    to exactly that salary. Untick only if the salary is a pre-tax gross.
                   </span>
                 </span>
               </label>
             </div>
+
+            {/* Forward statutory opt-in — only relevant when salary is a gross. */}
+            {editingEntry.salary_is_net === false && (
+              <div className="sm:col-span-2">
+                <label className="flex items-start gap-3 px-4 py-3 rounded-xl bg-lafoi-cream/60 border border-lafoi-dark/10 cursor-pointer hover:border-lafoi-green/40 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={!!editingEntry.auto_compute_statutory}
+                    onChange={(e) => setEditingEntry({ ...editingEntry, auto_compute_statutory: e.target.checked })}
+                    className="w-4 h-4 mt-0.5 accent-lafoi-green shrink-0"
+                  />
+                  <span>
+                    <span className="font-sora text-[13px] font-medium text-lafoi-dark">
+                      Apply statutory deductions (PAYE, AIDS levy, NSSA)
+                    </span>
+                    <span className="block text-[11px] text-lafoi-gray-medium mt-0.5">
+                      Deduct Zimbabwe statutory taxes from the gross, calculated from the tax tables.
+                    </span>
+                  </span>
+                </label>
+              </div>
+            )}
 
             <div className="sm:col-span-2">
               <p className="font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray mb-2">Deductions</p>

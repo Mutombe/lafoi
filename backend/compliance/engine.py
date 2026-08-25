@@ -184,6 +184,74 @@ def compute_nssa(gross: Decimal, currency: str, on_date) -> tuple[Decimal, Decim
 # Top-level orchestrator
 # ---------------------------------------------------------------------------
 
+def gross_up_from_net(net_target: Decimal, currency: str, on_date, max_iter: int = 80) -> TaxCalcResult:
+    """Inverse of the statutory pipeline.
+
+    Given a take-home ``net_target``, find the gross whose statutory deductions
+    leave exactly that amount in hand — i.e. solve ``gross - statutory(gross) =
+    net_target``. Net rises monotonically with gross, so we bracket then binary
+    -search to the cent. The returned result's ``.gross`` is the grossed-up
+    figure and its line items are the deductions that bridge gross → net_target.
+
+    If no bracket set applies (e.g. a currency with no configured table), the
+    deductions come back zero and the gross equals the net — a safe passthrough.
+    """
+    net_target = _round(Decimal(str(net_target or 0)))
+    if net_target <= D0:
+        return compute_statutory(D0, currency, on_date)
+
+    bracket_set = get_active_bracket_set(currency, on_date)
+    # No PAYE table for this currency → nothing to gross up; gross == net.
+    if bracket_set is None:
+        return compute_statutory(net_target, currency, on_date)
+
+    # Snapshot the tables ONCE so the search runs purely in-memory — otherwise
+    # each of the ~40 iterations would re-hit the (remote) DB for brackets +
+    # rates, turning one payslip save into dozens of round-trips.
+    brackets = list(bracket_set.brackets.all().order_by("sort_order", "lower"))
+    aids_rate = bracket_set.aids_levy_rate
+    if aids_rate is None:
+        aids_rate = get_statutory_value(StatutoryRate.Code.AIDS_LEVY_PCT, on_date) or D0
+    nssa_pct = get_statutory_value(StatutoryRate.Code.NSSA_EMPLOYEE_PCT, on_date) or D0
+    nssa_ceiling = get_statutory_value(StatutoryRate.Code.NSSA_CEILING, on_date, currency=currency)
+
+    def _statutory_of(gross: Decimal) -> Decimal:
+        # PAYE via the cached brackets (ZIMRA lookup: gross*rate - fixed).
+        b = next((x for x in brackets if gross >= x.lower and (x.upper is None or gross <= x.upper)), None)
+        if b is None:
+            b = brackets[-1] if brackets else None
+        paye = D0
+        if b is not None:
+            paye = gross * ((b.rate or D0) / HUNDRED) - (b.fixed_deduction or D0)
+            if paye < D0:
+                paye = D0
+        aids = paye * (aids_rate / HUNDRED)
+        base = gross if (nssa_ceiling is None or gross <= nssa_ceiling) else nssa_ceiling
+        nssa = base * (nssa_pct / HUNDRED)
+        return paye + aids + nssa
+
+    lo = net_target
+    hi = net_target
+    for _ in range(max_iter):
+        if (hi - _statutory_of(hi)) >= net_target:
+            break
+        hi *= Decimal("2")
+
+    for _ in range(max_iter):
+        mid = (lo + hi) / Decimal("2")
+        net = mid - _statutory_of(mid)
+        if abs(net - net_target) <= Decimal("0.005"):
+            break
+        if net < net_target:
+            lo = mid
+        else:
+            hi = mid
+
+    # One authoritative pass through the real pipeline at the found gross so the
+    # returned result carries the proper rounding + audit snapshot.
+    return compute_statutory(_round(mid), currency, on_date)
+
+
 def compute_statutory(gross: Decimal, currency: str, on_date) -> TaxCalcResult:
     """Run the full statutory pipeline for one payslip. Returns a single result
     object with line items + a single audit snapshot.

@@ -258,6 +258,14 @@ class PayrollEntry(models.Model):
     # off, the statutory fields are forced to zero on every recompute.
     auto_compute_statutory = models.BooleanField(default=False)
 
+    # When True, the salary field is treated as the employee's TAKE-HOME (net) —
+    # deductions were already worked out off-system. The payslip then grosses it
+    # up: it reverse-computes the gross whose PAYE/AIDS/NSSA leave exactly the
+    # entered salary in hand, and shows that gross + those deductions netting
+    # back to the salary. When False, the classic forward path runs (salary is
+    # gross; statutory only if auto_compute_statutory is on). Defaults True.
+    salary_is_net = models.BooleanField(default=True)
+
     # Computed
     total_allowances = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
     total_deductions = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
@@ -274,6 +282,13 @@ class PayrollEntry(models.Model):
         ordering = ("employee__first_name", "employee__last_name")
         unique_together = (("period", "employee"),)
         indexes = [models.Index(fields=["period", "employee"])]
+
+    @property
+    def basic_pay(self) -> Decimal:
+        """Basic salary as it should read on the payslip: gross minus overtime
+        and allowances. In net mode this is the grossed-up base (so basic +
+        overtime + allowances = gross); in forward mode it equals base_salary."""
+        return (self.gross or Decimal("0")) - (self.overtime_amount or Decimal("0")) - (self.total_allowances or Decimal("0"))
 
     def recompute(self) -> None:
         # ---- gross side ----
@@ -317,34 +332,59 @@ class PayrollEntry(models.Model):
         custom_deductions = sum(
             (Decimal(str(d.get("amount", 0))) for d in (self.deductions or [])), Decimal("0")
         )
-        self.gross = (self.base_salary or Decimal("0")) + self.overtime_amount + self.total_allowances
+        period_end = self.period.period_end if self.period_id else timezone.now().date()
+        currency = self.employee.currency if self.employee_id else "USD"
 
-        # ---- statutory side — opt-in only ----
-        if self.auto_compute_statutory:
+        if self.salary_is_net:
+            # ---- net mode: salary is take-home; gross it up ----
+            # base_salary is the amount the employee actually receives. Find the
+            # gross whose statutory deductions net back to it, then stack any
+            # overtime/allowances on top. The resulting net therefore equals the
+            # entered salary (+ extras, − custom deductions).
             try:
-                from compliance.engine import compute_statutory  # local import to avoid cycle at app load
+                from compliance.engine import gross_up_from_net
 
-                period_end = self.period.period_end if self.period_id else timezone.now().date()
-                currency = self.employee.currency if self.employee_id else "USD"
-                result = compute_statutory(self.gross, currency, period_end)
+                result = gross_up_from_net(self.base_salary or Decimal("0"), currency, period_end)
+                grossed_base = result.gross
                 self.paye = result.paye
                 self.aids_levy = result.aids_levy
                 self.nssa_employee = result.nssa_employee
                 self.nssa_employer = result.nssa_employer
                 self.statutory_total = result.statutory_total
-                self.tax_calc_snapshot = result.snapshot
-            except Exception as exc:  # pragma: no cover — never fail save() on stat issues
-                self.tax_calc_snapshot = {"error": str(exc)}
+                self.tax_calc_snapshot = {
+                    **result.snapshot, "mode": "gross_up_from_net",
+                    "net_target": str(self.base_salary or Decimal("0")),
+                }
+            except Exception as exc:  # never fail save() on a stat issue
+                grossed_base = self.base_salary or Decimal("0")
+                self.paye = self.aids_levy = self.nssa_employee = self.nssa_employer = Decimal("0")
+                self.statutory_total = Decimal("0")
+                self.tax_calc_snapshot = {"error": str(exc), "mode": "gross_up_from_net"}
+            self.gross = grossed_base + self.overtime_amount + self.total_allowances
         else:
-            # Statutory turned off — force every statutory field to zero so a
-            # payslip that previously carried PAYE/NSSA is fully cleared when
-            # the user opts out.
-            self.paye = Decimal("0")
-            self.aids_levy = Decimal("0")
-            self.nssa_employee = Decimal("0")
-            self.nssa_employer = Decimal("0")
-            self.statutory_total = Decimal("0")
-            self.tax_calc_snapshot = {}
+            # ---- forward mode: salary is gross; statutory is opt-in ----
+            self.gross = (self.base_salary or Decimal("0")) + self.overtime_amount + self.total_allowances
+            if self.auto_compute_statutory:
+                try:
+                    from compliance.engine import compute_statutory
+
+                    result = compute_statutory(self.gross, currency, period_end)
+                    self.paye = result.paye
+                    self.aids_levy = result.aids_levy
+                    self.nssa_employee = result.nssa_employee
+                    self.nssa_employer = result.nssa_employer
+                    self.statutory_total = result.statutory_total
+                    self.tax_calc_snapshot = result.snapshot
+                except Exception as exc:  # pragma: no cover
+                    self.tax_calc_snapshot = {"error": str(exc)}
+            else:
+                # Statutory turned off — force every statutory field to zero.
+                self.paye = Decimal("0")
+                self.aids_levy = Decimal("0")
+                self.nssa_employee = Decimal("0")
+                self.nssa_employer = Decimal("0")
+                self.statutory_total = Decimal("0")
+                self.tax_calc_snapshot = {}
 
         # ---- final totals ----
         self.total_deductions = custom_deductions + (self.statutory_total or Decimal("0"))
