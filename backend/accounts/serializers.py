@@ -63,6 +63,23 @@ class LafoiTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
     def validate(self, attrs):
+        # Accept EITHER a username or an email address (case-insensitive) in the
+        # login field. Users naturally type their email, but SimpleJWT only
+        # authenticates by USERNAME_FIELD (username), so an email login would
+        # otherwise fail with "No active account found". Translate a matching
+        # email to the real username before the parent runs its auth.
+        from django.db.models import Q
+
+        login = (attrs.get(self.username_field) or "").strip()
+        if login:
+            match = (
+                User.objects.filter(Q(username__iexact=login) | Q(email__iexact=login))
+                .order_by("-is_superuser", "id")
+                .first()
+            )
+            if match:
+                attrs[self.username_field] = match.username
+
         data = super().validate(attrs)
         # SimpleJWT doesn't touch `last_login` on token issuance — it has to
         # be done explicitly here for the Profile page (and any audit work)

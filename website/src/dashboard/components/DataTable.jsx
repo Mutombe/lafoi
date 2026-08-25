@@ -15,7 +15,7 @@ export function PendingBadge({ pending }) {
     : 'bg-amber-50 text-amber-800 border-amber-200'
   return (
     <div className="flex justify-end">
-      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${cls}`}>
+      <span className={`inline-flex items-center whitespace-nowrap gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${cls}`}>
         <CircleNotch size={10} className="animate-spin" />
         {pending.label || (danger ? 'Deleting…' : 'Saving…')}
       </span>
@@ -299,7 +299,7 @@ export const StatusBadge = ({ status, palette = {} }) => {
   const fallback = 'bg-lafoi-cream text-lafoi-gray border-lafoi-dark/10'
   const cls = palette[status] || fallback
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${cls}`}>
+    <span className={`inline-flex items-center whitespace-nowrap px-2.5 py-1 rounded-full border text-[10px] font-sora tracking-[0.18em] uppercase ${cls}`}>
       {String(status || '').replace(/_/g, ' ')}
     </span>
   )

@@ -9,6 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY", default="dev-insecure")
 DEBUG = config("DEBUG", default=False, cast=bool)
+# Anthropic API key for the AI inventory-reconciliation ingestion engine.
+# Read from env only — never hard-code. Set on Render for production.
+ANTHROPIC_API_KEY = config("ANTHROPIC_API_KEY", default="")
+
 # Master kill-switch. Set SYSTEM_SUSPENDED=true (env var) to lock the whole
 # platform behind a "Lafoi system is suspended." notice; false (the default)
 # runs normally.

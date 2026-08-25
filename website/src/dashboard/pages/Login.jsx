@@ -93,7 +93,7 @@ export default function Login() {
           )}
 
           <label className="block mb-4">
-            <span className="block font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray mb-2">Username</span>
+            <span className="block font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray mb-2">Email or username</span>
             <span className="relative block">
               <UserIcon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
               <input
@@ -102,7 +102,7 @@ export default function Login() {
                 autoComplete="username"
                 required
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none focus:ring-2 focus:ring-lafoi-green/15 font-body text-sm transition"
-                placeholder="admin"
+                placeholder="you@lafoidesigns.co.zw"
               />
             </span>
           </label>
