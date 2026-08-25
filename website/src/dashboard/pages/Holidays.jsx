@@ -153,6 +153,7 @@ export default function Holidays() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={sortedHolidays}
         isLoading={isLoading}
         empty={`No public holidays recorded for ${year} yet.`}

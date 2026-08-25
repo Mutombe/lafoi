@@ -342,6 +342,7 @@ export default function PurchaseOrders() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={rows}
         isLoading={isFirstLoad}
         empty="No purchase orders yet — raise one to start."

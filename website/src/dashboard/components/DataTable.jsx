@@ -102,7 +102,7 @@ export default function DataTable({
                 return (
                   <li
                     key={row[keyField]}
-                    onClick={!pending && onRowClick ? () => onRowClick(row) : undefined}
+                    onClick={!pending && onRowClick ? (e) => { if (e.target.closest('button, a, input, select, textarea, label')) return; onRowClick(row) } : undefined}
                     className={`px-4 py-3.5 transition-opacity ${pending ? 'opacity-60' : ''} ${onRowClick && !pending ? 'cursor-pointer active:bg-lafoi-cream/80' : ''}`}
                   >
                     {pending && (
@@ -172,7 +172,7 @@ export default function DataTable({
               return (
                 <tr
                   key={row[keyField]}
-                  onClick={!pending && onRowClick ? () => onRowClick(row) : undefined}
+                  onClick={!pending && onRowClick ? (e) => { if (e.target.closest('button, a, input, select, textarea, label')) return; onRowClick(row) } : undefined}
                   className={`border-b border-lafoi-dark/[0.06] last:border-b-0 transition-all ${pending ? 'opacity-70 pointer-events-none' : ''} ${onRowClick && !pending ? 'cursor-pointer hover:bg-lafoi-cream/60' : ''}`}
                 >
                   {columns.map((c) => (

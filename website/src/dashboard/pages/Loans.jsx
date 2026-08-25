@@ -261,6 +261,7 @@ export default function Loans() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={data?.results || data || []}
         isLoading={isFirstLoad}
         empty="No loans yet — create one to start tracking repayments."

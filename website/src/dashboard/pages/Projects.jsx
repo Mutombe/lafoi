@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Plus, Trash, PencilSimple, MagnifyingGlass, Eye, CircleNotch, MapPin } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
@@ -105,6 +105,7 @@ const empty = {
 
 export default function Projects() {
   const confirm = useConfirm()
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -252,6 +253,7 @@ export default function Projects() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => navigate(`/dashboard/projects/${row.id}`)}
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No projects yet — start your first."

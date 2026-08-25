@@ -219,6 +219,7 @@ export default function Catalog() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={rows}
         isLoading={isFirstLoad}
         empty="Catalog is empty — add your first product or service."

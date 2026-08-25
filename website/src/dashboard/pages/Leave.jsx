@@ -270,6 +270,7 @@ function RequestsTab() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={data?.results || data || []}
         isLoading={isLoading}
         empty="No leave requests yet."

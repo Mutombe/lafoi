@@ -157,6 +157,7 @@ export default function Suppliers() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No suppliers yet — add your first."

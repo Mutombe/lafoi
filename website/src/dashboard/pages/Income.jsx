@@ -331,6 +331,7 @@ export default function Income() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={rows}
         isLoading={isFirstLoad}
         empty="No income yet — invoice receipts will appear here automatically."

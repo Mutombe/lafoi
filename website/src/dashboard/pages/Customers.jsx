@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Plus, Trash, PencilSimple, MagnifyingGlass, CircleNotch, MapPinLine, X, Eye } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -40,6 +40,7 @@ const SITE_VISIT_PALETTE = {
 
 export default function Customers() {
   const confirm = useConfirm()
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
   const [search, setSearch] = useState('')
@@ -221,6 +222,7 @@ export default function Customers() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => navigate(`/dashboard/customers/${row.id}`)}
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No customers yet — add your first."

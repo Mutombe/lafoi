@@ -310,6 +310,7 @@ export default function Invoices() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No invoices yet."

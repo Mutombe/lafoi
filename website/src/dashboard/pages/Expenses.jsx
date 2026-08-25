@@ -492,6 +492,7 @@ export default function Expenses() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={rows}
         isLoading={isFirstLoad}
         empty="No expenses logged yet — start with a recent supplier invoice."

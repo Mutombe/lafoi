@@ -352,6 +352,7 @@ export default function Quotations() {
 
       <DataTable
         columns={columns}
+        onRowClick={(row) => setEditing(row)}
         rows={data?.results || []}
         isLoading={isFirstLoad}
         empty="No quotations yet."
