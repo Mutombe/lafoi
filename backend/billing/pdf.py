@@ -1035,13 +1035,25 @@ def render_payslip_pdf(entry) -> bytes:
         Paragraph("DEDUCTIONS", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=9)),
         Paragraph("AMOUNT", ParagraphStyle("h", parent=st["LFEyebrow"], textColor=colors.white, fontSize=9, alignment=TA_RIGHT)),
     ]]
+    # Combine statutory deductions (PAYE / AIDS levy / NSSA — held in their own
+    # fields, e.g. from a gross-up) with the free-form custom deductions so the
+    # table actually shows what bridges gross → net.
+    ded_lines = []
+    if entry.paye and Decimal(str(entry.paye)) > 0:
+        ded_lines.append(("PAYE (income tax)", Decimal(str(entry.paye))))
+    if entry.aids_levy and Decimal(str(entry.aids_levy)) > 0:
+        ded_lines.append(("AIDS levy", Decimal(str(entry.aids_levy))))
+    if entry.nssa_employee and Decimal(str(entry.nssa_employee)) > 0:
+        ded_lines.append(("NSSA (employee)", Decimal(str(entry.nssa_employee))))
     for d in (entry.deductions or []):
+        ded_lines.append((d.get("name", "Deduction"), Decimal(str(d.get("amount", 0)))))
+    for name, amount in ded_lines:
         ded_rows.append([
-            Paragraph(d.get("name", "Deduction"), st["LFBody"]),
-            Paragraph(_fmt_money(Decimal(str(d.get("amount", 0))), emp.currency),
+            Paragraph(name, st["LFBody"]),
+            Paragraph(_fmt_money(amount, emp.currency),
                       ParagraphStyle("r", parent=st["LFValue"], alignment=TA_RIGHT)),
         ])
-    if not entry.deductions:
+    if not ded_lines:
         ded_rows.append([Paragraph("<i>No deductions.</i>", st["LFBodySmall"]), ""])
     ded_rows.append([
         Paragraph("<b>Total deductions</b>", st["LFBody"]),
