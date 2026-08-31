@@ -292,6 +292,7 @@ export function PayrollDetail() {
   const [reopenPeriod, reopenState] = useReopenPeriodMutation()
   const [transition, setTransition] = useState(null) // { kind, requireReason }
   const [transitionNotes, setTransitionNotes] = useState('')
+  const [zipping, setZipping] = useState(false)
 
   if (isLoading || !period) {
     return (
@@ -380,7 +381,6 @@ export function PayrollDetail() {
     }
   }
 
-  const [zipping, setZipping] = useState(false)
   const handleAllPayslips = async () => {
     setZipping(true)
     try {
