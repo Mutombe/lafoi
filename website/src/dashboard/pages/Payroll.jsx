@@ -380,6 +380,23 @@ export function PayrollDetail() {
     }
   }
 
+  const [zipping, setZipping] = useState(false)
+  const handleAllPayslips = async () => {
+    setZipping(true)
+    try {
+      await downloadFile(
+        `payroll-periods/${period.id}/payslips-zip/`,
+        `payslips-${period.name?.replace(/\s+/g, '-') || period.id}.zip`,
+        store.getState,
+      )
+      toast.success('All payslips downloaded', { description: 'One ZIP with every payslip' })
+    } catch (e) {
+      toast.error('Payslips download failed', { description: e.message })
+    } finally {
+      setZipping(false)
+    }
+  }
+
   const TRANSITION_MAP = {
     reviewed: { fn: markReviewed, label: 'Mark as Reviewed', success: 'Marked reviewed', requireReason: false },
     approved: { fn: approve, label: 'Approve', success: 'Approved', requireReason: false },
@@ -463,6 +480,9 @@ export function PayrollDetail() {
             >
               <BookOpen size={14} weight="bold" /> <span className="hidden sm:inline">Guide</span>
             </Link>
+            <SecondaryButton onClick={handleAllPayslips} disabled={zipping}>
+              {zipping ? (<><CircleNotch size={14} className="animate-spin" /> Zipping…</>) : (<><Download size={14} weight="bold" /> All payslips</>)}
+            </SecondaryButton>
             <SecondaryButton onClick={handleBankFile}>
               <Download size={14} weight="bold" /> Bank file
             </SecondaryButton>

@@ -294,6 +294,30 @@ class PayrollPeriodViewSet(viewsets.ModelViewSet):
         resp["Content-Disposition"] = f'attachment; filename="bank_batch_{period.id}_{period.period_end}.csv"'
         return resp
 
+    @action(detail=True, methods=["get"], url_path="payslips-zip")
+    def payslips_zip(self, request, pk=None):
+        """Every payslip for the period bundled into ONE ZIP. Browsers block
+        firing many downloads in a row, so a single archive is the reliable way
+        to get all payslips at once instead of one at a time."""
+        import zipfile
+
+        period = self.get_object()
+        zbuf = io.BytesIO()
+        with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as zf:
+            for entry in period.entries.select_related("employee").all():
+                try:
+                    pdf = render_payslip_pdf(entry)
+                except Exception:
+                    continue  # skip a bad entry rather than fail the whole archive
+                emp = entry.employee
+                base = f"{emp.employee_code}-{emp.full_name}"
+                safe = "".join(c for c in base if c.isalnum() or c in " -_").strip() or f"entry-{entry.id}"
+                zf.writestr(f"payslip-{safe}.pdf", pdf)
+        period_slug = (period.name or str(period.id)).replace(" ", "-")
+        resp = HttpResponse(zbuf.getvalue(), content_type="application/zip")
+        resp["Content-Disposition"] = f'attachment; filename="payslips-{period_slug}.zip"'
+        return resp
+
 
 class PayrollEntryViewSet(viewsets.ModelViewSet):
     permission_classes = [HasModuleAccess.for_module("payroll")]
