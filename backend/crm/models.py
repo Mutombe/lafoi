@@ -1,7 +1,9 @@
 """CRM — Customers, Projects, Project lifecycle (updates + files)."""
+import secrets
 from decimal import Decimal
 
 from django.conf import settings
+from django.contrib.auth.hashers import check_password, make_password
 from django.db import models
 from django.utils import timezone
 
@@ -541,3 +543,109 @@ class CatalogItem(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover
         return f"{self.name} ({self.kind})"
+
+
+# ============================================================================
+# SECURE DESIGN SHARE — view-only, watermarked, expiring links for clients
+# ============================================================================
+
+class DesignShare(models.Model):
+    """A view-only, watermarked link to one or more project design files.
+
+    The client opens `/view/<token>` and sees the designs rendered with their
+    own name burned into the pixels (traceable if leaked). The original files
+    are never exposed — every asset is streamed, re-encoded and watermarked
+    server-side. Links can carry a passcode, expire, and be revoked, and every
+    view is logged. This is deterrence + traceability, not DRM: a screen can
+    always be photographed, but a leaked copy is branded and identifies the
+    client who leaked it.
+    """
+
+    token = models.CharField(max_length=32, unique=True, db_index=True, editable=False)
+    project = models.ForeignKey(
+        "Project", on_delete=models.CASCADE, related_name="design_shares",
+        null=True, blank=True,
+    )
+    customer = models.ForeignKey(
+        "Customer", on_delete=models.CASCADE, related_name="design_shares",
+        null=True, blank=True,
+    )
+    files = models.ManyToManyField("ProjectFile", related_name="design_shares", blank=True)
+
+    title = models.CharField(max_length=200, blank=True, help_text="What the client sees, e.g. 'Lounge — stretch ceiling concept'.")
+    client_name = models.CharField(max_length=200, blank=True, help_text="Burned into the watermark — defaults to the customer's name.")
+    client_email = models.EmailField(blank=True)
+
+    require_passcode = models.BooleanField(default=False)
+    passcode_hash = models.CharField(max_length=256, blank=True)
+
+    allow_download = models.BooleanField(default=False)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    is_revoked = models.BooleanField(default=False)
+
+    view_count = models.PositiveIntegerField(default=0)
+    last_viewed_at = models.DateTimeField(null=True, blank=True)
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name="design_shares_created",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        indexes = [models.Index(fields=["token"])]
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = secrets.token_urlsafe(16).replace("_", "").replace("-", "")[:22]
+        super().save(*args, **kwargs)
+
+    def set_passcode(self, raw: str) -> None:
+        raw = (raw or "").strip()
+        if raw:
+            self.passcode_hash = make_password(raw)
+            self.require_passcode = True
+        else:
+            self.passcode_hash = ""
+            self.require_passcode = False
+
+    def check_passcode(self, raw: str) -> bool:
+        if not self.require_passcode:
+            return True
+        return bool(self.passcode_hash) and check_password((raw or "").strip(), self.passcode_hash)
+
+    @property
+    def is_expired(self) -> bool:
+        return bool(self.expires_at and self.expires_at <= timezone.now())
+
+    @property
+    def is_active(self) -> bool:
+        return not self.is_revoked and not self.is_expired
+
+    @property
+    def watermark_name(self) -> str:
+        if self.client_name:
+            return self.client_name
+        if self.customer_id:
+            return self.customer.name
+        if self.project_id and self.project.customer_id:
+            return self.project.customer.name
+        return "Confidential"
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"Share {self.token} · {self.title or self.watermark_name}"
+
+
+class DesignShareView(models.Model):
+    """One access-log row per asset opened through a share."""
+
+    share = models.ForeignKey(DesignShare, on_delete=models.CASCADE, related_name="views")
+    file = models.ForeignKey("ProjectFile", on_delete=models.SET_NULL, null=True, blank=True)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+    ip = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=300, blank=True)
+
+    class Meta:
+        ordering = ("-viewed_at",)

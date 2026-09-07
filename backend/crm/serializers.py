@@ -4,9 +4,21 @@ from rest_framework import serializers
 
 from accounts.serializers import UserSerializer
 from .models import (
-    CatalogItem, Customer, CustomerFile, ExpensePayment, Income,
-    Project, ProjectCost, ProjectFile, ProjectUpdate,
+    CatalogItem, Customer, CustomerFile, DesignShare, DesignShareView,
+    ExpensePayment, Income, Project, ProjectCost, ProjectFile, ProjectUpdate,
 )
+
+
+def _asset_kind(name):
+    """Classify a filename into how the secure viewer should render it."""
+    n = (name or "").lower()
+    if n.rsplit(".", 1)[-1] in ("jpg", "jpeg", "png", "webp", "gif", "bmp", "tif", "tiff"):
+        return "image"
+    if n.endswith(".pdf"):
+        return "pdf"
+    if n.rsplit(".", 1)[-1] in ("mp4", "webm", "mov", "m4v", "ogg"):
+        return "video"
+    return "other"
 
 
 class ExpensePaymentSerializer(serializers.ModelSerializer):
@@ -265,3 +277,94 @@ class ProjectDetailSerializer(ProjectSerializer):
 
     class Meta(ProjectSerializer.Meta):
         fields = ProjectSerializer.Meta.fields + ("updates", "files", "costs", "customer_id")
+
+
+# ---------------------------------------------------------------------------
+# SECURE DESIGN SHARE
+# ---------------------------------------------------------------------------
+
+class DesignShareFileSerializer(serializers.ModelSerializer):
+    file_name = serializers.SerializerMethodField()
+    asset_kind = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProjectFile
+        fields = ("id", "kind", "title", "file_name", "asset_kind")
+
+    def get_file_name(self, obj):
+        return obj.file.name.rsplit("/", 1)[-1] if obj.file else None
+
+    def get_asset_kind(self, obj):
+        return _asset_kind(obj.file.name if obj.file else "")
+
+
+class DesignShareViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DesignShareView
+        fields = ("id", "file", "viewed_at", "ip", "user_agent")
+
+
+class DesignShareSerializer(serializers.ModelSerializer):
+    """Dashboard-facing: create/manage a secure share."""
+    files = DesignShareFileSerializer(many=True, read_only=True)
+    file_ids = serializers.PrimaryKeyRelatedField(
+        many=True, write_only=True, queryset=ProjectFile.objects.all(), source="files", required=False,
+    )
+    passcode = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    share_path = serializers.SerializerMethodField()
+    project_title = serializers.CharField(source="project.title", read_only=True)
+    customer_name = serializers.SerializerMethodField()
+    is_active = serializers.BooleanField(read_only=True)
+    is_expired = serializers.BooleanField(read_only=True)
+    recent_views = serializers.SerializerMethodField()
+
+    class Meta:
+        model = DesignShare
+        fields = (
+            "id", "token", "share_path", "project", "project_title", "customer", "customer_name",
+            "files", "file_ids", "title", "client_name", "client_email",
+            "require_passcode", "passcode", "allow_download",
+            "expires_at", "is_revoked", "is_active", "is_expired",
+            "view_count", "last_viewed_at", "recent_views", "created_at",
+        )
+        read_only_fields = (
+            "id", "token", "share_path", "require_passcode", "is_active", "is_expired",
+            "view_count", "last_viewed_at", "recent_views", "created_at", "project_title", "customer_name",
+        )
+
+    def get_share_path(self, obj):
+        return f"/view/{obj.token}"
+
+    def get_customer_name(self, obj):
+        return obj.watermark_name
+
+    def get_recent_views(self, obj):
+        return DesignShareViewSerializer(obj.views.all()[:20], many=True).data
+
+    def _apply_passcode(self, instance, validated):
+        pc = validated.pop("passcode", None)
+        if pc is not None:
+            instance.set_passcode(pc)
+
+    def create(self, validated):
+        files = validated.pop("files", [])
+        pc = validated.pop("passcode", None)
+        share = DesignShare.objects.create(**validated)
+        if pc:
+            share.set_passcode(pc)
+            share.save(update_fields=["passcode_hash", "require_passcode"])
+        if files:
+            share.files.set(files)
+        return share
+
+    def update(self, instance, validated):
+        files = validated.pop("files", None)
+        pc = validated.pop("passcode", None)
+        for k, v in validated.items():
+            setattr(instance, k, v)
+        if pc is not None:
+            instance.set_passcode(pc)
+        instance.save()
+        if files is not None:
+            instance.files.set(files)
+        return instance

@@ -20,6 +20,10 @@ import {
   useCreateProjectUpdateMutation,
   useUploadProjectFileMutation,
   useDeleteProjectFileMutation,
+  useListDesignSharesQuery,
+  useCreateDesignShareMutation,
+  useRevokeDesignShareMutation,
+  useDeleteDesignShareMutation,
 } from '../store/api'
 
 /* ============================================================================
@@ -447,6 +451,7 @@ export default function ProjectDetail() {
   const [showUpdate, setShowUpdate] = useState(false)
   const [showFile, setShowFile] = useState(false)
   const [showSketch, setShowSketch] = useState(false)
+  const [showShare, setShowShare] = useState(false)
 
   if (isLoading || !project) {
     return (
@@ -683,6 +688,9 @@ export default function ProjectDetail() {
         )}
       </section>
 
+      {/* 6b. Secure design shares — view-only, watermarked client links */}
+      <SharesSection project={project} files={files} onCreate={() => setShowShare(true)} />
+
       {/* 7. Linked expenses — read-only summary + variance card. Adding,
           editing or removing expenses happens in the Expenses tab now;
           this section just surfaces what's already linked to this project
@@ -723,6 +731,7 @@ export default function ProjectDetail() {
           />
         )}
       </Modal>
+      <CreateShareModal open={showShare} onClose={() => setShowShare(false)} project={project} files={files} />
     </div>
   )
 }
@@ -1311,4 +1320,236 @@ function FileUploadModal({ open, onClose, project, onSaved }) {
       </form>
     </Modal>
   )
+}
+
+/* ============================================================================
+   Secure design shares — view-only, watermarked client links
+   ========================================================================= */
+
+const SHARE_ORIGIN = typeof window !== 'undefined' ? window.location.origin : ''
+
+function SharesSection({ project, files, onCreate }) {
+  const { data, isLoading } = useListDesignSharesQuery({ project: project.id })
+  const [revoke] = useRevokeDesignShareMutation()
+  const [remove] = useDeleteDesignShareMutation()
+  const confirm = useConfirm()
+  const shares = data?.results || data || []
+
+  const copyLink = async (share) => {
+    const url = `${SHARE_ORIGIN}${share.share_path}`
+    try {
+      await navigator.clipboard.writeText(url)
+      toast.success('Link copied', { description: url })
+    } catch {
+      toast.message('Copy this link', { description: url })
+    }
+  }
+
+  const onRevoke = async (share) => {
+    if (!(await confirm({ title: 'Revoke this link?', body: 'The client will immediately lose access. This cannot be undone.', confirmLabel: 'Revoke', destructive: true }))) return
+    try { await revoke(share.id).unwrap(); toast.success('Link revoked') }
+    catch { toast.error('Could not revoke link') }
+  }
+
+  const onDelete = async (share) => {
+    if (!(await confirm({ title: 'Delete this link?', body: 'Removes the link and its view history.', confirmLabel: 'Delete', destructive: true }))) return
+    try { await remove(share.id).unwrap(); toast.success('Link deleted') }
+    catch { toast.error('Could not delete link') }
+  }
+
+  return (
+    <section className="mt-10">
+      <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
+        <h2 className="font-display text-2xl">Secure client shares</h2>
+        <PrimaryButton onClick={onCreate} disabled={files.length === 0}>
+          <Plus size={14} weight="bold" /> New share link
+        </PrimaryButton>
+      </div>
+      <p className="text-sm text-lafoi-gray-medium mb-4 max-w-2xl">
+        View-only links for clients. Every image and PDF is re-rendered with the
+        client&apos;s name watermarked across it and streamed through our server —
+        the original file is never downloadable. Links can carry a passcode,
+        expire on a date, and be revoked any time.
+      </p>
+
+      {files.length === 0 && (
+        <p className="text-sm text-lafoi-gray-medium">Upload a design file above first, then you can share it.</p>
+      )}
+
+      {isLoading && <p className="text-sm text-lafoi-gray-medium">Loading shares…</p>}
+
+      {shares.length > 0 && (
+        <div className="grid gap-3">
+          {shares.map((s) => (
+            <div key={s.id} className={`rounded-xl border p-4 ${s.is_active ? 'border-lafoi-dark/10 bg-white' : 'border-lafoi-dark/5 bg-lafoi-gray-light/40'}`}>
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-sora font-medium text-lafoi-dark">{s.title || 'Design preview'}</span>
+                    {s.is_active
+                      ? <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-sora tracking-wide">ACTIVE</span>
+                      : <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-200 text-gray-600 font-sora tracking-wide">{s.is_revoked ? 'REVOKED' : 'EXPIRED'}</span>}
+                    {s.require_passcode && <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-sora tracking-wide">PASSCODE</span>}
+                  </div>
+                  <p className="text-xs text-lafoi-gray-medium mt-1">
+                    For {s.customer_name || '—'} · {s.files?.length || 0} item(s) · {s.view_count} view(s)
+                    {s.expires_at ? ` · expires ${fmtDate(s.expires_at)}` : ''}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {s.is_active && (
+                    <>
+                      <SecondaryButton onClick={() => copyLink(s)}>Copy link</SecondaryButton>
+                      <button onClick={() => onRevoke(s)} className="text-xs font-sora text-amber-700 hover:underline">Revoke</button>
+                    </>
+                  )}
+                  <button onClick={() => onDelete(s)} className="text-lafoi-gray-medium hover:text-red-600" title="Delete">
+                    <Trash size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function CreateShareModal({ open, onClose, project, files }) {
+  const shareable = useMemo(() => files.filter((f) => isShareable(f)), [files])
+  const [title, setTitle] = useState('')
+  const [clientName, setClientName] = useState('')
+  const [clientEmail, setClientEmail] = useState('')
+  const [pickedIds, setPickedIds] = useState([])
+  const [expiresAt, setExpiresAt] = useState('')
+  const [requirePasscode, setRequirePasscode] = useState(false)
+  const [passcode, setPasscode] = useState('')
+  const [error, setError] = useState('')
+  const [created, setCreated] = useState(null)
+  const [createShare, { isLoading }] = useCreateDesignShareMutation()
+
+  const customerName = project.customer?.name || project.customer_name || ''
+  React.useEffect(() => {
+    if (open) {
+      setClientName(customerName)
+      setTitle(project.title ? `${project.title} — design preview` : '')
+      setPickedIds(shareable.map((f) => f.id))
+      setCreated(null); setError('')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+
+  const toggle = (id) => setPickedIds((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id])
+
+  const handleSave = async (e) => {
+    e.preventDefault()
+    setError('')
+    if (pickedIds.length === 0) { setError('Pick at least one file to share.'); return }
+    if (!clientName.trim()) { setError('Client name is required — it becomes the watermark.'); return }
+    if (requirePasscode && !passcode.trim()) { setError('Set a passcode or turn the passcode off.'); return }
+    try {
+      const body = {
+        project: project.id,
+        customer: project.customer?.id || project.customer || null,
+        title: title.trim(),
+        client_name: clientName.trim(),
+        client_email: clientEmail.trim(),
+        file_ids: pickedIds,
+        require_passcode: requirePasscode,
+        // Bare date → end-of-day datetime so the link stays live through that day.
+        expires_at: expiresAt ? `${expiresAt}T23:59:59` : null,
+      }
+      if (requirePasscode) body.passcode = passcode
+      const res = await createShare(body).unwrap()
+      setCreated(res)
+      toast.success('Share link created')
+    } catch (e) {
+      const msg = e?.data ? Object.values(e.data).flat().join(' ') : 'Could not create link.'
+      setError(msg)
+      toast.error('Could not create link', { description: msg })
+    }
+  }
+
+  const shareUrl = created ? `${SHARE_ORIGIN}${created.share_path}` : ''
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(shareUrl); toast.success('Link copied') }
+    catch { toast.message('Copy this link', { description: shareUrl }) }
+  }
+
+  return (
+    <Modal open={open} onClose={onClose} title={created ? 'Share link ready' : 'Create secure share link'} footer={
+      created ? (
+        <PrimaryButton type="button" onClick={onClose}>Done</PrimaryButton>
+      ) : (
+        <>
+          <SecondaryButton type="button" onClick={onClose}>Cancel</SecondaryButton>
+          <PrimaryButton form="share-form" type="submit" disabled={isLoading}>
+            {isLoading ? (<><CircleNotch size={14} className="animate-spin" /> Creating…</>) : 'Create link'}
+          </PrimaryButton>
+        </>
+      )
+    }>
+      {created ? (
+        <div className="grid gap-4">
+          <p className="text-sm text-lafoi-gray-medium">
+            Send this link to {created.customer_name}. It opens a view-only,
+            watermarked preview — no download, no original file.
+          </p>
+          <div className="flex items-center gap-2">
+            <Input readOnly value={shareUrl} onFocus={(e) => e.target.select()} />
+            <PrimaryButton type="button" onClick={copy}>Copy</PrimaryButton>
+          </div>
+          {created.require_passcode && (
+            <p className="text-xs text-amber-700">Passcode-protected — share the passcode with the client separately (not in the same message).</p>
+          )}
+        </div>
+      ) : (
+        <form id="share-form" onSubmit={handleSave} className="grid gap-4">
+          {error && <div className="px-3 py-2 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>}
+          {shareable.length === 0 && (
+            <div className="px-3 py-2 rounded-lg bg-amber-50 text-amber-800 text-sm">
+              No shareable files yet. Upload an image, PDF or video first.
+            </div>
+          )}
+          <Field label="Files to share" required>
+            <div className="grid gap-1.5 max-h-44 overflow-y-auto rounded-lg border border-lafoi-dark/10 p-2">
+              {shareable.map((f) => (
+                <label key={f.id} className="flex items-center gap-2 text-sm py-1 px-1 rounded hover:bg-lafoi-gray-light/60 cursor-pointer">
+                  <input type="checkbox" checked={pickedIds.includes(f.id)} onChange={() => toggle(f.id)} />
+                  <span className="truncate">{f.title || f.file_name || `File ${f.id}`}</span>
+                </label>
+              ))}
+            </div>
+          </Field>
+          <Field label="Link title">
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Lounge redesign — 3D preview" />
+          </Field>
+          <Field label="Client name (watermark)" required>
+            <Input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="Client's full name" />
+          </Field>
+          <Field label="Client email (optional)">
+            <Input type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="client@email.com" />
+          </Field>
+          <Field label="Expires on (optional)">
+            <Input type="date" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
+          </Field>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={requirePasscode} onChange={(e) => setRequirePasscode(e.target.checked)} />
+            Require a passcode to open
+          </label>
+          {requirePasscode && (
+            <Field label="Passcode" required>
+              <Input value={passcode} onChange={(e) => setPasscode(e.target.value)} placeholder="Share this with the client separately" />
+            </Field>
+          )}
+        </form>
+      )}
+    </Modal>
+  )
+}
+
+function isShareable(f) {
+  const name = (f.file_name || f.file || '').toLowerCase()
+  return /\.(jpg|jpeg|png|gif|webp|bmp|tiff?|pdf|mp4|webm|mov|ogg)$/.test(name)
 }

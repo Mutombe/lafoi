@@ -1,20 +1,25 @@
 from django.db.models import Count, Sum
-from rest_framework import viewsets
-from rest_framework.decorators import action
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from rest_framework import status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from compliance.permissions import HasModuleAccess
 
 from .models import (
-    CatalogItem, Customer, CustomerFile, ExpensePayment, Income,
-    Project, ProjectCost, ProjectFile, ProjectUpdate,
+    CatalogItem, Customer, CustomerFile, DesignShare, DesignShareView,
+    ExpensePayment, Income, Project, ProjectCost, ProjectFile, ProjectUpdate,
 )
 from .serializers import (
     CatalogItemSerializer,
     CustomerDetailSerializer,
     CustomerFileSerializer,
     CustomerSerializer,
+    DesignShareSerializer,
     ExpensePaymentSerializer,
     IncomeSerializer,
     ProjectCostSerializer,
@@ -22,7 +27,9 @@ from .serializers import (
     ProjectFileSerializer,
     ProjectSerializer,
     ProjectUpdateSerializer,
+    _asset_kind,
 )
+from . import watermark as wm
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -233,3 +240,128 @@ class CatalogItemViewSet(viewsets.ModelViewSet):
         CatalogItem.objects.filter(pk=item.pk).update(times_used=item.times_used + 1)
         item.refresh_from_db(fields=["times_used"])
         return Response({"times_used": item.times_used})
+
+
+# ============================================================================
+# SECURE DESIGN SHARE
+# ============================================================================
+
+class DesignShareViewSet(viewsets.ModelViewSet):
+    """Studio-side: create and manage view-only, watermarked share links."""
+    serializer_class = DesignShareSerializer
+    queryset = (
+        DesignShare.objects.select_related("project", "customer", "created_by")
+        .prefetch_related("files", "views").all()
+    )
+    permission_classes = [HasModuleAccess.for_module("projects")]
+    filterset_fields = ("project", "customer", "is_revoked")
+    ordering_fields = ("created_at",)
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user if self.request.user.is_authenticated else None)
+
+    @action(detail=True, methods=["post"], url_path="revoke")
+    def revoke(self, request, pk=None):
+        share = self.get_object()
+        share.is_revoked = True
+        share.save(update_fields=["is_revoked", "updated_at"])
+        return Response(DesignShareSerializer(share, context={"request": request}).data)
+
+
+def _client_ip(request):
+    xff = request.META.get("HTTP_X_FORWARDED_FOR")
+    return (xff.split(",")[0].strip() if xff else request.META.get("REMOTE_ADDR")) or None
+
+
+def _check_view_token(share, request):
+    if not share.require_passcode:
+        return True
+    vt = request.GET.get("vt") or request.headers.get("X-Share-Token", "")
+    if not vt:
+        return False
+    from django.core import signing
+    try:
+        return signing.loads(vt, salt="designshare", max_age=60 * 60 * 8).get("t") == share.token
+    except Exception:
+        return False
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def share_meta(request, token):
+    """Public: what the viewer needs to render — no raw file URLs, ever."""
+    share = DesignShare.objects.prefetch_related("files").filter(token=token).first()
+    if not share:
+        return Response({"status": "not_found"}, status=status.HTTP_404_NOT_FOUND)
+    if share.is_revoked:
+        return Response({"status": "revoked"})
+    if share.is_expired:
+        return Response({"status": "expired"})
+    files = []
+    for f in share.files.all():
+        kind = _asset_kind(f.file.name if f.file else "")
+        item = {"id": f.id, "kind": kind, "title": f.title or (f.file.name.rsplit("/", 1)[-1] if f.file else "")}
+        if kind == "pdf":
+            try:
+                data = f.file.read(); f.file.close()
+                item["pages"] = wm.pdf_page_count(data)
+            except Exception:
+                item["pages"] = 1
+        files.append(item)
+    # count one view per open
+    DesignShareView.objects.create(share=share, ip=_client_ip(request), user_agent=request.META.get("HTTP_USER_AGENT", "")[:300])
+    DesignShare.objects.filter(pk=share.pk).update(view_count=share.view_count + 1, last_viewed_at=timezone.now())
+    return Response({
+        "status": "active",
+        "title": share.title or "Design preview",
+        "client_name": share.watermark_name,
+        "project_title": share.project.title if share.project_id else None,
+        "require_passcode": share.require_passcode,
+        "files": files,
+    })
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def share_verify(request, token):
+    share = DesignShare.objects.filter(token=token).first()
+    if not share or not share.is_active:
+        return Response({"detail": "unavailable"}, status=status.HTTP_404_NOT_FOUND)
+    if share.check_passcode(request.data.get("passcode", "")):
+        from django.core import signing
+        return Response({"ok": True, "vt": signing.dumps({"t": token}, salt="designshare")})
+    return Response({"ok": False, "detail": "Incorrect passcode."}, status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def share_asset(request, token, file_id):
+    """Public: stream ONE asset, watermarked + re-encoded. Never the original."""
+    share = DesignShare.objects.filter(token=token).first()
+    if not share or not share.is_active:
+        raise Http404
+    if not _check_view_token(share, request):
+        return Response({"detail": "locked"}, status=status.HTTP_403_FORBIDDEN)
+    f = share.files.filter(id=file_id).first()
+    if not f or not f.file:
+        raise Http404
+    kind = _asset_kind(f.file.name)
+    label = wm.label_for(share.watermark_name)
+    try:
+        raw = f.file.read(); f.file.close()
+    except Exception:
+        raise Http404
+    if kind == "image":
+        out, ctype = wm.watermark_image_bytes(raw, label), "image/jpeg"
+    elif kind == "pdf":
+        out, ctype = wm.watermark_pdf_page_bytes(raw, int(request.GET.get("page", 0)), label), "image/jpeg"
+    elif kind == "video":
+        ext = f.file.name.rsplit(".", 1)[-1].lower()
+        out, ctype = raw, {"webm": "video/webm", "ogg": "video/ogg"}.get(ext, "video/mp4")
+    else:
+        raise Http404
+    resp = HttpResponse(out, content_type=ctype)
+    resp["Content-Disposition"] = "inline"
+    resp["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+    resp["X-Content-Type-Options"] = "nosniff"
+    return resp

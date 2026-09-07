@@ -25,6 +25,7 @@ const FAQ = lazy(() => import('./pages/FAQ'))
 const Blog = lazy(() => import('./pages/Blog'))
 const Shop = lazy(() => import('./pages/Shop'))
 const Launch = lazy(() => import('./pages/Launch'))
+const DesignView = lazy(() => import('./pages/DesignView'))
 
 // Dashboard
 const DashboardLayout = lazy(() => import('./dashboard/components/DashboardLayout'))
@@ -68,6 +69,18 @@ const DashProfile = lazy(() => import('./dashboard/pages/Profile'))
 export default function App() {
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
+  const isDesignView = location.pathname.startsWith('/view/')
+
+  // Client-facing secure viewer runs with no site chrome at all.
+  if (isDesignView) {
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          <Route path="/view/:token" element={<DesignView />} />
+        </Routes>
+      </Suspense>
+    )
+  }
 
   // Dashboard runs OUTSIDE the public Layout so it has its own chrome.
   if (isDashboard) {

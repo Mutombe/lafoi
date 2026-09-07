@@ -73,6 +73,7 @@ export const api = createApi({
     'InventoryStock', 'InventoryMovement', 'InventorySupplier',
     'PurchaseOrder', 'BurnRate',
     'NotificationRule', 'Notification',
+    'DesignShare',
   ],
   endpoints: (b) => ({
     // ---------- Auth ----------
@@ -167,6 +168,32 @@ export const api = createApi({
     deleteProjectFile: b.mutation({
       query: (id) => ({ url: `project-files/${id}/`, method: 'DELETE' }),
       invalidatesTags: ['ProjectFile', 'Project'],
+    }),
+
+    // ---------- Design Shares (secure view-only links) ----------
+    listDesignShares: b.query({
+      query: (params = {}) => ({ url: 'design-shares/', params }),
+      providesTags: ['DesignShare'],
+    }),
+    getDesignShare: b.query({
+      query: (id) => ({ url: `design-shares/${id}/` }),
+      providesTags: ['DesignShare'],
+    }),
+    createDesignShare: b.mutation({
+      query: (body) => ({ url: 'design-shares/', method: 'POST', body }),
+      invalidatesTags: ['DesignShare'],
+    }),
+    updateDesignShare: b.mutation({
+      query: ({ id, ...body }) => ({ url: `design-shares/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['DesignShare'],
+    }),
+    revokeDesignShare: b.mutation({
+      query: (id) => ({ url: `design-shares/${id}/revoke/`, method: 'POST' }),
+      invalidatesTags: ['DesignShare'],
+    }),
+    deleteDesignShare: b.mutation({
+      query: (id) => ({ url: `design-shares/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['DesignShare'],
     }),
 
     // ---------- Customer files (drawings / photos / documents) ----------
@@ -820,6 +847,8 @@ export const {
   useListProjectsQuery, useGetProjectQuery, useCreateProjectMutation, useUpdateProjectMutation, useDeleteProjectMutation,
   useListProjectUpdatesQuery, useCreateProjectUpdateMutation,
   useListProjectFilesQuery, useUploadProjectFileMutation, useDeleteProjectFileMutation,
+  useListDesignSharesQuery, useGetDesignShareQuery, useCreateDesignShareMutation,
+  useUpdateDesignShareMutation, useRevokeDesignShareMutation, useDeleteDesignShareMutation,
   useListCustomerFilesQuery, useUploadCustomerFileMutation, useDeleteCustomerFileMutation,
   useListExpensePaymentsQuery, useCreateExpensePaymentMutation, useDeleteExpensePaymentMutation,
   useListQuotationsQuery, useGetQuotationQuery, useCreateQuotationMutation, useUpdateQuotationMutation, useDeleteQuotationMutation, useConvertQuotationToInvoiceMutation, useConvertQuotationToProformaMutation, useDuplicateQuotationMutation,
