@@ -32,6 +32,12 @@ export default function OptimizedImage({
     return () => observer.disconnect()
   }, [priority])
 
+  // Local brand assets have a pre-generated .webp sibling (see the media
+  // optimisation pass). Serve it via <source>; the original PNG/JPEG stays as
+  // the fallback for the rare browser without WebP support.
+  const isLocal = typeof src === 'string' && src.startsWith('/')
+  const webpSrc = isLocal ? src.replace(/\.(png|jpe?g)$/i, '.webp') : null
+
   const aspectStyles = aspectRatio
     ? { aspectRatio, position: 'relative', overflow: 'hidden' }
     : fill
@@ -49,16 +55,19 @@ export default function OptimizedImage({
         <div className="absolute inset-0 img-placeholder" />
       )}
       {inView && (
-        <motion.img
-          src={src}
-          alt={alt}
-          loading={priority ? 'eager' : 'lazy'}
-          decoding="async"
-          className={`transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'} ${className}`}
-          onLoad={() => setLoaded(true)}
-          initial={false}
-          style={fill ? { position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' } : {}}
-        />
+        <picture>
+          {webpSrc && <source srcSet={webpSrc} type="image/webp" />}
+          <motion.img
+            src={src}
+            alt={alt}
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+            className={`transition-opacity duration-700 ${loaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+            onLoad={() => setLoaded(true)}
+            initial={false}
+            style={fill ? { position: 'absolute', width: '100%', height: '100%', objectFit: 'cover' } : {}}
+          />
+        </picture>
       )}
     </div>
   )

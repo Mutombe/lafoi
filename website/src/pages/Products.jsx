@@ -50,7 +50,7 @@ export default function Products() {
   const [query, setQuery] = useState('')
 
   useSEO({
-    title: 'Membranes, Lighting & Accessories Catalogue',
+    title: 'Ceilings, Lighting & Accessories Catalogue',
     description:
       'Browse the La Foi Designs catalogue, PVC and fabric stretch membranes (matte, satin, gloss, translucent, printed, sculptural, acoustic, mirror, suede), lighting fixtures, and installation accessories.',
     path: '/products',
@@ -125,7 +125,7 @@ export default function Products() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            Membranes
+            Ceilings
             <span className="block italic text-lafoi-green">&amp; lighting.</span>
           </motion.h1>
 

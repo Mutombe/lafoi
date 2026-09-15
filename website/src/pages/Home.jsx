@@ -712,7 +712,7 @@ function FinishGallery() {
                   {p.finish}
                 </p>
                 <h3 className="font-display font-light text-white text-xl lg:text-2xl leading-[1.05] tracking-[-0.01em]">
-                  {p.name.replace(/ Stretch Membrane$| Membrane$/i, '')}
+                  {p.name.replace(/ Stretch Ceiling$| Ceiling$/i, '')}
                 </h3>
                 <p className="text-[11px] lg:text-xs font-sora text-white/70 tracking-wide mt-1.5 line-clamp-1">
                   {finishMeta[p.finish] || p.shortDesc}
@@ -778,7 +778,7 @@ function FinishGallery() {
                   {p.finish}
                 </p>
                 <h3 className="font-display font-light text-white text-xl leading-none tracking-[-0.01em]">
-                  {p.name.replace(/ Stretch Membrane$| Membrane$/i, '')}
+                  {p.name.replace(/ Stretch Ceiling$| Ceiling$/i, '')}
                 </h3>
                 {finishPalettes[p.finish] && (
                   <div className="mt-2 flex items-center gap-1">

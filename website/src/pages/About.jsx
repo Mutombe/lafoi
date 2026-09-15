@@ -74,7 +74,7 @@ function AboutHero() {
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: 'url(/brand/images/1.png)',
+          backgroundImage: 'url(/brand/images/1.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 1,

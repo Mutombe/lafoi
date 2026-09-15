@@ -15,7 +15,7 @@ export const products = [
   // ---------- STRETCH CEILINGS ----------
   {
     slug: 'matte-stretch-membrane',
-    name: 'Matte Stretch Membrane',
+    name: 'Matte Stretch Ceiling',
     category: 'Stretch Ceilings',
     finish: 'Matte',
     applications: ['Residential', 'Office', 'Hospitality'],
@@ -49,7 +49,7 @@ export const products = [
   },
   {
     slug: 'satin-stretch-membrane',
-    name: 'Satin Stretch Membrane',
+    name: 'Satin Stretch Ceiling',
     category: 'Stretch Ceilings',
     finish: 'Satin',
     applications: ['Residential', 'Hospitality', 'Retail'],
@@ -83,7 +83,7 @@ export const products = [
   },
   {
     slug: 'gloss-lacquer-membrane',
-    name: 'Gloss Membrane',
+    name: 'Glossy Stretch Ceiling',
     category: 'Stretch Ceilings',
     finish: 'Gloss',
     applications: ['Hospitality', 'Retail', 'Commercial'],
@@ -120,7 +120,7 @@ export const products = [
   },
   {
     slug: 'translucent-backlit-membrane',
-    name: 'Translucent Backlit Membrane',
+    name: 'Translucent Ceiling',
     category: 'Stretch Ceilings',
     finish: 'Translucent',
     applications: ['Hospitality', 'Retail', 'Commercial', 'Healthcare'],
@@ -156,7 +156,7 @@ export const products = [
   },
   {
     slug: 'printed-photographic-membrane',
-    name: 'Printed Photographic Membrane',
+    name: 'Printed Ceiling',
     category: 'Stretch Ceilings',
     finish: 'Printed',
     applications: ['Residential', 'Hospitality', 'Retail', 'Healthcare'],
@@ -192,7 +192,7 @@ export const products = [
   },
   {
     slug: 'star-ceiling-membrane',
-    name: 'Star Ceiling Membrane',
+    name: 'Star Ceiling',
     category: 'Stretch Ceilings',
     finish: 'Stars',
     applications: ['Residential', 'Hospitality', 'Wellness'],
@@ -229,7 +229,7 @@ export const products = [
   },
   {
     slug: 'acoustic-microperforated-membrane',
-    name: 'Acoustic Micro-Perforated Membrane',
+    name: 'Acoustic Stretch Ceiling',
     category: 'Stretch Ceilings',
     finish: 'Acoustic',
     applications: ['Office', 'Healthcare', 'Hospitality', 'Educational'],
