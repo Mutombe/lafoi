@@ -136,7 +136,7 @@ export default function Products() {
             transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
             {linkifyProse(
-              'Premium PVC and fabric stretch membranes paired with bespoke architectural lighting. A focused product family, matte finish, satin finish, gloss finish, translucent backlit, printed photographic, sculptural and acoustic, engineered to disappear into great architecture.'
+              'Premium stretch ceilings and bespoke architectural lighting — engineered to disappear into great architecture.'
             )}
           </motion.p>
 
@@ -148,14 +148,14 @@ export default function Products() {
           >
             <a
               href="#catalog"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-dark text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 group"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-dark text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 group"
             >
               Browse the catalogue
               <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
             </a>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-lafoi-dark/15 text-lafoi-dark rounded-full font-sora text-sm font-medium hover:border-lafoi-green/40 hover:text-lafoi-green transition-colors duration-300"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-lafoi-dark/15 text-lafoi-dark rounded-none font-sora text-sm font-medium hover:border-lafoi-green/40 hover:text-lafoi-green transition-colors duration-300"
             >
               Request samples
             </Link>
@@ -203,6 +203,8 @@ export default function Products() {
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
               <div>
                 <p className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase mb-3 flex items-center gap-2">
+                  <span className="font-mono text-lafoi-dark/40">01</span>
+                  <span className="w-6 h-px bg-lafoi-green/50" />
                   <Sparkle size={14} weight="fill" /> Editor&rsquo;s pick
                 </p>
                 <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark max-w-2xl">
@@ -211,7 +213,7 @@ export default function Products() {
               </div>
               <p className="font-general text-lafoi-gray max-w-md">
                 {linkifyProse(
-                  'The stretch ceiling products our designers reach for first, proven, versatile, and the foundation of most La Foi installations. Each one is documented across our portfolio in real interior settings.'
+                  'The ceilings our designers reach for first — proven, versatile, documented across our portfolio.'
                 )}
               </p>
             </div>
@@ -240,7 +242,9 @@ export default function Products() {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <AnimatedSection>
             <div className="mb-12">
-              <p className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase mb-3">
+              <p className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase mb-3 flex items-center gap-2">
+                <span className="font-mono text-lafoi-dark/40">02</span>
+                <span className="w-6 h-px bg-lafoi-green/50" />
                 Catalogue
               </p>
               <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark mb-3">
@@ -248,7 +252,7 @@ export default function Products() {
               </h2>
               <p className="font-general text-lafoi-gray max-w-2xl">
                 {linkifyProse(
-                  'Filter by category, application, or search the catalogue directly. Click any stretch ceiling or lighting solution for full specifications, warranty details and case studies in our portfolio.'
+                  'Filter by category or application. Every ceiling and lighting solution opens to full specs, warranty and case studies.'
                 )}
               </p>
             </div>
@@ -268,7 +272,7 @@ export default function Products() {
                       <button
                         key={cat}
                         onClick={() => setCategory(cat)}
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-sora font-medium transition-all duration-300 ${
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-none text-xs font-sora font-medium transition-all duration-300 ${
                           active
                             ? 'bg-lafoi-dark text-white shadow-md'
                             : 'bg-gray-100 text-lafoi-gray hover:bg-lafoi-green/10 hover:text-lafoi-green'
@@ -292,7 +296,7 @@ export default function Products() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search products"
-                    className="w-full pl-10 pr-9 py-2.5 bg-gray-50 border border-gray-100 rounded-full text-sm font-general placeholder:text-gray-400 outline-none focus:border-lafoi-green/50 focus:bg-white transition-all duration-300"
+                    className="w-full pl-10 pr-9 py-2.5 bg-gray-50 border border-gray-100 rounded-none text-sm font-general placeholder:text-gray-400 outline-none focus:border-lafoi-green/50 focus:bg-white transition-all duration-300"
                   />
                   {query && (
                     <button
@@ -317,7 +321,7 @@ export default function Products() {
                     <button
                       key={app}
                       onClick={() => setApplication(app)}
-                      className={`px-3 py-1 rounded-full text-[11px] font-sora font-medium transition-all duration-300 ${
+                      className={`px-3 py-1 rounded-none text-[11px] font-sora font-medium transition-all duration-300 ${
                         active
                           ? 'bg-lafoi-green text-white'
                           : 'bg-transparent text-lafoi-gray hover:text-lafoi-green'
@@ -355,7 +359,7 @@ export default function Products() {
 
           {/* product grid */}
           {filtered.length > 0 ? (
-            <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+            <StaggerContainer className="grid sm:grid-cols-2 gap-4 lg:gap-6">
               {filtered.map((p) => (
                 <StaggerItem key={p.slug}>
                   <ProductCard product={p} />
@@ -397,7 +401,7 @@ export default function Products() {
                     setCategory('All')
                     document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
                   }}
-                  className="group relative block w-full aspect-[3/4] rounded-3xl overflow-hidden text-left card-shine"
+                  className="group relative block w-full aspect-[3/4] rounded-none overflow-hidden text-left card-shine"
                 >
                   <OptimizedImage
                     src={b.img}
@@ -455,14 +459,14 @@ export default function Products() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-lafoi-green text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/30 group"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-lafoi-green text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/30 group"
                 >
                   Speak to a specialist
                   <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/projects"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-sora text-sm font-medium hover:bg-white/15 transition-colors duration-300"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-none font-sora text-sm font-medium hover:bg-white/15 transition-colors duration-300"
                 >
                   See products in projects
                 </Link>
@@ -483,7 +487,7 @@ function FeaturedCardLarge({ product }) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group block relative rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-shadow duration-500 h-full min-h-[440px] card-shine"
+      className="group block relative rounded-none overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-shadow duration-500 h-full min-h-[440px] card-shine"
     >
       <div className="absolute inset-0">
         <OptimizedImage
@@ -496,7 +500,7 @@ function FeaturedCardLarge({ product }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
       </div>
       <div className="relative z-10 h-full min-h-[440px] flex flex-col justify-end p-8 lg:p-10 text-white">
-        <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-5">
+        <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-none bg-white/10 backdrop-blur-md border border-white/15 mb-5">
           <Sparkle size={11} weight="fill" className="text-lafoi-green-light" />
           <span className="text-[10px] font-sora font-semibold tracking-widest uppercase">Editor&rsquo;s pick</span>
         </div>
@@ -517,7 +521,7 @@ function FeaturedCardSmall({ product }) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group flex items-stretch rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-xl transition-shadow duration-500 h-full min-h-[140px]"
+      className="group flex items-stretch rounded-none overflow-hidden bg-white shadow-sm hover:shadow-xl transition-shadow duration-500 h-full min-h-[140px]"
     >
       <div className="relative w-1/3 sm:w-2/5 shrink-0 overflow-hidden">
         <OptimizedImage
@@ -548,7 +552,7 @@ function ProductCard({ product }) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group block bg-white border border-gray-100 rounded-3xl overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500 h-full flex flex-col"
+      className="group block bg-white border border-gray-100 rounded-none overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500 h-full flex flex-col"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         <OptimizedImage
@@ -559,39 +563,26 @@ function ProductCard({ product }) {
           vision={product.vision}
         />
         {product.featured && (
-          <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
+          <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-none bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
             <Sparkle size={10} weight="fill" className="text-lafoi-green" /> Featured
           </div>
         )}
-        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-lafoi-dark/80 backdrop-blur-md text-[10px] font-sora font-medium tracking-wider uppercase text-white">
+        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-none bg-lafoi-dark/80 backdrop-blur-md text-[10px] font-sora font-medium tracking-wider uppercase text-white">
           {product.origin}
         </div>
       </div>
-      <div className="p-6 flex flex-col flex-1">
-        <p className="text-[10px] font-sora font-semibold tracking-widest uppercase text-lafoi-green mb-2">
-          {product.category} · {product.finish}
-        </p>
-        <h3 className="font-sora text-lg font-bold text-lafoi-dark mb-2 group-hover:text-lafoi-green transition-colors duration-300">
-          {product.name}
-        </h3>
-        <p className="text-sm font-general text-lafoi-gray mb-4 line-clamp-2 flex-1">{product.shortDesc}</p>
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <div className="flex flex-wrap gap-1">
-            {(product.applications || []).slice(0, 2).map((a) => (
-              <span key={a} className="text-[10px] font-sora text-lafoi-gray-medium px-2 py-0.5 rounded-full bg-gray-50">
-                {a}
-              </span>
-            ))}
-            {product.applications && product.applications.length > 2 && (
-              <span className="text-[10px] font-sora text-lafoi-gray-medium px-2 py-0.5">
-                +{product.applications.length - 2}
-              </span>
-            )}
-          </div>
-          <span className="inline-flex items-center gap-1 text-xs font-sora font-medium text-lafoi-dark group-hover:text-lafoi-green group-hover:gap-2 transition-all duration-300">
-            View <ArrowUpRight size={12} weight="bold" />
-          </span>
+      <div className="p-5 lg:p-6 flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-[10px] font-sora font-semibold tracking-widest uppercase text-lafoi-green mb-1.5">
+            {product.category} · {product.finish}
+          </p>
+          <h3 className="font-sora text-lg lg:text-xl font-bold text-lafoi-dark leading-tight truncate group-hover:text-lafoi-green transition-colors duration-300">
+            {product.name}
+          </h3>
         </div>
+        <span className="shrink-0 inline-flex items-center gap-1 text-xs font-sora font-medium text-lafoi-dark group-hover:text-lafoi-green group-hover:gap-2 transition-all duration-300">
+          View <ArrowUpRight size={13} weight="bold" />
+        </span>
       </div>
     </Link>
   )

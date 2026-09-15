@@ -67,7 +67,7 @@ function VideoCard({ video, onOpen, aspect = 'aspect-[16/10]', large = false, in
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.7, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
-      className={`group relative block w-full ${aspect} rounded-3xl overflow-hidden bg-lafoi-dark text-left ring-1 ring-lafoi-dark/10 hover:ring-lafoi-green-light/40 transition-shadow duration-500 shadow-[0_18px_40px_-28px_rgba(17,17,17,0.35)]`}
+      className={`group relative block w-full ${aspect} rounded-none overflow-hidden bg-lafoi-dark text-left ring-1 ring-lafoi-dark/10 hover:ring-lafoi-green-light/40 transition-shadow duration-500 shadow-[0_18px_40px_-28px_rgba(17,17,17,0.35)]`}
       aria-label={`Play ${video.title}`}
     >
       {/* hairline reveal — top */}
@@ -104,7 +104,7 @@ function VideoCard({ video, onOpen, aspect = 'aspect-[16/10]', large = false, in
       </span>
 
       {/* index — top-left */}
-      <span className="absolute top-4 left-4 inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora text-white/85 tracking-[0.2em] uppercase">
+      <span className="absolute top-4 left-4 inline-flex items-center gap-2 px-2.5 py-1 rounded-none bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora text-white/85 tracking-[0.2em] uppercase">
         <span
           aria-hidden
           className="block w-1.5 h-1.5 rounded-full bg-lafoi-green-light"
@@ -190,7 +190,7 @@ function VideoModal({ video, onClose }) {
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative rounded-2xl overflow-hidden bg-lafoi-dark shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)] ring-1 ring-white/10">
+        <div className="relative rounded-none overflow-hidden bg-lafoi-dark shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)] ring-1 ring-white/10">
           <video
             src={video.src}
             controls

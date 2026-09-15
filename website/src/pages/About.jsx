@@ -292,14 +292,14 @@ function Mission() {
 
             {/* Downloads, restyled for dark BG: transparent card, green accent border */}
             <AnimatedSection delay={0.32}>
-              <div className="mt-10 relative rounded-tl-[1.6rem] rounded-br-[1.6rem] rounded-tr-2xl rounded-bl-2xl bg-white/[0.04] backdrop-blur-sm border border-lafoi-green-light/25 overflow-hidden max-w-lg">
+              <div className="mt-10 relative rounded-none bg-white/[0.04] backdrop-blur-sm border border-lafoi-green-light/25 overflow-hidden max-w-lg">
                 <span
                   aria-hidden
                   className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-lafoi-green-light via-lafoi-green-light/70 to-lafoi-green-light/30"
                 />
                 <div className="p-6 lg:p-7">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="w-9 h-9 rounded-xl bg-lafoi-green-light/15 border border-lafoi-green-light/30 flex items-center justify-center">
+                    <span className="w-9 h-9 rounded-none bg-lafoi-green-light/15 border border-lafoi-green-light/30 flex items-center justify-center">
                       <FilePdf size={16} weight="duotone" className="text-lafoi-green-light" />
                     </span>
                     <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light font-semibold">
@@ -314,7 +314,7 @@ function Mission() {
                     target="_blank"
                     rel="noopener"
                     download
-                    className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-full bg-lafoi-green-light text-lafoi-dark font-sora text-sm font-semibold hover:bg-white transition-all duration-300 shadow-[0_8px_24px_-8px_rgba(34,197,94,0.45)]"
+                    className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-none bg-lafoi-green-light text-lafoi-dark font-sora text-sm font-semibold hover:bg-white transition-all duration-300 shadow-[0_8px_24px_-8px_rgba(34,197,94,0.45)]"
                   >
                     <DownloadSimple size={15} weight="bold" />
                     Download our Company Profile
@@ -628,7 +628,7 @@ function ValueImageCard({ v, index, wide = false }) {
   return (
     <div
       className={`relative h-full overflow-hidden bg-lafoi-dark ${
-        wide ? 'aspect-[16/6] rounded-3xl' : 'min-h-[420px] rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-2xl rounded-bl-2xl'
+        wide ? 'aspect-[16/6] rounded-none' : 'min-h-[420px] rounded-none'
       }`}
     >
       <OptimizedImage
@@ -665,7 +665,7 @@ function ValueImageCard({ v, index, wide = false }) {
 
 function ValueTypoCard({ v, index }) {
   return (
-    <div className="group h-full p-7 lg:p-8 rounded-3xl border border-lafoi-dark/10 bg-white/40 backdrop-blur-sm hover:bg-white hover:border-lafoi-green/30 transition-all duration-500">
+    <div className="group h-full p-7 lg:p-8 rounded-none border border-lafoi-dark/10 bg-white/40 backdrop-blur-sm hover:bg-white hover:border-lafoi-green/30 transition-all duration-500">
       <div className="flex items-baseline justify-between mb-6">
         <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
           0{index + 1}
@@ -751,7 +751,7 @@ function Partners() {
 
 function PartnerCard({ p }) {
   return (
-    <div className="relative h-full p-8 lg:p-10 rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-2xl rounded-bl-2xl border border-lafoi-dark/10 bg-white overflow-hidden hover:border-lafoi-green/30 transition-colors duration-500">
+    <div className="relative h-full p-8 lg:p-10 rounded-none border border-lafoi-dark/10 bg-white overflow-hidden hover:border-lafoi-green/30 transition-colors duration-500">
       {p.pattern && (
         <div aria-hidden className="absolute inset-0 pattern-blueprint opacity-25 pointer-events-none" />
       )}
@@ -907,7 +907,7 @@ function Team() {
 
           {/* Right, typographic leadership plate (no portrait) */}
           <AnimatedSection direction="right" className="lg:col-span-6 relative">
-            <div className="relative aspect-[4/5] rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl overflow-hidden border border-white/10 bg-lafoi-green">
+            <div className="relative aspect-[4/5] rounded-none overflow-hidden border border-white/10 bg-lafoi-green">
               <div aria-hidden className="absolute inset-0 dot-pattern opacity-25 pointer-events-none" />
               <div
                 aria-hidden
@@ -1014,7 +1014,7 @@ function AboutCTA() {
             <div className="mt-12 flex flex-wrap items-center gap-4 lg:gap-5">
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
+                className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
               >
                 Begin a conversation
                 <ArrowRight
@@ -1025,7 +1025,7 @@ function AboutCTA() {
               </Link>
               <a
                 href="tel:+263782931472"
-                className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-white/10 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-500"
+                className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-white/10 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-500"
               >
                 +263 782 931 472
                 <ArrowUpRight

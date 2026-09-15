@@ -122,14 +122,14 @@ export default function CartDrawer() {
                   Your cart
                 </h2>
                 {count > 0 && (
-                  <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-lafoi-green text-white text-[11px] font-sora font-semibold">
+                  <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-none bg-lafoi-green text-white text-[11px] font-sora font-semibold">
                     {count}
                   </span>
                 )}
               </div>
               <button
                 onClick={closeCart}
-                className="p-2 rounded-xl hover:bg-lafoi-dark/[0.05] transition-colors"
+                className="p-2 rounded-none hover:bg-lafoi-dark/[0.05] transition-colors"
                 aria-label="Close cart"
               >
                 <X size={18} weight="regular" className="text-lafoi-gray" />
@@ -168,7 +168,7 @@ export default function CartDrawer() {
 
                   <button
                     onClick={handleCheckout}
-                    className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-[#25D366] hover:bg-[#1DA851] text-white rounded-full font-sora text-sm font-medium transition-colors duration-300 shadow-lg shadow-[#25D366]/25 group"
+                    className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-[#25D366] hover:bg-[#1DA851] text-white rounded-none font-sora text-sm font-medium transition-colors duration-300 shadow-lg shadow-[#25D366]/25 group"
                   >
                     <WhatsappLogo size={18} weight="fill" />
                     <span>Checkout via WhatsApp</span>
@@ -199,7 +199,7 @@ export default function CartDrawer() {
 function EmptyState({ onClose }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-      <div className="w-20 h-20 rounded-2xl bg-lafoi-green/10 flex items-center justify-center mb-5">
+      <div className="w-20 h-20 rounded-none bg-lafoi-green/10 flex items-center justify-center mb-5">
         <ShoppingBag size={32} weight="regular" className="text-lafoi-green/70" />
       </div>
       <h3 className="font-display text-xl font-light text-lafoi-dark mb-2">
@@ -211,7 +211,7 @@ function EmptyState({ onClose }) {
       <Link
         to="/shop"
         onClick={onClose}
-        className="inline-flex items-center gap-2 px-5 py-2.5 bg-lafoi-dark text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green transition-colors group"
+        className="inline-flex items-center gap-2 px-5 py-2.5 bg-lafoi-dark text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green transition-colors group"
       >
         Browse the shop
         <ArrowRight
@@ -228,7 +228,7 @@ function EmptyState({ onClose }) {
 function CartItem({ item, onUpdate, onRemove }) {
   return (
     <div className="flex gap-4 group">
-      <div className="w-[72px] h-[72px] rounded-xl overflow-hidden bg-lafoi-dark/[0.04] shrink-0">
+      <div className="w-[72px] h-[72px] rounded-none overflow-hidden bg-lafoi-dark/[0.04] shrink-0">
         <img
           src={item.image}
           alt={item.name}
@@ -248,14 +248,14 @@ function CartItem({ item, onUpdate, onRemove }) {
           </div>
           <button
             onClick={() => onRemove(item.id)}
-            className="p-1.5 rounded-lg text-lafoi-gray-medium hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
+            className="p-1.5 rounded-none text-lafoi-gray-medium hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
             aria-label={`Remove ${item.name}`}
           >
             <Trash size={14} weight="regular" />
           </button>
         </div>
         <div className="flex items-center justify-between mt-2.5">
-          <div className="inline-flex items-center bg-white border border-lafoi-dark/[0.08] rounded-full">
+          <div className="inline-flex items-center bg-white border border-lafoi-dark/[0.08] rounded-none">
             <button
               onClick={() => onUpdate(item.id, item.qty - 1)}
               className="w-7 h-7 flex items-center justify-center text-lafoi-gray hover:text-lafoi-green transition-colors"

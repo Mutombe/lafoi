@@ -294,7 +294,7 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
         {/* Search bar, glass strip */}
         <AnimatedSection delay={0.15}>
           <div className="mb-6 lg:mb-8">
-            <div className="relative flex items-center gap-3 px-5 lg:px-6 py-4 rounded-full bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] focus-within:border-lafoi-green/40 focus-within:shadow-[0_8px_32px_-8px_rgba(34,197,94,0.18)] transition-all duration-500">
+            <div className="relative flex items-center gap-3 px-5 lg:px-6 py-4 rounded-none bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] focus-within:border-lafoi-green/40 focus-within:shadow-[0_8px_32px_-8px_rgba(34,197,94,0.18)] transition-all duration-500">
               <MagnifyingGlass size={16} weight="regular" className="text-lafoi-gray-medium shrink-0" />
               <input
                 type="text"
@@ -317,7 +317,7 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
 
         {/* Category tabs, glass pills */}
         <AnimatedSection delay={0.2}>
-          <div className="mb-12 lg:mb-16 flex flex-wrap items-center gap-2 sm:gap-3 px-5 lg:px-6 py-3 rounded-full bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)]">
+          <div className="mb-12 lg:mb-16 flex flex-wrap items-center gap-2 sm:gap-3 px-5 lg:px-6 py-3 rounded-none bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)]">
             <span className="hidden sm:inline-flex items-center gap-2 font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray-medium pr-3 mr-1 border-r border-lafoi-dark/15">
               Filter
             </span>
@@ -330,7 +330,7 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
                     setActiveCategory(cat.category)
                     setQuery('')
                   }}
-                  className={`px-4 py-2 rounded-full text-xs font-sora font-medium transition-all duration-300 ${
+                  className={`px-4 py-2 rounded-none text-xs font-sora font-medium transition-all duration-300 ${
                     active
                       ? 'bg-gradient-to-b from-lafoi-green-light to-lafoi-green text-white shadow-[0_8px_24px_-12px_rgba(34,197,94,0.45)]'
                       : 'bg-white/60 text-lafoi-gray hover:bg-lafoi-green/8 hover:text-lafoi-green border border-lafoi-dark/10'
@@ -448,7 +448,7 @@ function FAQContactCard() {
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <AnimatedSection>
-          <div className="relative rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-2xl rounded-bl-2xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.08)] overflow-hidden">
+          <div className="relative rounded-none bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.08)] overflow-hidden">
             <div
               aria-hidden
               className="absolute inset-0 pattern-blueprint opacity-20 pointer-events-none"
@@ -481,7 +481,7 @@ function FAQContactCard() {
                     href="https://wa.me/263782931472"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
+                    className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
                   >
                     <WhatsappLogo size={17} weight="regular" />
                     Message us on WhatsApp
@@ -493,7 +493,7 @@ function FAQContactCard() {
                   </a>
                   <a
                     href="mailto:admin@lafoidesigns.co.zw"
-                    className="group inline-flex items-center gap-3 px-7 py-4 rounded-full bg-white/70 backdrop-blur-md border border-lafoi-dark/15 text-lafoi-dark font-sora text-sm font-semibold hover:bg-white hover:border-lafoi-green/40 transition-all duration-500"
+                    className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-white/70 backdrop-blur-md border border-lafoi-dark/15 text-lafoi-dark font-sora text-sm font-semibold hover:bg-white hover:border-lafoi-green/40 transition-all duration-500"
                   >
                     <EnvelopeSimple size={17} weight="regular" />
                     admin@lafoidesigns.co.zw

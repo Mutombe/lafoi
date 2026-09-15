@@ -48,9 +48,9 @@ export default function Layout({ children }) {
 
       {/* Scroll progress rail, right edge, hairline + dot */}
       <div className="hidden lg:block fixed top-1/4 right-3 z-[105] h-1/2 w-[2px] pointer-events-none">
-        <div className="absolute inset-0 bg-lafoi-dark/[0.06] rounded-full" />
+        <div className="absolute inset-0 bg-lafoi-dark/[0.06] rounded-none" />
         <div
-          className="absolute left-0 right-0 top-0 bg-lafoi-green/40 rounded-full transition-all duration-150"
+          className="absolute left-0 right-0 top-0 bg-lafoi-green/40 rounded-none transition-all duration-150"
           style={{ height: `${Math.max(8, scrollProgress)}%` }}
         />
         <div
@@ -73,9 +73,9 @@ export default function Layout({ children }) {
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
-            <div className="glass rounded-2xl p-5 shadow-2xl border border-white/40">
+            <div className="glass rounded-none p-5 shadow-2xl border border-white/40">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-lafoi-green/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-none bg-lafoi-green/10 flex items-center justify-center shrink-0">
                   <Cookie size={18} className="text-lafoi-green" />
                 </div>
                 <div>
@@ -86,13 +86,13 @@ export default function Layout({ children }) {
                   <div className="flex gap-2">
                     <button
                       onClick={acceptCookies}
-                      className="px-4 py-2 bg-lafoi-dark text-white text-xs font-sora font-medium rounded-full hover:bg-lafoi-green transition-colors"
+                      className="px-4 py-2 bg-lafoi-dark text-white text-xs font-sora font-medium rounded-none hover:bg-lafoi-green transition-colors"
                     >
                       Accept All
                     </button>
                     <button
                       onClick={() => { setCookieVisible(false); localStorage.setItem('lafoi-cookies', 'essential') }}
-                      className="px-4 py-2 bg-gray-100 text-lafoi-gray text-xs font-sora font-medium rounded-full hover:bg-gray-200 transition-colors"
+                      className="px-4 py-2 bg-gray-100 text-lafoi-gray text-xs font-sora font-medium rounded-none hover:bg-gray-200 transition-colors"
                     >
                       Essential Only
                     </button>
@@ -130,7 +130,7 @@ function PolicyModal({ open, onClose, type }) {
         >
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
           <motion.div
-            className="relative w-full max-w-2xl max-h-[80vh] bg-white rounded-3xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-2xl max-h-[80vh] bg-white rounded-none shadow-2xl overflow-hidden"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -138,12 +138,12 @@ function PolicyModal({ open, onClose, type }) {
           >
             <div className="sticky top-0 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100 z-10">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-lafoi-green/10 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-none bg-lafoi-green/10 flex items-center justify-center">
                   <Icon size={16} className="text-lafoi-green" />
                 </div>
                 <h3 className="font-sora text-lg font-semibold text-lafoi-dark">{title}</h3>
               </div>
-              <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100 transition-colors">
+              <button onClick={onClose} className="p-2 rounded-none hover:bg-gray-100 transition-colors">
                 <X size={18} />
               </button>
             </div>

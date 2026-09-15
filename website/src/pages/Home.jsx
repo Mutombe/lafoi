@@ -232,7 +232,7 @@ function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/8 backdrop-blur-md border border-white/15">
+          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-none bg-white/8 backdrop-blur-md border border-white/15">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lafoi-green opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-lafoi-green-light" />
@@ -354,14 +354,14 @@ function Hero() {
             >
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-3 px-7 py-3.5 bg-lafoi-green-light text-white rounded-full font-body text-sm font-medium hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
+                className="group inline-flex items-center gap-3 px-7 py-3.5 bg-lafoi-green-light text-white rounded-none font-body text-sm font-medium hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
               >
                 Start your project
                 <ArrowRight size={15} weight="bold" className="group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
               <Link
                 to="/projects"
-                className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
+                className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-none border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
               >
                 Explore our work
                 <ArrowUpRight size={14} weight="regular" className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
@@ -543,7 +543,7 @@ function Manifesto() {
           <div aria-hidden className="absolute inset-0 lg:hidden bg-gradient-to-t from-lafoi-dark/40 via-transparent to-transparent" />
 
           {/* corner badge, restrained, only visible on the right plate */}
-          <div className="absolute top-6 right-6 lg:top-8 lg:right-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/12 backdrop-blur-md border border-white/20">
+          <div className="absolute top-6 right-6 lg:top-8 lg:right-8 inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-white/12 backdrop-blur-md border border-white/20">
             <Sparkle size={11} weight="fill" className="text-lafoi-green-light" />
             <span className="font-sora text-[10px] tracking-[0.25em] uppercase text-white/90">
               La Foi Studio
@@ -679,7 +679,7 @@ function FinishGallery() {
             <MagneticCard strength={0.16} tiltAmplitude={4} className="h-full w-full">
             <Link
               to={`/products/${p.slug}`}
-              className={`group relative block h-full w-full rounded-3xl overflow-hidden bg-lafoi-dark shadow-[0_18px_50px_-25px_rgba(17,17,17,0.35)]`}
+              className={`group relative block h-full w-full rounded-none overflow-hidden bg-lafoi-dark shadow-[0_18px_50px_-25px_rgba(17,17,17,0.35)]`}
             >
               <img
                 src={p.image}
@@ -699,7 +699,7 @@ function FinishGallery() {
               />
               {/* Top-corner index + arrow */}
               <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/80 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md border border-white/15">
+                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/80 px-2.5 py-1 rounded-none bg-black/25 backdrop-blur-md border border-white/15">
                   0{i + 1} / 0{stretchProducts.length}
                 </span>
                 <span className="w-9 h-9 rounded-full border border-white/30 bg-black/20 backdrop-blur-md flex items-center justify-center group-hover:border-lafoi-green-light group-hover:bg-lafoi-green-light/15 transition-all duration-500">
@@ -746,7 +746,7 @@ function FinishGallery() {
             <MagneticCard key={p.slug} strength={0.14} tiltAmplitude={3} className="block h-full">
             <Link
               to={`/products/${p.slug}`}
-              className="group relative block rounded-3xl overflow-hidden bg-lafoi-dark aspect-[4/5]"
+              className="group relative block rounded-none overflow-hidden bg-lafoi-dark aspect-[4/5]"
             >
               <img
                 src={p.image}
@@ -905,7 +905,7 @@ function Approach() {
                 {stages.map((_, i) => (
                   <span
                     key={i}
-                    className={`h-1 rounded-full transition-all duration-700 ${
+                    className={`h-1 rounded-none transition-all duration-700 ${
                       i === activeStep ? 'w-10 bg-white' : 'w-5 bg-white/30'
                     }`}
                   />
@@ -981,7 +981,7 @@ function Approach() {
                 {stages.map((_, i) => (
                   <span
                     key={i}
-                    className={`h-1 rounded-full transition-all duration-700 ${
+                    className={`h-1 rounded-none transition-all duration-700 ${
                       i === activeStep ? 'w-14 bg-white' : 'w-6 bg-white/30'
                     }`}
                   />
@@ -1050,7 +1050,7 @@ function ScrollStage({ stage, index, active }) {
       transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
     >
       {/* mobile-only inline image */}
-      <div className="lg:hidden mb-6 rounded-2xl overflow-hidden aspect-[4/3]">
+      <div className="lg:hidden mb-6 rounded-none overflow-hidden aspect-[4/3]">
         <OptimizedImage
           src={stage.image}
           alt={`Stage ${stage.num} ${stage.title}, ${stage.vision}`}
@@ -1159,8 +1159,8 @@ function Stats() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {stats.map((s, i) => (
             <AnimatedSection key={s.label} delay={i * 0.08}>
-              <div className="conic-ring relative rounded-3xl">
-                <div className="neumorph-glass rounded-3xl p-7 lg:p-8 h-full flex flex-col">
+              <div className="conic-ring relative rounded-none">
+                <div className="neumorph-glass rounded-none p-7 lg:p-8 h-full flex flex-col">
                   <div className="flex items-start justify-between mb-6 lg:mb-10">
                     <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/40">
                       0{i + 1}
@@ -1274,7 +1274,7 @@ function BentoProject({ project, large = false }) {
   return (
     <Link
       to={`/projects/${project.slug}`}
-      className={`group relative block w-full rounded-3xl overflow-hidden bg-lafoi-dark ${
+      className={`group relative block w-full rounded-none overflow-hidden bg-lafoi-dark ${
         large ? 'aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[640px]' : 'aspect-[16/10] lg:aspect-auto lg:min-h-[200px] lg:h-full'
       }`}
     >
@@ -1289,7 +1289,7 @@ function BentoProject({ project, large = false }) {
       <div className="absolute inset-0 bg-gradient-to-br from-lafoi-dark/30 via-transparent to-transparent opacity-60" />
 
       <div className="absolute top-5 left-5 lg:top-6 lg:left-6">
-        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora text-white/85 tracking-[0.2em] uppercase">
+        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora text-white/85 tracking-[0.2em] uppercase">
           {project.category}
         </span>
       </div>
@@ -1482,7 +1482,7 @@ function Testimonial() {
                     href={googleRating.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-1.5 mt-1 px-3 py-1 rounded-full border border-lafoi-dark/10 bg-white/60 hover:bg-white hover:border-lafoi-green/30 transition-colors duration-300"
+                    className="group inline-flex items-center gap-1.5 mt-1 px-3 py-1 rounded-none border border-lafoi-dark/10 bg-white/60 hover:bg-white hover:border-lafoi-green/30 transition-colors duration-300"
                   >
                     <span
                       aria-hidden
@@ -1513,7 +1513,7 @@ function Testimonial() {
                   type="button"
                   aria-label={`Show review ${i + 1}`}
                   onClick={() => setActive(i)}
-                  className={`h-1 rounded-full transition-all duration-500 ${
+                  className={`h-1 rounded-none transition-all duration-500 ${
                     i === active ? 'w-8 bg-lafoi-green' : 'w-3 bg-lafoi-dark/15 hover:bg-lafoi-dark/30'
                   }`}
                 />
@@ -1714,9 +1714,9 @@ function WhyLaFoi() {
             const Icon = p.icon
             return (
               <AnimatedSection key={p.title} delay={i * 0.05}>
-                <div className="clay-lift group h-full p-7 lg:p-8 rounded-3xl bg-white/55 backdrop-blur-md border border-lafoi-green/10 hover:border-lafoi-green/30">
+                <div className="clay-lift group h-full p-7 lg:p-8 rounded-none bg-white/55 backdrop-blur-md border border-lafoi-green/10 hover:border-lafoi-green/30">
                   <div className="flex items-center gap-4 mb-5">
-                    <span className="w-12 h-12 rounded-2xl bg-lafoi-green/10 border border-lafoi-green/20 flex items-center justify-center group-hover:bg-lafoi-green/15 transition-colors duration-500">
+                    <span className="w-12 h-12 rounded-none bg-lafoi-green/10 border border-lafoi-green/20 flex items-center justify-center group-hover:bg-lafoi-green/15 transition-colors duration-500">
                       <Icon size={20} weight="duotone" className="text-lafoi-green" />
                     </span>
                     <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/55">
@@ -1780,7 +1780,7 @@ function CinematicCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="pointer-events-auto inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20"
+            className="pointer-events-auto inline-flex items-center gap-2.5 px-4 py-2 rounded-none bg-white/10 backdrop-blur-md border border-white/20"
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inset-0 rounded-full bg-lafoi-green-light pulse-dot" />
@@ -1829,7 +1829,7 @@ function CinematicCTA() {
             <div className="mt-12 flex flex-wrap items-center gap-4 lg:gap-5">
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-none bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
               >
                 Start your project
                 <ArrowRight
@@ -1840,7 +1840,7 @@ function CinematicCTA() {
               </Link>
               <Link
                 to="/projects"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white/8 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/25 hover:bg-white/12 hover:border-white/45 transition-all duration-500"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-none bg-white/8 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/25 hover:bg-white/12 hover:border-white/45 transition-all duration-500"
               >
                 Explore portfolio
                 <ArrowUpRight

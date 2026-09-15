@@ -109,7 +109,7 @@ export default function HeroSlideshow({
                 type="button"
                 onClick={() => goTo(i)}
                 aria-label={`Slide ${i + 1}`}
-                className={`h-1 rounded-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                className={`h-1 rounded-none transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   isActive
                     ? 'w-8 bg-lafoi-green-light'
                     : 'w-1.5 bg-white/50 hover:bg-white/80'

@@ -81,7 +81,7 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
 
       {/* Newsletter CTA band */}
       <div className="relative border-b border-white/10 z-10">
-        <div className="absolute top-0 left-1/4 w-96 h-48 bg-lafoi-green/[0.07] rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-96 h-48 bg-lafoi-green/[0.07] rounded-none blur-[120px] pointer-events-none" />
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-16 lg:py-20 relative">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <AnimatedSection>
@@ -105,11 +105,11 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="flex-1 px-5 py-3.5 bg-white/[0.07] border border-white/[0.12] rounded-full text-sm font-general text-white placeholder:text-white/30 outline-none focus:border-lafoi-green/50 focus:bg-white/10 transition-all duration-300"
+                  className="flex-1 px-5 py-3.5 bg-white/[0.07] border border-white/[0.12] rounded-none text-sm font-general text-white placeholder:text-white/30 outline-none focus:border-lafoi-green/50 focus:bg-white/10 transition-all duration-300"
                 />
                 <button
                   type="submit"
-                  className="px-6 py-3.5 bg-lafoi-green text-white rounded-full font-sora text-sm font-medium hover:bg-lafoi-green-light transition-all duration-300 flex items-center gap-2 group shrink-0 shadow-lg shadow-lafoi-green/20"
+                  className="px-6 py-3.5 bg-lafoi-green text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green-light transition-all duration-300 flex items-center gap-2 group shrink-0 shadow-lg shadow-lafoi-green/20"
                 >
                   Subscribe
                   <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
@@ -254,7 +254,7 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
       </div>
 
       {/* Refined ambient glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[720px] h-[260px] bg-lafoi-green/[0.06] rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[720px] h-[260px] bg-lafoi-green/[0.06] rounded-none blur-[140px] pointer-events-none" />
     </footer>
   )
 }
