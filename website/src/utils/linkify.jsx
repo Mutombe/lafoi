@@ -43,6 +43,11 @@ const TERMS = [
   { pattern: /\bafter[-\s]sales\b/i, to: '/services/maintenance-support' },
   { pattern: /\bmaintenance\b/i, to: '/services/maintenance-support' },
 
+  { pattern: /\b3D\s+digital\s+twins?\b/i, to: '/services/3d-digital-twins' },
+  { pattern: /\bdigital\s+twins?\b/i, to: '/services/3d-digital-twins' },
+  { pattern: /\bMatterport\b/i, to: '/services/3d-digital-twins' },
+  { pattern: /\b3D\s+mapping\b/i, to: '/services/3d-digital-twins' },
+
   // === Finishes / products (longer first) ===
   { pattern: /\bprinted\s+photographic\s+membranes?\b/i, to: '/products/printed-photographic-membrane' },
   { pattern: /\bphotographic\s+membranes?\b/i, to: '/products/printed-photographic-membrane' },

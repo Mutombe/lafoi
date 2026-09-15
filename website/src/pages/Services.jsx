@@ -17,6 +17,7 @@ import {
   PaintBrush,
   GridFour,
   Drop,
+  Cube,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
@@ -237,6 +238,33 @@ const allServices = [
     image: 'https://images.unsplash.com/photo-1604762524889-3e2fcc145683?w=1400&q=80',
     imageVision: 'Glossy seamless epoxy floor surface',
   },
+  {
+    slug: '3d-digital-twins',
+    icon: Cube,
+    title: '3D Digital Twins',
+    subtitle: 'Matterport spatial capture',
+    hero: '/brand/images/46.png',
+    heroVision: 'Geometric linear-LED stretch ceiling, the kind of finished La Foi space captured as a 3D twin',
+    desc: 'We scan a finished space with Matterport into a fully navigable 3D digital twin, a dimensionally accurate virtual walkthrough clients open from any device. Walk the room before a brick moves, revisit a completed install from anywhere in the world, and pull true measurements straight from the model. It is the difference between describing a space and standing in it.',
+    features: [
+      { label: 'Matterport capture', detail: 'Millimetre-accurate 3D scan of the finished room' },
+      { label: 'Virtual walkthrough', detail: 'Navigate space to space from any browser or phone' },
+      { label: 'Dollhouse & floor plan', detail: 'Overhead cutaway and measured plan views' },
+      { label: 'Measure anywhere', detail: 'Draw real dimensions from any point in the model' },
+      { label: 'Guided tags', detail: 'Annotate finishes, fixtures and specs in-scene' },
+      { label: 'One secure link', detail: 'Shared in a click, no app, no download' },
+    ],
+    applications: [
+      'As-built documentation',
+      'Remote client sign-off',
+      'Hospitality & showrooms',
+      'Real estate & lettings',
+      'Design presentations',
+      'Insurance & records',
+    ],
+    image: '/brand/images/50.png',
+    imageVision: 'Wide furnished La Foi interior with slatted timber ceiling, a whole room ready to be captured as a digital twin',
+  },
 ]
 
 export default function Services() {
@@ -361,7 +389,7 @@ function ServicesHero() {
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-12 h-px bg-lafoi-green/60" />
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                Four services &middot; One studio
+                Eight services &middot; One studio
               </p>
             </div>
 
@@ -399,6 +427,7 @@ function ServicesHero() {
                 { name: 'Flooring', slug: 'flooring' },
                 { name: 'Epoxy Flooring', slug: 'epoxy-flooring' },
                 { name: 'Design Consultation & Customisation', slug: 'design-consultation' },
+                { name: '3D Digital Twins', slug: '3d-digital-twins' },
                 { name: 'Maintenance & Support', slug: 'maintenance-support' },
               ].map((s, i) => (
                 <li key={s.slug} className="flex items-baseline gap-4 py-1.5 border-b border-lafoi-dark/8">
@@ -501,7 +530,7 @@ function ServicesEditorial() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
-                Four services.{' '}
+                Eight services.{' '}
                 <span className="text-lafoi-green">Read like a magazine.</span>
               </h2>
             </AnimatedSection>

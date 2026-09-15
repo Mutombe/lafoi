@@ -830,7 +830,7 @@ export const getAdjacentProjects = (slug) => {
 export const totalStats = {
   // Honest, modest framing for a studio founded 2024.
   totalProjects: projects.length,
-  servicesOffered: 4,
+  servicesOffered: 8,
   founded: 2024,
   warrantyYears: 10,
 }

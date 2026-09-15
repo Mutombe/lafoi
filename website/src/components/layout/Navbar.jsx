@@ -8,7 +8,7 @@ import {
   Question, Newspaper, Users, Lightbulb, Palette,
   SquaresFour, Lightning, Star, Package, ShoppingBag,
   Storefront, SignIn, UserCircle,
-  PaintBrush, Stack, GridFour, Drop,
+  PaintBrush, Stack, GridFour, Drop, Cube,
 } from '@phosphor-icons/react'
 import { useSelector } from 'react-redux'
 import { selectIsAuthenticated, selectCurrentUser } from '../../dashboard/store/authSlice'
@@ -34,6 +34,7 @@ const navGroups = [
       { name: 'Interior Design',    path: '/services/interior-design',             icon: PaintBrush,  desc: 'Concept to completion' },
       { name: 'Flooring',           path: '/services/flooring',                    icon: Stack,       desc: 'Hardwood, vinyl, parquet' },
       { name: 'Epoxy Flooring',     path: '/services/epoxy-flooring',              icon: Drop,        desc: 'Seamless resin systems' },
+      { name: '3D Digital Twins',   path: '/services/3d-digital-twins',            icon: Cube,        desc: 'Matterport spatial capture' },
       { name: 'All Services',       path: '/services',                             icon: Palette,     desc: 'Full service catalog' },
       { name: 'Products',           path: '/products',                             icon: Package,     desc: 'Membranes, lighting & accessories' },
     ],
@@ -56,6 +57,7 @@ const searchableContent = [
   { title: 'Epoxy Flooring', path: '/services/epoxy-flooring', section: 'Services', keywords: 'epoxy resin floor seamless metallic flake industrial garage showroom' },
   { title: 'Design Consultation & Customisation', path: '/services/design-consultation', section: 'Services', keywords: 'design consultation custom site visit sampling' },
   { title: 'Maintenance & Support', path: '/services/maintenance-support', section: 'Services', keywords: 'maintenance support warranty cleaning repair' },
+  { title: '3D Digital Twins', path: '/services/3d-digital-twins', section: 'Services', keywords: 'matterport 3d mapping digital twin virtual tour walkthrough scan spatial capture dollhouse floor plan measurement' },
   { title: 'About La Foi Designs', path: '/about', section: 'Company', keywords: 'about company history story team' },
   { title: 'Our Portfolio', path: '/portfolio', section: 'Projects', keywords: 'portfolio gallery projects work showcase' },
   { title: 'Contact Us', path: '/contact', section: 'Connect', keywords: 'contact reach phone email address' },
