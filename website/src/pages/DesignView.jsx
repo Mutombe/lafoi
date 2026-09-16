@@ -210,7 +210,7 @@ function Shell({ children, wm }) {
 const S = {
   root: {
     position: 'fixed', inset: 0, background: '#0d0f0e', color: '#e8eae7',
-    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", display: 'flex',
+    fontFamily: "'Manrope', system-ui, sans-serif", display: 'flex',
     flexDirection: 'column', overflow: 'hidden',
   },
   topbar: { display: 'flex', alignItems: 'center', gap: 16, padding: '14px 22px', borderBottom: '1px solid rgba(255,255,255,.08)' },
