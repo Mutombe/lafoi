@@ -421,11 +421,11 @@ export default function Navbar() {
                       <Link
                         key={item.path}
                         to={item.path}
-                        className="flex items-center gap-3 py-2.5 text-lafoi-gray hover:text-lafoi-green transition-colors"
+                        className="flex items-center gap-3 py-3 min-h-[44px] text-lafoi-gray hover:text-lafoi-green transition-colors"
                         onClick={() => setMobileOpen(false)}
                       >
                         <item.icon size={16} weight="regular" />
-                        <span className="font-general text-sm">{item.name}</span>
+                        <span className="font-general text-[15px]">{item.name}</span>
                       </Link>
                     ))}
                   </div>

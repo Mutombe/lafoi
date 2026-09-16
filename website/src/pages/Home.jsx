@@ -628,7 +628,7 @@ function FinishGallery() {
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  The finish library
+                  01 · The finish library
                 </p>
                 <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">03 / 10</span>
               </div>
@@ -997,7 +997,7 @@ function Approach() {
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  How we work
+                  02 · How we work
                 </p>
                 <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">05 / 10</span>
               </div>
@@ -1191,7 +1191,7 @@ function ProjectsBento() {
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  Selected work
+                  03 · Selected work
                 </p>
                 <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">07 / 10</span>
               </div>
@@ -1409,7 +1409,7 @@ function Testimonial() {
             <div className="flex items-center justify-center gap-3 mb-10">
               <span className="block w-10 h-px bg-lafoi-green/60" />
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                Heard from clients
+                04 · Heard from clients
               </p>
               <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">09 / 10</span>
               <span className="block w-10 h-px bg-lafoi-green/60" />
@@ -1580,7 +1580,7 @@ function VideoShowcaseSection() {
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  In motion
+                  05 · In motion
                 </p>
                 <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
                   08 / 10
@@ -1674,7 +1674,7 @@ function WhyLaFoi() {
             <div className="flex items-center gap-3 mb-5">
               <span className="block w-10 h-px bg-lafoi-green/60" />
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                Why La Foi
+                06 · Why La Foi
               </p>
               <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">10 / 10</span>
             </div>
