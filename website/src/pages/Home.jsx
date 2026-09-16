@@ -315,33 +315,19 @@ function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
             >
-              Premium PVC and fabric{' '}
+              Premium{' '}
               <Link
                 to="/services/stretch-ceiling-installation"
                 className="prose-link-dark prose-link-arrow"
               >
-                stretch membranes
-              </Link>
-              , custom{' '}
-              <Link
-                to="/products/printed-photographic-membrane"
-                className="prose-link-dark"
-              >
-                photographic
+                stretch ceilings
               </Link>{' '}
-              and{' '}
-              <Link
-                to="/products/translucent-backlit-membrane"
-                className="prose-link-dark"
-              >
-                translucent
-              </Link>{' '}
-              panels, paired with bespoke{' '}
+              and bespoke{' '}
               <Link
                 to="/services/lighting-solutions"
                 className="prose-link-dark prose-link-arrow"
               >
-                LED architecture
+                lighting
               </Link>
               . We design the surface most often forgotten.
             </motion.p>
@@ -560,7 +546,7 @@ function Manifesto() {
           {[...Array(2)].flatMap((_, k) =>
             [
               'Zimbabwe’s first',
-              'PVC & fabric membrane',
+              'PVC & fabric ceilings',
               'Wide colour range',
               'Fire-rated B-s1, d0',
               '1 to 2 day install',
@@ -642,7 +628,7 @@ function FinishGallery() {
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  The membrane library
+                  The finish library
                 </p>
                 <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">03 / 10</span>
               </div>
@@ -660,7 +646,7 @@ function FinishGallery() {
           <AnimatedSection delay={0.2} direction="right">
             <p className="text-lafoi-gray font-general max-w-sm leading-relaxed">
               {linkifyProse(
-                'Every stretch ceiling finish answers a different brief, calm or theatrical, silent or sculptural. We help you choose the one your space is asking for, drawing on a decade of architectural lighting experience.'
+                'Every finish answers a different brief — calm or theatrical, silent or sculptural. We help you choose the one your space is asking for.'
               )}
             </p>
           </AnimatedSection>
@@ -683,7 +669,7 @@ function FinishGallery() {
             >
               <img
                 src={p.image}
-                alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling membrane`}`}
+                alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling`}`}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -750,7 +736,7 @@ function FinishGallery() {
             >
               <img
                 src={p.image}
-                alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling membrane`}`}
+                alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling`}`}
                 width="800"
                 height="1067"
                 loading="lazy"
@@ -844,21 +830,21 @@ function Approach() {
     {
       num: '01',
       title: 'Design',
-      copy: 'A site visit, a measured drawing, a long design consultation. Stretch membrane, lighting layout, control logic, edge details, we sample the finish in your light, not ours.',
+      copy: 'A site visit, a measured drawing, a design consultation. We sample the finish in your light, not ours.',
       image: '/brand/images/11.png',
       vision: 'White gloss kitchen with perimeter LED, magazine-clean design language',
     },
     {
       num: '02',
       title: 'Craft',
-      copy: 'Custom-cut stretch membrane, hand-joined seams, architectural lighting prepped to scene before the room is touched. The work happens off-site so the room itself stays calm.',
+      copy: 'Custom-cut ceilings, hand-joined seams, lighting prepped to scene — built off-site so the room stays calm.',
       image: '/brand/images/15.png',
       vision: 'Dining room with hand-blown glass-globe chandelier, crafted entertaining space',
     },
     {
       num: '03',
       title: 'Reveal',
-      copy: 'A trained crew, one to two working days per room, no demolition. The membrane goes up, the lighting comes alive, and the room is yours by sundown, followed by our maintenance and support warranty.',
+      copy: 'A trained crew, one to two days per room, no demolition. The ceiling goes up, the lighting comes alive, and the room is yours by sundown.',
       image: '/brand/images/20.png',
       vision: 'Bedroom with white gloss ceiling, arched mirrors and timber panelling, finished reveal',
     },
@@ -1124,7 +1110,7 @@ function Stats() {
     { value: 1, suffix: 'st', label: 'Stretch ceiling studio in Zimbabwe' },
     { value: 4, suffix: '', label: 'Core service lines, end to end' },
     { value: 2, suffix: 'd', label: 'Typical install, start to handover' },
-    { value: 10, suffix: 'yr', label: 'Manufacturer warranty on the membrane' },
+    { value: 10, suffix: 'yr', label: 'Manufacturer warranty on the ceiling' },
   ]
 
   return (
@@ -1560,7 +1546,7 @@ function VideoShowcaseSection() {
     {
       src: '/brand/videos/7.mp4',
       title: 'Studio in motion',
-      caption: 'Stretch membrane install · Residential',
+      caption: 'Stretch ceiling install · Residential',
     },
     {
       src: '/brand/videos/27.mp4',
@@ -1612,7 +1598,7 @@ function VideoShowcaseSection() {
             <AnimatedSection delay={0.2}>
               <p className="mt-6 max-w-xl text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
                 {linkifyProse(
-                  'Every finished ceiling begins long before the final photograph. From measuring and shaping stretch membranes, to integrating lighting solutions and installing photographic membranes with precision, each stage is part of a workflow built around detail, balance, and craftsmanship. What appears effortless in our portfolio is the result of careful planning, technical execution, and hours spent perfecting the spaces above you.'
+                  'Every finished ceiling begins long before the final photograph — measured, shaped, and lit with precision. What looks effortless is the result of careful planning and craft.'
                 )}
               </p>
             </AnimatedSection>
@@ -1654,7 +1640,7 @@ function WhyLaFoi() {
     {
       icon: Sparkle,
       title: 'Innovative & Modern',
-      copy: 'Premium PVC and fabric membranes paired with bespoke architectural lighting design.',
+      copy: 'Premium PVC and fabric ceilings paired with bespoke architectural lighting design.',
     },
     {
       icon: Lightning,
@@ -1674,7 +1660,7 @@ function WhyLaFoi() {
     {
       icon: Leaf,
       title: 'Eco Friendly',
-      copy: 'Removable, reusable membranes. Energy-efficient LED systems calibrated to your space.',
+      copy: 'Removable, reusable ceilings. Energy-efficient LED systems calibrated to your space.',
     },
   ]
 
@@ -1695,14 +1681,14 @@ function WhyLaFoi() {
             <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[4rem] leading-[1.05] tracking-[-0.02em]">
               Six reasons to put
               <br />
-              <span className="text-lafoi-green">our membrane on your ceiling.</span>
+              <span className="text-lafoi-green">our finish on your ceiling.</span>
             </h2>
           </AnimatedSection>
 
           <AnimatedSection direction="right" className="lg:col-span-5">
             <p className="text-base lg:text-lg text-lafoi-gray font-general leading-relaxed">
               {linkifyProse(
-                'We pioneered stretch ceilings in Zimbabwe and remain the country’s leading installer. Tensioned PVC and fabric membranes go up in one to two days, clean, fire-rated, fully washable, and finished in a wide colour range and printed designs.'
+                'We pioneered stretch ceilings in Zimbabwe and remain the country’s leading installer. Tensioned PVC and fabric go up in one to two days — clean, fire-rated, washable.'
               )}
             </p>
           </AnimatedSection>
@@ -1819,7 +1805,7 @@ function CinematicCTA() {
           <AnimatedSection delay={0.25}>
             <p className="mt-8 max-w-xl text-base lg:text-lg text-white/70 font-general leading-relaxed">
               {linkifyProse(
-                'We visit, we measure, we listen. The first design consultation costs nothing and tends to clarify even the briefs that arrive uncertain. WhatsApp is the fastest channel, email if you would rather attach drawings, or browse our portfolio for context.',
+                'We visit, we measure, we listen. The first consultation is free. WhatsApp is fastest; email if you would rather attach drawings.',
                 { variant: 'dark' }
               )}
             </p>
