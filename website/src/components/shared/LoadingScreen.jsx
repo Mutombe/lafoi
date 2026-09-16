@@ -11,7 +11,7 @@ export default function LoadingScreen() {
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="w-16 h-16 rounded-none bg-gradient-to-br from-lafoi-green to-lafoi-green-light"
+          className="w-16 h-16 rounded-sm bg-gradient-to-br from-lafoi-green to-lafoi-green-light"
           animate={{
             rotate: [0, 90, 180, 270, 360],
             borderRadius: ['20%', '50%', '20%', '50%', '20%'],

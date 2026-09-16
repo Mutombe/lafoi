@@ -100,13 +100,13 @@ export default function ProductDetail() {
             transition={{ duration: 0.7, delay: 0.15 }}
           >
             <div className="flex flex-wrap items-center gap-2 mb-5">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora font-semibold tracking-widest uppercase text-white">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora font-semibold tracking-widest uppercase text-white">
                 {product.category}
               </span>
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-lafoi-green text-[10px] font-sora font-semibold tracking-widest uppercase text-white">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-lafoi-green text-[10px] font-sora font-semibold tracking-widest uppercase text-white">
                 {product.finish}
               </span>
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora font-semibold tracking-widest uppercase text-white">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-white/10 backdrop-blur-md border border-white/15 text-[10px] font-sora font-semibold tracking-widest uppercase text-white">
                 <Globe size={10} weight="regular" /> {product.origin}
               </span>
             </div>
@@ -162,7 +162,7 @@ export default function ProductDetail() {
                     {(product.applications || []).map((a) => (
                       <span
                         key={a}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-none bg-lafoi-cream border border-gray-100 text-xs font-sora font-medium text-lafoi-dark"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-lafoi-cream border border-gray-100 text-xs font-sora font-medium text-lafoi-dark"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-lafoi-green" />
                         {a}
@@ -178,7 +178,7 @@ export default function ProductDetail() {
               <div className="lg:sticky lg:top-28 space-y-6">
                 {/* spec table */}
                 <AnimatedSection direction="right">
-                  <div className="bg-lafoi-cream border border-gray-100 rounded-none p-7 lg:p-8 relative overflow-hidden">
+                  <div className="bg-lafoi-cream border border-gray-100 rounded-sm p-7 lg:p-8 relative overflow-hidden">
                     <div className="absolute inset-0 dot-pattern opacity-40 pointer-events-none" />
                     <div className="relative">
                       <p className="text-lafoi-green font-sora text-[10px] font-semibold tracking-widest uppercase mb-1">
@@ -201,7 +201,7 @@ export default function ProductDetail() {
 
                 {/* CTA card */}
                 <AnimatedSection direction="right" delay={0.1}>
-                  <div className="relative bg-lafoi-dark text-white rounded-none p-7 lg:p-8 overflow-hidden">
+                  <div className="relative bg-lafoi-dark text-white rounded-sm p-7 lg:p-8 overflow-hidden">
                     <div className="absolute -top-12 -right-12 w-48 h-48 bg-lafoi-green/20 rounded-full blur-3xl pointer-events-none" />
                     <div className="relative">
                       <p className="text-lafoi-green-light font-sora text-[10px] font-semibold tracking-widest uppercase mb-2">
@@ -216,7 +216,7 @@ export default function ProductDetail() {
                       </p>
                       <Link
                         to="/contact"
-                        className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-lafoi-green hover:bg-lafoi-green-light text-white rounded-none font-sora text-sm font-medium transition-colors duration-300 group mb-3"
+                        className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-lafoi-green hover:bg-lafoi-green-light text-white rounded-sm font-sora text-sm font-medium transition-colors duration-300 group mb-3"
                       >
                         Request a quote
                         <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
@@ -224,7 +224,7 @@ export default function ProductDetail() {
                       <button
                         type="button"
                         onClick={() => window.print()}
-                        className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 rounded-none font-sora text-xs font-medium text-white/85 transition-colors duration-300"
+                        className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 rounded-sm font-sora text-xs font-medium text-white/85 transition-colors duration-300"
                       >
                         <Download size={13} weight="regular" /> Download spec sheet
                       </button>
@@ -272,7 +272,7 @@ export default function ProductDetail() {
                 <AnimatedSection key={i} delay={i * 0.08}>
                   <button
                     onClick={() => setLightbox(src)}
-                    className="group relative block w-full aspect-[4/5] rounded-none overflow-hidden card-shine"
+                    className="group relative block w-full aspect-[4/5] rounded-sm overflow-hidden card-shine"
                   >
                     <OptimizedImage
                       src={src}
@@ -322,7 +322,7 @@ export default function ProductDetail() {
                 <StaggerItem key={proj.slug}>
                   <Link
                     to={`/projects/${proj.slug}`}
-                    className="group block bg-white border border-gray-100 rounded-none overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500"
+                    className="group block bg-white border border-gray-100 rounded-sm overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
@@ -332,7 +332,7 @@ export default function ProductDetail() {
                         fill
                         vision={proj.vision}
                       />
-                      <div className="absolute top-3 left-3 px-2.5 py-1 rounded-none bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
+                      <div className="absolute top-3 left-3 px-2.5 py-1 rounded-sm bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
                         {proj.category}
                       </div>
                     </div>
@@ -370,7 +370,7 @@ export default function ProductDetail() {
                 <StaggerItem key={p.slug}>
                   <Link
                     to={`/products/${p.slug}`}
-                    className="group block bg-white border border-gray-100 rounded-none overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500"
+                    className="group block bg-white border border-gray-100 rounded-sm overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
@@ -445,7 +445,7 @@ export default function ProductDetail() {
           >
             <div className="absolute inset-0 bg-black/85 backdrop-blur-md" onClick={() => setLightbox(null)} />
             <motion.div
-              className="relative w-full max-w-5xl rounded-none overflow-hidden"
+              className="relative w-full max-w-5xl rounded-sm overflow-hidden"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}

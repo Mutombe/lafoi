@@ -197,7 +197,7 @@ function CareersHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-none bg-white/8 backdrop-blur-md border border-white/15">
+          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-sm bg-white/8 backdrop-blur-md border border-white/15">
             <Briefcase size={13} weight="regular" className="text-lafoi-green-light" />
             <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
               Careers &middot; Belgravia, Harare
@@ -240,7 +240,7 @@ function CareersHero() {
             >
               <a
                 href="#openings"
-                className="group inline-flex items-center gap-3 px-7 py-3.5 bg-lafoi-green-light text-white rounded-none font-body text-sm font-medium hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
+                className="group inline-flex items-center gap-3 px-7 py-3.5 bg-lafoi-green-light text-white rounded-sm font-body text-sm font-medium hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
               >
                 See open roles
                 <ArrowRight
@@ -251,7 +251,7 @@ function CareersHero() {
               </a>
               <a
                 href="mailto:admin@lafoidesigns.co.zw?subject=General Application, La Foi Designs"
-                className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-none border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
+                className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-sm border border-white/25 text-white/85 hover:bg-white/8 hover:border-white/45 hover:text-white font-body text-sm font-medium transition-all duration-500"
               >
                 Open application
                 <ArrowUpRight
@@ -269,7 +269,7 @@ function CareersHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="ml-auto max-w-[300px] relative bg-white/[0.06] backdrop-blur-md border border-white/15 rounded-none p-6 overflow-hidden">
+            <div className="ml-auto max-w-[300px] relative bg-white/[0.06] backdrop-blur-md border border-white/15 rounded-sm p-6 overflow-hidden">
               <div aria-hidden className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
               <div className="relative">
                 <div className="flex items-center gap-3 mb-4">
@@ -381,7 +381,7 @@ function Perks() {
 function PerkImageCard({ p, index }) {
   const Icon = p.icon
   return (
-    <div className="relative h-full min-h-[420px] overflow-hidden bg-lafoi-dark rounded-none">
+    <div className="relative h-full min-h-[420px] overflow-hidden bg-lafoi-dark rounded-sm">
       <OptimizedImage
         src={p.image}
         alt={p.title}
@@ -417,7 +417,7 @@ function PerkImageCard({ p, index }) {
 function PerkTypoCard({ p, index }) {
   const Icon = p.icon
   return (
-    <div className="group h-full min-h-[420px] flex flex-col p-8 lg:p-10 rounded-none border border-lafoi-dark/10 bg-white/40 backdrop-blur-sm hover:bg-white hover:border-lafoi-green/30 transition-all duration-500">
+    <div className="group h-full min-h-[420px] flex flex-col p-8 lg:p-10 rounded-sm border border-lafoi-dark/10 bg-white/40 backdrop-blur-sm hover:bg-white hover:border-lafoi-green/30 transition-all duration-500">
       <div className="flex items-baseline justify-between mb-7">
         <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
           0{index + 1} / 04
@@ -523,15 +523,15 @@ function JobRow({ job, index, total }) {
 
         {/* chips */}
         <div className="lg:col-span-3 flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none bg-white/8 border border-white/15 text-[10px] font-sora tracking-[0.22em] uppercase text-white/75">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-white/8 border border-white/15 text-[10px] font-sora tracking-[0.22em] uppercase text-white/75">
             <Briefcase size={11} weight="regular" />
             {job.department}
           </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none bg-white/8 border border-white/15 text-[10px] font-sora tracking-[0.22em] uppercase text-white/75">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-white/8 border border-white/15 text-[10px] font-sora tracking-[0.22em] uppercase text-white/75">
             <Clock size={11} weight="regular" />
             {job.type}
           </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none bg-white/8 border border-white/15 text-[10px] font-sora tracking-[0.22em] uppercase text-white/75">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-sm bg-white/8 border border-white/15 text-[10px] font-sora tracking-[0.22em] uppercase text-white/75">
             <MapPin size={11} weight="regular" />
             {job.location}
           </span>
@@ -686,7 +686,7 @@ function GeneralApplyCTA() {
             <div className="mt-12 flex flex-wrap items-center gap-4 lg:gap-5">
               <a
                 href="mailto:admin@lafoidesigns.co.zw?subject=General Application, La Foi Designs"
-                className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
+                className="group inline-flex items-center gap-3 px-7 py-4 rounded-sm bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
               >
                 <Sparkle size={15} weight="regular" />
                 Send your CV
@@ -698,7 +698,7 @@ function GeneralApplyCTA() {
               </a>
               <Link
                 to="/about"
-                className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-white/10 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-500"
+                className="group inline-flex items-center gap-3 px-7 py-4 rounded-sm bg-white/10 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-500"
               >
                 Read more about the studio
                 <ArrowUpRight

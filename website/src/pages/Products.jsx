@@ -148,14 +148,14 @@ export default function Products() {
           >
             <a
               href="#catalog"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-dark text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 group"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-dark text-white rounded-sm font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 group"
             >
               Browse the catalogue
               <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
             </a>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-lafoi-dark/15 text-lafoi-dark rounded-none font-sora text-sm font-medium hover:border-lafoi-green/40 hover:text-lafoi-green transition-colors duration-300"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-lafoi-dark/15 text-lafoi-dark rounded-sm font-sora text-sm font-medium hover:border-lafoi-green/40 hover:text-lafoi-green transition-colors duration-300"
             >
               Request samples
             </Link>
@@ -272,7 +272,7 @@ export default function Products() {
                       <button
                         key={cat}
                         onClick={() => setCategory(cat)}
-                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-none text-xs font-sora font-medium transition-all duration-300 ${
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-sm text-xs font-sora font-medium transition-all duration-300 ${
                           active
                             ? 'bg-lafoi-dark text-white shadow-md'
                             : 'bg-gray-100 text-lafoi-gray hover:bg-lafoi-green/10 hover:text-lafoi-green'
@@ -296,7 +296,7 @@ export default function Products() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search products"
-                    className="w-full pl-10 pr-9 py-2.5 bg-gray-50 border border-gray-100 rounded-none text-sm font-general placeholder:text-gray-400 outline-none focus:border-lafoi-green/50 focus:bg-white transition-all duration-300"
+                    className="w-full pl-10 pr-9 py-2.5 bg-gray-50 border border-gray-100 rounded-sm text-sm font-general placeholder:text-gray-400 outline-none focus:border-lafoi-green/50 focus:bg-white transition-all duration-300"
                   />
                   {query && (
                     <button
@@ -321,7 +321,7 @@ export default function Products() {
                     <button
                       key={app}
                       onClick={() => setApplication(app)}
-                      className={`px-3 py-1 rounded-none text-[11px] font-sora font-medium transition-all duration-300 ${
+                      className={`px-3 py-1 rounded-sm text-[11px] font-sora font-medium transition-all duration-300 ${
                         active
                           ? 'bg-lafoi-green text-white'
                           : 'bg-transparent text-lafoi-gray hover:text-lafoi-green'
@@ -401,7 +401,7 @@ export default function Products() {
                     setCategory('All')
                     document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
                   }}
-                  className="group relative block w-full aspect-[3/4] rounded-none overflow-hidden text-left card-shine"
+                  className="group relative block w-full aspect-[3/4] rounded-sm overflow-hidden text-left card-shine"
                 >
                   <OptimizedImage
                     src={b.img}
@@ -459,14 +459,14 @@ export default function Products() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-lafoi-green text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/30 group"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-lafoi-green text-white rounded-sm font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/30 group"
                 >
                   Speak to a specialist
                   <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/projects"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-none font-sora text-sm font-medium hover:bg-white/15 transition-colors duration-300"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-sm font-sora text-sm font-medium hover:bg-white/15 transition-colors duration-300"
                 >
                   See products in projects
                 </Link>
@@ -487,7 +487,7 @@ function FeaturedCardLarge({ product }) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group block relative rounded-none overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-shadow duration-500 h-full min-h-[440px] card-shine"
+      className="group block relative rounded-sm overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-shadow duration-500 h-full min-h-[440px] card-shine"
     >
       <div className="absolute inset-0">
         <OptimizedImage
@@ -500,7 +500,7 @@ function FeaturedCardLarge({ product }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
       </div>
       <div className="relative z-10 h-full min-h-[440px] flex flex-col justify-end p-8 lg:p-10 text-white">
-        <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-none bg-white/10 backdrop-blur-md border border-white/15 mb-5">
+        <div className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-sm bg-white/10 backdrop-blur-md border border-white/15 mb-5">
           <Sparkle size={11} weight="fill" className="text-lafoi-green-light" />
           <span className="text-[10px] font-sora font-semibold tracking-widest uppercase">Editor&rsquo;s pick</span>
         </div>
@@ -521,7 +521,7 @@ function FeaturedCardSmall({ product }) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group flex items-stretch rounded-none overflow-hidden bg-white shadow-sm hover:shadow-xl transition-shadow duration-500 h-full min-h-[140px]"
+      className="group flex items-stretch rounded-sm overflow-hidden bg-white shadow-sm hover:shadow-xl transition-shadow duration-500 h-full min-h-[140px]"
     >
       <div className="relative w-1/3 sm:w-2/5 shrink-0 overflow-hidden">
         <OptimizedImage
@@ -552,7 +552,7 @@ function ProductCard({ product }) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group block bg-white border border-gray-100 rounded-none overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500 h-full flex flex-col"
+      className="group block bg-white border border-gray-100 rounded-sm overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500 h-full flex flex-col"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         <OptimizedImage
@@ -563,11 +563,11 @@ function ProductCard({ product }) {
           vision={product.vision}
         />
         {product.featured && (
-          <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-none bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
+          <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-sm bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
             <Sparkle size={10} weight="fill" className="text-lafoi-green" /> Featured
           </div>
         )}
-        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-none bg-lafoi-dark/80 backdrop-blur-md text-[10px] font-sora font-medium tracking-wider uppercase text-white">
+        <div className="absolute top-3 right-3 px-2.5 py-1 rounded-sm bg-lafoi-dark/80 backdrop-blur-md text-[10px] font-sora font-medium tracking-wider uppercase text-white">
           {product.origin}
         </div>
       </div>

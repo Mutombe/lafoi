@@ -61,7 +61,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #1A8A2E;
-  border-radius: 0;
+  border-radius: 2px;
 }
 
 /* Custom cursor for interactive elements */
@@ -260,11 +260,11 @@ body {
 
 /* Organic blob shapes */
 .blob {
-  border-radius: 0;
+  border-radius: 2px;
 }
 
 .blob-2 {
-  border-radius: 0;
+  border-radius: 2px;
 }
 
 /* Grid pattern */
@@ -357,7 +357,7 @@ textarea:focus-visible,
 select:focus-visible {
   outline: 2px solid #1A8A2E;
   outline-offset: 2px;
-  border-radius: 0;
+  border-radius: 2px;
 }
 
 /* Smooth image loading */

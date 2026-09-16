@@ -414,7 +414,7 @@ function ServicesHero() {
 
             <p className="mt-7 max-w-md text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
               {linkifyProse(
-                'Eight services, each engineered to stand alone, designed to work together. From the stretch membrane overhead, the architectural lighting calibrated within it, and now the floor, wall, and finish that meet them.'
+                'Eight services, each engineered to stand alone, designed to work together — from the ceiling overhead to the floor, wall and finish that meet it.'
               )}
             </p>
 
@@ -447,14 +447,14 @@ function ServicesHero() {
             <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
               <a
                 href="#catalogue"
-                className="group inline-flex items-center gap-3 px-6 py-3 bg-lafoi-dark text-white rounded-none font-body text-sm font-medium hover:bg-lafoi-green-light transition-all duration-500"
+                className="group inline-flex items-center gap-3 px-6 py-3 bg-lafoi-dark text-white rounded-sm font-body text-sm font-medium hover:bg-lafoi-green-light transition-all duration-500"
               >
                 Browse the catalogue
                 <ArrowRight size={15} weight="bold" className="group-hover:translate-x-1 transition-transform duration-300" />
               </a>
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-none border border-lafoi-dark/15 bg-white text-lafoi-dark font-body text-sm font-medium hover:border-lafoi-green/40 hover:text-lafoi-green transition-all duration-500"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-sm border border-lafoi-dark/15 bg-white text-lafoi-dark font-body text-sm font-medium hover:border-lafoi-green/40 hover:text-lafoi-green transition-all duration-500"
               >
                 Request samples
                 <ArrowUpRight size={14} weight="regular" className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
@@ -475,12 +475,12 @@ function ServicesHero() {
                   key={t.label}
                   className={`relative overflow-hidden bg-lafoi-dark group ${
                     i === 0
-                      ? 'rounded-none'
+                      ? 'rounded-sm'
                       : i === 1
-                      ? 'rounded-none'
+                      ? 'rounded-sm'
                       : i === 2
-                      ? 'rounded-none'
-                      : 'rounded-none'
+                      ? 'rounded-sm'
+                      : 'rounded-sm'
                   }`}
                 >
                   <OptimizedImage
@@ -538,7 +538,7 @@ function ServicesEditorial() {
           <AnimatedSection delay={0.2} direction="right">
             <p className="font-body text-lafoi-gray max-w-sm leading-relaxed">
               {linkifyProse(
-                'Each entry below is a complete service, from stretch ceiling installation to lighting solutions, design consultation and maintenance and support. Click through for specifications, applications, and a request-quote sidebar.'
+                'Each entry is a complete service. Click through for specifications, applications and a request-quote sidebar.'
               )}
             </p>
           </AnimatedSection>
@@ -575,7 +575,7 @@ function ServiceRow({ service, index, total }) {
     >
       {/* image column */}
       <div className="lg:col-span-7">
-        <div className="relative aspect-[5/4] rounded-none overflow-hidden bg-lafoi-dark group">
+        <div className="relative aspect-[5/4] rounded-sm overflow-hidden bg-lafoi-dark group">
           <OptimizedImage
             src={service.image}
             alt={`${service.title}, ${service.imageVision}`}
@@ -587,7 +587,7 @@ function ServiceRow({ service, index, total }) {
 
           {/* corner index */}
           <div className="absolute top-6 left-6 right-6 flex items-start justify-between">
-            <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/65 px-3 py-1.5 rounded-none bg-white/10 backdrop-blur-md border border-white/15">
+            <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/65 px-3 py-1.5 rounded-sm bg-white/10 backdrop-blur-md border border-white/15">
               0{index + 1} / 0{total}
             </span>
             <span className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
@@ -655,7 +655,7 @@ function TechnicalGuideBand() {
       <div className="absolute inset-0 mesh-gradient-1 opacity-50 pointer-events-none" />
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <AnimatedSection>
-          <div className="relative rounded-none bg-lafoi-dark text-white overflow-hidden">
+          <div className="relative rounded-sm bg-lafoi-dark text-white overflow-hidden">
             <div aria-hidden className="absolute inset-0 dot-pattern opacity-15 pointer-events-none" />
             <div aria-hidden className="absolute -top-24 -right-12 w-[420px] h-[420px] rounded-full bg-lafoi-green/15 blur-[120px] pointer-events-none" />
             <div aria-hidden className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-lafoi-green-light via-lafoi-green to-lafoi-green/40" />
@@ -683,7 +683,7 @@ function TechnicalGuideBand() {
                   target="_blank"
                   rel="noopener"
                   download
-                  className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_12px_38px_-10px_rgba(34,197,94,0.55)]"
+                  className="group inline-flex items-center gap-3 px-7 py-4 rounded-sm bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_12px_38px_-10px_rgba(34,197,94,0.55)]"
                 >
                   <FilePdf size={17} weight="duotone" />
                   Download the guide
@@ -823,7 +823,7 @@ function WhyChooseUs() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {reasons.map((r, i) => (
             <AnimatedSection key={r.title} delay={i * 0.08}>
-              <div className="group h-full p-7 lg:p-8 rounded-none border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500">
+              <div className="group h-full p-7 lg:p-8 rounded-sm border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500">
                 <div className="flex items-baseline justify-between mb-7">
                   <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
                     0{i + 1} / 04
@@ -899,7 +899,7 @@ function ServicesCTA() {
             <div className="mt-12 flex flex-wrap items-center gap-4 lg:gap-5">
               <Link
                 to="/contact"
-                className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
+                className="group inline-flex items-center gap-3 px-7 py-4 rounded-sm bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
               >
                 Speak to a specialist
                 <ArrowRight
@@ -910,7 +910,7 @@ function ServicesCTA() {
               </Link>
               <Link
                 to="/projects"
-                className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-white/10 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-500"
+                className="group inline-flex items-center gap-3 px-7 py-4 rounded-sm bg-white/10 backdrop-blur-md text-white font-sora text-sm font-semibold border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-500"
               >
                 See products in projects
                 <ArrowUpRight
@@ -1026,7 +1026,7 @@ function ServiceDetail({ service }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="ml-auto max-w-[280px] relative bg-white/[0.06] backdrop-blur-md border border-white/15 rounded-none p-6 overflow-hidden">
+              <div className="ml-auto max-w-[280px] relative bg-white/[0.06] backdrop-blur-md border border-white/15 rounded-sm p-6 overflow-hidden">
                 <div aria-hidden className="absolute inset-0 dot-pattern opacity-30 pointer-events-none" />
                 <div className="relative">
                   <div className="flex items-center justify-between mb-5">
@@ -1097,7 +1097,7 @@ function ServiceDetail({ service }) {
 
               {/* Image break */}
               <AnimatedSection delay={0.2}>
-                <div className="relative aspect-[16/9] rounded-none overflow-hidden bg-lafoi-dark mb-12">
+                <div className="relative aspect-[16/9] rounded-sm overflow-hidden bg-lafoi-dark mb-12">
                   <OptimizedImage
                     src={service.image}
                     alt={`${service.title}, ${service.imageVision}`}
@@ -1118,7 +1118,7 @@ function ServiceDetail({ service }) {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <Link
                       to={`/services/${prev.slug}`}
-                      className="group p-6 rounded-none border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 transition-colors duration-500"
+                      className="group p-6 rounded-sm border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 transition-colors duration-500"
                     >
                       <div className="flex items-center gap-2 mb-3">
                         <ArrowLeft size={12} weight="regular" className="text-lafoi-gray-medium group-hover:-translate-x-0.5 transition-transform" />
@@ -1132,7 +1132,7 @@ function ServiceDetail({ service }) {
                     </Link>
                     <Link
                       to={`/services/${next.slug}`}
-                      className="group p-6 rounded-none border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 transition-colors duration-500 sm:text-right"
+                      className="group p-6 rounded-sm border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 transition-colors duration-500 sm:text-right"
                     >
                       <div className="flex items-center gap-2 mb-3 sm:justify-end">
                         <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
@@ -1154,7 +1154,7 @@ function ServiceDetail({ service }) {
               <AnimatedSection direction="right">
                 <div className="sticky top-28 space-y-5">
                   {/* Applications card, glass + asymmetric */}
-                  <div className="relative p-7 lg:p-8 rounded-none bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] overflow-hidden">
+                  <div className="relative p-7 lg:p-8 rounded-sm bg-white/70 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] overflow-hidden">
                     <div aria-hidden className="absolute inset-0 pattern-blueprint opacity-20 pointer-events-none" />
                     <div className="relative">
                       <div className="flex items-center gap-3 mb-6">
@@ -1180,7 +1180,7 @@ function ServiceDetail({ service }) {
 
                       <Link
                         to="/contact"
-                        className="group flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-lafoi-green-light text-white rounded-none font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
+                        className="group flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-lafoi-green-light text-white rounded-sm font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
                       >
                         Request a quote
                         <ArrowRight
@@ -1193,7 +1193,7 @@ function ServiceDetail({ service }) {
                   </div>
 
                   {/* Trust */}
-                  <div className="p-6 rounded-none border border-lafoi-dark/10 bg-white">
+                  <div className="p-6 rounded-sm border border-lafoi-dark/10 bg-white">
                     <div className="flex items-center gap-3 mb-3">
                       <Trophy size={14} weight="regular" className="text-lafoi-green" />
                       <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-dark">

@@ -221,7 +221,7 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setSearchOpen(true)}
-                className={`p-2.5 rounded-none transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
+                className={`p-2.5 rounded-sm transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
                 aria-label="Search"
               >
                 <MagnifyingGlass size={18} weight="regular" className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
@@ -229,7 +229,7 @@ export default function Navbar() {
 
               <button
                 onClick={openCart}
-                className={`relative p-2.5 rounded-none transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
+                className={`relative p-2.5 rounded-sm transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
                 aria-label={`Open cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? '' : 's'}` : ''}`}
               >
                 <ShoppingBag size={18} weight="regular" className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
@@ -241,7 +241,7 @@ export default function Navbar() {
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0, opacity: 0 }}
                       transition={{ type: 'spring', damping: 12, stiffness: 400 }}
-                      className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-none bg-lafoi-green text-white text-[10px] font-sora font-semibold flex items-center justify-center shadow-md shadow-lafoi-green/30 ring-2 ring-white"
+                      className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-sm bg-lafoi-green text-white text-[10px] font-sora font-semibold flex items-center justify-center shadow-md shadow-lafoi-green/30 ring-2 ring-white"
                     >
                       {cartCount > 9 ? '9+' : cartCount}
                     </motion.span>
@@ -255,7 +255,7 @@ export default function Navbar() {
               <Link
                 to={isAuthed ? '/dashboard' : '/dashboard/login'}
                 title={isAuthed ? `Studio · ${currentUser?.display_name || currentUser?.username || 'admin'}` : 'Sign in to the studio dashboard'}
-                className={`hidden lg:inline-flex items-center gap-2 px-4 py-2.5 font-sora text-sm font-medium rounded-none transition-all duration-300 group ${
+                className={`hidden lg:inline-flex items-center gap-2 px-4 py-2.5 font-sora text-sm font-medium rounded-sm transition-all duration-300 group ${
                   isLightText
                     ? 'text-white/85 hover:text-white hover:bg-white/8 border border-white/15'
                     : 'text-lafoi-dark hover:text-lafoi-green hover:bg-lafoi-green/5 border border-lafoi-dark/15'
@@ -280,7 +280,7 @@ export default function Navbar() {
 
               <Link
                 to="/contact"
-                className={`hidden lg:flex items-center gap-2 px-5 py-2.5 font-sora text-sm font-medium rounded-none transition-all duration-300 group ${
+                className={`hidden lg:flex items-center gap-2 px-5 py-2.5 font-sora text-sm font-medium rounded-sm transition-all duration-300 group ${
                   isLightText
                     ? 'bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-lafoi-green hover:border-lafoi-green'
                     : 'bg-lafoi-dark text-white hover:bg-lafoi-green'
@@ -292,7 +292,7 @@ export default function Navbar() {
 
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className={`lg:hidden p-2.5 rounded-none transition-colors ${isLightText ? 'text-white hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
+                className={`lg:hidden p-2.5 rounded-sm transition-colors ${isLightText ? 'text-white hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
                 aria-label="Toggle menu"
               >
                 {mobileOpen ? <X size={22} weight="regular" /> : <List size={22} weight="regular" />}
@@ -313,7 +313,7 @@ export default function Navbar() {
           >
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSearchOpen(false)} />
             <motion.div
-              className="relative w-full max-w-2xl mx-4 bg-white rounded-none shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl mx-4 bg-white rounded-sm shadow-2xl overflow-hidden"
               initial={{ opacity: 0, y: -30, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
@@ -329,7 +329,7 @@ export default function Navbar() {
                   placeholder="Search pages, services, projects..."
                   className="flex-1 text-base font-general outline-none bg-transparent placeholder:text-gray-300"
                 />
-                <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-xs text-lafoi-gray-medium bg-gray-100 rounded-none font-mono">
+                <kbd className="hidden sm:inline-flex items-center px-2 py-0.5 text-xs text-lafoi-gray-medium bg-gray-100 rounded-sm font-mono">
                   ESC
                 </kbd>
               </div>
@@ -341,7 +341,7 @@ export default function Navbar() {
                       onClick={() => handleSearchNavigate(result.path)}
                       className="w-full flex items-center gap-3 px-5 py-3 hover:bg-lafoi-green/5 transition-colors text-left group"
                     >
-                      <div className="w-8 h-8 rounded-none bg-lafoi-green/10 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-sm bg-lafoi-green/10 flex items-center justify-center shrink-0">
                         <Star size={14} weight="fill" className="text-lafoi-green" />
                       </div>
                       <div>
@@ -366,7 +366,7 @@ export default function Navbar() {
                       <button
                         key={q}
                         onClick={() => setSearchQuery(q)}
-                        className="px-3 py-1.5 text-xs rounded-none bg-gray-100 text-lafoi-gray hover:bg-lafoi-green/10 hover:text-lafoi-green transition-colors"
+                        className="px-3 py-1.5 text-xs rounded-sm bg-gray-100 text-lafoi-gray hover:bg-lafoi-green/10 hover:text-lafoi-green transition-colors"
                       >
                         {q}
                       </button>
@@ -432,7 +432,7 @@ export default function Navbar() {
                 ))}
                 <Link
                   to={isAuthed ? '/dashboard' : '/dashboard/login'}
-                  className="flex items-center justify-center gap-2 w-full mt-6 px-6 py-3 rounded-none border border-lafoi-dark/15 text-lafoi-dark hover:bg-lafoi-green/5 hover:border-lafoi-green transition-colors font-sora text-sm font-medium"
+                  className="flex items-center justify-center gap-2 w-full mt-6 px-6 py-3 rounded-sm border border-lafoi-dark/15 text-lafoi-dark hover:bg-lafoi-green/5 hover:border-lafoi-green transition-colors font-sora text-sm font-medium"
                   onClick={() => setMobileOpen(false)}
                 >
                   {isAuthed ? <UserCircle size={16} weight="regular" /> : <SignIn size={14} weight="bold" />}
@@ -440,7 +440,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   to="/contact"
-                  className="flex items-center justify-center gap-2 w-full mt-3 px-6 py-3.5 bg-lafoi-dark text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green transition-colors"
+                  className="flex items-center justify-center gap-2 w-full mt-3 px-6 py-3.5 bg-lafoi-dark text-white rounded-sm font-sora text-sm font-medium hover:bg-lafoi-green transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   Get a Free Quote
@@ -514,14 +514,14 @@ function DropdownMenu({ group, active, onOpen, onClose, currentPath, lightText }
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="w-64 bg-white rounded-none shadow-xl shadow-black/[0.06] border border-gray-100 p-2 overflow-hidden">
+            <div className="w-64 bg-white rounded-sm shadow-xl shadow-black/[0.06] border border-gray-100 p-2 overflow-hidden">
               {group.items.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="flex items-start gap-3 p-3 rounded-none hover:bg-lafoi-green/5 transition-colors group"
+                  className="flex items-start gap-3 p-3 rounded-sm hover:bg-lafoi-green/5 transition-colors group"
                 >
-                  <div className="w-9 h-9 rounded-none bg-lafoi-green/10 flex items-center justify-center shrink-0 group-hover:bg-lafoi-green/20 transition-colors">
+                  <div className="w-9 h-9 rounded-sm bg-lafoi-green/10 flex items-center justify-center shrink-0 group-hover:bg-lafoi-green/20 transition-colors">
                     <item.icon size={16} className="text-lafoi-green" />
                   </div>
                   <div>

@@ -180,7 +180,7 @@ export default function Projects() {
               </p>
               <Link
                 to={`/projects/${featured.slug}`}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-green hover:bg-lafoi-green-light text-white rounded-none font-sora text-sm font-medium transition-colors duration-300 group shadow-lg shadow-lafoi-green/20"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-green hover:bg-lafoi-green-light text-white rounded-sm font-sora text-sm font-medium transition-colors duration-300 group shadow-lg shadow-lafoi-green/20"
               >
                 Read case study
                 <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
@@ -214,7 +214,7 @@ export default function Projects() {
                     <button
                       key={cat}
                       onClick={() => setFilter(cat)}
-                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-none text-xs font-sora font-medium transition-all duration-300 ${
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-sm text-xs font-sora font-medium transition-all duration-300 ${
                         active
                           ? 'bg-lafoi-dark text-white shadow-md'
                           : 'bg-white/70 backdrop-blur-md border border-gray-100 text-lafoi-gray hover:bg-lafoi-green/10 hover:text-lafoi-green'
@@ -311,14 +311,14 @@ export default function Projects() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-lafoi-green text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/30 group"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-lafoi-green text-white rounded-sm font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors duration-300 shadow-lg shadow-lafoi-green/30 group"
                 >
                   Book a site visit
                   <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/products"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-none font-sora text-sm font-medium hover:bg-white/15 transition-colors duration-300"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-sm font-sora text-sm font-medium hover:bg-white/15 transition-colors duration-300"
                 >
                   Browse the catalogue
                 </Link>
@@ -339,7 +339,7 @@ function ProjectCard({ project, large = false, aspect = 'aspect-[3/4]' }) {
   return (
     <Link
       to={`/projects/${project.slug}`}
-      className={`group relative block overflow-hidden rounded-none ${aspect} card-shine`}
+      className={`group relative block overflow-hidden rounded-sm ${aspect} card-shine`}
     >
       <OptimizedImage
         src={project.thumb}
@@ -354,7 +354,7 @@ function ProjectCard({ project, large = false, aspect = 'aspect-[3/4]' }) {
       <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/95 via-lafoi-dark/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* category pill */}
-      <div className="absolute top-5 left-5 px-3 py-1 rounded-none bg-white/95 backdrop-blur-md text-[10px] font-sora font-semibold tracking-widest uppercase text-lafoi-dark">
+      <div className="absolute top-5 left-5 px-3 py-1 rounded-sm bg-white/95 backdrop-blur-md text-[10px] font-sora font-semibold tracking-widest uppercase text-lafoi-dark">
         {project.category}
       </div>
 

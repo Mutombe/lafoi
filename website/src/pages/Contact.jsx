@@ -254,7 +254,7 @@ function ContactCardLarge({ eyebrow, icon: Icon, label, value, alt, detail, href
   return (
     <Tag
       href={href}
-      className={`group block h-full relative p-8 lg:p-10 rounded-none border overflow-hidden transition-all duration-500 ${
+      className={`group block h-full relative p-8 lg:p-10 rounded-sm border overflow-hidden transition-all duration-500 ${
         accent
           ? 'bg-lafoi-dark border-lafoi-dark hover:border-lafoi-green-light/40'
           : 'bg-white border-lafoi-dark/10 hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04]'
@@ -336,7 +336,7 @@ function ContactCardLarge({ eyebrow, icon: Icon, label, value, alt, detail, href
 
 function ContactCardSmall({ eyebrow, icon: Icon, label, lines, detail }) {
   return (
-    <div className="group h-full p-7 lg:p-8 rounded-none border border-lafoi-dark/10 bg-white/60 backdrop-blur-sm hover:bg-white hover:border-lafoi-green/30 transition-all duration-500">
+    <div className="group h-full p-7 lg:p-8 rounded-sm border border-lafoi-dark/10 bg-white/60 backdrop-blur-sm hover:bg-white hover:border-lafoi-green/30 transition-all duration-500">
       <div className="flex items-baseline justify-between mb-6">
         <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
           {eyebrow}
@@ -470,7 +470,7 @@ function ContactForm() {
             <AnimatedSection direction="right">
               {submitted ? (
                 <motion.div
-                  className="p-12 lg:p-16 rounded-none bg-lafoi-cream border border-lafoi-green/20 text-center"
+                  className="p-12 lg:p-16 rounded-sm bg-lafoi-cream border border-lafoi-green/20 text-center"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
@@ -551,7 +551,7 @@ function ContactForm() {
 
                   <button
                     type="submit"
-                    className="group inline-flex items-center gap-3 px-8 py-4 bg-lafoi-green-light text-white rounded-none font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
+                    className="group inline-flex items-center gap-3 px-8 py-4 bg-lafoi-green-light text-white rounded-sm font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_30px_rgba(34,197,94,0.25)]"
                   >
                     <PaperPlaneRight size={15} weight="regular" />
                     Send the brief
@@ -652,7 +652,7 @@ function WhatsAppCallout() {
       <div className="absolute inset-0 pattern-diagonal opacity-30 pointer-events-none" />
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <AnimatedSection>
-          <div className="relative rounded-none bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.08)] overflow-hidden">
+          <div className="relative rounded-sm bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.08)] overflow-hidden">
             <div aria-hidden className="absolute inset-0 pattern-blueprint opacity-20 pointer-events-none" />
 
             <div className="relative grid lg:grid-cols-12 gap-8 lg:gap-12 items-center p-8 lg:p-14">
@@ -682,7 +682,7 @@ function WhatsAppCallout() {
                   href="https://wa.me/263782931472"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-none bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
+                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-sm bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_10px_40px_-10px_rgba(34,197,94,0.55)]"
                 >
                   <WhatsappLogo size={18} weight="regular" />
                   Message us on WhatsApp
@@ -756,7 +756,7 @@ function MapSection() {
         </AnimatedSection>
 
         <AnimatedSection delay={0.05}>
-          <div className="relative mb-6 lg:mb-8 rounded-none overflow-hidden h-44 lg:h-56 bg-lafoi-dark">
+          <div className="relative mb-6 lg:mb-8 rounded-sm overflow-hidden h-44 lg:h-56 bg-lafoi-dark">
             <OptimizedImage
               src="/brand/images/24.png"
               alt="Hallway with crossing linear LED light pattern on a dark stretch ceiling"
@@ -781,7 +781,7 @@ function MapSection() {
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>
-          <div className="relative rounded-none overflow-hidden h-80 lg:h-[440px] border border-lafoi-green/20">
+          <div className="relative rounded-sm overflow-hidden h-80 lg:h-[440px] border border-lafoi-green/20">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3798.5!2d31.0429!3d-17.8052!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sBelgravia%2C+Harare%2C+Zimbabwe!5e0!3m2!1sen!2s!4v1"
               width="100%"

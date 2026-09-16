@@ -194,7 +194,7 @@ function LaunchHero() {
 
         {/* Event facts */}
         <AnimatedSection delay={0.3}>
-          <div className="mt-10 grid sm:grid-cols-3 gap-px rounded-none overflow-hidden border border-white/12 bg-white/[0.04] backdrop-blur-sm max-w-3xl">
+          <div className="mt-10 grid sm:grid-cols-3 gap-px rounded-sm overflow-hidden border border-white/12 bg-white/[0.04] backdrop-blur-sm max-w-3xl">
             {[
               { icon: CalendarBlank, k: 'Date', v: EVENT.date, s: EVENT.arrival },
               { icon: MapPin, k: 'Venue', v: EVENT.venue, s: EVENT.address },
@@ -214,7 +214,7 @@ function LaunchHero() {
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <a
               href={BOOKLET_URL} target="_blank" rel="noreferrer"
-              className="group inline-flex items-center gap-3 px-6 py-3.5 rounded-none bg-lafoi-green text-white font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors"
+              className="group inline-flex items-center gap-3 px-6 py-3.5 rounded-sm bg-lafoi-green text-white font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors"
             >
               <DownloadSimple size={16} weight="bold" /> Download the programme booklet
             </a>
@@ -242,7 +242,7 @@ function Programme() {
           <p className="mt-3 text-lafoi-gray font-body font-light">{EVENT.date} · {EVENT.venue}, {EVENT.address}</p>
         </AnimatedSection>
 
-        <div className="mt-12 space-y-px rounded-none overflow-hidden border border-lafoi-dark/10 bg-white">
+        <div className="mt-12 space-y-px rounded-sm overflow-hidden border border-lafoi-dark/10 bg-white">
           {PROGRAM.map((item, i) => (
             <ProgramRow key={i} item={item} index={i} />
           ))}
@@ -312,7 +312,7 @@ function SpeakerCard({ person, index }) {
       initial={{ opacity: 0, y: 20 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: Math.min(index * 0.06, 0.3), ease: [0.16, 1, 0.3, 1] }}
-      className={`relative rounded-none border p-6 sm:p-7 ${
+      className={`relative rounded-sm border p-6 sm:p-7 ${
         person.featured
           ? 'md:col-span-2 bg-lafoi-dark text-white border-lafoi-dark'
           : 'bg-white border-lafoi-dark/10'
@@ -320,7 +320,7 @@ function SpeakerCard({ person, index }) {
     >
       <div className="flex items-start gap-5">
         {/* Monogram */}
-        <div className={`shrink-0 w-16 h-16 rounded-none flex items-center justify-center font-display text-xl ${
+        <div className={`shrink-0 w-16 h-16 rounded-sm flex items-center justify-center font-display text-xl ${
           person.featured
             ? 'bg-lafoi-green-light/20 text-lafoi-green-light border border-lafoi-green-light/30'
             : 'bg-lafoi-green/10 text-lafoi-green-dark border border-lafoi-green/25'
@@ -352,7 +352,7 @@ function BookletCTA() {
     <section className="bg-lafoi-dark text-white py-20 sm:py-28">
       <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center">
         <AnimatedSection>
-          <span className="inline-flex w-14 h-14 rounded-none bg-lafoi-green/20 text-lafoi-green-light items-center justify-center mb-6">
+          <span className="inline-flex w-14 h-14 rounded-sm bg-lafoi-green/20 text-lafoi-green-light items-center justify-center mb-6">
             <FilePdf size={26} />
           </span>
           <h2 className="font-display text-4xl sm:text-5xl tracking-tight">Take the evening with you</h2>
@@ -363,7 +363,7 @@ function BookletCTA() {
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <a
               href={BOOKLET_URL} target="_blank" rel="noreferrer"
-              className="group inline-flex items-center gap-3 px-7 py-4 rounded-none bg-lafoi-green text-white font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors"
+              className="group inline-flex items-center gap-3 px-7 py-4 rounded-sm bg-lafoi-green text-white font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors"
             >
               <DownloadSimple size={16} weight="bold" /> Download programme booklet
               <span className="text-white/60 text-xs">PDF</span>

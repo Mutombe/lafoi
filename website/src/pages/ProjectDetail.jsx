@@ -121,7 +121,7 @@ export default function ProjectDetail() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
           >
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-lafoi-green text-[10px] font-sora font-semibold tracking-widest uppercase text-white mb-5">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-lafoi-green text-[10px] font-sora font-semibold tracking-widest uppercase text-white mb-5">
               {project.category}
             </span>
             <h1 className="heading-xl text-4xl sm:text-5xl lg:text-7xl text-white max-w-4xl">
@@ -276,7 +276,7 @@ export default function ProjectDetail() {
                 <button
                   key={i}
                   onClick={() => setLightboxIdx(i)}
-                  className="group relative w-full block break-inside-avoid rounded-none overflow-hidden text-left mb-5 card-shine"
+                  className="group relative w-full block break-inside-avoid rounded-sm overflow-hidden text-left mb-5 card-shine"
                 >
                   <div className={i % 3 === 1 ? 'h-72 sm:h-80' : i % 3 === 2 ? 'h-96' : 'h-64 sm:h-72'}>
                     <OptimizedImage
@@ -332,7 +332,7 @@ export default function ProjectDetail() {
                 <StaggerItem key={p.slug}>
                   <Link
                     to={`/products/${p.slug}`}
-                    className="group block bg-white border border-gray-100 rounded-none overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500"
+                    className="group block bg-white border border-gray-100 rounded-sm overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
@@ -342,7 +342,7 @@ export default function ProjectDetail() {
                         fill
                         vision={p.vision}
                       />
-                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-none bg-lafoi-dark/80 backdrop-blur-md text-[10px] font-sora font-medium tracking-wider uppercase text-white">
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-sm bg-lafoi-dark/80 backdrop-blur-md text-[10px] font-sora font-medium tracking-wider uppercase text-white">
                         {p.origin}
                       </div>
                     </div>
@@ -412,7 +412,7 @@ export default function ProjectDetail() {
                 <StaggerItem key={p.slug}>
                   <Link
                     to={`/projects/${p.slug}`}
-                    className="group block bg-white border border-gray-100 rounded-none overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500"
+                    className="group block bg-white border border-gray-100 rounded-sm overflow-hidden hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <OptimizedImage
@@ -422,7 +422,7 @@ export default function ProjectDetail() {
                         fill
                         vision={p.vision}
                       />
-                      <div className="absolute top-3 left-3 px-2.5 py-1 rounded-none bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
+                      <div className="absolute top-3 left-3 px-2.5 py-1 rounded-sm bg-white/90 backdrop-blur-md text-[10px] font-sora font-semibold tracking-wider uppercase text-lafoi-dark">
                         {p.category}
                       </div>
                     </div>
@@ -483,7 +483,7 @@ export default function ProjectDetail() {
               <img
                 src={project.gallery[lightboxIdx].src}
                 alt={`${project.title}, ${project.gallery[lightboxIdx].vision || project.gallery[lightboxIdx].alt}`}
-                className="w-full h-auto max-h-[85vh] object-contain bg-black rounded-none"
+                className="w-full h-auto max-h-[85vh] object-contain bg-black rounded-sm"
               />
               {project.gallery[lightboxIdx].caption && (
                 <p className="text-center text-white/70 text-sm font-general mt-4">

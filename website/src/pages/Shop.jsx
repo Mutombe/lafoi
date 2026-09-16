@@ -131,7 +131,7 @@ function ShopHero() {
             >
               <a
                 href="#shop-grid"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-dark text-white rounded-none font-sora text-sm font-medium hover:bg-lafoi-green transition-colors duration-300 group"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-lafoi-dark text-white rounded-sm font-sora text-sm font-medium hover:bg-lafoi-green transition-colors duration-300 group"
               >
                 Browse the line
                 <ArrowRight size={14} weight="bold" className="group-hover:translate-x-1 transition-transform" />
@@ -153,7 +153,7 @@ function ShopHero() {
               {heroProducts.map((p, i) => (
                 <div
                   key={p.slug}
-                  className={`relative rounded-none overflow-hidden bg-lafoi-dark/[0.04] ${
+                  className={`relative rounded-sm overflow-hidden bg-lafoi-dark/[0.04] ${
                     i === 0 ? 'aspect-[4/5]' : i === 1 ? 'aspect-[4/5] mt-8 lg:mt-12' : i === 2 ? 'aspect-[4/5]' : 'aspect-[4/5] mt-8 lg:mt-12'
                   }`}
                 >
@@ -165,10 +165,10 @@ function ShopHero() {
                     vision={`${p.name}, featured shop piece`}
                   />
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
-                    <span className="px-2.5 py-1 rounded-none bg-white/90 backdrop-blur-sm text-[10px] font-sora font-medium text-lafoi-dark tracking-wide uppercase">
+                    <span className="px-2.5 py-1 rounded-sm bg-white/90 backdrop-blur-sm text-[10px] font-sora font-medium text-lafoi-dark tracking-wide uppercase">
                       {p.category}
                     </span>
-                    <span className="px-2.5 py-1 rounded-none bg-lafoi-dark/80 text-white text-[11px] font-sora font-medium">
+                    <span className="px-2.5 py-1 rounded-sm bg-lafoi-dark/80 text-white text-[11px] font-sora font-medium">
                       ${p.price}
                     </span>
                   </div>
@@ -222,7 +222,7 @@ function FilterAndGrid({ category, setCategory, filtered }) {
                 <button
                   key={cat}
                   onClick={() => setCategory(cat)}
-                  className={`px-4 py-2 rounded-none font-sora text-xs font-medium tracking-wide transition-all duration-300 ${
+                  className={`px-4 py-2 rounded-sm font-sora text-xs font-medium tracking-wide transition-all duration-300 ${
                     isActive
                       ? 'bg-lafoi-green text-white shadow-md shadow-lafoi-green/20'
                       : 'bg-white border border-lafoi-dark/[0.08] text-lafoi-gray hover:border-lafoi-green/40 hover:text-lafoi-dark'
@@ -274,7 +274,7 @@ function ProductCard({ product }) {
       whileHover={{ y: -4 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="relative aspect-[4/5] rounded-none overflow-hidden bg-lafoi-dark/[0.04] mb-4">
+      <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-lafoi-dark/[0.04] mb-4">
         <OptimizedImage
           src={product.images[0]}
           alt={`${product.name}, ${product.category} sample piece from La Foi Designs`}
@@ -284,7 +284,7 @@ function ProductCard({ product }) {
         />
         {product.featured && (
           <div className="absolute top-3 left-3">
-            <span className="px-2.5 py-1 rounded-none bg-white/90 backdrop-blur-sm text-[10px] font-sora font-medium text-lafoi-green tracking-wide uppercase">
+            <span className="px-2.5 py-1 rounded-sm bg-white/90 backdrop-blur-sm text-[10px] font-sora font-medium text-lafoi-green tracking-wide uppercase">
               Featured
             </span>
           </div>
@@ -309,7 +309,7 @@ function ProductCard({ product }) {
 
         <button
           onClick={handleAdd}
-          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-lafoi-dark/15 rounded-none font-sora text-[12px] font-medium text-lafoi-dark hover:bg-lafoi-green hover:text-white hover:border-lafoi-green transition-all duration-300 group/btn"
+          className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-lafoi-dark/15 rounded-sm font-sora text-[12px] font-medium text-lafoi-dark hover:bg-lafoi-green hover:text-white hover:border-lafoi-green transition-all duration-300 group/btn"
         >
           <ShoppingBag size={14} weight="regular" />
           <span>Add to cart</span>
@@ -365,7 +365,7 @@ function HowOrderingWorks() {
         <StaggerContainer className="grid md:grid-cols-3 gap-6 lg:gap-8">
           {steps.map((s) => (
             <StaggerItem key={s.n}>
-              <div className="relative bg-white rounded-none p-7 lg:p-8 border border-lafoi-dark/[0.06] h-full">
+              <div className="relative bg-white rounded-sm p-7 lg:p-8 border border-lafoi-dark/[0.06] h-full">
                 <div className="flex items-center gap-3 mb-4">
                   <span className="font-display text-3xl font-light text-lafoi-green tracking-tight">
                     {s.n}
@@ -395,7 +395,7 @@ function ShopCTA() {
   return (
     <section className="relative bg-lafoi-dark text-white py-20 lg:py-28 overflow-hidden">
       <div aria-hidden className="absolute inset-0 pattern-diagonal opacity-30 pointer-events-none" />
-      <div aria-hidden className="absolute -top-20 right-1/4 w-[600px] h-[300px] bg-lafoi-green/[0.08] rounded-none blur-[140px] pointer-events-none" />
+      <div aria-hidden className="absolute -top-20 right-1/4 w-[600px] h-[300px] bg-lafoi-green/[0.08] rounded-sm blur-[140px] pointer-events-none" />
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-10 items-center">
@@ -422,9 +422,9 @@ function ShopCTA() {
                 href="https://wa.me/263782931472?text=Hello%20La%20Foi%20Designs%2C%20I%20have%20a%20question%20about%20the%20shop."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-none transition-colors group"
+                className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-sm transition-colors group"
               >
-                <div className="w-11 h-11 rounded-none bg-[#25D366]/20 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-sm bg-[#25D366]/20 flex items-center justify-center shrink-0">
                   <WhatsappLogo size={20} weight="fill" className="text-[#25D366]" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -438,9 +438,9 @@ function ShopCTA() {
 
               <a
                 href="mailto:admin@lafoidesigns.co.zw"
-                className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-none transition-colors group"
+                className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-sm transition-colors group"
               >
-                <div className="w-11 h-11 rounded-none bg-lafoi-green/20 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-sm bg-lafoi-green/20 flex items-center justify-center shrink-0">
                   <Envelope size={18} weight="regular" className="text-lafoi-green-light" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -454,9 +454,9 @@ function ShopCTA() {
 
               <Link
                 to="/contact"
-                className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-none transition-colors group"
+                className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-sm transition-colors group"
               >
-                <div className="w-11 h-11 rounded-none bg-lafoi-green/20 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-sm bg-lafoi-green/20 flex items-center justify-center shrink-0">
                   <MapPin size={18} weight="regular" className="text-lafoi-green-light" />
                 </div>
                 <div className="flex-1 min-w-0">

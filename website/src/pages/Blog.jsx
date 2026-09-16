@@ -182,7 +182,7 @@ function BlogHero() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Stamp */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none border border-lafoi-dark/15 bg-white/70 mb-7">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-lafoi-dark/15 bg-white/70 mb-7">
               <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-dark font-semibold">
                 Field notes
               </span>
@@ -226,7 +226,7 @@ function BlogHero() {
               {thumbs.map((src, i) => (
                 <div
                   key={i}
-                  className="relative aspect-square rounded-none overflow-hidden bg-lafoi-dark/10"
+                  className="relative aspect-square rounded-sm overflow-hidden bg-lafoi-dark/10"
                 >
                   <OptimizedImage
                     src={src}
@@ -275,7 +275,7 @@ function FeaturedPost({ post }) {
             {/* duotone image, magazine cover */}
             <a
               href="#"
-              className="lg:col-span-7 block relative aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] rounded-none overflow-hidden bg-lafoi-green"
+              className="lg:col-span-7 block relative aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] rounded-sm overflow-hidden bg-lafoi-green"
               aria-label={post.title}
             >
               <OptimizedImage
@@ -295,7 +295,7 @@ function FeaturedPost({ post }) {
 
               {/* corner artifact */}
               <div className="absolute top-6 left-6 right-6 flex items-start justify-between">
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-sora text-white tracking-[0.25em] uppercase">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-sora text-white tracking-[0.25em] uppercase">
                   Cover &middot; {post.category}
                 </span>
                 <span className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition-all duration-500">
@@ -402,7 +402,7 @@ function PostsGrid({ posts, categories, filter, setFilter }) {
 
         {/* glass filter pills */}
         <AnimatedSection delay={0.15}>
-          <div className="mb-12 lg:mb-16 flex flex-wrap items-center gap-2 sm:gap-3 px-5 lg:px-6 py-3 rounded-none bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)]">
+          <div className="mb-12 lg:mb-16 flex flex-wrap items-center gap-2 sm:gap-3 px-5 lg:px-6 py-3 rounded-sm bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)]">
             <span className="hidden sm:inline-flex items-center gap-2 font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray-medium pr-3 mr-1 border-r border-lafoi-dark/15">
               Filter
             </span>
@@ -412,7 +412,7 @@ function PostsGrid({ posts, categories, filter, setFilter }) {
                 <button
                   key={cat}
                   onClick={() => setFilter(cat)}
-                  className={`px-4 py-2 rounded-none text-xs font-sora font-medium transition-all duration-300 ${
+                  className={`px-4 py-2 rounded-sm text-xs font-sora font-medium transition-all duration-300 ${
                     active
                       ? 'bg-gradient-to-b from-lafoi-green-light to-lafoi-green text-white shadow-[0_8px_24px_-12px_rgba(34,197,94,0.45)]'
                       : 'bg-white/60 text-lafoi-gray hover:bg-lafoi-green/8 hover:text-lafoi-green border border-lafoi-dark/10'
@@ -477,7 +477,7 @@ function PostCard({ post, index }) {
       <a href="#" className="block" aria-label={post.title}>
         {/* image with varied aspect */}
         <div
-          className={`relative ${aspect} rounded-none overflow-hidden bg-lafoi-dark mb-5`}
+          className={`relative ${aspect} rounded-sm overflow-hidden bg-lafoi-dark mb-5`}
         >
           <OptimizedImage
             src={post.image}
@@ -489,7 +489,7 @@ function PostCard({ post, index }) {
           <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           <div className="absolute top-5 left-5">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-white/15 backdrop-blur-md border border-white/20 text-[10px] font-sora text-white tracking-[0.22em] uppercase">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm bg-white/15 backdrop-blur-md border border-white/20 text-[10px] font-sora text-white tracking-[0.22em] uppercase">
               {post.category}
             </span>
           </div>
@@ -622,7 +622,7 @@ function NewsletterBand() {
                     />
                     <button
                       type="submit"
-                      className="group inline-flex items-center gap-2 px-6 py-3 rounded-none bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_24px_-10px_rgba(34,197,94,0.45)] shrink-0"
+                      className="group inline-flex items-center gap-2 px-6 py-3 rounded-sm bg-lafoi-green-light text-white font-sora text-sm font-semibold hover:bg-lafoi-green transition-all duration-500 shadow-[0_8px_24px_-10px_rgba(34,197,94,0.45)] shrink-0"
                     >
                       <PaperPlaneRight size={14} weight="regular" />
                       Subscribe

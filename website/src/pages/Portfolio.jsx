@@ -141,7 +141,7 @@ export default function Portfolio() {
                   <button
                     key={cat}
                     onClick={() => setFilter(cat)}
-                    className={`px-4 py-2 rounded-none text-xs font-sora font-medium transition-all duration-300 ${
+                    className={`px-4 py-2 rounded-sm text-xs font-sora font-medium transition-all duration-300 ${
                       active
                         ? 'bg-lafoi-dark text-white shadow-[0_8px_24px_-12px_rgba(0,0,0,0.4)]'
                         : 'bg-white/60 text-lafoi-gray hover:bg-lafoi-green/10 hover:text-lafoi-green border border-lafoi-dark/10'
@@ -170,7 +170,7 @@ export default function Portfolio() {
                   <MagneticCard strength={0.18} tiltAmplitude={4}>
                   <button
                     onClick={() => setSelectedIndex(i)}
-                    className="group relative block w-full rounded-none overflow-hidden text-left bg-lafoi-dark"
+                    className="group relative block w-full rounded-sm overflow-hidden text-left bg-lafoi-dark"
                   >
                     {/* hairline reveal, top */}
                     <span
@@ -190,7 +190,7 @@ export default function Portfolio() {
 
                     {/* index, top */}
                     <div className="absolute top-5 left-5 right-5 flex items-start justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/70 px-2.5 py-1 rounded-none bg-white/10 backdrop-blur-md border border-white/15">
+                      <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/70 px-2.5 py-1 rounded-sm bg-white/10 backdrop-blur-md border border-white/15">
                         0{i + 1} / 0{filtered.length}
                       </span>
                       <span className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
@@ -240,7 +240,7 @@ export default function Portfolio() {
             />
 
             <motion.div
-              className="relative w-full max-w-5xl rounded-none overflow-hidden border border-lafoi-green-light/20 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)]"
+              className="relative w-full max-w-5xl rounded-sm overflow-hidden border border-lafoi-green-light/20 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.6)]"
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -257,7 +257,7 @@ export default function Portfolio() {
                     priority
                     vision={selected.vision}
                   />
-                  <span className="absolute top-5 left-5 font-sora text-[10px] tracking-[0.3em] uppercase text-white/85 px-3 py-1.5 rounded-none bg-white/10 backdrop-blur-md border border-white/20">
+                  <span className="absolute top-5 left-5 font-sora text-[10px] tracking-[0.3em] uppercase text-white/85 px-3 py-1.5 rounded-sm bg-white/10 backdrop-blur-md border border-white/20">
                     0{selectedIndex + 1} / 0{filtered.length}
                   </span>
                 </div>
