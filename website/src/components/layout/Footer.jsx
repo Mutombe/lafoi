@@ -66,19 +66,6 @@ export default function Footer({ onOpenPolicy, onOpenPrivacy }) {
         </svg>
       </div>
 
-      {/* Giant brand watermark, editorial */}
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none select-none overflow-hidden"
-      >
-        <span
-          className="font-display font-light text-white/[0.035] tracking-[-0.05em] leading-none whitespace-nowrap"
-          style={{ fontSize: 'clamp(14rem, 36vw, 32rem)' }}
-        >
-          LA&nbsp;FOI
-        </span>
-      </div>
-
       {/* Newsletter CTA band */}
       <div className="relative border-b border-white/10 z-10">
         <div className="absolute top-0 left-1/4 w-96 h-48 bg-lafoi-green/[0.07] rounded-sm blur-[120px] pointer-events-none" />
