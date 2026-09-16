@@ -371,7 +371,7 @@ function VideoGallery() {
             <AnimatedSection delay={0.2}>
               <p className="mt-5 max-w-xl font-body font-light text-sm lg:text-base text-lafoi-gray leading-relaxed">
                 {linkifyProse(
-                  'Captures from the studio floor, installations underway, lighting solutions calibrated, photographic membranes finished. Click any tile for the full clip.'
+                  'Captures from the studio floor — installations underway, lighting calibrated, finishes set. Click any tile for the full clip.'
                 )}
               </p>
             </AnimatedSection>
@@ -441,7 +441,7 @@ function PortfolioHero() {
             </h1>
             <p className="mt-6 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]">
               {linkifyProse(
-                'A curated collection of frames from residential, commercial, hospitality and retail installations across Zimbabwe, every one a real stretch ceiling project drawn from our portfolio.',
+                'A curated collection of frames from residential, commercial, hospitality and retail installations across Zimbabwe.',
                 { variant: 'dark' }
               )}
             </p>

@@ -49,10 +49,10 @@ const allServices = [
     slug: 'stretch-ceiling-installation',
     icon: Stack,
     title: 'Stretch Ceiling Installation',
-    subtitle: 'Premium membrane systems',
+    subtitle: 'Premium ceiling systems',
     hero: '/brand/images/12.png',
     heroVision: 'White gloss stretch ceiling with linear LEDs in a contemporary kitchen, a recent La Foi install',
-    desc: 'Tensioned PVC and fabric stretch ceilings, matte, satin, gloss, translucent backlit, printed photographic, star ceilings and acoustic perforated. Available across a wide colour range, engineered to disappear into great architecture.',
+    desc: 'Tensioned PVC and fabric ceilings — matte, satin, gloss, translucent, printed, stars and acoustic — across a wide colour range, engineered to disappear into great architecture.',
     features: [
       { label: 'Finish library', detail: 'Matte, satin, gloss, translucent, printed, stars, acoustic' },
       { label: 'Colour range', detail: 'A wide custom colour range' },
@@ -79,11 +79,11 @@ const allServices = [
     subtitle: 'Architectural illumination',
     hero: '/brand/images/3.png',
     heroVision: 'Continuous recessed linear LEDs in a La Foi stretch-ceiling install',
-    desc: 'From fibre-optic starry skies to programmable LED arrays, our lighting solutions create atmosphere that elevates any interior. Designed alongside the ceiling, never bolted on after.',
+    desc: 'From fibre-optic starry skies to programmable LED arrays — atmosphere designed alongside the ceiling, never bolted on after.',
     features: [
       { label: 'LED systems', detail: 'Strip, panel and linear integration' },
       { label: 'Fibre optic', detail: 'Starry skies and edge accents' },
-      { label: 'Backlit panels', detail: 'Translucent membrane lighting' },
+      { label: 'Backlit panels', detail: 'Translucent backlit lighting' },
       { label: 'RGB & tunable', detail: 'Colour-changing and white-tunable' },
       { label: 'Scene control', detail: 'Wall plate, app or BMS triggering' },
       { label: 'Energy', detail: 'Dimmable, low-power architecture' },
@@ -106,7 +106,7 @@ const allServices = [
     subtitle: 'Vision to reality',
     hero: '/brand/images/29.png',
     heroVision: 'La Foi home-cinema install with shadow-edge perimeter and recessed spots',
-    desc: 'A trained consultant guides you through every step, from material selection and colour matching to lighting layout and visualisation of the finished space. The first conversation costs nothing.',
+    desc: 'A trained consultant guides every step, from material and colour to lighting layout and visualisation. The first conversation is free.',
     features: [
       { label: 'Free consult', detail: 'Initial brief and site visit' },
       { label: 'Site assessment', detail: 'Measured drawings, samples' },
@@ -133,7 +133,7 @@ const allServices = [
     subtitle: 'Care after handover',
     hero: '/brand/images/62.png',
     heroVision: 'La Foi installation team finishing a stretch-ceiling install in a Harare residence',
-    desc: 'Stretch ceilings are designed to be removable and serviceable. We support every install with cleaning guidance, on-site care and a clear warranty path, for as long as the ceiling is yours.',
+    desc: 'Stretch ceilings are removable and serviceable. We support every install with cleaning guidance, on-site care and a clear warranty path.',
     features: [
       { label: 'Cleaning', detail: 'Damp-wipe / microfibre, neutral pH' },
       { label: 'Service access', detail: 'Membrane removable, services preserved' },
@@ -160,7 +160,7 @@ const allServices = [
     subtitle: 'Concept to completion',
     hero: '/brand/projects/greystone-park/greystone-2.jpeg',
     heroVision: 'Greystone Park dressing room with high-gloss ceiling and back-lit oval mirrors',
-    desc: 'A full interior design service taken from first conversation to final styling, space planning, material palettes, furniture specification, mood boards, and supervised installation. We co-ordinate every trade so the room arrives whole.',
+    desc: 'A full interior design service from first conversation to final styling — space planning, materials, furniture and supervised installation, every trade co-ordinated.',
     features: [
       { label: 'Concept design', detail: 'Mood boards, design intent, sample boards' },
       { label: 'Space planning', detail: 'Measured drawings, circulation, zoning' },
@@ -189,7 +189,7 @@ const allServices = [
     // shows hardwood/parquet floor as the subject of the frame.
     hero: 'https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=1920&q=80',
     heroVision: 'Wide-plank engineered hardwood floor in a contemporary interior',
-    desc: 'Specialist flooring installation across engineered hardwood, luxury vinyl plank, laminate, and patterned parquet. Substrate preparation, perimeter detailing and skirting transitions handled in-house, the floor reads as one continuous plane.',
+    desc: 'Specialist flooring in engineered hardwood, luxury vinyl, laminate and parquet. Substrate prep and detailing handled in-house so the floor reads as one plane.',
     features: [
       { label: 'Engineered hardwood', detail: 'Oak, walnut, ash, wide and narrow plank' },
       { label: 'Luxury vinyl (LVP)', detail: 'Waterproof, click-lock, premium underlay' },
@@ -218,7 +218,7 @@ const allServices = [
     // shows a glossy seamless epoxy floor surface.
     hero: 'https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=1920&q=80',
     heroVision: 'High-gloss seamless epoxy resin floor in a showroom',
-    desc: 'Industrial-strength epoxy resin floors, seamless, hygienic, chemically resistant. Decorative metallic flake, solid colour, self-levelling, and food-grade variants. From garages to commercial kitchens to retail showrooms.',
+    desc: 'Industrial-strength epoxy resin floors — seamless, hygienic, chemically resistant. Metallic flake, solid colour, self-levelling and food-grade variants.',
     features: [
       { label: 'Self-levelling', detail: 'Mirror-flat finish, 2 to 4 mm thick' },
       { label: 'Metallic flake', detail: 'Decorative shimmer for showrooms' },
@@ -245,7 +245,7 @@ const allServices = [
     subtitle: 'Matterport spatial capture',
     hero: '/brand/images/46.png',
     heroVision: 'Geometric linear-LED stretch ceiling, the kind of finished La Foi space captured as a 3D twin',
-    desc: 'We scan a finished space with Matterport into a fully navigable 3D digital twin, a dimensionally accurate virtual walkthrough clients open from any device. Walk the room before a brick moves, revisit a completed install from anywhere in the world, and pull true measurements straight from the model. It is the difference between describing a space and standing in it.',
+    desc: 'We scan a finished space with Matterport into a navigable 3D digital twin clients open from any device. Walk the room from anywhere and pull true measurements from the model — the difference between describing a space and standing in it.',
     features: [
       { label: 'Matterport capture', detail: 'Millimetre-accurate 3D scan of the finished room' },
       { label: 'Virtual walkthrough', detail: 'Navigate space to space from any browser or phone' },

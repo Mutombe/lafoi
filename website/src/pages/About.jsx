@@ -164,7 +164,7 @@ function AboutHero() {
               </p>
               <p className="text-white/80">
                 {linkifyProse(
-                  'Built around a single conviction: the ceiling deserves the same care as the floor it sits above. Premium PVC and fabric stretch membranes, paired with bespoke lighting solutions, installed in one to two days per room.'
+                  'Built on one conviction: the ceiling deserves the same care as the floor beneath it. Premium stretch ceilings and bespoke lighting, installed in one to two days per room.'
                 )}
               </p>
             </div>
@@ -247,13 +247,13 @@ function Mission() {
               <div className="space-y-5 font-body font-light text-base lg:text-[17px] text-white/70 leading-[1.7] max-w-lg">
                 <p>
                   {linkifyProse(
-                    'We transform interior spaces with durable, visually stunning, and versatile stretch ceilings that meet the highest standards of quality and design, pioneering a finish that, until 2024, no studio in Zimbabwe could specify.',
+                    'We transform interiors with durable, versatile stretch ceilings held to the highest standard — a finish no Zimbabwean studio could specify until 2024.',
                     { variant: 'dark' }
                   )}
                 </p>
                 <p className="text-white/55">
                   {linkifyProse(
-                    'Founded in 2024 in Belgravia, Harare, around a single conviction: the ceiling, not the floor, is where a room begins. Read the full company profile or browse our portfolio to see the work.',
+                    'Founded in 2024 in Belgravia, Harare, on one conviction: the ceiling, not the floor, is where a room begins.',
                     { variant: 'dark' }
                   )}
                 </p>
@@ -397,7 +397,7 @@ function StoryTimeline() {
       year: '03',
       sub: 'Craft',
       title: 'A team trained for the work',
-      copy: 'Four leads, managing, operations, projects, marketing, and a trained installation crew. Every membrane goes up under the eyes of someone who has done it before.',
+      copy: 'Four leads — managing, operations, projects, marketing — and a trained crew. Every ceiling goes up under experienced eyes.',
     },
     {
       year: '04',
@@ -581,7 +581,7 @@ function Values() {
           <AnimatedSection delay={0.2} direction="right">
             <p className="font-body text-lafoi-gray max-w-sm leading-relaxed">
               {linkifyProse(
-                'More than a company, a team united by shared values that inform every project we accept. See our portfolio for projects that show how those values play out in finished work.'
+                'More than a company — a team united by shared values that inform every project we accept.'
               )}
             </p>
           </AnimatedSection>
@@ -691,7 +691,7 @@ function Partners() {
       country: 'Pioneer',
       role: 'A Zimbabwean first',
       title: 'Zimbabwe’s first',
-      desc: 'La Foi Designs introduced stretch ceilings to Zimbabwe, and remains the country’s leading installer. The finish is everywhere in Europe; we made it specifiable here.',
+      desc: 'La Foi Designs introduced stretch ceilings to Zimbabwe and remains the country’s leading installer. Everywhere in Europe; we made it specifiable here.',
       features: [
         { label: 'Fast', detail: '1 to 2 days to install vs. days for gypsum' },
         { label: 'Clean', detail: 'No demolition, no plaster dust, no painting' },
@@ -704,7 +704,7 @@ function Partners() {
       country: 'Engineered',
       role: 'PVC & fabric membrane',
       title: 'Built to last',
-      desc: 'Stretch ceilings are tensioned PVC or fabric membranes, fire-rated, water-resistant, 100% washable, and engineered to outlast the room beneath them.',
+      desc: 'Stretch ceilings are tensioned PVC or fabric — fire-rated, water-resistant, fully washable, and built to outlast the room beneath them.',
       features: [
         { label: 'Fire-rated', detail: 'B-s1, d0 self-extinguishing membrane' },
         { label: 'Water-tight', detail: 'Holds water in a leak, protects below' },
