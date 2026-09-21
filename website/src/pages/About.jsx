@@ -164,7 +164,7 @@ function AboutHero() {
               </p>
               <p className="text-white/80">
                 {linkifyProse(
-                  'Built on one conviction: the ceiling deserves the same care as the floor beneath it. Premium stretch ceilings and bespoke lighting, installed in one to two days per room.'
+                  'Built on one conviction: the ceiling deserves the same care as the floor beneath it. Premium stretch ceilings and bespoke lighting, installed in two to four days, depending on the design.'
                 )}
               </p>
             </div>
@@ -693,7 +693,7 @@ function Partners() {
       title: 'Zimbabwe’s first',
       desc: 'La Foi Designs introduced stretch ceilings to Zimbabwe and remains the country’s leading installer. Everywhere in Europe; we made it specifiable here.',
       features: [
-        { label: 'Fast', detail: '1 to 2 days to install vs. days for gypsum' },
+        { label: 'Fast', detail: '2 to 4 days, depending on the design' },
         { label: 'Clean', detail: 'No demolition, no plaster dust, no painting' },
         { label: 'Flexible', detail: 'A wide colour range, matte to mirror gloss' },
         { label: 'Backed', detail: 'Manufacturer-warranted PVC membrane' },
@@ -848,7 +848,7 @@ function Team() {
             <AnimatedSection delay={0.2}>
               <p className="font-body font-light text-base lg:text-lg text-white/65 leading-[1.75] mb-10 max-w-xl">
                 A small, deliberate team. Managing Director, Operations, Projects, Marketing, each one client-facing, each one accountable. Plus a trained install crew that
-                shows up on time, in branded shirts, and finishes the room by sundown.
+                shows up on time, in branded shirts, and leaves the room spotless.
               </p>
             </AnimatedSection>
 

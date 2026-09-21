@@ -58,7 +58,7 @@ const allServices = [
       { label: 'Colour range', detail: 'A wide custom colour range' },
       { label: 'Fire rating', detail: 'B-s1, d0, self-extinguishing' },
       { label: 'Moisture proof', detail: 'Bathroom and kitchen rated' },
-      { label: 'Installation', detail: '1 to 2 working days per 9 m² standard room' },
+      { label: 'Installation', detail: '2 to 4 days, depending on the design' },
       { label: 'Warranty', detail: 'Manufacturer warranty up to 10 years' },
     ],
     applications: [

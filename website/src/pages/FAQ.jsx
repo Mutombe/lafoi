@@ -78,7 +78,7 @@ const faqCategories = [
     questions: [
       {
         q: 'How long does installation take?',
-        a: 'A standard room (20 to 30 sqm) can be completed in 4 to 8 hours. Larger spaces or complex designs with lighting integration may take 1 to 2 days. We work efficiently to minimize disruption.',
+        a: 'Most installations take 2 to 4 days, depending on the design and lighting integration. We work efficiently to minimize disruption.',
       },
       {
         q: 'Is the installation process messy?',

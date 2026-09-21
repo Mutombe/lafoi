@@ -32,19 +32,19 @@ import { linkifyProse } from '../utils/linkify.jsx'
 
 const HOME_HERO_SLIDES = [
   {
-    src: '/brand/images/50.png',
-    alt: 'Wood-pattern stretch ceiling above a luxury lounge',
-    vision: 'Editorial wood-stripe printed ceiling over a designer lounge',
+    src: '/brand/images/22.png',
+    alt: 'Starfield and linear-LED stretch ceiling above a luxury city-view lounge',
+    vision: 'Dark feature ceiling with starfield and linear LEDs over a designer lounge',
   },
   {
-    src: '/brand/images/35.png',
-    alt: 'Warm linear pendants over a marble feature wall',
-    vision: 'Editorial yellow linear-pendant ceiling against luxury marble',
+    src: '/brand/images/transluescent1.png',
+    alt: 'Luminous backlit stretch ceiling glowing above an onyx-walled lounge',
+    vision: 'Translucent backlit stretch ceiling casting an even glow over a warm lounge',
   },
   {
-    src: '/brand/images/1.png',
-    alt: 'La Foi signature stretch ceiling installation, editorial cover image',
-    vision: 'Brand-supplied editorial hero, signature install',
+    src: '/brand/images/mirror.png',
+    alt: 'Mirror-gloss stretch ceiling reflecting a chandelier-lit dining room',
+    vision: 'High-gloss mirror ceiling doubling a luxury dining room and its chandelier',
   },
 ]
 
@@ -483,7 +483,7 @@ function Manifesto() {
                 { k: 'Origin', v: 'Belgravia, Harare' },
                 { k: 'Founded', v: '2024' },
                 { k: 'Membranes', v: 'PVC · Fabric' },
-                { k: 'Install', v: '1 to 2 days per 9 m² standard room' },
+                { k: 'Install', v: '2 to 4 days, depending on the design' },
               ].map((m) => (
                 <div key={m.k} className="border-t border-white/10 pt-4">
                   <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/40 mb-1.5">
@@ -549,7 +549,7 @@ function Manifesto() {
               'PVC & fabric ceilings',
               'Wide colour range',
               'Fire-rated B-s1, d0',
-              '1 to 2 day install',
+              '2 to 4 day install',
             ].map((chip, i) => (
               <span key={`${k}-${i}`} className="inline-flex items-center mx-8">
                 <span className="font-sora text-xs lg:text-sm text-white/55 tracking-[0.18em] uppercase">
@@ -844,7 +844,7 @@ function Approach() {
     {
       num: '03',
       title: 'Reveal',
-      copy: 'A trained crew, one to two days per room, no demolition. The ceiling goes up, the lighting comes alive, and the room is yours by sundown.',
+      copy: 'A trained crew, two to four days, no demolition. The ceiling goes up, the lighting comes alive, and the room is transformed.',
       image: '/brand/images/20.png',
       vision: 'Bedroom with white gloss ceiling, arched mirrors and timber panelling, finished reveal',
     },
@@ -1645,7 +1645,7 @@ function WhyLaFoi() {
     {
       icon: Lightning,
       title: 'Fast & Cost Effective',
-      copy: 'One to two day install per room, no demolition, no concealed delays.',
+      copy: 'Two to four day install, no demolition, no concealed delays.',
     },
     {
       icon: PaintBrush,
@@ -1688,7 +1688,7 @@ function WhyLaFoi() {
           <AnimatedSection direction="right" className="lg:col-span-5">
             <p className="text-base lg:text-lg text-lafoi-gray font-general leading-relaxed">
               {linkifyProse(
-                'We pioneered stretch ceilings in Zimbabwe and remain the country’s leading installer. Tensioned PVC and fabric go up in one to two days — clean, fire-rated, washable.'
+                'We pioneered stretch ceilings in Zimbabwe and remain the country’s leading installer. Tensioned PVC and fabric go up in two to four days — clean, fire-rated, washable.'
               )}
             </p>
           </AnimatedSection>

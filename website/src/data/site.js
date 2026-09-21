@@ -20,7 +20,7 @@ export const products = [
     finish: 'Matte',
     applications: ['Residential', 'Office', 'Hospitality'],
     shortDesc: 'A whisper-soft matte ceiling that diffuses light like fresh fallen snow.',
-    longDesc: 'Our flagship matte membrane is the quiet workhorse of the La Foi range, a tensioned PVC skin that reads as a perfectly painted plaster surface, only smoother. Light scatters across it without glare or hotspots, making it the natural choice for rooms where the architecture, not the ceiling, should hold attention.\n\nUnlike traditional plasterboard, the membrane installs in one to two days per room, hides services, and can be removed and reinstalled without damage. It accepts a wide range of custom tints and pairs beautifully with cove lighting, recessed downlights, and pendant fixtures.\n\nClass B fire performance, anti-bacterial coating and a manufacturer warranty up to 10 years make it equally at home in a primary residence and a clinical environment.',
+    longDesc: 'Our flagship matte membrane is the quiet workhorse of the La Foi range, a tensioned PVC skin that reads as a perfectly painted plaster surface, only smoother. Light scatters across it without glare or hotspots, making it the natural choice for rooms where the architecture, not the ceiling, should hold attention.\n\nUnlike traditional plasterboard, the ceiling installs in two to four days depending on the design, hides services, and can be removed and reinstalled without damage. It accepts a wide range of custom tints and pairs beautifully with cove lighting, recessed downlights, and pendant fixtures.\n\nClass B fire performance, anti-bacterial coating and a manufacturer warranty up to 10 years make it equally at home in a primary residence and a clinical environment.',
     highlights: [
       'Class B fire-rated membrane (B-s1,d0 per EN 13501-1)',
       'Anti-bacterial silver-ion topcoat',
@@ -38,13 +38,12 @@ export const products = [
       'Warranty': 'Up to 10 years',
       'Cleanability': 'Damp wipe, neutral pH',
     },
-    image: '/brand/images/32.png',
+    image: '/brand/images/matte.png',
     gallery: [
-      '/brand/images/32.png',
       '/brand/images/matte.png',
       '/brand/images/22.png',
     ],
-    vision: 'Pristine matte ceiling diffusing soft daylight across a contemporary living room',
+    vision: 'Flat, non-reflective matte ceiling with recessed downlights',
     featured: true,
   },
   {
