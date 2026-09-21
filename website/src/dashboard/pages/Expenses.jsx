@@ -171,6 +171,34 @@ export default function Expenses() {
     return Array.from(s).sort()
   }, [incomeByCurrency, expensesByCurrency])
 
+  // This-calendar-month expense total — shown in the header regardless of the
+  // filters below, so there's always a running "spent this month" indicator.
+  const monthBounds = useMemo(() => {
+    const d = new Date()
+    const iso = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`
+    return {
+      from: iso(new Date(d.getFullYear(), d.getMonth(), 1)),
+      to: iso(new Date(d.getFullYear(), d.getMonth() + 1, 0)),
+      label: d.toLocaleDateString(undefined, { month: 'long' }),
+    }
+  }, [])
+  const monthArgs = useMemo(
+    () => ({ page: 1, page_size: 500, incurred_on__gte: monthBounds.from, incurred_on__lte: monthBounds.to }),
+    [monthBounds],
+  )
+  const { data: monthExpensesData } = useListExpensesQuery(monthArgs)
+  const monthByCurrency = useMemo(() => {
+    const m = {}
+    ;(monthExpensesData?.results || []).forEach((r) => {
+      const c = r.currency || 'USD'
+      m[c] = (m[c] || 0) + Number(r.amount || 0)
+    })
+    return m
+  }, [monthExpensesData])
+  const monthTotalDisplay = Object.keys(monthByCurrency).length
+    ? Object.entries(monthByCurrency).map(([c, a]) => fmtMoney(a, c)).join('  ·  ')
+    : fmtMoney(0, 'USD')
+
   const [createExpense] = useCreateExpenseMutation()
   const [updateExpense] = useUpdateExpenseMutation()
   const [deleteExpense] = useDeleteExpenseMutation()
@@ -383,9 +411,25 @@ export default function Expenses() {
         title="Every cost, in one ledger."
         description="Studio overhead, project costs, supplier invoices, fuel, software. Link to a project when relevant, leave it blank for global expenses."
         actions={
-          <PrimaryButton onClick={() => setEditing({ ...empty() })}>
-            <Plus size={14} weight="bold" /> New expense
-          </PrimaryButton>
+          <>
+            <div
+              className="inline-flex items-center gap-2.5 pl-3.5 pr-4 py-2 rounded-full bg-lafoi-dark text-white"
+              title={`Total expenses for ${monthBounds.label} (this calendar month)`}
+            >
+              <Wallet size={15} weight="bold" className="text-lafoi-green-light shrink-0" />
+              <span className="font-sora text-[9px] tracking-[0.22em] uppercase text-white/55 leading-none">
+                {monthBounds.label}
+                <br className="hidden sm:block" />
+                <span className="text-white/45">this month</span>
+              </span>
+              <span className="tabular-nums font-sora font-semibold text-sm sm:text-[15px] leading-none">
+                {monthTotalDisplay}
+              </span>
+            </div>
+            <PrimaryButton onClick={() => setEditing({ ...empty() })}>
+              <Plus size={14} weight="bold" /> New expense
+            </PrimaryButton>
+          </>
         }
       />
 
