@@ -104,7 +104,6 @@ export default function Home() {
       <KineticTextStrip variant="dark" speed={70} />
       <SectionDivider shape="mirror-angular" from="cream" to="cream" />
       <Approach />
-      <SectionDivider shape="arc" from="cream" to="dark" />
       <Stats />
       <SectionDivider shape="angular" from="dark" to="cream" />
       <ProjectsBento />
@@ -903,31 +902,10 @@ function Approach() {
             </div>
           </div>
 
-          {/* Inline SVG defs, clip-path that mirrors the bottom-divider arc.
-              The desktop sticky image references this clip via `clipPathUnits=objectBoundingBox`
-              so its bottom edge bends in step with the SectionDivider below.
-              Path geometry mirrors the divider's `arc` shape (left half: dips from 0,0 to 0.5,0.96;
-              right half: rises back to 1,0). The values are normalised 0-1. */}
-          <svg aria-hidden width="0" height="0" className="absolute pointer-events-none">
-            <defs>
-              <clipPath id="approach-arc-clip" clipPathUnits="objectBoundingBox">
-                <path d="
-                  M 0 0
-                  L 1 0
-                  L 1 1
-                  C 0.75 1, 0.6 0.95, 0.5 0.95
-                  C 0.4 0.95, 0.25 1, 0 1
-                  Z
-                " />
-              </clipPath>
-            </defs>
-          </svg>
           {/* Desktop: sticky full-bleed pane covering the entire left half.
-              The pane's bottom edge is clipped with the divider's arc so the image
-              bends parallel to the curved white border below. */}
+              Its bottom edge is flat — it meets the section below on a clean, straight line. */}
           <div
             className="hidden lg:block lg:sticky lg:top-0 lg:h-screen overflow-hidden bg-lafoi-dark z-10"
-            style={{ clipPath: 'url(#approach-arc-clip)' }}
           >
             <AnimatePresence mode="popLayout">
               <motion.div
@@ -1372,144 +1350,90 @@ function ReviewAvatar({ author, avatar }) {
 }
 
 function Testimonial() {
-  const [active, setActive] = useState(0)
-
-  // auto-advance through real reviews
-  useEffect(() => {
-    const id = setInterval(() => setActive((a) => (a + 1) % reviews.length), 7500)
-    return () => clearInterval(id)
-  }, [])
-
-  const t = reviews[active]
+  // All real, verified reviews shown at once as a masonry of cards — more
+  // trustworthy than a single rotating quote, and it fills the section properly.
   const clientNames = reviews.map((r) => r.author)
 
   return (
-    <section className="relative bg-lafoi-cream py-28 lg:py-44 overflow-hidden">
+    <section className="relative bg-lafoi-cream py-24 lg:py-36 overflow-hidden">
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="max-w-5xl mx-auto text-center relative">
-          {/* RATING EYEBROW, verified Google reviews */}
+        {/* header — rating + eyebrow + heading, centred */}
+        <div className="max-w-3xl mx-auto text-center mb-14 lg:mb-20">
           <AnimatedSection>
-            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mb-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 mb-5">
               <span className="inline-flex items-center gap-0.5">
                 {[0, 1, 2, 3, 4].map((i) => (
-                  <Star key={i} size={14} weight="fill" className="text-lafoi-green-light" />
+                  <Star key={i} size={15} weight="fill" className="text-lafoi-green-light" />
                 ))}
               </span>
-              <span className="font-display font-light italic text-lafoi-dark text-lg leading-none">
+              <span className="font-display font-light italic text-lafoi-dark text-xl leading-none">
                 {googleRating.average.toFixed(1)}
               </span>
-              <span
-                aria-hidden
-                className="hidden sm:inline-block w-1 h-1 rounded-full bg-lafoi-gray/30"
-              />
+              <span aria-hidden className="hidden sm:inline-block w-1 h-1 rounded-full bg-lafoi-gray/30" />
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-gray">
                 {googleRating.count} Google reviews &middot; Verified clients
               </p>
             </div>
-            <div className="flex items-center justify-center gap-3 mb-10">
+            <div className="flex items-center justify-center gap-3 mb-6">
               <span className="block w-10 h-px bg-lafoi-green/60" />
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                04 · Heard from clients
+                04 &middot; Heard from clients
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">09 / 10</span>
               <span className="block w-10 h-px bg-lafoi-green/60" />
             </div>
+            <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-5xl leading-[1.08] tracking-[-0.02em]">
+              Loved by the people <span className="text-lafoi-green italic">we build for.</span>
+            </h2>
           </AnimatedSection>
+        </div>
 
-          {/* HUGE opening quote glyph behind the text */}
-          <span
-            aria-hidden
-            className="absolute left-1/2 -translate-x-1/2 -top-2 lg:-top-6 font-display font-light italic text-lafoi-green/[0.08] leading-none pointer-events-none select-none"
-            style={{ fontSize: 'clamp(10rem, 18vw, 22rem)' }}
-          >
-            “
-          </span>
-
-          <div className="relative">
-            <AnimatePresence mode="wait">
-              <motion.blockquote
-                key={active}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -24 }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="font-display font-light italic text-lafoi-dark leading-[1.18] tracking-[-0.02em] mx-auto max-w-4xl"
-                style={{ fontSize: 'clamp(1.7rem, 3.6vw, 3.4rem)' }}
-              >
-                {t.quote}
-              </motion.blockquote>
-            </AnimatePresence>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`meta-${active}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="mt-10 lg:mt-14 flex flex-col items-center gap-3"
-              >
-                <span className="block w-10 h-px bg-lafoi-green" />
-                <div className="flex items-center justify-center gap-3">
-                  <ReviewAvatar author={t.author} avatar={t.avatar} />
-                  <div className="text-left">
-                    <p className="font-sora text-sm font-semibold text-lafoi-dark tracking-wide leading-tight">
-                      {t.author}
-                    </p>
-                    <p className="text-xs font-general text-lafoi-gray leading-tight mt-0.5">
-                      {t.role}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Google verified badge, only when source is google */}
-                {t.source === 'google' && (
-                  <a
-                    href={googleRating.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-1.5 mt-1 px-3 py-1 rounded-sm border border-lafoi-dark/10 bg-white/60 hover:bg-white hover:border-lafoi-green/30 transition-colors duration-300"
+        {/* review cards — masonry, every real review at once */}
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 lg:gap-6">
+          {reviews.map((r, i) => (
+            <div
+              key={i}
+              className="break-inside-avoid mb-5 lg:mb-6 rounded-sm bg-white border border-lafoi-dark/8 p-6 lg:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_18px_38px_-18px_rgba(0,0,0,0.14)] hover:border-lafoi-green/25 transition-all duration-500"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span className="inline-flex items-center gap-0.5">
+                  {[0, 1, 2, 3, 4].map((sIdx) => (
+                    <Star key={sIdx} size={13} weight="fill" className="text-lafoi-green-light" />
+                  ))}
+                </span>
+                {r.source === 'google' && (
+                  <span
+                    aria-hidden
+                    className="font-display text-[15px] leading-none"
+                    style={{
+                      background: 'linear-gradient(135deg, #4285F4 0%, #EA4335 35%, #FBBC05 65%, #34A853 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                    title="Verified Google review"
                   >
-                    <span
-                      aria-hidden
-                      className="font-display font-normal text-[13px] leading-none tracking-tight"
-                      style={{
-                        background: 'linear-gradient(135deg, #4285F4 0%, #EA4335 35%, #FBBC05 65%, #34A853 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}
-                    >
-                      G
-                    </span>
-                    <span className="font-sora text-[10px] tracking-[0.18em] uppercase text-lafoi-gray group-hover:text-lafoi-dark transition-colors">
-                      Verified Google review
-                    </span>
-                    <ArrowUpRight size={10} weight="bold" className="text-lafoi-gray/60 group-hover:text-lafoi-green transition-colors" />
-                  </a>
+                    G
+                  </span>
                 )}
-              </motion.div>
-            </AnimatePresence>
-
-            {/* pagination dots */}
-            <div className="mt-10 flex items-center justify-center gap-1.5 flex-wrap max-w-md mx-auto">
-              {reviews.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  aria-label={`Show review ${i + 1}`}
-                  onClick={() => setActive(i)}
-                  className={`h-1 rounded-sm transition-all duration-500 ${
-                    i === active ? 'w-8 bg-lafoi-green' : 'w-3 bg-lafoi-dark/15 hover:bg-lafoi-dark/30'
-                  }`}
-                />
-              ))}
+              </div>
+              <blockquote className="font-display font-light text-lafoi-dark text-[17px] lg:text-lg leading-[1.5] tracking-[-0.01em]">
+                {r.quote}
+              </blockquote>
+              <div className="flex items-center gap-3 mt-6 pt-5 border-t border-lafoi-dark/[0.07]">
+                <ReviewAvatar author={r.author} avatar={r.avatar} />
+                <div className="min-w-0">
+                  <p className="font-sora text-sm font-semibold text-lafoi-dark leading-tight truncate">
+                    {r.author}
+                  </p>
+                  <p className="text-xs font-general text-lafoi-gray leading-tight mt-0.5">{r.role}</p>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
 
         {/* kinetic name marquee, sourced from reviews data */}
-        <AnimatedSection delay={0.4} className="mt-20 lg:mt-28">
+        <AnimatedSection delay={0.2} className="mt-16 lg:mt-24">
           <p className="text-center text-[10px] font-sora text-lafoi-gray tracking-[0.3em] uppercase mb-8">
             In good company
           </p>
@@ -1700,21 +1624,23 @@ function WhyLaFoi() {
             const Icon = p.icon
             return (
               <AnimatedSection key={p.title} delay={i * 0.05}>
-                <div className="clay-lift group h-full p-7 lg:p-8 rounded-sm bg-white/55 backdrop-blur-md border border-lafoi-green/10 hover:border-lafoi-green/30">
-                  <div className="flex items-center gap-4 mb-5">
-                    <span className="w-12 h-12 rounded-sm bg-lafoi-green/10 border border-lafoi-green/20 flex items-center justify-center group-hover:bg-lafoi-green/15 transition-colors duration-500">
-                      <Icon size={20} weight="duotone" className="text-lafoi-green" />
-                    </span>
-                    <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/55">
-                      0{i + 1}
-                    </span>
-                  </div>
-                  <h3 className="font-display font-normal text-2xl text-lafoi-dark leading-tight mb-3 tracking-tight">
+                <div className="group relative h-full p-7 lg:p-8 rounded-sm bg-white border border-lafoi-dark/8 shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_22px_44px_-20px_rgba(26,138,46,0.22)] hover:border-lafoi-green/30 hover:-translate-y-1 transition-all duration-500 overflow-hidden">
+                  {/* ghost index numeral */}
+                  <span aria-hidden className="absolute top-3 right-5 font-display font-light leading-none text-lafoi-green/[0.07] select-none pointer-events-none" style={{ fontSize: '4.5rem' }}>
+                    0{i + 1}
+                  </span>
+                  {/* icon chip — fills solid green on hover */}
+                  <span className="relative w-12 h-12 rounded-sm bg-lafoi-green/10 border border-lafoi-green/20 flex items-center justify-center mb-6 group-hover:bg-lafoi-green group-hover:border-lafoi-green transition-colors duration-500">
+                    <Icon size={22} weight="duotone" className="text-lafoi-green group-hover:text-white transition-colors duration-500" />
+                  </span>
+                  <h3 className="relative font-display font-normal text-2xl text-lafoi-dark leading-tight mb-3 tracking-tight">
                     {p.title}
                   </h3>
-                  <p className="text-sm font-general text-lafoi-gray leading-relaxed">
+                  <p className="relative text-sm font-general text-lafoi-gray leading-relaxed">
                     {p.copy}
                   </p>
+                  {/* accent bar grows on hover */}
+                  <span aria-hidden className="absolute left-0 bottom-0 h-[3px] w-0 bg-lafoi-green group-hover:w-full transition-all duration-500 ease-out" />
                 </div>
               </AnimatedSection>
             )
