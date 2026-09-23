@@ -16,7 +16,10 @@ class ContentBlockViewSet(viewsets.ModelViewSet):
     serializer_class = ContentBlockSerializer
     permission_classes = [HasModuleAccess.for_module("website")]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["page", "section", "type", "is_active"]
+    # NB: no "page" filter here — it collides with the pagination `?page=` param.
+    # The admin fetches all blocks and filters by page client-side; the public
+    # site-content view does its own (un-paginated) page lookup.
+    filterset_fields = ["section", "type", "is_active"]
     search_fields = ["key", "label", "value", "section"]
     ordering_fields = ["order", "page", "section", "key", "updated_at"]
     ordering = ["page", "section", "order"]
