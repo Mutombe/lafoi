@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "payroll",
     "compliance",
     "inventory",
+    "website",
 ]
 
 MIDDLEWARE = [

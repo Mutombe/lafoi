@@ -25,6 +25,7 @@ MODULES = (
     ("audit", "Audit Log"),
     ("users", "User Management"),
     ("map", "Studio Map"),
+    ("website", "Website (CMS)"),
 )
 DEFAULT_MODULE_ACCESS = {key: True for key, _ in MODULES if key not in ("payroll", "employees", "loans", "compliance", "audit", "users")}
 
