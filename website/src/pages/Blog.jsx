@@ -14,6 +14,8 @@ import { linkifyProse } from '../utils/linkify.jsx'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import { useSEO, breadcrumbsLd } from '../utils/seo'
+import { Link } from 'react-router-dom'
+import { posts } from '../data/blog'
 
 const BLOG_HERO_SLIDES = [
   {
@@ -33,75 +35,6 @@ const BLOG_HERO_SLIDES = [
   },
 ]
 
-const posts = [
-  {
-    id: 1,
-    title: '5 Ways Stretch Ceilings Transform Small Spaces',
-    excerpt:
-      'Discover how stretch ceilings create the illusion of more space, add depth with lighting, and elevate the design of compact rooms.',
-    category: 'Design Tips',
-    date: 'Feb 15, 2026',
-    readTime: '4 min',
-    image: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1600&q=85',
-    vision: 'Elegant living room with premium stretch ceiling and refined furnishings',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'The Science Behind Acoustic Stretch Ceilings',
-    excerpt:
-      'How micro-perforated membranes reduce noise levels while maintaining elegant aesthetics in offices and hospitality venues.',
-    category: 'Innovation',
-    date: 'Feb 8, 2026',
-    readTime: '6 min',
-    image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1200&q=80',
-    vision: 'Professional studio with acoustic ceiling treatment',
-  },
-  {
-    id: 3,
-    title: 'Fiber Optic Starry Skies: The Ultimate Bedroom Upgrade',
-    excerpt:
-      'Everything you need to know about creating a magical starry sky effect in your bedroom with fiber optic ceiling technology.',
-    category: 'Lighting',
-    date: 'Jan 28, 2026',
-    readTime: '5 min',
-    image: 'https://images.unsplash.com/photo-1765434670017-c0d28ecde29a?w=1200&q=80',
-    vision: 'Modern ceiling lights with blue and white artistic accents',
-  },
-  {
-    id: 4,
-    title: 'Stretch Ceilings vs Traditional Plastering: A Complete Guide',
-    excerpt:
-      'Comparing cost, durability, installation time, and aesthetics between stretch ceilings and traditional ceiling finishes.',
-    category: 'Guides',
-    date: 'Jan 20, 2026',
-    readTime: '7 min',
-    image: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=1200&q=80',
-    vision: 'Luxury modern living room with premium ceiling',
-  },
-  {
-    id: 5,
-    title: 'Inside the Stretch Membrane Manufacturing Process',
-    excerpt:
-      'A behind-the-scenes look at how our premium PVC membranes are manufactured to exacting European quality standards.',
-    category: 'Behind the Scenes',
-    date: 'Jan 12, 2026',
-    readTime: '5 min',
-    image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=1200&q=80',
-    vision: 'Designers collaborating in a warm wooden architectural space',
-  },
-  {
-    id: 6,
-    title: 'Top Interior Design Trends in Zimbabwe for 2026',
-    excerpt:
-      'From biophilic design to statement ceilings, explore the trends shaping Zimbabwean interior spaces this year.',
-    category: 'Trends',
-    date: 'Jan 5, 2026',
-    readTime: '6 min',
-    image: 'https://images.unsplash.com/photo-1618259715220-a89a4e4da76b?w=1200&q=80',
-    vision: 'Country hotel interior with elegant design and sophisticated ceiling',
-  },
-]
 
 export default function Blog() {
   const featured = posts.find((p) => p.featured)
@@ -270,8 +203,8 @@ function FeaturedPost({ post }) {
         <AnimatedSection delay={0.1}>
           <article className="group grid lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             {/* duotone image, magazine cover */}
-            <a
-              href="#"
+            <Link
+              to={`/blog/${post.slug}`}
               className="lg:col-span-7 block relative aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] rounded-sm overflow-hidden bg-lafoi-green"
               aria-label={post.title}
             >
@@ -311,7 +244,7 @@ function FeaturedPost({ post }) {
                   {post.date} &middot; {post.readTime} read
                 </p>
               </div>
-            </a>
+            </Link>
 
             {/* text column */}
             <div className="lg:col-span-5">
@@ -351,8 +284,8 @@ function FeaturedPost({ post }) {
                 </div>
               </div>
 
-              <a
-                href="#"
+              <Link
+                to={`/blog/${post.slug}`}
                 className="group/cta inline-flex items-center gap-3 text-lafoi-dark font-sora text-sm font-medium pb-1 border-b border-lafoi-dark/30 hover:border-lafoi-green hover:text-lafoi-green transition-colors duration-300"
               >
                 <span className="font-display font-light text-base">Read the article</span>
@@ -361,7 +294,7 @@ function FeaturedPost({ post }) {
                   weight="bold"
                   className="group-hover/cta:translate-x-1 transition-transform duration-300"
                 />
-              </a>
+              </Link>
             </div>
           </article>
         </AnimatedSection>
@@ -468,7 +401,7 @@ function PostCard({ post, index }) {
       transition={{ duration: 0.6, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
       className={`group ${span}`}
     >
-      <a href="#" className="block" aria-label={post.title}>
+      <Link to={`/blog/${post.slug}`} className="block" aria-label={post.title}>
         {/* image with varied aspect */}
         <div
           className={`relative ${aspect} rounded-sm overflow-hidden bg-lafoi-dark mb-5`}
@@ -523,7 +456,7 @@ function PostCard({ post, index }) {
             className="text-lafoi-dark/40 group-hover:text-lafoi-green group-hover:rotate-45 transition-all duration-500"
           />
         </div>
-      </a>
+      </Link>
     </motion.article>
   )
 }

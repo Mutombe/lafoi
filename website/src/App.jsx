@@ -23,6 +23,7 @@ const Contact = lazy(() => import('./pages/Contact'))
 const Careers = lazy(() => import('./pages/Careers'))
 const FAQ = lazy(() => import('./pages/FAQ'))
 const Blog = lazy(() => import('./pages/Blog'))
+const BlogPost = lazy(() => import('./pages/BlogPost'))
 const Shop = lazy(() => import('./pages/Shop'))
 const Launch = lazy(() => import('./pages/Launch'))
 const DesignView = lazy(() => import('./pages/DesignView'))
@@ -155,6 +156,7 @@ export default function App() {
               <Route path="/careers" element={<Careers />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/launch" element={<Launch />} />
             </Routes>
