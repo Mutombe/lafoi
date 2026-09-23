@@ -171,17 +171,32 @@ export default function Expenses() {
     return Array.from(s).sort()
   }, [incomeByCurrency, expensesByCurrency])
 
-  // This-calendar-month expense total — shown in the header regardless of the
-  // filters below, so there's always a running "spent this month" indicator.
-  const monthBounds = useMemo(() => {
-    const d = new Date()
-    const iso = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`
-    return {
-      from: iso(new Date(d.getFullYear(), d.getMonth(), 1)),
-      to: iso(new Date(d.getFullYear(), d.getMonth() + 1, 0)),
-      label: d.toLocaleDateString(undefined, { month: 'long' }),
-    }
+  // Month picker for the header total. The dropdown offers the last 18 months;
+  // whichever is selected drives the "spent" total shown in the header,
+  // independent of the filter strip below.
+  const monthOptions = useMemo(() => {
+    const now = new Date()
+    return Array.from({ length: 18 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      return {
+        value: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+        label: d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
+      }
+    })
   }, [])
+  const [monthSel, setMonthSel] = useState(monthOptions[0].value)
+
+  const monthBounds = useMemo(() => {
+    const [y, m] = monthSel.split('-').map(Number)
+    const iso = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`
+    const first = new Date(y, m - 1, 1)
+    return {
+      from: iso(first),
+      to: iso(new Date(y, m, 0)),
+      label: first.toLocaleDateString(undefined, { month: 'long' }),
+      full: first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
+    }
+  }, [monthSel])
   const monthArgs = useMemo(
     () => ({ page: 1, page_size: 500, incurred_on__gte: monthBounds.from, incurred_on__lte: monthBounds.to }),
     [monthBounds],
@@ -413,18 +428,28 @@ export default function Expenses() {
         actions={
           <>
             <div
-              className="inline-flex items-center gap-2.5 pl-3.5 pr-4 py-2 rounded-full bg-lafoi-dark text-white"
-              title={`Total expenses for ${monthBounds.label} (this calendar month)`}
+              className="inline-flex items-center gap-2.5 pl-3.5 pr-2.5 py-2 rounded-full bg-lafoi-dark text-white"
+              title={`Total expenses for ${monthBounds.full}`}
             >
               <Wallet size={15} weight="bold" className="text-lafoi-green-light shrink-0" />
-              <span className="font-sora text-[9px] tracking-[0.22em] uppercase text-white/55 leading-none">
-                {monthBounds.label}
-                <br className="hidden sm:block" />
-                <span className="text-white/45">this month</span>
-              </span>
               <span className="tabular-nums font-sora font-semibold text-sm sm:text-[15px] leading-none">
                 {monthTotalDisplay}
               </span>
+              <span aria-hidden className="w-px h-4 bg-white/15" />
+              <div className="relative inline-flex items-center">
+                <Calendar size={12} weight="bold" className="text-white/45 pointer-events-none" />
+                <select
+                  value={monthSel}
+                  onChange={(e) => setMonthSel(e.target.value)}
+                  title="Change month"
+                  aria-label="Select month for the expense total"
+                  className="appearance-none bg-transparent text-white/85 hover:text-white text-xs font-sora tracking-wide leading-none pl-1.5 pr-1 py-0.5 focus:outline-none cursor-pointer"
+                >
+                  {monthOptions.map((o) => (
+                    <option key={o.value} value={o.value} className="text-lafoi-dark">{o.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             <PrimaryButton onClick={() => setEditing({ ...empty() })}>
               <Plus size={14} weight="bold" /> New expense
