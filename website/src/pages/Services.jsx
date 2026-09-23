@@ -69,8 +69,8 @@ const allServices = [
       'Medical facilities',
       'Retail showrooms',
     ],
-    image: '/brand/images/22.png',
-    imageVision: 'La Foi residential install: gloss ceiling with starfield and recessed linear LEDs',
+    image: '/brand/images/metallic.png',
+    imageVision: 'La Foi satin stretch ceiling with recessed linear LEDs in a contemporary hallway',
   },
   {
     slug: 'lighting-solutions',
@@ -96,8 +96,8 @@ const allServices = [
       'Hospitality lobbies',
       'Retail showrooms',
     ],
-    image: '/brand/images/11.png',
-    imageVision: 'La Foi install with magnetic track lights recessed into a white stretch ceiling',
+    image: '/brand/images/carved.png',
+    imageVision: 'La Foi fibre-optic starlight array recessed into a black stretch ceiling',
   },
   {
     slug: 'design-consultation',
@@ -123,8 +123,8 @@ const allServices = [
       'Hospitality refits',
       'Architectural projects',
     ],
-    image: '/brand/images/45.png',
-    imageVision: 'La Foi printed-marble ceiling above a curated boardroom, specified end to end',
+    image: '/brand/images/stretch-mirror.png',
+    imageVision: 'La Foi bespoke mirror-panel ceiling with lit framing, designed end to end',
   },
   {
     slug: 'maintenance-support',
