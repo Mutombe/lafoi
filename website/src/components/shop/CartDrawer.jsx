@@ -199,7 +199,7 @@ export default function CartDrawer() {
 function EmptyState({ onClose }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-      <div className="w-20 h-20 rounded-sm bg-lafoi-green/10 flex items-center justify-center mb-5">
+      <div className="w-20 h-20 rounded-full bg-lafoi-green/10 flex items-center justify-center mb-5">
         <ShoppingBag size={32} weight="regular" className="text-lafoi-green/70" />
       </div>
       <h3 className="font-display text-xl font-light text-lafoi-dark mb-2">

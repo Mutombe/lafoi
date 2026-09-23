@@ -810,7 +810,7 @@ function Approach() {
                 {stages.map((_, i) => (
                   <span
                     key={i}
-                    className={`h-1 rounded-sm transition-all duration-700 ${
+                    className={`h-1 rounded-full transition-all duration-700 ${
                       i === activeStep ? 'w-10 bg-white' : 'w-5 bg-white/30'
                     }`}
                   />
@@ -865,7 +865,7 @@ function Approach() {
                 {stages.map((_, i) => (
                   <span
                     key={i}
-                    className={`h-1 rounded-sm transition-all duration-700 ${
+                    className={`h-1 rounded-full transition-all duration-700 ${
                       i === activeStep ? 'w-14 bg-white' : 'w-6 bg-white/30'
                     }`}
                   />
@@ -1272,7 +1272,14 @@ function ReviewAvatar({ author, avatar }) {
 function Testimonial() {
   // All real, verified reviews shown at once as a masonry of cards — more
   // trustworthy than a single rotating quote, and it fills the section properly.
-  const clientNames = reviews.map((r) => r.author)
+  const clientNames = [
+    ...reviews.map((r) => r.author),
+    'Mutapa Gold Resources',
+    'Inverium',
+    'Geo Pomona',
+    'The Spot Bar',
+    'Freda Rebecca',
+  ]
 
   return (
     <section className="relative bg-lafoi-cream py-24 lg:py-36 overflow-hidden">
@@ -1550,7 +1557,7 @@ function WhyLaFoi() {
                     0{i + 1}
                   </span>
                   {/* icon chip — fills solid green on hover */}
-                  <span className="relative w-12 h-12 rounded-sm bg-lafoi-green/10 border border-lafoi-green/20 flex items-center justify-center mb-6 group-hover:bg-lafoi-green group-hover:border-lafoi-green transition-colors duration-500">
+                  <span className="relative w-12 h-12 rounded-full bg-lafoi-green/10 border border-lafoi-green/20 flex items-center justify-center mb-6 group-hover:bg-lafoi-green group-hover:border-lafoi-green transition-colors duration-500">
                     <Icon size={22} weight="duotone" className="text-lafoi-green group-hover:text-white transition-colors duration-500" />
                   </span>
                   <h3 className="relative font-display font-normal text-2xl text-lafoi-dark leading-tight mb-3 tracking-tight">

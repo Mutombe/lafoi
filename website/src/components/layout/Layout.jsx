@@ -75,7 +75,7 @@ export default function Layout({ children }) {
           >
             <div className="glass rounded-sm p-5 shadow-2xl border border-white/40">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-sm bg-lafoi-green/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-lafoi-green/10 flex items-center justify-center shrink-0">
                   <Cookie size={18} className="text-lafoi-green" />
                 </div>
                 <div>
@@ -138,7 +138,7 @@ function PolicyModal({ open, onClose, type }) {
           >
             <div className="sticky top-0 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100 z-10">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-sm bg-lafoi-green/10 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full bg-lafoi-green/10 flex items-center justify-center">
                   <Icon size={16} className="text-lafoi-green" />
                 </div>
                 <h3 className="font-sora text-lg font-semibold text-lafoi-dark">{title}</h3>

@@ -320,7 +320,7 @@ function SpeakerCard({ person, index }) {
     >
       <div className="flex items-start gap-5">
         {/* Monogram */}
-        <div className={`shrink-0 w-16 h-16 rounded-sm flex items-center justify-center font-display text-xl ${
+        <div className={`shrink-0 w-16 h-16 rounded-full flex items-center justify-center font-display text-xl ${
           person.featured
             ? 'bg-lafoi-green-light/20 text-lafoi-green-light border border-lafoi-green-light/30'
             : 'bg-lafoi-green/10 text-lafoi-green-dark border border-lafoi-green/25'

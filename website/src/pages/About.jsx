@@ -299,7 +299,7 @@ function Mission() {
                 />
                 <div className="p-6 lg:p-7">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="w-9 h-9 rounded-sm bg-lafoi-green-light/15 border border-lafoi-green-light/30 flex items-center justify-center">
+                    <span className="w-9 h-9 rounded-full bg-lafoi-green-light/15 border border-lafoi-green-light/30 flex items-center justify-center">
                       <FilePdf size={16} weight="duotone" className="text-lafoi-green-light" />
                     </span>
                     <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light font-semibold">

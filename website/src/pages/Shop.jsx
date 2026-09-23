@@ -424,7 +424,7 @@ function ShopCTA() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-sm transition-colors group"
               >
-                <div className="w-11 h-11 rounded-sm bg-[#25D366]/20 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-full bg-[#25D366]/20 flex items-center justify-center shrink-0">
                   <WhatsappLogo size={20} weight="fill" className="text-[#25D366]" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -440,7 +440,7 @@ function ShopCTA() {
                 href="mailto:admin@lafoidesigns.co.zw"
                 className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-sm transition-colors group"
               >
-                <div className="w-11 h-11 rounded-sm bg-lafoi-green/20 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-full bg-lafoi-green/20 flex items-center justify-center shrink-0">
                   <Envelope size={18} weight="regular" className="text-lafoi-green-light" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -456,7 +456,7 @@ function ShopCTA() {
                 to="/contact"
                 className="flex items-center gap-4 p-5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-sm transition-colors group"
               >
-                <div className="w-11 h-11 rounded-sm bg-lafoi-green/20 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-full bg-lafoi-green/20 flex items-center justify-center shrink-0">
                   <MapPin size={18} weight="regular" className="text-lafoi-green-light" />
                 </div>
                 <div className="flex-1 min-w-0">

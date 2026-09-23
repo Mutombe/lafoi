@@ -221,7 +221,7 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setSearchOpen(true)}
-                className={`p-2.5 rounded-sm transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
+                className={`p-2.5 rounded-full transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
                 aria-label="Search"
               >
                 <MagnifyingGlass size={18} weight="regular" className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
@@ -229,7 +229,7 @@ export default function Navbar() {
 
               <button
                 onClick={openCart}
-                className={`relative p-2.5 rounded-sm transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
+                className={`relative p-2.5 rounded-full transition-colors group ${isLightText ? 'hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
                 aria-label={`Open cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? '' : 's'}` : ''}`}
               >
                 <ShoppingBag size={18} weight="regular" className={`transition-colors ${isLightText ? 'text-white/80 group-hover:text-white' : 'text-lafoi-gray group-hover:text-lafoi-green'}`} />
@@ -241,7 +241,7 @@ export default function Navbar() {
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0, opacity: 0 }}
                       transition={{ type: 'spring', damping: 12, stiffness: 400 }}
-                      className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-sm bg-lafoi-green text-white text-[10px] font-sora font-semibold flex items-center justify-center shadow-md shadow-lafoi-green/30 ring-2 ring-white"
+                      className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-lafoi-green text-white text-[10px] font-sora font-semibold flex items-center justify-center shadow-md shadow-lafoi-green/30 ring-2 ring-white"
                     >
                       {cartCount > 9 ? '9+' : cartCount}
                     </motion.span>
@@ -292,7 +292,7 @@ export default function Navbar() {
 
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className={`lg:hidden p-2.5 rounded-sm transition-colors ${isLightText ? 'text-white hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
+                className={`lg:hidden p-2.5 rounded-full transition-colors ${isLightText ? 'text-white hover:bg-white/10' : 'hover:bg-lafoi-green/5'}`}
                 aria-label="Toggle menu"
               >
                 {mobileOpen ? <X size={22} weight="regular" /> : <List size={22} weight="regular" />}
@@ -341,7 +341,7 @@ export default function Navbar() {
                       onClick={() => handleSearchNavigate(result.path)}
                       className="w-full flex items-center gap-3 px-5 py-3 hover:bg-lafoi-green/5 transition-colors text-left group"
                     >
-                      <div className="w-8 h-8 rounded-sm bg-lafoi-green/10 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-lafoi-green/10 flex items-center justify-center shrink-0">
                         <Star size={14} weight="fill" className="text-lafoi-green" />
                       </div>
                       <div>
@@ -521,7 +521,7 @@ function DropdownMenu({ group, active, onOpen, onClose, currentPath, lightText }
                   to={item.path}
                   className="flex items-start gap-3 p-3 rounded-sm hover:bg-lafoi-green/5 transition-colors group"
                 >
-                  <div className="w-9 h-9 rounded-sm bg-lafoi-green/10 flex items-center justify-center shrink-0 group-hover:bg-lafoi-green/20 transition-colors">
+                  <div className="w-9 h-9 rounded-full bg-lafoi-green/10 flex items-center justify-center shrink-0 group-hover:bg-lafoi-green/20 transition-colors">
                     <item.icon size={16} className="text-lafoi-green" />
                   </div>
                   <div>
