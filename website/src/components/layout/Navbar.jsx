@@ -98,9 +98,10 @@ const searchableContent = [
 // Services and products catalogue + their detail pages run on bright photography
 // (white kitchens, gloss ceilings, hardwood floors) so the logo + nav links stay
 // in dark colour there.
-const darkHeroPages = ['/', '/about', '/portfolio', '/careers', '/projects']
-// Pages with sub-routes that also have dark heroes
-const darkHeroPrefixes = ['/projects/']
+const darkHeroPages = ['/', '/about', '/portfolio', '/careers', '/projects', '/services', '/contact', '/launch']
+// Pages with sub-routes that also have dark image heroes (e.g. /products is a
+// light cream hero, but /products/:slug and /services/:slug are dark).
+const darkHeroPrefixes = ['/projects/', '/services/', '/products/']
 
 function useHasDarkHero(pathname) {
   return darkHeroPages.includes(pathname) || darkHeroPrefixes.some(p => pathname.startsWith(p))
