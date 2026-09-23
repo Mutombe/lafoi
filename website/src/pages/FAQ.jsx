@@ -270,10 +270,7 @@ function FAQAccordion({ activeCategory, setActiveCategory, query, setQuery, acti
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   The catalogue of answers
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  01 / 02
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-5xl leading-[1.1] tracking-[-0.02em]">
@@ -461,10 +458,7 @@ function FAQContactCard() {
                   <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                     Still wondering
                   </p>
-                  <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                    02 / 02
-                  </span>
-                </div>
+</div>
 
                 <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[3rem] leading-[1.1] tracking-[-0.02em] mb-6">
                   Still wondering?{' '}

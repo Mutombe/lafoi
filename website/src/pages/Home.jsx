@@ -462,8 +462,7 @@ function Manifesto() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Studio manifesto
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">01 / 10</span>
-            </div>
+</div>
 
             <h2
               className="font-display text-white tracking-[-0.025em] text-[2.4rem] sm:text-5xl lg:text-[3.6rem] xl:text-[4.2rem]"
@@ -629,8 +628,7 @@ function FinishGallery() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   01 · The finish library
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">03 / 10</span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
@@ -677,10 +675,7 @@ function FinishGallery() {
                     style={{ background: 'linear-gradient(180deg, rgba(17,17,17,0) 0%, rgba(17,17,17,0) 30%, rgba(17,17,17,0.55) 72%, rgba(17,17,17,0.88) 100%)' }}
                   />
                   <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
-                    <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/85 px-2.5 py-1 rounded-sm bg-black/25 backdrop-blur-md border border-white/15">
-                      0{i + 1} / 0{stretchProducts.length}
-                    </span>
-                    <span className="w-9 h-9 rounded-full border border-white/30 bg-black/20 backdrop-blur-md flex items-center justify-center group-hover:border-lafoi-green-light group-hover:bg-lafoi-green-light/15 transition-all duration-500">
+<span className="w-9 h-9 rounded-full border border-white/30 bg-black/20 backdrop-blur-md flex items-center justify-center group-hover:border-lafoi-green-light group-hover:bg-lafoi-green-light/15 transition-all duration-500">
                       <ArrowUpRight size={13} weight="bold" className="text-white" />
                     </span>
                   </div>
@@ -897,8 +892,7 @@ function Approach() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   02 · How we work
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">05 / 10</span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-[4rem] leading-[1.05]">
@@ -1024,8 +1018,7 @@ function Stats() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 By the numbers
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">06 / 10</span>
-            </div>
+</div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="heading-xl text-white text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.1]">
@@ -1091,8 +1084,7 @@ function ProjectsBento() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   03 · Selected work
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">07 / 10</span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
@@ -1433,10 +1425,7 @@ function VideoShowcaseSection() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   05 · In motion
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  08 / 10
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
@@ -1527,8 +1516,7 @@ function WhyLaFoi() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 06 · Why La Foi
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">10 / 10</span>
-            </div>
+</div>
             <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[4rem] leading-[1.05] tracking-[-0.02em]">
               Six reasons to put
               <br />

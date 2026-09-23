@@ -190,10 +190,7 @@ export default function Portfolio() {
 
                     {/* index, top */}
                     <div className="absolute top-5 left-5 right-5 flex items-start justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/70 px-2.5 py-1 rounded-sm bg-white/10 backdrop-blur-md border border-white/15">
-                        0{i + 1} / 0{filtered.length}
-                      </span>
-                      <span className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
+<span className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
                         <ArrowUpRight size={14} weight="regular" className="text-white" />
                       </span>
                     </div>
@@ -257,10 +254,7 @@ export default function Portfolio() {
                     priority
                     vision={selected.vision}
                   />
-                  <span className="absolute top-5 left-5 font-sora text-[10px] tracking-[0.3em] uppercase text-white/85 px-3 py-1.5 rounded-sm bg-white/10 backdrop-blur-md border border-white/20">
-                    0{selectedIndex + 1} / 0{filtered.length}
-                  </span>
-                </div>
+</div>
 
                 {/* Body */}
                 <div className="lg:col-span-5 p-7 lg:p-10 flex flex-col">

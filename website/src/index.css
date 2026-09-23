@@ -735,3 +735,25 @@ img {
   box-shadow: 0 0 0 4px rgba(26, 138, 46, 0.18), 0 0 20px rgba(26, 138, 46, 0.55);
   transition: top 0.18s ease-out;
 }
+
+/* ------------------------------------------------------------------
+   De-AI cleanup: strip decorative pattern / gradient / aurora overlays
+   for a clean, real, photography-led look (bert reference). The overlay
+   elements stay in the DOM but render nothing.
+   ------------------------------------------------------------------ */
+.mesh-gradient-1,
+.mesh-gradient-hero,
+.dot-pattern,
+.pattern-cross,
+.pattern-cross-light,
+.pattern-diagonal,
+.pattern-diagonal-dark,
+.pattern-blueprint,
+.pattern-blueprint-light,
+.pattern-topo,
+.aurora-mesh,
+.aurora-mesh-cool {
+  background: none !important;
+  background-image: none !important;
+  animation: none !important;
+}

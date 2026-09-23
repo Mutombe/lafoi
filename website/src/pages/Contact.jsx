@@ -181,10 +181,7 @@ function ContactBento() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   Four ways to reach us
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  01 / 04
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em]">
@@ -404,10 +401,7 @@ function ContactForm() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   Open a brief
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  02 / 04
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[2.6rem] leading-[1.1] tracking-[-0.02em] mb-6">
@@ -662,10 +656,7 @@ function WhatsAppCallout() {
                   <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                     The fastest channel
                   </p>
-                  <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                    03 / 04
-                  </span>
-                </div>
+</div>
 
                 <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[2.8rem] leading-[1.1] tracking-[-0.02em] mb-6">
                   WhatsApp us{' '}
@@ -739,10 +730,7 @@ function MapSection() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   Visit the studio
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  04 / 04
-                </span>
-              </div>
+</div>
               <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl leading-[1.1] tracking-[-0.02em]">
                 Suite 26, Belgravia.
               </h2>

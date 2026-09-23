@@ -229,10 +229,7 @@ function Mission() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                   Our mission
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
-                  01 / 06
-                </span>
-              </div>
+</div>
             </AnimatedSection>
 
             <AnimatedSection delay={0.1}>
@@ -421,10 +418,7 @@ function StoryTimeline() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 The journey
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
-                02 / 06
-              </span>
-            </div>
+</div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="font-display font-light text-white text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.1] tracking-[-0.02em]">
@@ -473,10 +467,7 @@ function Milestone({ m, index, total, align }) {
       {/* Massive year numeral */}
       <div className={`lg:col-span-5 ${align === 'right' ? 'lg:text-right' : ''}`}>
         <div className="flex items-baseline gap-4 mb-2">
-          <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light/70">
-            0{index + 1} / 0{total}
-          </span>
-          <span className="block w-16 h-px bg-white/20" />
+<span className="block w-16 h-px bg-white/20" />
         </div>
         <p
           className="font-display font-light text-lafoi-green-light leading-[0.85] tracking-[-0.04em] text-[7rem] sm:text-[10rem] lg:text-[11rem]"
@@ -566,10 +557,7 @@ function Values() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   What we hold
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  03 / 06
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
@@ -642,10 +630,7 @@ function ValueImageCard({ v, index, wide = false }) {
       <div className="absolute inset-0 bg-gradient-to-br from-lafoi-dark/40 via-transparent to-transparent opacity-70" />
 
       <div className="absolute top-6 left-6 right-6 flex items-center justify-between">
-        <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/65">
-          0{index + 1} / 06
-        </span>
-        <span className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center">
+<span className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center">
           <v.icon size={14} weight="regular" className="text-white/75" />
         </span>
       </div>
@@ -724,10 +709,7 @@ function Partners() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 Provenance
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                04 / 06
-              </span>
-            </div>
+</div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
@@ -832,10 +814,7 @@ function Team() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                   The team
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
-                  05 / 06
-                </span>
-              </div>
+</div>
             </AnimatedSection>
 
             <AnimatedSection delay={0.1}>
@@ -988,10 +967,7 @@ function AboutCTA() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Free studio consultation
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
-                06 / 06
-              </span>
-            </div>
+</div>
           </AnimatedSection>
 
           <AnimatedSection delay={0.1}>

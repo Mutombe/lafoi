@@ -331,10 +331,7 @@ function Perks() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   Why work here
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  01 / 04
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
@@ -393,10 +390,7 @@ function PerkImageCard({ p, index }) {
       <div className="absolute inset-0 bg-gradient-to-br from-lafoi-dark/40 via-transparent to-transparent opacity-70" />
 
       <div className="absolute top-6 left-6 right-6 flex items-center justify-between">
-        <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/65">
-          0{index + 1} / 04
-        </span>
-        <span className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
+<span className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
           <Icon size={14} weight="regular" className="text-white/85" />
         </span>
       </div>
@@ -419,10 +413,7 @@ function PerkTypoCard({ p, index }) {
   return (
     <div className="group h-full min-h-[420px] flex flex-col p-8 lg:p-10 rounded-sm border border-lafoi-dark/10 bg-white/40 backdrop-blur-sm hover:bg-white hover:border-lafoi-green/30 transition-all duration-500">
       <div className="flex items-baseline justify-between mb-7">
-        <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
-          0{index + 1} / 04
-        </span>
-        <Icon
+<Icon
           size={16}
           weight="regular"
           className="text-lafoi-green/70 group-hover:text-lafoi-green transition-colors duration-500"
@@ -462,10 +453,7 @@ function Openings() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                   Open positions
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
-                  02 / 04
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-white text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em]">
@@ -509,10 +497,7 @@ function JobRow({ job, index, total }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 py-7 lg:py-9 items-baseline">
         {/* index */}
         <div className="lg:col-span-1 flex items-baseline gap-3">
-          <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light/70">
-            0{index + 1} / 0{total}
-          </span>
-        </div>
+</div>
 
         {/* title */}
         <div className="lg:col-span-4">
@@ -573,10 +558,7 @@ function ProcessTimeline() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 The process
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                03 / 04
-              </span>
-            </div>
+</div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em]">
@@ -660,10 +642,7 @@ function GeneralApplyCTA() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Open application
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
-                04 / 04
-              </span>
-            </div>
+</div>
           </AnimatedSection>
 
           <AnimatedSection delay={0.1}>

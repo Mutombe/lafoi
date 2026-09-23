@@ -259,10 +259,7 @@ function FeaturedPost({ post }) {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 The cover essay
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                01 / 03
-              </span>
-            </div>
+</div>
             <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-5xl leading-[1.1] tracking-[-0.02em]">
               This week,{' '}
               <span className="text-lafoi-green">on the studio desk</span>.
@@ -386,10 +383,7 @@ function PostsGrid({ posts, categories, filter, setFilter }) {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   All field notes
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  02 / 03
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-5xl leading-[1.1] tracking-[-0.02em]">
@@ -564,10 +558,7 @@ function NewsletterBand() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 The studio letter
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                03 / 03
-              </span>
-            </div>
+</div>
             <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.8rem] leading-[1.05] tracking-[-0.02em]">
               Stay in the{' '}
               <span className="text-lafoi-green">conversation</span>.

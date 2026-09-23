@@ -123,37 +123,9 @@ export default function SectionDivider({
   flip = false,
   className = '',
 }) {
-  const def = SHAPES[shape] || SHAPES.wave
-  const fill = COLOURS[to] || COLOURS.cream
-  const bg = COLOURS[from] || COLOURS.dark
-
-  return (
-    <div
-      aria-hidden
-      className={`relative w-full overflow-hidden pointer-events-none select-none ${className}`}
-      style={{
-        background: bg,
-        // Use a CSS variable to swap heights at the breakpoint.
-        height: 'var(--divider-h)',
-        ['--divider-h']: `${def.mobile}px`,
-      }}
-    >
-      <style>{`
-        @media (min-width: 768px) {
-          .__divider-${shape} { --divider-h: ${def.height}px !important; }
-        }
-      `}</style>
-      <div className={`__divider-${shape} absolute inset-0`} style={{ ['--divider-h']: `${def.mobile}px`, height: '100%' }}>
-        <svg
-          viewBox={def.viewBox}
-          preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="block w-full h-full"
-          style={{ transform: flip ? 'scaleY(-1)' : undefined }}
-        >
-          <path d={def.d} fill={fill} />
-        </svg>
-      </div>
-    </div>
-  )
+  // De-AI / clean-look: sections now meet on crisp, flat edges (bert reference),
+  // instead of decorative wavy SVG transitions. Rendering nothing keeps every
+  // `<SectionDivider .../>` call site working while removing the waves site-wide.
+  void shape; void from; void to; void flip; void className
+  return null
 }

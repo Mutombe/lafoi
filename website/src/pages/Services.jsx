@@ -523,10 +523,7 @@ function ServicesEditorial() {
                 <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   The catalogue
                 </p>
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                  01 / 04
-                </span>
-              </div>
+</div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
@@ -587,10 +584,7 @@ function ServiceRow({ service, index, total }) {
 
           {/* corner index */}
           <div className="absolute top-6 left-6 right-6 flex items-start justify-between">
-            <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/65 px-3 py-1.5 rounded-sm bg-white/10 backdrop-blur-md border border-white/15">
-              0{index + 1} / 0{total}
-            </span>
-            <span className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
+<span className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/15 flex items-center justify-center">
               <Icon size={16} weight="regular" className="text-white" />
             </span>
           </div>
@@ -727,10 +721,7 @@ function Process() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 The process
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
-                02 / 04
-              </span>
-            </div>
+</div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="font-display font-light text-white text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em]">
@@ -807,10 +798,7 @@ function WhyChooseUs() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 Why choose us
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
-                03 / 04
-              </span>
-            </div>
+</div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em]">
@@ -825,10 +813,7 @@ function WhyChooseUs() {
             <AnimatedSection key={r.title} delay={i * 0.08}>
               <div className="group h-full p-7 lg:p-8 rounded-sm border border-lafoi-dark/10 bg-white hover:border-lafoi-green/30 hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-500">
                 <div className="flex items-baseline justify-between mb-7">
-                  <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
-                    0{i + 1} / 04
-                  </span>
-                  <r.icon size={16} weight="regular" className="text-lafoi-green/70 group-hover:text-lafoi-green transition-colors" />
+<r.icon size={16} weight="regular" className="text-lafoi-green/70 group-hover:text-lafoi-green transition-colors" />
                 </div>
                 <span className="block w-8 h-px bg-lafoi-green/60 mb-5" />
                 <h3 className="font-display font-light text-lafoi-dark text-2xl mb-4 leading-tight">
@@ -873,10 +858,7 @@ function ServicesCTA() {
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Specifying support
               </p>
-              <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/30">
-                04 / 04
-              </span>
-            </div>
+</div>
           </AnimatedSection>
 
           <AnimatedSection delay={0.1}>
