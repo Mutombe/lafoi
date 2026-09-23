@@ -243,6 +243,7 @@ const allServices = [
     icon: Cube,
     title: '3D Digital Twins',
     subtitle: 'Matterport spatial capture',
+    matterport: 'https://my.matterport.com/show/?m=w6rLGbghgQ6',
     hero: '/brand/images/46.png',
     heroVision: 'Geometric linear-LED stretch ceiling, the kind of finished La Foi space captured as a 3D twin',
     desc: 'We scan a finished space with Matterport into a navigable 3D digital twin clients open from any device. Walk the room from anywhere and pull true measurements from the model — the difference between describing a space and standing in it.',
@@ -1076,19 +1077,47 @@ function ServiceDetail({ service }) {
                 </div>
               </AnimatedSection>
 
-              {/* Image break */}
-              <AnimatedSection delay={0.2}>
-                <div className="relative aspect-[16/9] rounded-sm overflow-hidden bg-lafoi-dark mb-12">
-                  <OptimizedImage
-                    src={service.image}
-                    alt={`${service.title}, ${service.imageVision}`}
-                    className="w-full h-full object-cover object-center"
-                    fill
-                    vision={service.imageVision}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/30 via-transparent to-transparent" />
-                </div>
-              </AnimatedSection>
+              {/* Interactive Matterport twin — a real, playable 3D model when the
+                  service carries one; otherwise a static editorial image break. */}
+              {service.matterport ? (
+                <AnimatedSection delay={0.2}>
+                  <div className="mb-12">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="block w-10 h-px bg-lafoi-green/60" />
+                      <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                        Interactive &middot; Live 3D twin
+                      </p>
+                    </div>
+                    <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-sm overflow-hidden bg-lafoi-dark ring-1 ring-lafoi-dark/10 shadow-[0_24px_60px_-30px_rgba(17,17,17,0.5)]">
+                      <iframe
+                        title={`${service.title} — interactive Matterport 3D tour`}
+                        src={`${service.matterport}${service.matterport.includes('?') ? '&' : '?'}play=1&qs=1&title=0`}
+                        className="absolute inset-0 w-full h-full"
+                        frameBorder="0"
+                        allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
+                        allowFullScreen
+                        loading="lazy"
+                      />
+                    </div>
+                    <p className="mt-3 font-sora text-[11px] tracking-wide text-lafoi-gray-medium">
+                      Drag to look around, scroll to move, and click the floor to walk the space. Use the fullscreen control for the full experience.
+                    </p>
+                  </div>
+                </AnimatedSection>
+              ) : (
+                <AnimatedSection delay={0.2}>
+                  <div className="relative aspect-[16/9] rounded-sm overflow-hidden bg-lafoi-dark mb-12">
+                    <OptimizedImage
+                      src={service.image}
+                      alt={`${service.title}, ${service.imageVision}`}
+                      className="w-full h-full object-cover object-center"
+                      fill
+                      vision={service.imageVision}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/30 via-transparent to-transparent" />
+                  </div>
+                </AnimatedSection>
+              )}
 
               {/* Other services */}
               <AnimatedSection delay={0.25}>
