@@ -394,7 +394,6 @@ export default function Navbar() {
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* soft green glow */}
-            <div aria-hidden className="absolute -top-24 -right-16 w-80 h-80 rounded-full bg-lafoi-green/20 blur-[130px] pointer-events-none" />
             <div aria-hidden className="absolute inset-0 dot-pattern opacity-[0.05] pointer-events-none" />
 
             {/* top bar: logo + close */}

@@ -97,7 +97,6 @@ export default function Portfolio() {
     >
       <PortfolioHero />
 
-      <KineticTextStrip variant="light" speed={70} />
 
       <VideoGallery />
 

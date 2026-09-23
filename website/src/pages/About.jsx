@@ -48,7 +48,6 @@ export default function About() {
       <StoryTimeline />
       <SectionDivider shape="organic-blob" from="dark" to="cream" />
       <Values />
-      <KineticTextStrip variant="dark" speed={70} />
       <SectionDivider shape="s-curve" from="cream" to="cream" />
       <Partners />
       <SectionDivider shape="big-wave" from="cream" to="dark" />

@@ -651,7 +651,6 @@ function TechnicalGuideBand() {
         <AnimatedSection>
           <div className="relative rounded-sm bg-lafoi-dark text-white overflow-hidden">
             <div aria-hidden className="absolute inset-0 dot-pattern opacity-15 pointer-events-none" />
-            <div aria-hidden className="absolute -top-24 -right-12 w-[420px] h-[420px] rounded-full bg-lafoi-green/15 blur-[120px] pointer-events-none" />
             <div aria-hidden className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-lafoi-green-light via-lafoi-green to-lafoi-green/40" />
 
             <div className="relative grid lg:grid-cols-12 gap-8 lg:gap-12 items-center p-8 lg:p-14">

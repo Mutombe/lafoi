@@ -101,7 +101,6 @@ export default function Home() {
       <Manifesto />
       <SectionDivider shape="organic-blob" from="dark" to="cream" />
       <FinishGallery />
-      <KineticTextStrip variant="dark" speed={70} />
       <SectionDivider shape="mirror-angular" from="cream" to="cream" />
       <Approach />
       <Stats />
@@ -536,29 +535,6 @@ function Manifesto() {
         </motion.div>
       </div>
 
-      {/* Credential marquee, full-bleed floating band across both halves */}
-      <div className="relative border-y border-white/10 py-6 overflow-hidden marquee-pause">
-        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-lafoi-dark to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-lafoi-dark to-transparent z-10 pointer-events-none" />
-        <div className="flex marquee-track whitespace-nowrap">
-          {[...Array(2)].flatMap((_, k) =>
-            [
-              'Zimbabwe’s first',
-              'PVC & fabric ceilings',
-              'Wide colour range',
-              'Fire-rated B-s1, d0',
-              '2 to 4 day install',
-            ].map((chip, i) => (
-              <span key={`${k}-${i}`} className="inline-flex items-center mx-8">
-                <span className="font-sora text-xs lg:text-sm text-white/55 tracking-[0.18em] uppercase">
-                  {chip}
-                </span>
-                <span className="ml-16 inline-block w-1 h-1 rounded-full bg-lafoi-green-light/40 align-middle" />
-              </span>
-            ))
-          )}
-        </div>
-      </div>
     </section>
   )
 }

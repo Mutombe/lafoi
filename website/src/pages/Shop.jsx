@@ -395,7 +395,6 @@ function ShopCTA() {
   return (
     <section className="relative bg-lafoi-dark text-white py-20 lg:py-28 overflow-hidden">
       <div aria-hidden className="absolute inset-0 pattern-diagonal opacity-30 pointer-events-none" />
-      <div aria-hidden className="absolute -top-20 right-1/4 w-[600px] h-[300px] bg-lafoi-green/[0.08] rounded-sm blur-[140px] pointer-events-none" />
 
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-12 gap-10 items-center">
