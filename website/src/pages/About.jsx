@@ -512,12 +512,16 @@ function Values() {
       key: 'passion',
       title: 'Passion',
       desc: 'We are driven by a genuine love for transforming spaces and exceeding expectations.',
+      image: '/brand/images/np1.jpg',
+      vision: 'Passion, a lounge transformed with programmable RGB ceiling and wall lighting',
       icon: Heart,
     },
     {
       key: 'integrity',
       title: 'Integrity',
       desc: 'Transparent pricing, honest timelines, and unwavering commitment to quality.',
+      image: '/brand/images/np4.jpg',
+      vision: 'Integrity, a clean gloss-black ceiling and linear lighting in a finished commercial fit-out',
       icon: Shield,
     },
     {
@@ -533,12 +537,16 @@ function Values() {
       key: 'collaboration',
       title: 'Collaboration',
       desc: 'We work closely with clients, designers, and architects to bring visions to life.',
+      image: '/brand/images/33.png',
+      vision: 'Collaboration, the La Foi team at the Zimbabwe Real Estate and Construction Summit',
       icon: Users,
     },
     {
       key: 'precision',
       title: 'Precision',
       desc: 'Every measurement, cut, and installation is executed with meticulous attention to detail.',
+      image: '/brand/images/35.png',
+      vision: 'Precision, a marble-print gloss ceiling with concealed linear LEDs above a bespoke kitchen',
       icon: Target,
     },
   ]
@@ -648,6 +656,40 @@ function ValueImageCard({ v, index, wide = false }) {
 }
 
 function ValueTypoCard({ v, index }) {
+  // Image-led card: a real photo carries the value, copy sits over a soft dark
+  // gradient. Falls back to the typographic card when a value has no image.
+  if (v.image) {
+    return (
+      <div className="group relative h-full min-h-[240px] overflow-hidden rounded-sm bg-lafoi-dark">
+        <OptimizedImage
+          src={v.image}
+          alt={v.vision || `La Foi Designs ${v.title.toLowerCase()}, studio principle`}
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+          fill
+          vision={v.vision}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark via-lafoi-dark/45 to-transparent" />
+        <div className="absolute top-5 left-5 right-5 flex items-center justify-between">
+          <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/60">
+            0{index + 1}
+          </span>
+          <span className="w-8 h-8 rounded-full border border-white/25 flex items-center justify-center">
+            <v.icon size={14} weight="regular" className="text-white/80" />
+          </span>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 p-6 lg:p-7">
+          <span className="block w-8 h-px bg-lafoi-green-light/70 mb-4" />
+          <h3 className="font-display font-light text-white text-2xl lg:text-3xl mb-3 leading-[1.1]">
+            {v.title}
+          </h3>
+          <p className="font-body font-light text-sm text-white/75 leading-[1.6]">
+            {linkifyProse(v.desc, { variant: 'dark' })}
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="group h-full p-7 lg:p-8 rounded-sm border border-lafoi-dark/10 bg-white/40 backdrop-blur-sm hover:bg-white hover:border-lafoi-green/30 transition-all duration-500">
       <div className="flex items-baseline justify-between mb-6">
