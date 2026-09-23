@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ContentBlock
+from .models import ContentBlock, MediaAsset
 
 
 class ContentBlockSerializer(serializers.ModelSerializer):
@@ -37,3 +37,32 @@ class ContentBlockSerializer(serializers.ModelSerializer):
     def get_updated_by_name(self, obj):
         u = obj.updated_by
         return (u.get_full_name() or u.username) if u else None
+
+
+class MediaAssetSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MediaAsset
+        fields = (
+            "id", "title", "alt", "file", "external_url", "url", "source",
+            "tags", "folder", "created_at",
+        )
+        read_only_fields = ("url", "created_at")
+        extra_kwargs = {
+            "file": {"write_only": True, "required": False, "allow_null": True},
+            "title": {"required": False},
+        }
+
+    def get_url(self, obj):
+        u = obj.url
+        if not u:
+            return None
+        if u.startswith("http") or u.startswith("/"):
+            request = self.context.get("request")
+            # Uploaded files may be relative (local storage) — absolutise those.
+            if obj.file and request:
+                return request.build_absolute_uri(u)
+            return u
+        request = self.context.get("request")
+        return request.build_absolute_uri(u) if request else u

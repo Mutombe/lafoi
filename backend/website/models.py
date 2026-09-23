@@ -60,3 +60,44 @@ class ContentBlock(models.Model):
         if self.type == self.Type.IMAGE and self.image:
             return self.image.url
         return self.value
+
+
+class MediaAsset(models.Model):
+    """A reusable image in the site media library.
+
+    Either an uploaded `file` (DO Spaces / local) or an `external_url` that
+    points at an existing bundled asset such as ``/brand/images/22.png``.
+    """
+    class Source(models.TextChoices):
+        UPLOAD = "upload", "Uploaded"
+        BRAND = "brand", "Brand library"
+
+    title = models.CharField(max_length=200, blank=True)
+    alt = models.CharField(max_length=300, blank=True, help_text="Describe the image for accessibility & SEO.")
+    file = models.ImageField(blank=True, null=True, upload_to="website/media/")
+    external_url = models.CharField(max_length=500, blank=True)
+    source = models.CharField(max_length=16, choices=Source.choices, default=Source.UPLOAD)
+    tags = models.JSONField(default=list, blank=True)
+    folder = models.CharField(max_length=64, blank=True, help_text="Optional grouping, e.g. a page name.")
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="media_assets",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at", "title")
+        indexes = [models.Index(fields=["source", "folder"])]
+
+    def __str__(self):
+        return self.title or self.external_url or (self.file.name if self.file else f"asset {self.pk}")
+
+    @property
+    def url(self):
+        if self.file:
+            return self.file.url
+        return self.external_url
