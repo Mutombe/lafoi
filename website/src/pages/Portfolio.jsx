@@ -328,14 +328,14 @@ export default function Portfolio() {
 function VideoGallery() {
   // Eight studio captures. Generic, category-level captions, no fabricated clients.
   const videos = [
-    { src: '/brand/videos/7.mp4',  title: 'Studio in motion',         caption: 'Stretch membrane install · Residential' },
-    { src: '/brand/videos/8.mp4',  title: 'Membrane tensioning',      caption: 'Live install · Harare studio' },
+    { src: '/brand/videos/7.mp4',  title: 'Studio in motion',         caption: 'Stretch ceiling install · Residential' },
+    { src: '/brand/videos/8.mp4',  title: 'On-site ceiling install',      caption: 'Live install · Harare studio' },
     { src: '/brand/videos/12.mp4', title: 'Linear lighting reveal',   caption: 'Architectural lighting · Office' },
-    { src: '/brand/videos/14.mp4', title: 'Print ceiling installation', caption: 'Custom design · Hospitality' },
-    { src: '/brand/videos/17.mp4', title: 'Translucent backlit panel', caption: 'Backlit membrane · Feature install' },
-    { src: '/brand/videos/27.mp4', title: 'Magnetic track install',   caption: 'Lighting fit-out · Retail' },
-    { src: '/brand/videos/36.mp4', title: 'Mirror finish reveal',     caption: 'Gloss lacquer · Commercial' },
-    { src: '/brand/videos/47.mp4', title: 'Acoustic ceiling',         caption: 'Acoustic membrane · Office space' },
+    { src: '/brand/videos/14.mp4', title: 'Matte ceiling install', caption: 'Matte finish · Hospitality' },
+    { src: '/brand/videos/17.mp4', title: 'Black glass ceiling', caption: 'Gloss black · Feature install' },
+    { src: '/brand/videos/27.mp4', title: 'Printed ceiling reveal',   caption: 'Printed design · Retail' },
+    { src: '/brand/videos/36.mp4', title: 'Translucent ceiling reveal',     caption: 'Translucent finish · Commercial' },
+    { src: '/brand/videos/47.mp4', title: 'Acoustic ceiling',         caption: 'Acoustic ceiling · Office space' },
   ]
 
   return (

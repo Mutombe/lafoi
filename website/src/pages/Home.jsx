@@ -1374,8 +1374,8 @@ function VideoShowcaseSection() {
     },
     {
       src: '/brand/videos/35.mp4',
-      title: 'Print ceiling installation',
-      caption: 'Custom design · Hospitality',
+      title: 'Matte ceiling install',
+      caption: 'Matte finish · Hospitality',
     },
     {
       src: '/brand/videos/47.mp4',
@@ -1384,8 +1384,8 @@ function VideoShowcaseSection() {
     },
     {
       src: '/brand/videos/28.mp4',
-      title: 'Translucent backlit panel',
-      caption: 'Hospitality · Feature install',
+      title: 'Black glass ceiling',
+      caption: 'Gloss black · Feature install',
     },
   ]
 
