@@ -31,6 +31,9 @@ const EDITABLE_PAGES = [
   { slug: 'home', label: 'Home', path: '/' },
   { slug: 'about', label: 'About', path: '/about' },
   { slug: 'services', label: 'Services', path: '/services' },
+  { slug: 'portfolio', label: 'Portfolio', path: '/portfolio' },
+  { slug: 'products', label: 'Products', path: '/products' },
+  { slug: 'contact', label: 'Contact', path: '/contact' },
 ]
 const PAGE_PATH = Object.fromEntries(EDITABLE_PAGES.map((p) => [p.slug, p.path]))
 

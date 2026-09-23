@@ -459,9 +459,9 @@ function Manifesto() {
           <div className="relative w-full max-w-xl ml-auto lg:mr-10">
             <div className="flex items-center gap-3 mb-10">
               <span className="block w-12 h-px bg-lafoi-green-light/70" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              <EditableText page="home" field="manifesto.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Studio manifesto
-              </p>
+              </EditableText>
 </div>
 
             <h2
@@ -864,9 +864,9 @@ function Approach() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  02 · How we work
-                </p>
+                <EditableText page="home" field="approach.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                02 · How we work
+              </EditableText>
 </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
@@ -990,9 +990,9 @@ function Stats() {
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-5">
               <span className="block w-10 h-px bg-lafoi-green-light/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              <EditableText page="home" field="stats.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 By the numbers
-              </p>
+              </EditableText>
 </div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
@@ -1056,9 +1056,9 @@ function ProjectsBento() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  03 · Selected work
-                </p>
+                <EditableText page="home" field="work.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                03 · Selected work
+              </EditableText>
 </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
@@ -1270,9 +1270,9 @@ function Testimonial() {
             </div>
             <div className="flex items-center justify-center gap-3 mb-6">
               <span className="block w-10 h-px bg-lafoi-green/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+              <EditableText page="home" field="testimonial.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 04 &middot; Heard from clients
-              </p>
+              </EditableText>
               <span className="block w-10 h-px bg-lafoi-green/60" />
             </div>
             <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-5xl leading-[1.08] tracking-[-0.02em]">
@@ -1397,9 +1397,9 @@ function VideoShowcaseSection() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  05 · In motion
-                </p>
+                <EditableText page="home" field="video.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                05 · In motion
+              </EditableText>
 </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
@@ -1488,9 +1488,9 @@ function WhyLaFoi() {
           <AnimatedSection direction="left" className="lg:col-span-7">
             <div className="flex items-center gap-3 mb-5">
               <span className="block w-10 h-px bg-lafoi-green/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+              <EditableText page="home" field="why.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 06 · Why La Foi
-              </p>
+              </EditableText>
 </div>
             <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[4rem] leading-[1.05] tracking-[-0.02em]">
               Six reasons to put
@@ -1600,9 +1600,9 @@ function CinematicCTA() {
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-10 h-px bg-lafoi-green-light/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              <EditableText page="home" field="cta.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Free studio consultation
-              </p>
+              </EditableText>
             </div>
           </AnimatedSection>
 

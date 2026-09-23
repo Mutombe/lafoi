@@ -222,9 +222,9 @@ function Mission() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-7">
                 <span className="block w-12 h-px bg-lafoi-green-light/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
-                  Our mission
-                </p>
+                <EditableText page="about" field="mission.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                Our mission
+              </EditableText>
 </div>
             </AnimatedSection>
 
@@ -413,9 +413,9 @@ function StoryTimeline() {
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-6">
               <span className="block w-12 h-px bg-lafoi-green-light/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              <EditableText page="about" field="journey.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 The journey
-              </p>
+              </EditableText>
 </div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
@@ -560,9 +560,9 @@ function Values() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  What we hold
-                </p>
+                <EditableText page="about" field="values.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                What we hold
+              </EditableText>
 </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
@@ -746,9 +746,9 @@ function Partners() {
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-5">
               <span className="block w-10 h-px bg-lafoi-green/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+              <EditableText page="about" field="partners.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 Provenance
-              </p>
+              </EditableText>
 </div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
@@ -851,9 +851,9 @@ function Team() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-6">
                 <span className="block w-12 h-px bg-lafoi-green-light/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
-                  The team
-                </p>
+                <EditableText page="about" field="team.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                The team
+              </EditableText>
 </div>
             </AnimatedSection>
 
@@ -1004,9 +1004,9 @@ function AboutCTA() {
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-12 h-px bg-lafoi-green-light/70" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              <EditableText page="about" field="cta.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Free studio consultation
-              </p>
+              </EditableText>
 </div>
           </AnimatedSection>
 

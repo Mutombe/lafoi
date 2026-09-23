@@ -44,6 +44,7 @@ const categoryIcon = {
   Accessories: Wrench,
 }
 
+import { EditableText } from '../cms/editable'
 export default function Products() {
   const [category, setCategory] = useState('All')
   const [application, setApplication] = useState('All')
@@ -168,9 +169,9 @@ export default function Products() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.9, delay: 0.7 }}
           >
-            <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium mr-2">
-              The library
-            </p>
+            <EditableText page="products" field="hero.eyebrow" as="p" className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray-medium mr-2">
+                The library
+              </EditableText>
             {[
               { name: 'Matte', tone: '#E9E6DE' },
               { name: 'Satin', tone: '#D2CFC4' },

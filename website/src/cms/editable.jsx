@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import { useSiteContent } from '../hooks/useSiteContent'
 
@@ -12,8 +12,7 @@ import { useSiteContent } from '../hooks/useSiteContent'
 
 export const isCmsEdit = (() => {
   try {
-    const params = new URLSearchParams(window.location.search)
-    return params.get('cms') === '1' && window.parent && window.parent !== window
+    return new URLSearchParams(window.location.search).get('cms') === '1'
   } catch {
     return false
   }
@@ -21,7 +20,9 @@ export const isCmsEdit = (() => {
 
 const post = (msg) => {
   try {
-    window.parent.postMessage({ source: 'lafoi-cms', ...msg }, '*')
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ source: 'lafoi-cms', ...msg }, '*')
+    }
   } catch {
     /* ignore */
   }
@@ -35,39 +36,98 @@ function splitField(field) {
 }
 
 /**
- * Injects edit-mode styling + a handshake once, when the page is in the
- * editor. Mounted from Layout so it's always present in the iframe.
+ * Injects edit-mode styling + a visible banner once, so it's obvious the page
+ * is editable. Mounted from Layout so it's always present in the iframe.
  */
 export function CmsEditLayer() {
   useEffect(() => {
     if (!isCmsEdit) return
     const style = document.createElement('style')
     style.textContent = `
-      [data-cms-field]{ outline:1px dashed rgba(26,138,46,0.0); outline-offset:3px; transition:outline-color .15s; border-radius:2px; cursor:text; }
-      [data-cms-field]:hover{ outline-color:rgba(26,138,46,0.55); background:rgba(34,197,94,0.06); }
-      [data-cms-field]:focus{ outline:2px solid #1A8A2E; background:rgba(34,197,94,0.08); }
+      [data-cms-field]{ outline:1px dashed rgba(26,138,46,0.5); outline-offset:2px; border-radius:2px; cursor:text; transition:background .15s, outline-color .15s; }
+      [data-cms-field]:hover{ outline:1px solid #1A8A2E; background:rgba(34,197,94,0.10); }
+      [data-cms-field]:focus{ outline:2px solid #1A8A2E; background:rgba(34,197,94,0.14); }
       .cms-img-wrap{ position:relative; }
-      .cms-img-wrap:hover .cms-img-btn{ opacity:1; }
-      .cms-img-btn{ position:absolute; z-index:40; top:10px; left:10px; opacity:0; transition:opacity .15s;
-        display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:6px; cursor:pointer;
-        background:#111; color:#fff; font:600 12px/1 ui-sans-serif,system-ui; border:1px solid rgba(255,255,255,0.2); }
-      .cms-img-btn:hover{ background:#1A8A2E; }
+      .cms-img-wrap::after{ content:""; position:absolute; inset:0; outline:2px dashed rgba(26,138,46,0.55); outline-offset:-4px; pointer-events:none; border-radius:4px; }
+      .cms-img-btn{ position:absolute; z-index:40; top:10px; left:10px;
+        display:inline-flex; align-items:center; gap:6px; padding:8px 13px; border-radius:6px; cursor:pointer;
+        background:#1A8A2E; color:#fff; font:600 12px/1 ui-sans-serif,system-ui; border:0; box-shadow:0 4px 14px rgba(0,0,0,.3); }
+      .cms-img-btn:hover{ background:#111; }
+      #cms-banner{ position:fixed; z-index:2147483000; left:50%; transform:translateX(-50%); bottom:16px;
+        display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
+        background:#111; color:#fff; font:600 12px/1 ui-sans-serif,system-ui; box-shadow:0 8px 30px rgba(0,0,0,.35); }
+      #cms-banner b{ color:#5AE27E; }
     `
     document.head.appendChild(style)
     document.body.setAttribute('data-cms-editing', '1')
-    post({ type: 'ready', page: document.body.getAttribute('data-cms-page') || '' })
-    return () => { style.remove() }
+
+    const banner = document.createElement('div')
+    banner.id = 'cms-banner'
+    banner.innerHTML = '<span>✏️ <b>Edit mode</b> — click any highlighted text to edit · hover an image to replace it</span>'
+    document.body.appendChild(banner)
+
+    post({ type: 'ready' })
+    return () => { style.remove(); banner.remove() }
   }, [])
   return null
 }
+
+/**
+ * The actual contentEditable node. Kept as an isolated, memoised component so
+ * React never re-renders it (which would fight the browser's editing / reset
+ * the caret). We set the text imperatively and only re-sync when the stored
+ * value changes AND the field isn't focused.
+ */
+const InlineNode = React.memo(
+  function InlineNode({ tag: Tag = 'span', className, field, initial, multiline, onCommit }) {
+    const ref = useRef(null)
+    const last = useRef(initial ?? '')
+    const focused = useRef(false)
+
+    useEffect(() => {
+      if (ref.current) ref.current.textContent = initial ?? ''
+      last.current = initial ?? ''
+    }, []) // set once on mount
+
+    useEffect(() => {
+      // Re-sync if the saved value arrives/changes while the user isn't typing.
+      if (ref.current && !focused.current && (initial ?? '') !== last.current) {
+        ref.current.textContent = initial ?? ''
+        last.current = initial ?? ''
+      }
+    }, [initial])
+
+    return (
+      <Tag
+        ref={ref}
+        className={className}
+        data-cms-field={field}
+        contentEditable
+        suppressContentEditableWarning
+        spellCheck={false}
+        title="Click to edit"
+        onFocus={() => { focused.current = true }}
+        onBlur={(e) => {
+          focused.current = false
+          const text = (multiline ? e.currentTarget.innerText : e.currentTarget.textContent).replace(/ /g, ' ').replace(/\s+$/, '')
+          if (text !== last.current) { last.current = text; onCommit(text) }
+        }}
+        onKeyDown={(e) => {
+          if (!multiline && e.key === 'Enter') { e.preventDefault(); e.currentTarget.blur() }
+          if (e.key === 'Escape') { e.currentTarget.blur() }
+        }}
+      />
+    )
+  },
+  // Only re-render when the value/identity actually changes.
+  (a, b) => a.initial === b.initial && a.field === b.field && a.className === b.className,
+)
 
 /**
  * Editable inline text. Renders `c(field, children)` normally; in edit mode it
  * is contentEditable and posts an upsert on blur.
  *
  *   <EditableText page="about" field="hero.eyebrow" as="p">Who we are</EditableText>
- *
- * `render` (e.g. linkifyProse) styles the read-only output only.
  */
 export function EditableText({ page, field, as: Tag = 'span', className = '', children, render, multiline = false }) {
   const { c } = useSiteContent(page)
@@ -79,30 +139,15 @@ export function EditableText({ page, field, as: Tag = 'span', className = '', ch
   }
 
   const { section, key } = splitField(field)
-  const onBlur = (e) => {
-    const v = (multiline ? e.currentTarget.innerText : e.currentTarget.textContent).replace(/ /g, ' ').trim()
-    if (v !== value) {
-      post({ type: 'update', page, section, key, value: v, fieldType: multiline ? 'richtext' : 'text' })
-    }
-  }
-  const onKeyDown = (e) => {
-    if (!multiline && e.key === 'Enter') { e.preventDefault(); e.currentTarget.blur() }
-    if (e.key === 'Escape') { e.currentTarget.blur() }
-  }
-
   return (
-    <Tag
+    <InlineNode
+      tag={Tag}
       className={className}
-      data-cms-field={field}
-      contentEditable
-      suppressContentEditableWarning
-      spellCheck={false}
-      title="Click to edit"
-      onBlur={onBlur}
-      onKeyDown={onKeyDown}
-    >
-      {value}
-    </Tag>
+      field={field}
+      initial={value}
+      multiline={multiline}
+      onCommit={(text) => post({ type: 'update', page, section, key, value: text, fieldType: multiline ? 'richtext' : 'text' })}
+    />
   )
 }
 

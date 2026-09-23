@@ -56,6 +56,7 @@ const projects = siteProjects.map((p, i) => ({
   vision: p.vision,
 }))
 
+import { EditableText } from '../cms/editable'
 export default function Portfolio() {
   const [filter, setFilter] = useState('All')
   const [selectedIndex, setSelectedIndex] = useState(null)
@@ -110,9 +111,9 @@ export default function Portfolio() {
               <AnimatedSection>
                 <div className="flex items-center gap-3 mb-5">
                   <span className="block w-10 h-px bg-lafoi-green/60" />
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                    The gallery
-                  </p>
+                  <EditableText page="portfolio" field="hero.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                The gallery
+              </EditableText>
                   <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
                     {filtered.length} {filtered.length === 1 ? 'frame' : 'frames'}
                   </span>

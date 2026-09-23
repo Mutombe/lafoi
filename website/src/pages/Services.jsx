@@ -520,9 +520,9 @@ function ServicesEditorial() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  The catalogue
-                </p>
+                <EditableText page="services" field="editorial.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                The catalogue
+              </EditableText>
 </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
@@ -657,9 +657,9 @@ function TechnicalGuideBand() {
               <div className="lg:col-span-8">
                 <div className="flex items-center gap-3 mb-5">
                   <span className="block w-10 h-px bg-lafoi-green-light/60" />
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
-                    Technical guide &middot; PDF
-                  </p>
+                  <EditableText page="services" field="guide.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                Technical guide &middot; PDF
+              </EditableText>
                 </div>
                 <h2 className="font-display font-light text-white text-3xl sm:text-4xl lg:text-[2.8rem] leading-[1.1] tracking-[-0.02em] mb-5">
                   What are stretch ceilings?{' '}
@@ -717,9 +717,9 @@ function Process() {
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-5">
               <span className="block w-10 h-px bg-lafoi-green-light/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              <EditableText page="services" field="process.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 The process
-              </p>
+              </EditableText>
 </div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
@@ -794,9 +794,9 @@ function WhyChooseUs() {
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-5">
               <span className="block w-10 h-px bg-lafoi-green/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+              <EditableText page="services" field="why.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                 Why choose us
-              </p>
+              </EditableText>
 </div>
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
@@ -854,9 +854,9 @@ function ServicesCTA() {
           <AnimatedSection>
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-12 h-px bg-lafoi-green-light/70" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              <EditableText page="services" field="cta.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 Specifying support
-              </p>
+              </EditableText>
 </div>
           </AnimatedSection>
 

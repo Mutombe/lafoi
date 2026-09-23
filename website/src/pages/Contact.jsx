@@ -35,6 +35,7 @@ const CONTACT_HERO_SLIDES = [
   },
 ]
 
+import { EditableText } from '../cms/editable'
 export default function Contact() {
   useSEO({
     title: 'Contact La Foi Designs | Request a Stretch Ceiling Quote',
@@ -98,9 +99,9 @@ function ContactHero() {
         <div className="relative w-full max-w-xl ml-auto">
           <div className="flex items-center gap-3 mb-7">
             <span className="block w-12 h-px bg-lafoi-green-light/70" />
-            <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
-              Begin a conversation
-            </p>
+            <EditableText page="contact" field="hero.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                Begin a conversation
+              </EditableText>
           </div>
 
           <h1
