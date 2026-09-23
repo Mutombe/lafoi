@@ -26,7 +26,7 @@ import MagneticCard from '../components/ui/MagneticCard'
 import KineticTextStrip from '../components/ui/KineticTextStrip'
 import CountUpUI from '../components/ui/CountUp'
 import { useSEO, breadcrumbsLd } from '../utils/seo'
-import { useSiteContent } from '../hooks/useSiteContent'
+import { EditableText } from '../cms/editable'
 import { products, projects } from '../data/site'
 import { reviews, googleRating } from '../data/reviews'
 import { linkifyProse } from '../utils/linkify.jsx'
@@ -125,7 +125,6 @@ export default function Home() {
 
 function Hero() {
   const ref = useRef(null)
-  const { c } = useSiteContent('home')
   const [mouse, setMouse] = useState({ x: 50, y: 40 })
   const [hoverable, setHoverable] = useState(false)
 
@@ -237,9 +236,9 @@ function Hero() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lafoi-green opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-lafoi-green-light" />
             </span>
-            <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              {c('hero.status', 'Stretch ceilings · Architectural lighting · Harare')}
-            </span>
+            <EditableText page="home" field="hero.status" as="span" className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
+              Stretch ceilings · Architectural lighting · Harare
+            </EditableText>
           </span>
 
           {/* Mobile-only Vol.01 sits below the status pill (replaces the floating top-right label on small screens) */}
@@ -546,7 +545,6 @@ function Manifesto() {
    ============================================================================ */
 
 function FinishGallery() {
-  const { c } = useSiteContent('home')
   const stretchProducts = products.filter((p) => p.category === 'Stretch Ceilings').slice(0, 9)
 
   // Each finish carries a custom colour range, from neutral off-whites through
@@ -604,27 +602,25 @@ function FinishGallery() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                <EditableText page="home" field="finish.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
                   01 · The finish library
-                </p>
+                </EditableText>
 </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
-                Seven finishes.
+                <EditableText page="home" field="finish.headline" as="span">Seven finishes.</EditableText>
                 <br />
-                <span className="font-display font-light text-lafoi-green">
-                  {c('finish.title', 'Every colour you can imagine.')}
-                </span>
+                <EditableText page="home" field="finish.title" as="span" className="font-display font-light text-lafoi-green">
+                  Every colour you can imagine.
+                </EditableText>
               </h2>
             </AnimatedSection>
           </div>
           <AnimatedSection delay={0.2} direction="right">
-            <p className="text-lafoi-gray font-general max-w-sm leading-relaxed">
-              {linkifyProse(
-                c('finish.intro', 'Every finish answers a different brief — calm or theatrical, silent or sculptural. We help you choose the one your space is asking for.')
-              )}
-            </p>
+            <EditableText page="home" field="finish.intro" as="p" multiline render={linkifyProse} className="text-lafoi-gray font-general max-w-sm leading-relaxed">
+              Every finish answers a different brief — calm or theatrical, silent or sculptural. We help you choose the one your space is asking for.
+            </EditableText>
           </AnimatedSection>
         </div>
 

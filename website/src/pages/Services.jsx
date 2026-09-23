@@ -25,7 +25,7 @@ import HeroSlideshow from '../components/ui/HeroSlideshow'
 import AnimatedHeading from '../components/ui/AnimatedHeading'
 import { useSEO, breadcrumbsLd, serviceLd } from '../utils/seo'
 import { linkifyProse } from '../utils/linkify.jsx'
-import { useSiteContent } from '../hooks/useSiteContent'
+import { EditableText } from '../cms/editable'
 
 const SERVICES_HERO_SLIDES = [
   {
@@ -330,7 +330,6 @@ export default function Services() {
    ============================================================================ */
 
 function ServicesHero() {
-  const { c } = useSiteContent('services')
   // Bento Hero, symmetric 6/6 split.
   // LEFT, heading + intro + 4-bullet service list.
   // RIGHT, 2x2 image bento (4 tiles) showing each service capability.
@@ -391,9 +390,9 @@ function ServicesHero() {
           >
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-12 h-px bg-lafoi-green/60" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                {c('hero.eyebrow', 'Eight services · One studio')}
-              </p>
+              <EditableText page="services" field="hero.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Eight services &middot; One studio
+              </EditableText>
             </div>
 
             <h1
@@ -415,11 +414,9 @@ function ServicesHero() {
               />
             </h1>
 
-            <p className="mt-7 max-w-md text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
-              {linkifyProse(
-                c('hero.subcopy', 'Eight services, each engineered to stand alone, designed to work together — from the ceiling overhead to the floor, wall and finish that meet it.')
-              )}
-            </p>
+            <EditableText page="services" field="hero.subcopy" as="p" multiline render={linkifyProse} className="mt-7 max-w-md text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
+              Eight services, each engineered to stand alone, designed to work together — from the ceiling overhead to the floor, wall and finish that meet it.
+            </EditableText>
 
             {/* Bullet list of all services, each links to its detail page */}
             <ul className="mt-8 space-y-2.5 border-t border-lafoi-dark/10 pt-7">

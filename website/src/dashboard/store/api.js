@@ -74,7 +74,7 @@ export const api = createApi({
     'PurchaseOrder', 'BurnRate',
     'NotificationRule', 'Notification',
     'DesignShare',
-    'ContentBlock',
+    'ContentBlock', 'MediaAsset',
   ],
   endpoints: (b) => ({
     // ---------- Auth ----------
@@ -858,6 +858,29 @@ export const api = createApi({
       query: (id) => ({ url: `content-blocks/${id}/`, method: 'DELETE' }),
       invalidatesTags: ['ContentBlock'],
     }),
+    // WYSIWYG inline edits — creates the block on first edit, updates thereafter.
+    upsertContentBlock: b.mutation({
+      query: (body) => ({ url: 'content-blocks/upsert/', method: 'POST', body }),
+      invalidatesTags: ['ContentBlock'],
+    }),
+
+    // ---------- Media library ----------
+    listMediaAssets: b.query({
+      query: (params = {}) => ({ url: 'media-assets/', params: { page_size: 500, ...params } }),
+      providesTags: ['MediaAsset'],
+    }),
+    createMediaAsset: b.mutation({
+      query: (body) => ({ url: 'media-assets/', method: 'POST', body }),
+      invalidatesTags: ['MediaAsset'],
+    }),
+    updateMediaAsset: b.mutation({
+      query: ({ id, body }) => ({ url: `media-assets/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['MediaAsset'],
+    }),
+    deleteMediaAsset: b.mutation({
+      query: (id) => ({ url: `media-assets/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['MediaAsset'],
+    }),
   }),
 })
 
@@ -911,6 +934,8 @@ export const {
   useListNotificationRulesQuery, useCreateNotificationRuleMutation, useUpdateNotificationRuleMutation, useDeleteNotificationRuleMutation, useTestNotificationRuleMutation,
   useListNotificationsQuery,
   useListContentBlocksQuery, useCreateContentBlockMutation, useUpdateContentBlockMutation, useDeleteContentBlockMutation,
+  useUpsertContentBlockMutation,
+  useListMediaAssetsQuery, useCreateMediaAssetMutation, useUpdateMediaAssetMutation, useDeleteMediaAssetMutation,
 } = api
 
 // Convenience: download an arbitrary endpoint with the bearer token attached.

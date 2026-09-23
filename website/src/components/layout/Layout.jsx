@@ -6,6 +6,7 @@ import WelcomeModal from './WelcomeModal'
 import { toast } from 'sonner'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import { CmsEditLayer, isCmsEdit } from '../../cms/editable'
 
 export default function Layout({ children }) {
   const [cookieVisible, setCookieVisible] = useState(false)
@@ -14,6 +15,7 @@ export default function Layout({ children }) {
   const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
+    if (isCmsEdit) return
     const timer = setTimeout(() => {
       const accepted = localStorage.getItem('lafoi-cookies')
       if (!accepted) setCookieVisible(true)
@@ -64,8 +66,11 @@ export default function Layout({ children }) {
       <main className="flex-1">{children}</main>
       <Footer onOpenPolicy={() => setPolicyOpen(true)} onOpenPrivacy={() => setPrivacyOpen(true)} />
 
-      {/* First-visit welcome modal */}
-      <WelcomeModal />
+      {/* WYSIWYG edit-mode layer (only active inside the dashboard iframe) */}
+      <CmsEditLayer />
+
+      {/* First-visit welcome modal — suppressed while editing in the CMS */}
+      {!isCmsEdit && <WelcomeModal />}
 
       {/* Cookie Consent */}
       <AnimatePresence>
@@ -108,8 +113,8 @@ export default function Layout({ children }) {
         )}
       </AnimatePresence>
 
-      {/* Floating WhatsApp Button */}
-      <WhatsAppButton />
+      {/* Floating WhatsApp Button — hidden while editing */}
+      {!isCmsEdit && <WhatsAppButton />}
 
       {/* Policy Modal */}
       <PolicyModal open={policyOpen} onClose={() => setPolicyOpen(false)} type="terms" />

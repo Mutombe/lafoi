@@ -21,7 +21,7 @@ import AnimatedHeading from '../components/ui/AnimatedHeading'
 import KineticTextStrip from '../components/ui/KineticTextStrip'
 import { useSEO, breadcrumbsLd } from '../utils/seo'
 import { linkifyProse } from '../utils/linkify.jsx'
-import { useSiteContent } from '../hooks/useSiteContent'
+import { EditableText, EditableImage } from '../cms/editable'
 
 export default function About() {
   useSEO({
@@ -63,7 +63,6 @@ export default function About() {
    ============================================================================ */
 
 function AboutHero() {
-  const { c } = useSiteContent('about')
   // Full-bleed warm hero. The brand image fills the whole section including
   // the area behind the transparent navbar. Sepia / honey overlays warm it
   // toward the brand tone; a left-side cream gradient keeps the headline
@@ -133,9 +132,9 @@ function AboutHero() {
           >
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-12 h-px bg-lafoi-green-light/80" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
-                {c('hero.eyebrow', 'Who we are')}
-              </p>
+              <EditableText page="about" field="hero.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                Who we are
+              </EditableText>
             </div>
 
             <h1
@@ -158,16 +157,12 @@ function AboutHero() {
             </h1>
 
             <div className="mt-8 space-y-5 font-body font-light text-base lg:text-[17px] text-white/90 leading-[1.7] max-w-md [text-shadow:0_1px_12px_rgba(0,0,0,0.4)]">
-              <p>
-                {linkifyProse(
-                  c('hero.p1', 'Founded January 2024 in Belgravia, Harare, Zimbabwe’s first dedicated stretch ceiling and architectural lighting studio.')
-                )}
-              </p>
-              <p className="text-white/80">
-                {linkifyProse(
-                  c('hero.p2', 'Built on one conviction: the ceiling deserves the same care as the floor beneath it. Premium stretch ceilings and bespoke lighting, installed in two to four days, depending on the design.')
-                )}
-              </p>
+              <EditableText page="about" field="hero.p1" as="p" multiline render={linkifyProse}>
+                Founded January 2024 in Belgravia, Harare, Zimbabwe’s first dedicated stretch ceiling and architectural lighting studio.
+              </EditableText>
+              <EditableText page="about" field="hero.p2" as="p" multiline render={linkifyProse} className="text-white/80">
+                Built on one conviction: the ceiling deserves the same care as the floor beneath it. Premium stretch ceilings and bespoke lighting, installed in two to four days, depending on the design.
+              </EditableText>
             </div>
 
             {/* Stat strip, 3 hairline-divided cells with cascade reveal */}
@@ -200,7 +195,6 @@ function AboutHero() {
    ============================================================================ */
 
 function Mission() {
-  const { c } = useSiteContent('about')
   // Brutalist split-screen, full-bleed, dark plate (left) + raw image (right).
   // SUBTLE PARALLAX on the right photo, drifts ~50px down as the section
   // scrolls past, while the dark text plate stays still.
@@ -354,8 +348,10 @@ function Mission() {
           style={{ y: photoY }}
         >
           <ScrollReveal className="absolute inset-0">
-            <OptimizedImage
-              src={c('mission.image', '/brand/images/30.png')}
+            <EditableImage
+              page="about"
+              field="mission.image"
+              defaultSrc="/brand/images/30.png"
               alt="La Foi Designs team at a branded event in Harare"
               className="w-full h-full object-cover object-center"
               fill
