@@ -10,7 +10,7 @@ import {
   CaretDown, Storefront, Coins, IdentificationCard, GearSix,
   ClockClockwise,
   Package, ArrowsLeftRight, Truck, ClipboardText, Cube, BellRinging,
-  ArrowDown,
+  ArrowDown, Browser,
 } from '@phosphor-icons/react'
 
 import Logo from '../../components/shared/Logo'
@@ -83,6 +83,14 @@ const GROUPS = [
       { to: '/dashboard/loans',      icon: Bank,                 label: 'Loans',      module: 'loans' },
       { to: '/dashboard/leave',      icon: Tray,                 label: 'Leave',      module: 'leave' },
       { to: '/dashboard/holidays',   icon: CalendarStar,         label: 'Holidays',   module: 'holidays' },
+    ],
+  },
+  {
+    key: 'website',
+    label: 'Website',
+    icon: Browser,
+    items: [
+      { to: '/dashboard/website', icon: Browser, label: 'Site content', module: 'website' },
     ],
   },
   {

@@ -74,6 +74,7 @@ export const api = createApi({
     'PurchaseOrder', 'BurnRate',
     'NotificationRule', 'Notification',
     'DesignShare',
+    'ContentBlock',
   ],
   endpoints: (b) => ({
     // ---------- Auth ----------
@@ -838,6 +839,25 @@ export const api = createApi({
       query: (params = {}) => ({ url: 'notifications/', params }),
       providesTags: ['Notification'],
     }),
+
+    // ---------- Website CMS (content blocks) ----------
+    listContentBlocks: b.query({
+      query: (params = {}) => ({ url: 'content-blocks/', params: { page_size: 500, ...params } }),
+      providesTags: ['ContentBlock'],
+    }),
+    createContentBlock: b.mutation({
+      query: (body) => ({ url: 'content-blocks/', method: 'POST', body }),
+      invalidatesTags: ['ContentBlock'],
+    }),
+    updateContentBlock: b.mutation({
+      // `body` is a plain object (JSON) or a FormData (image upload).
+      query: ({ id, body }) => ({ url: `content-blocks/${id}/`, method: 'PATCH', body }),
+      invalidatesTags: ['ContentBlock'],
+    }),
+    deleteContentBlock: b.mutation({
+      query: (id) => ({ url: `content-blocks/${id}/`, method: 'DELETE' }),
+      invalidatesTags: ['ContentBlock'],
+    }),
   }),
 })
 
@@ -890,6 +910,7 @@ export const {
   useQuickReorderItemMutation,
   useListNotificationRulesQuery, useCreateNotificationRuleMutation, useUpdateNotificationRuleMutation, useDeleteNotificationRuleMutation, useTestNotificationRuleMutation,
   useListNotificationsQuery,
+  useListContentBlocksQuery, useCreateContentBlockMutation, useUpdateContentBlockMutation, useDeleteContentBlockMutation,
 } = api
 
 // Convenience: download an arbitrary endpoint with the bearer token attached.

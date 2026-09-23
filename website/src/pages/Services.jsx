@@ -25,6 +25,7 @@ import HeroSlideshow from '../components/ui/HeroSlideshow'
 import AnimatedHeading from '../components/ui/AnimatedHeading'
 import { useSEO, breadcrumbsLd, serviceLd } from '../utils/seo'
 import { linkifyProse } from '../utils/linkify.jsx'
+import { useSiteContent } from '../hooks/useSiteContent'
 
 const SERVICES_HERO_SLIDES = [
   {
@@ -329,6 +330,7 @@ export default function Services() {
    ============================================================================ */
 
 function ServicesHero() {
+  const { c } = useSiteContent('services')
   // Bento Hero, symmetric 6/6 split.
   // LEFT, heading + intro + 4-bullet service list.
   // RIGHT, 2x2 image bento (4 tiles) showing each service capability.
@@ -390,7 +392,7 @@ function ServicesHero() {
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-12 h-px bg-lafoi-green/60" />
               <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                Eight services &middot; One studio
+                {c('hero.eyebrow', 'Eight services · One studio')}
               </p>
             </div>
 
@@ -415,7 +417,7 @@ function ServicesHero() {
 
             <p className="mt-7 max-w-md text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
               {linkifyProse(
-                'Eight services, each engineered to stand alone, designed to work together — from the ceiling overhead to the floor, wall and finish that meet it.'
+                c('hero.subcopy', 'Eight services, each engineered to stand alone, designed to work together — from the ceiling overhead to the floor, wall and finish that meet it.')
               )}
             </p>
 

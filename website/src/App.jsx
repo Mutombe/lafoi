@@ -55,6 +55,7 @@ const DashTimeClock = lazy(() => import('./dashboard/pages/TimeClock'))
 const DashCompliance = lazy(() => import('./dashboard/pages/Compliance'))
 const DashStudioMap = lazy(() => import('./dashboard/pages/StudioMap'))
 const DashUsers = lazy(() => import('./dashboard/pages/Users'))
+const DashWebsite = lazy(() => import('./dashboard/pages/Website'))
 const DashInventory = lazy(() => import('./dashboard/pages/Inventory'))
 const DashInventoryDetail = lazy(() => import('./dashboard/pages/InventoryDetail'))
 const DashSuppliers = lazy(() => import('./dashboard/pages/Suppliers'))
@@ -128,6 +129,7 @@ export default function App() {
             <Route path="settings/compliance" element={<DashCompliance />} />
             <Route path="map" element={<DashStudioMap />} />
             <Route path="users" element={<DashUsers />} />
+            <Route path="website" element={<DashWebsite />} />
             <Route path="profile" element={<DashProfile />} />
           </Route>
           </Routes>

@@ -26,6 +26,7 @@ import MagneticCard from '../components/ui/MagneticCard'
 import KineticTextStrip from '../components/ui/KineticTextStrip'
 import CountUpUI from '../components/ui/CountUp'
 import { useSEO, breadcrumbsLd } from '../utils/seo'
+import { useSiteContent } from '../hooks/useSiteContent'
 import { products, projects } from '../data/site'
 import { reviews, googleRating } from '../data/reviews'
 import { linkifyProse } from '../utils/linkify.jsx'
@@ -124,6 +125,7 @@ export default function Home() {
 
 function Hero() {
   const ref = useRef(null)
+  const { c } = useSiteContent('home')
   const [mouse, setMouse] = useState({ x: 50, y: 40 })
   const [hoverable, setHoverable] = useState(false)
 
@@ -236,7 +238,7 @@ function Hero() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-lafoi-green-light" />
             </span>
             <span className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              Stretch ceilings · Architectural lighting · Harare
+              {c('hero.status', 'Stretch ceilings · Architectural lighting · Harare')}
             </span>
           </span>
 
@@ -544,6 +546,7 @@ function Manifesto() {
    ============================================================================ */
 
 function FinishGallery() {
+  const { c } = useSiteContent('home')
   const stretchProducts = products.filter((p) => p.category === 'Stretch Ceilings').slice(0, 9)
 
   // Each finish carries a custom colour range, from neutral off-whites through
@@ -611,7 +614,7 @@ function FinishGallery() {
                 Seven finishes.
                 <br />
                 <span className="font-display font-light text-lafoi-green">
-                  Every colour you can imagine.
+                  {c('finish.title', 'Every colour you can imagine.')}
                 </span>
               </h2>
             </AnimatedSection>
@@ -619,7 +622,7 @@ function FinishGallery() {
           <AnimatedSection delay={0.2} direction="right">
             <p className="text-lafoi-gray font-general max-w-sm leading-relaxed">
               {linkifyProse(
-                'Every finish answers a different brief — calm or theatrical, silent or sculptural. We help you choose the one your space is asking for.'
+                c('finish.intro', 'Every finish answers a different brief — calm or theatrical, silent or sculptural. We help you choose the one your space is asking for.')
               )}
             </p>
           </AnimatedSection>
