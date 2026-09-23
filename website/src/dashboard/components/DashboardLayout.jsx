@@ -154,7 +154,7 @@ export default function DashboardLayout() {
   const [openMap, setOpenMap] = useState(() => {
     const persisted = readPersistedOpen() || {}
     // Default: open all groups on first run for discoverability.
-    return { sales: true, operations: true, billing: true, team: true, settings: true, ...persisted }
+    return { sales: true, operations: true, billing: true, team: true, website: true, settings: true, ...persisted }
   })
   useEffect(() => {
     if (activeGroupKey) {
