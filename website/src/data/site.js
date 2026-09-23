@@ -105,8 +105,9 @@ export const products = [
       'Warranty': '10 years',
             'Cleanability': 'Microfibre, gloss cleaner',
     },
-    image: '/brand/images/gloss.png',
+    image: '/brand/images/np10.jpg',
     gallery: [
+      '/brand/images/np10.jpg',
       '/brand/images/gloss.png',
       '/brand/images/gloss2.png',
       '/brand/images/gloss3.png',
@@ -178,8 +179,9 @@ export const products = [
       'Warranty': '10 years on print',
             'File requirements': '300 dpi minimum at full size',
     },
-    image: '/brand/images/artprint.png',
+    image: '/brand/images/np5.jpg',
     gallery: [
+      '/brand/images/np5.jpg',
       '/brand/images/artprint.png',
       '/brand/images/artprint2.png',
       '/brand/images/37.png',

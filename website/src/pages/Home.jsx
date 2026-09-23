@@ -651,151 +651,71 @@ function FinishGallery() {
           </AnimatedSection>
         </div>
 
-        {/* DESKTOP, editorial bento grid: 4 cols × 5 rows, asymmetric */}
-        <div className="hidden lg:grid lg:grid-cols-4 gap-5 auto-rows-[260px]">
-          {stretchProducts.map((p, i) => (
-            <AnimatedSection
-              key={p.slug}
-              direction="scale"
-              delay={Math.min(0.4, i * 0.05)}
-              amount={0.15}
-              className={bentoSpans[i]}
-            >
-            <MagneticCard strength={0.16} tiltAmplitude={4} className="h-full w-full">
-            <Link
-              to={`/products/${p.slug}`}
-              className={`group relative block h-full w-full rounded-sm overflow-hidden bg-lafoi-dark shadow-[0_18px_50px_-25px_rgba(17,17,17,0.35)]`}
-            >
-              <img
-                src={p.image}
-                alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling`}`}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-              />
-              {/* Permanent dark glassmorphic gradient at bottom */}
-              <div
-                aria-hidden
-                className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(17,17,17,0) 0%, rgba(17,17,17,0) 35%, rgba(17,17,17,0.55) 75%, rgba(17,17,17,0.85) 100%)',
-                }}
-              />
-              {/* Top-corner index + arrow */}
-              <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/80 px-2.5 py-1 rounded-sm bg-black/25 backdrop-blur-md border border-white/15">
-                  0{i + 1} / 0{stretchProducts.length}
-                </span>
-                <span className="w-9 h-9 rounded-full border border-white/30 bg-black/20 backdrop-blur-md flex items-center justify-center group-hover:border-lafoi-green-light group-hover:bg-lafoi-green-light/15 transition-all duration-500">
-                  <ArrowUpRight size={12} weight="bold" className="text-white" />
-                </span>
-              </div>
-              {/* Bottom label always visible */}
-              <div className="absolute inset-x-5 bottom-5 z-10 pointer-events-none">
-                <p className="text-[10px] font-sora text-lafoi-green-light tracking-[0.28em] uppercase mb-1.5 opacity-95">
-                  {p.finish}
-                </p>
-                <h3 className="font-display font-light text-white text-xl lg:text-2xl leading-[1.05] tracking-[-0.01em]">
-                  {p.name.replace(/ Stretch Ceiling$| Ceiling$/i, '')}
-                </h3>
-                <p className="text-[11px] lg:text-xs font-sora text-white/70 tracking-wide mt-1.5 line-clamp-1">
-                  {finishMeta[p.finish] || p.shortDesc}
-                </p>
-                {/* Colour palette preview, showcases that each finish carries a colour spectrum */}
-                {finishPalettes[p.finish] && (
-                  <div className="mt-3 flex items-center gap-1.5">
-                    {finishPalettes[p.finish].slice(0, 6).map((c, idx) => (
-                      <span
-                        key={idx}
-                        aria-hidden
-                        className="block w-3 h-3 rounded-full ring-1 ring-white/30 shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
-                        style={{ backgroundColor: c }}
-                      />
-                    ))}
-                    <span className="ml-1 font-sora text-[9px] tracking-[0.22em] uppercase text-white/55">
-                      + more
+        {/* Horizontal-scroll finish strip — one simple, swipeable row on every screen */}
+        <div className="-mx-4 sm:-mx-6 lg:-mx-10">
+          <div className="flex gap-4 lg:gap-5 overflow-x-auto snap-x snap-mandatory scrollbar-none px-4 sm:px-6 lg:px-10 pb-6">
+            {stretchProducts.map((p, i) => (
+              <Link
+                key={p.slug}
+                to={`/products/${p.slug}`}
+                className="group relative snap-start shrink-0 w-[78vw] sm:w-[300px] lg:w-[340px] rounded-sm overflow-hidden bg-lafoi-dark shadow-[0_18px_50px_-25px_rgba(17,17,17,0.35)]"
+              >
+                <div className="relative aspect-[3/4]">
+                  <picture>
+                    <source srcSet={p.image.replace(/\.(png|jpe?g)$/i, '.webp')} type="image/webp" />
+                    <img
+                      src={p.image}
+                      alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling`}`}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    />
+                  </picture>
+                  <div
+                    aria-hidden
+                    className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
+                    style={{ background: 'linear-gradient(180deg, rgba(17,17,17,0) 0%, rgba(17,17,17,0) 30%, rgba(17,17,17,0.55) 72%, rgba(17,17,17,0.88) 100%)' }}
+                  />
+                  <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
+                    <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/85 px-2.5 py-1 rounded-sm bg-black/25 backdrop-blur-md border border-white/15">
+                      0{i + 1} / 0{stretchProducts.length}
+                    </span>
+                    <span className="w-9 h-9 rounded-full border border-white/30 bg-black/20 backdrop-blur-md flex items-center justify-center group-hover:border-lafoi-green-light group-hover:bg-lafoi-green-light/15 transition-all duration-500">
+                      <ArrowUpRight size={13} weight="bold" className="text-white" />
                     </span>
                   </div>
-                )}
-              </div>
-            </Link>
-            </MagneticCard>
-            </AnimatedSection>
-          ))}
-        </div>
-
-        {/* MOBILE, stacked cards */}
-        <div className="lg:hidden grid grid-cols-2 gap-3 sm:gap-5">
-          {stretchProducts.map((p, i) => (
-            <MagneticCard key={p.slug} strength={0.14} tiltAmplitude={3} className="block h-full">
-            <Link
-              to={`/products/${p.slug}`}
-              className="group relative block rounded-sm overflow-hidden bg-lafoi-dark aspect-[4/5]"
-            >
-              <img
-                src={p.image}
-                alt={`${p.name}, ${p.vision || p.shortDesc || `${p.finish} finish stretch ceiling`}`}
-                width="800"
-                height="1067"
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-              />
-              <div
-                aria-hidden
-                className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(17,17,17,0) 0%, rgba(17,17,17,0) 35%, rgba(17,17,17,0.55) 75%, rgba(17,17,17,0.82) 100%)',
-                }}
-              />
-              <div className="absolute top-4 left-4 right-4 flex items-start justify-between z-10">
-                <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/75">
-                  0{i + 1} / 0{stretchProducts.length}
-                </span>
-                <span className="w-7 h-7 rounded-full border border-white/30 bg-black/15 backdrop-blur-sm flex items-center justify-center">
-                  <ArrowUpRight size={11} weight="bold" className="text-white/85" />
-                </span>
-              </div>
-              <div className="absolute inset-x-4 bottom-4 z-10 pointer-events-none">
-                <p className="text-[10px] font-sora text-lafoi-green-light tracking-[0.28em] uppercase mb-1 opacity-95">
-                  {p.finish}
-                </p>
-                <h3 className="font-display font-light text-white text-xl leading-none tracking-[-0.01em]">
-                  {p.name.replace(/ Stretch Ceiling$| Ceiling$/i, '')}
-                </h3>
-                {finishPalettes[p.finish] && (
-                  <div className="mt-2 flex items-center gap-1">
-                    {finishPalettes[p.finish].slice(0, 5).map((c, idx) => (
-                      <span
-                        key={idx}
-                        aria-hidden
-                        className="block w-2.5 h-2.5 rounded-full ring-1 ring-white/30"
-                        style={{ backgroundColor: c }}
-                      />
-                    ))}
+                  <div className="absolute inset-x-5 bottom-5 z-10 pointer-events-none">
+                    <p className="text-[10px] font-sora text-lafoi-green-light tracking-[0.28em] uppercase mb-1.5">
+                      {p.finish}
+                    </p>
+                    <h3 className="font-display font-light text-white text-2xl leading-[1.05] tracking-[-0.01em]">
+                      {p.name.replace(/ Stretch Ceiling$| Ceiling$/i, '')}
+                    </h3>
+                    <p className="text-xs font-sora text-white/70 tracking-wide mt-1.5 line-clamp-1">
+                      {finishMeta[p.finish] || p.shortDesc}
+                    </p>
                   </div>
-                )}
-              </div>
+                </div>
+              </Link>
+            ))}
+            {/* trailing card — jump to the full library */}
+            <Link
+              to="/products"
+              className="group snap-start shrink-0 w-[60vw] sm:w-[210px] lg:w-[230px] rounded-sm border border-lafoi-dark/12 bg-white/40 flex flex-col items-center justify-center text-center gap-4 px-6 hover:border-lafoi-green/40 hover:bg-white/70 transition-colors duration-500"
+              style={{ aspectRatio: '3 / 4' }}
+            >
+              <span className="w-12 h-12 rounded-full border border-lafoi-dark/20 flex items-center justify-center group-hover:border-lafoi-green group-hover:bg-lafoi-green transition-colors duration-500">
+                <ArrowRight size={16} weight="bold" className="text-lafoi-dark group-hover:text-white transition-colors duration-500" />
+              </span>
+              <span className="font-display font-light text-lafoi-dark text-lg leading-tight">
+                View the full<br />finish library
+              </span>
             </Link>
-            </MagneticCard>
-          ))}
+          </div>
+          <p className="px-4 sm:px-6 lg:px-10 font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/45">
+            Swipe to explore &rarr;
+          </p>
         </div>
-
-        <AnimatedSection delay={0.2} className="mt-12 flex justify-center">
-          <Link
-            to="/products"
-            className="group inline-flex items-center gap-3 text-lafoi-dark font-sora text-sm font-medium pb-1 border-b border-lafoi-dark/30 hover:border-lafoi-green hover:text-lafoi-green transition-colors duration-300"
-          >
-            <span className="font-display font-light text-base">Explore the full library</span>
-            <ArrowRight
-              size={16}
-              weight="bold"
-              className="group-hover:translate-x-1 transition-transform duration-300"
-            />
-          </Link>
-        </AnimatedSection>
       </div>
     </section>
   )
@@ -837,8 +757,8 @@ function Approach() {
       num: '02',
       title: 'Craft',
       copy: 'Custom-cut ceilings, hand-joined seams, lighting prepped to scene — built off-site so the room stays calm.',
-      image: '/brand/images/15.png',
-      vision: 'Dining room with hand-blown glass-globe chandelier, crafted entertaining space',
+      image: '/brand/images/np9.jpg',
+      vision: 'La Foi crew mounting a printed stretch ceiling on site, branded shirts, careful hands',
     },
     {
       num: '03',
