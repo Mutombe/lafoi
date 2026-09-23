@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   MagnifyingGlass, X, List, CaretDown, ArrowRight,
-  Sparkle, Buildings, Briefcase, Camera, Phone,
+  Sparkle, Buildings, Briefcase, Camera, Phone, MapPin, Envelope,
   Question, Newspaper, Users, Lightbulb, Palette,
   SquaresFour, Lightning, Star, Package, ShoppingBag,
   Storefront, SignIn, UserCircle,
@@ -139,6 +139,12 @@ export default function Navbar() {
   useEffect(() => {
     if (searchOpen && searchRef.current) searchRef.current.focus()
   }, [searchOpen])
+
+  // Lock body scroll while the full-screen mobile menu is open.
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileOpen])
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -280,10 +286,8 @@ export default function Navbar() {
 
               <Link
                 to="/contact"
-                className={`hidden lg:flex items-center gap-2 px-5 py-2.5 font-sora text-sm font-medium rounded-sm transition-all duration-300 group ${
-                  isLightText
-                    ? 'bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-lafoi-green hover:border-lafoi-green'
-                    : 'bg-lafoi-dark text-white hover:bg-lafoi-green'
+                className={`hidden lg:flex items-center gap-2 px-5 py-2.5 font-sora text-sm font-medium rounded-sm transition-all duration-300 group bg-lafoi-green text-white shadow-sm shadow-lafoi-green/25 hover:bg-lafoi-green-light ${
+                  isLightText ? 'border border-lafoi-green-light/30' : ''
                 }`}
               >
                 <span>Get a Quote</span>
@@ -379,75 +383,104 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — full-screen, editorial: big typographic links + contact footer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-[99] lg:hidden"
+            className="fixed inset-0 z-[150] lg:hidden bg-lafoi-dark text-white flex flex-col overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-            <motion.div
-              className="absolute top-0 right-0 w-[85%] max-w-sm h-full bg-white shadow-2xl overflow-y-auto"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            >
-              <div className="p-6 pt-20">
-                <Link
-                  to="/"
-                  className="block py-3 text-lg font-sora font-semibold text-lafoi-dark hover:text-lafoi-green transition-colors"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/shop"
-                  className="flex items-center gap-2 py-3 text-lg font-sora font-semibold text-lafoi-dark hover:text-lafoi-green transition-colors border-t border-gray-100"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <Storefront size={18} weight="regular" className="text-lafoi-green" />
-                  Shop
-                </Link>
-                {navGroups.map((group) => (
-                  <div key={group.label} className="py-4 border-t border-gray-100">
-                    <p className="text-xs font-sora font-semibold text-lafoi-green uppercase tracking-widest mb-3">
-                      {group.label}
-                    </p>
-                    {group.items.map((item) => (
+            {/* soft green glow */}
+            <div aria-hidden className="absolute -top-24 -right-16 w-80 h-80 rounded-full bg-lafoi-green/20 blur-[130px] pointer-events-none" />
+            <div aria-hidden className="absolute inset-0 dot-pattern opacity-[0.05] pointer-events-none" />
+
+            {/* top bar: logo + close */}
+            <div className="relative flex items-center justify-between px-6 pt-6">
+              <Link to="/" onClick={() => setMobileOpen(false)}>
+                <Logo tone="light" variant="wordmark" imgClassName="h-9 w-auto" />
+              </Link>
+              <button
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
+                className="w-11 h-11 rounded-full flex items-center justify-center text-white/90 hover:bg-white/10 transition-colors"
+              >
+                <X size={24} weight="regular" />
+              </button>
+            </div>
+
+            <div className="relative flex-1 overflow-y-auto px-7 pt-10 pb-8 flex flex-col">
+              <nav className="flex flex-col">
+                {[
+                  { name: 'Home', to: '/' },
+                  { name: 'Services', to: '/services' },
+                  { name: 'Products', to: '/products' },
+                  { name: 'Portfolio', to: '/portfolio' },
+                  { name: 'About', to: '/about' },
+                  { name: 'Shop', to: '/shop' },
+                  { name: 'Contact', to: '/contact' },
+                ].map((item, i) => {
+                  const active = location.pathname === item.to
+                  return (
+                    <motion.div
+                      key={item.to}
+                      initial={{ opacity: 0, x: 24 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.06 + i * 0.05, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    >
                       <Link
-                        key={item.path}
-                        to={item.path}
-                        className="flex items-center gap-3 py-3 min-h-[44px] text-lafoi-gray hover:text-lafoi-green transition-colors"
+                        to={item.to}
                         onClick={() => setMobileOpen(false)}
+                        className={`block py-2 font-display font-light tracking-[-0.02em] leading-[1.15] text-[2.1rem] transition-colors ${
+                          active ? 'text-lafoi-green-light' : 'text-white hover:text-lafoi-green-light'
+                        }`}
                       >
-                        <item.icon size={16} weight="regular" />
-                        <span className="font-general text-[15px]">{item.name}</span>
+                        {item.name}
                       </Link>
-                    ))}
-                  </div>
-                ))}
-                <Link
-                  to={isAuthed ? '/dashboard' : '/dashboard/login'}
-                  className="flex items-center justify-center gap-2 w-full mt-6 px-6 py-3 rounded-sm border border-lafoi-dark/15 text-lafoi-dark hover:bg-lafoi-green/5 hover:border-lafoi-green transition-colors font-sora text-sm font-medium"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {isAuthed ? <UserCircle size={16} weight="regular" /> : <SignIn size={14} weight="bold" />}
-                  {isAuthed ? 'Studio dashboard' : 'Sign in to studio'}
-                </Link>
+                    </motion.div>
+                  )
+                })}
+              </nav>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.4 }}
+                className="mt-9 flex flex-col gap-3"
+              >
                 <Link
                   to="/contact"
-                  className="flex items-center justify-center gap-2 w-full mt-3 px-6 py-3.5 bg-lafoi-dark text-white rounded-sm font-sora text-sm font-medium hover:bg-lafoi-green transition-colors"
                   onClick={() => setMobileOpen(false)}
+                  className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-lafoi-green text-white rounded-sm font-sora text-sm font-medium hover:bg-lafoi-green-light transition-colors"
                 >
                   Get a Free Quote
                   <ArrowRight size={16} weight="bold" />
                 </Link>
+                <Link
+                  to={isAuthed ? '/dashboard' : '/dashboard/login'}
+                  onClick={() => setMobileOpen(false)}
+                  className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 rounded-sm border border-white/20 text-white/85 hover:bg-white/10 transition-colors font-sora text-sm font-medium"
+                >
+                  {isAuthed ? <UserCircle size={16} weight="regular" /> : <SignIn size={14} weight="bold" />}
+                  {isAuthed ? 'Studio dashboard' : 'Sign in to studio'}
+                </Link>
+              </motion.div>
+
+              {/* contact footer */}
+              <div className="mt-auto pt-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="block w-8 h-px bg-lafoi-green-light/60" />
+                  <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-white/45">Get in touch</span>
+                </div>
+                <div className="space-y-2.5 text-white/55 text-sm font-general">
+                  <div className="flex items-center gap-2.5"><MapPin size={15} className="text-lafoi-green-light shrink-0" /> Suite 26, 6 Chelmsford Rd, Belgravia, Harare</div>
+                  <div className="flex items-center gap-2.5"><Phone size={15} className="text-lafoi-green-light shrink-0" /> +263 782 931 472</div>
+                  <div className="flex items-center gap-2.5"><Envelope size={15} className="text-lafoi-green-light shrink-0" /> admin@lafoidesigns.co.zw</div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
