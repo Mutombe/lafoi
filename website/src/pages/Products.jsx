@@ -248,9 +248,9 @@ export default function Products() {
                 <span className="w-6 h-px bg-lafoi-green/50" />
                 Catalogue
               </p>
-              <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark mb-3">
+              <EditableText page="products" field="auto.the-full-range-4ac450" as="h2" className="heading-lg text-3xl lg:text-5xl text-lafoi-dark mb-3">
                 The full range
-              </h2>
+              </EditableText>
               <p className="font-general text-lafoi-gray max-w-2xl">
                 {linkifyProse(
                   'Filter by category or application. Every ceiling and lighting solution opens to full specs, warranty and case studies.'
@@ -384,9 +384,9 @@ export default function Products() {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <AnimatedSection>
             <div className="mb-12 max-w-2xl">
-              <p className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase mb-3">
+              <EditableText page="products" field="auto.by-application-f259a3" as="p" multiline className="text-lafoi-green font-sora text-xs font-semibold tracking-widest uppercase mb-3">
                 By application
-              </p>
+              </EditableText>
               <h2 className="heading-lg text-3xl lg:text-5xl text-lafoi-dark">
                 Find what fits <span className="font-display font-light text-lafoi-green">your space</span>.
               </h2>
@@ -445,9 +445,9 @@ export default function Products() {
         <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
           <AnimatedSection>
             <div className="max-w-2xl">
-              <p className="text-lafoi-green-light font-sora text-xs font-semibold tracking-widest uppercase mb-3">
+              <EditableText page="products" field="auto.specifying-support-c70dad" as="p" multiline className="text-lafoi-green-light font-sora text-xs font-semibold tracking-widest uppercase mb-3">
                 Specifying support
-              </p>
+              </EditableText>
               <h2 className="heading-lg text-3xl lg:text-5xl text-white mb-4">
                 Need help <span className="font-display font-light">choosing</span>?
               </h2>

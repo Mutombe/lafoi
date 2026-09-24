@@ -21,6 +21,7 @@ export function useSiteContent(page) {
   const [data, setData] = useState(() => cache.get(page)?.data || null)
 
   useEffect(() => {
+    if (!page) return undefined
     let alive = true
     const entry = cache.get(page)
     if (entry?.data) {

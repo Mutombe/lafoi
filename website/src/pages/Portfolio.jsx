@@ -348,9 +348,9 @@ function VideoGallery() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  Video gallery
-                </p>
+                <EditableText page="portfolio" field="auto.video-gallery-1bd4e7" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Video gallery
+              </EditableText>
                 <span className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-gray/50">
                   {videos.length} clips
                 </span>
@@ -422,9 +422,9 @@ function PortfolioHero() {
           >
             <div className="flex items-center gap-3 mb-6">
               <span className="block w-12 h-px bg-lafoi-green-light/70" />
-              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+              <EditableText page="portfolio" field="auto.the-gallery-631031" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
                 The Gallery
-              </p>
+              </EditableText>
             </div>
             <h1
               className="font-display text-white tracking-[-0.035em] leading-[0.95] text-[3rem] sm:text-[4.5rem] lg:text-[6rem] xl:text-[6.6rem]"
@@ -467,9 +467,9 @@ function PortfolioHero() {
                 </div>
               ))}
             </div>
-            <p className="mt-5 max-w-[340px] ml-auto text-[11px] font-sora tracking-[0.18em] uppercase text-white/55">
-              One studio &middot; One vision
-            </p>
+            <EditableText page="portfolio" field="auto.one-studio-middot-one-vision-65d672" as="p" multiline className="mt-5 max-w-[340px] ml-auto text-[11px] font-sora tracking-[0.18em] uppercase text-white/55">
+                One studio &middot; One vision
+              </EditableText>
           </motion.aside>
         </div>
       </div>

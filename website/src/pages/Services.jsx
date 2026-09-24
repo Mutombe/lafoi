@@ -401,12 +401,16 @@ function ServicesHero() {
             >
               <AnimatedHeading
                 as="span"
+                page="services"
+                field="hero.title1"
                 text="Ceilings, light,"
                 className="block font-light"
                 staggerChildren={0.06}
               />
               <AnimatedHeading
                 as="span"
+                page="services"
+                field="hero.title2"
                 text="and the craft between."
                 className="block italic font-light text-lafoi-green"
                 delay={0.2}
@@ -1042,13 +1046,13 @@ function ServiceDetail({ service }) {
               <AnimatedSection>
                 <div className="flex items-center gap-3 mb-6">
                   <span className="block w-10 h-px bg-lafoi-green/60" />
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                    The specification
-                  </p>
+                  <EditableText page="services" field="auto.the-specification-212d6e" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                The specification
+              </EditableText>
                 </div>
-                <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[2.8rem] leading-[1.1] tracking-[-0.02em] mb-6">
-                  Features &amp; benefits
-                </h2>
+                <EditableText page="services" field="auto.features-amp-benefits-7a191e" as="h2" className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[2.8rem] leading-[1.1] tracking-[-0.02em] mb-6">
+                Features &amp; benefits
+              </EditableText>
                 <p className="font-body font-light text-base lg:text-lg text-lafoi-gray leading-[1.75] mb-12 max-w-2xl">
                   {linkifyProse(service.desc)}
                 </p>
@@ -1083,9 +1087,9 @@ function ServiceDetail({ service }) {
                   <div className="mb-12">
                     <div className="flex items-center gap-3 mb-4">
                       <span className="block w-10 h-px bg-lafoi-green/60" />
-                      <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                        Interactive &middot; Live 3D twin
-                      </p>
+                      <EditableText page="services" field="auto.interactive-middot-live-3d-twin-d688b3" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Interactive &middot; Live 3D twin
+              </EditableText>
                     </div>
                     <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-sm overflow-hidden bg-lafoi-dark ring-1 ring-lafoi-dark/10 shadow-[0_24px_60px_-30px_rgba(17,17,17,0.5)]">
                       <iframe
@@ -1098,9 +1102,9 @@ function ServiceDetail({ service }) {
                         loading="lazy"
                       />
                     </div>
-                    <p className="mt-3 font-sora text-[11px] tracking-wide text-lafoi-gray-medium">
-                      Drag to look around, scroll to move, and click the floor to walk the space. Use the fullscreen control for the full experience.
-                    </p>
+                    <EditableText page="services" field="auto.drag-to-look-around-scroll-d49b00" as="p" multiline className="mt-3 font-sora text-[11px] tracking-wide text-lafoi-gray-medium">
+                Drag to look around, scroll to move, and click the floor to walk the space. Use the fullscreen control for the full experience.
+              </EditableText>
                   </div>
                 </AnimatedSection>
               ) : (
@@ -1121,9 +1125,9 @@ function ServiceDetail({ service }) {
               {/* Other services */}
               <AnimatedSection delay={0.25}>
                 <div className="pt-10 border-t border-lafoi-dark/10">
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green mb-6">
-                    Continue exploring
-                  </p>
+                  <EditableText page="services" field="auto.continue-exploring-c609e8" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green mb-6">
+                Continue exploring
+              </EditableText>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <Link
                       to={`/services/${prev.slug}`}
@@ -1168,9 +1172,9 @@ function ServiceDetail({ service }) {
                     <div className="relative">
                       <div className="flex items-center gap-3 mb-6">
                         <span className="block w-8 h-px bg-lafoi-green/60" />
-                        <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                          Ideal for
-                        </p>
+                        <EditableText page="services" field="auto.ideal-for-cedef2" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Ideal for
+              </EditableText>
                       </div>
 
                       <div className="space-y-0 border-t border-lafoi-dark/10 mb-7">
@@ -1205,9 +1209,9 @@ function ServiceDetail({ service }) {
                   <div className="p-6 rounded-sm border border-lafoi-dark/10 bg-white">
                     <div className="flex items-center gap-3 mb-3">
                       <Trophy size={14} weight="regular" className="text-lafoi-green" />
-                      <p className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-dark">
-                        Backed by warranty
-                      </p>
+                      <EditableText page="services" field="auto.backed-by-warranty-775643" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.28em] uppercase text-lafoi-dark">
+                Backed by warranty
+              </EditableText>
                     </div>
                     <p className="font-body font-light text-xs text-lafoi-gray leading-relaxed">
                       Manufacturer warranty up to 10 years. Premium PVC and fabric membrane. Class B fire

@@ -35,6 +35,12 @@ function splitField(field) {
   return { section: field.slice(0, i), key: field.slice(i + 1) }
 }
 
+/** Post an inline text update for a "section.key" field (used by AnimatedHeading). */
+export function postFieldUpdate(page, field, value, fieldType = 'text') {
+  const { section, key } = splitField(field)
+  post({ type: 'update', page, section, key, value, fieldType })
+}
+
 /**
  * Injects edit-mode styling + a visible banner once, so it's obvious the page
  * is editable. Mounted from Layout so it's always present in the iframe.
@@ -66,8 +72,16 @@ export function CmsEditLayer() {
     banner.innerHTML = '<span>✏️ <b>Edit mode</b> — click any highlighted text to edit · hover an image to replace it</span>'
     document.body.appendChild(banner)
 
+    // In the editor, links must not navigate away — clicking them should just
+    // let you edit their text (or do nothing). The dashboard changes pages.
+    const clickGuard = (e) => {
+      const a = e.target.closest && e.target.closest('a[href]')
+      if (a) { e.preventDefault() }
+    }
+    document.addEventListener('click', clickGuard, true)
+
     post({ type: 'ready' })
-    return () => { style.remove(); banner.remove() }
+    return () => { style.remove(); banner.remove(); document.removeEventListener('click', clickGuard, true) }
   }, [])
   return null
 }
@@ -78,7 +92,7 @@ export function CmsEditLayer() {
  * the caret). We set the text imperatively and only re-sync when the stored
  * value changes AND the field isn't focused.
  */
-const InlineNode = React.memo(
+export const InlineNode = React.memo(
   function InlineNode({ tag: Tag = 'span', className, field, initial, multiline, onCommit }) {
     const ref = useRef(null)
     const last = useRef(initial ?? '')

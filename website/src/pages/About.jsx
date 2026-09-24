@@ -143,12 +143,16 @@ function AboutHero() {
             >
               <AnimatedHeading
                 as="span"
+                page="about"
+                field="hero.title1"
                 text="A studio of"
                 className="block font-light"
                 staggerChildren={0.06}
               />
               <AnimatedHeading
                 as="span"
+                page="about"
+                field="hero.title2"
                 text="attention."
                 className="block italic font-light text-lafoi-green-light"
                 delay={0.18}
@@ -260,25 +264,25 @@ function Mission() {
                   <p className="font-display font-light text-2xl lg:text-3xl text-white leading-none">
                     1<span className="text-base lg:text-lg">st</span>
                   </p>
-                  <p className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
-                    In Zimbabwe
-                  </p>
+                  <EditableText page="about" field="auto.in-zimbabwe-40ba97" as="p" multiline className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
+                In Zimbabwe
+              </EditableText>
                 </div>
                 <div className="border-l border-white/10 pl-4">
                   <p className="font-display font-light text-2xl lg:text-3xl text-white leading-none">
                     1 to 2<span className="text-base lg:text-lg">d</span>
                   </p>
-                  <p className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
-                    Typical install
-                  </p>
+                  <EditableText page="about" field="auto.typical-install-f2e574" as="p" multiline className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
+                Typical install
+              </EditableText>
                 </div>
                 <div className="border-l border-white/10 pl-4">
                   <p className="font-display font-light text-2xl lg:text-3xl text-white leading-none">
                     10<span className="text-base lg:text-lg">yr</span>
                   </p>
-                  <p className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
-                    Mfr. warranty
-                  </p>
+                  <EditableText page="about" field="auto.mfr-warranty-196e51" as="p" multiline className="text-[10px] font-sora tracking-[0.22em] uppercase text-white/45 mt-2 leading-snug">
+                Mfr. warranty
+              </EditableText>
                 </div>
               </div>
             </AnimatedSection>
@@ -295,13 +299,13 @@ function Mission() {
                     <span className="w-9 h-9 rounded-full bg-lafoi-green-light/15 border border-lafoi-green-light/30 flex items-center justify-center">
                       <FilePdf size={16} weight="duotone" className="text-lafoi-green-light" />
                     </span>
-                    <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light font-semibold">
-                      Resources &middot; PDF
-                    </p>
+                    <EditableText page="about" field="auto.resources-middot-pdf-b9bb74" as="p" multiline className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light font-semibold">
+                Resources &middot; PDF
+              </EditableText>
                   </div>
-                  <h3 className="font-display font-light text-xl lg:text-2xl text-white leading-tight tracking-tight mb-4">
-                    Take the studio with you.
-                  </h3>
+                  <EditableText page="about" field="auto.take-the-studio-with-you-24a90d" as="h3" className="font-display font-light text-xl lg:text-2xl text-white leading-tight tracking-tight mb-4">
+                Take the studio with you.
+              </EditableText>
                   <a
                     href="/brand/docs/company-profile.pdf"
                     target="_blank"
@@ -940,9 +944,9 @@ function Team() {
               <div className="relative z-10 h-full flex flex-col p-8 lg:p-10">
                 <div className="flex items-center gap-3 mb-8">
                   <span className="block w-10 h-px bg-white/70" />
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-white/85">
-                    Leadership
-                  </p>
+                  <EditableText page="about" field="auto.leadership-1f0aef" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-white/85">
+                Leadership
+              </EditableText>
                 </div>
 
                 <div className="flex-1 flex flex-col justify-center space-y-7">
@@ -964,12 +968,12 @@ function Team() {
                 </div>
 
                 <div className="pt-6 mt-8 border-t border-white/20">
-                  <p className="font-display font-normal text-white text-xl lg:text-2xl leading-tight mb-1">
-                    Locally dedicated.
-                  </p>
-                  <p className="font-display font-light text-white/80 text-xl lg:text-2xl leading-tight">
-                    Belgravia, Harare.
-                  </p>
+                  <EditableText page="about" field="auto.locally-dedicated-88e8f6" as="p" multiline className="font-display font-normal text-white text-xl lg:text-2xl leading-tight mb-1">
+                Locally dedicated.
+              </EditableText>
+                  <EditableText page="about" field="auto.belgravia-harare-9e3b47" as="p" multiline className="font-display font-light text-white/80 text-xl lg:text-2xl leading-tight">
+                Belgravia, Harare.
+              </EditableText>
                 </div>
               </div>
             </div>

@@ -1,5 +1,7 @@
 import React from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
+import { isCmsEdit, InlineNode, postFieldUpdate } from '../../cms/editable'
+import { useSiteContent } from '../../hooks/useSiteContent'
 
 /**
  * AnimatedHeading — word-by-word reveal for display headings.
@@ -17,14 +19,31 @@ export default function AnimatedHeading({
   className = '',
   delay = 0,
   staggerChildren = 0.05,
+  page,
+  field,
 }) {
   const reduce = useReducedMotion()
+  const { c } = useSiteContent(page)
+  const value = page && field ? c(field, text) : text
 
-  if (reduce) {
-    return <Tag className={className}>{text}</Tag>
+  // In the WYSIWYG editor, a CMS-bound heading becomes directly editable.
+  if (isCmsEdit && page && field) {
+    return (
+      <InlineNode
+        tag={Tag}
+        className={className}
+        field={field}
+        initial={value}
+        onCommit={(t) => postFieldUpdate(page, field, t)}
+      />
+    )
   }
 
-  const words = text.split(' ')
+  if (reduce) {
+    return <Tag className={className}>{value}</Tag>
+  }
+
+  const words = value.split(' ')
   return (
     <Tag className={className}>
       {words.map((word, i) => (

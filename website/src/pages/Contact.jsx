@@ -179,9 +179,9 @@ function ContactBento() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  Four ways to reach us
-                </p>
+                <EditableText page="contact" field="auto.four-ways-to-reach-us-57c058" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Four ways to reach us
+              </EditableText>
 </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
@@ -399,9 +399,9 @@ function ContactForm() {
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  Open a brief
-                </p>
+                <EditableText page="contact" field="auto.open-a-brief-b30fcb" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Open a brief
+              </EditableText>
 </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
@@ -473,15 +473,15 @@ function ContactForm() {
                     <CheckCircle size={28} weight="regular" className="text-lafoi-green" />
                   </div>
                   <span className="block w-10 h-px bg-lafoi-green mx-auto mb-5" />
-                  <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green mb-4">
-                    Message received
-                  </p>
-                  <h3 className="font-display font-light text-3xl lg:text-4xl text-lafoi-dark mb-4 leading-tight">
-                    Thank you.
-                  </h3>
-                  <p className="font-body font-light text-base text-lafoi-gray mb-8 max-w-md mx-auto">
-                    Our team will be in touch within 24 hours.
-                  </p>
+                  <EditableText page="contact" field="auto.message-received-51313c" as="p" multiline className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green mb-4">
+                Message received
+              </EditableText>
+                  <EditableText page="contact" field="auto.thank-you-2d4390" as="h3" className="font-display font-light text-3xl lg:text-4xl text-lafoi-dark mb-4 leading-tight">
+                Thank you.
+              </EditableText>
+                  <EditableText page="contact" field="auto.our-team-will-be-in-33bfa6" as="p" multiline className="font-body font-light text-base text-lafoi-gray mb-8 max-w-md mx-auto">
+                Our team will be in touch within 24 hours.
+              </EditableText>
                   <button
                     onClick={() => {
                       setSubmitted(false)
@@ -654,9 +654,9 @@ function WhatsAppCallout() {
               <div className="lg:col-span-7">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="block w-10 h-px bg-lafoi-green/60" />
-                  <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                    The fastest channel
-                  </p>
+                  <EditableText page="contact" field="auto.the-fastest-channel-4485b3" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                The fastest channel
+              </EditableText>
 </div>
 
                 <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl lg:text-[2.8rem] leading-[1.1] tracking-[-0.02em] mb-6">
@@ -728,13 +728,13 @@ function MapSection() {
             <div>
               <div className="flex items-center gap-3 mb-5">
                 <span className="block w-10 h-px bg-lafoi-green/60" />
-                <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                  Visit the studio
-                </p>
+                <EditableText page="contact" field="auto.visit-the-studio-ce9e1f" as="p" multiline className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                Visit the studio
+              </EditableText>
 </div>
-              <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl leading-[1.1] tracking-[-0.02em]">
+              <EditableText page="contact" field="auto.suite-26-belgravia-4277f1" as="h2" className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl leading-[1.1] tracking-[-0.02em]">
                 Suite 26, Belgravia.
-              </h2>
+              </EditableText>
             </div>
             <p className="font-body font-light text-sm text-lafoi-gray max-w-md">
               {linkifyProse(
@@ -757,9 +757,9 @@ function MapSection() {
             <div className="absolute inset-0 flex items-center px-8 lg:px-12">
               <div>
                 <span className="block w-10 h-px bg-lafoi-green-light/70 mb-3" />
-                <p className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light/90 mb-2">
-                  The route in
-                </p>
+                <EditableText page="contact" field="auto.the-route-in-4e5f70" as="p" multiline className="font-sora text-[10px] tracking-[0.3em] uppercase text-lafoi-green-light/90 mb-2">
+                The route in
+              </EditableText>
                 <p className="font-display font-light text-white text-2xl lg:text-3xl leading-tight tracking-[-0.01em]">
                   Off Chelmsford Road,
                   <br className="hidden sm:block" /> a short hallway from the lift.
@@ -785,9 +785,9 @@ function MapSection() {
         </AnimatedSection>
 
         <AnimatedSection delay={0.15}>
-          <p className="mt-6 font-sora text-[11px] tracking-[0.25em] uppercase text-lafoi-gray-medium text-center">
-            Suite 26, 6 Chelmsford Road &middot; Belgravia, Harare
-          </p>
+          <EditableText page="contact" field="auto.suite-26-6-chelmsford-road-777d45" as="p" multiline className="mt-6 font-sora text-[11px] tracking-[0.25em] uppercase text-lafoi-gray-medium text-center">
+                Suite 26, 6 Chelmsford Road &middot; Belgravia, Harare
+              </EditableText>
         </AnimatedSection>
       </div>
     </section>

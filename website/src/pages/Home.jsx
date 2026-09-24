@@ -682,9 +682,9 @@ function FinishGallery() {
               </span>
             </Link>
           </div>
-          <p className="px-4 sm:px-6 lg:px-10 font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/45">
-            Swipe to explore &rarr;
-          </p>
+          <EditableText page="home" field="auto.swipe-to-explore-rarr-18897d" as="p" multiline className="px-4 sm:px-6 lg:px-10 font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/45">
+                Swipe to explore &rarr;
+              </EditableText>
         </div>
       </div>
     </section>
@@ -1328,9 +1328,9 @@ function Testimonial() {
 
         {/* kinetic name marquee, sourced from reviews data */}
         <AnimatedSection delay={0.2} className="mt-16 lg:mt-24">
-          <p className="text-center text-[10px] font-sora text-lafoi-gray tracking-[0.3em] uppercase mb-8">
-            In good company
-          </p>
+          <EditableText page="home" field="auto.in-good-company-92b62f" as="p" multiline className="text-center text-[10px] font-sora text-lafoi-gray tracking-[0.3em] uppercase mb-8">
+                In good company
+              </EditableText>
           <div className="relative overflow-hidden marquee-pause">
             <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-lafoi-cream to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-lafoi-cream to-transparent z-10 pointer-events-none" />
