@@ -33,19 +33,9 @@ import { linkifyProse } from '../utils/linkify.jsx'
 
 const HOME_HERO_SLIDES = [
   {
-    src: '/brand/images/22.png',
-    alt: 'Starfield and linear-LED stretch ceiling above a luxury city-view lounge',
-    vision: 'Dark feature ceiling with starfield and linear LEDs over a designer lounge',
-  },
-  {
-    src: '/brand/images/transluescent1.png',
-    alt: 'Luminous backlit stretch ceiling glowing above an onyx-walled lounge',
-    vision: 'Translucent backlit stretch ceiling casting an even glow over a warm lounge',
-  },
-  {
-    src: '/brand/images/mirror.png',
-    alt: 'Mirror-gloss stretch ceiling reflecting a chandelier-lit dining room',
-    vision: 'High-gloss mirror ceiling doubling a luxury dining room and its chandelier',
+    src: '/brand/images/stretch-mirror.png',
+    alt: 'Gold geometric mirror-panel stretch ceiling with lit framing in a luxury arcade',
+    vision: 'Faceted gold mirror-panel ceiling with illuminated framing in an upscale retail space',
   },
   {
     src: '/brand/images/35.png',
@@ -53,9 +43,19 @@ const HOME_HERO_SLIDES = [
     vision: 'Printed-marble gloss ceiling with concealed linear lighting over a designer kitchen',
   },
   {
-    src: '/brand/images/stretch-mirror.png',
-    alt: 'Gold geometric mirror-panel stretch ceiling with lit framing in a luxury arcade',
-    vision: 'Faceted gold mirror-panel ceiling with illuminated framing in an upscale retail space',
+    src: '/brand/images/mirror.png',
+    alt: 'Mirror-gloss stretch ceiling reflecting a chandelier-lit dining room',
+    vision: 'High-gloss mirror ceiling doubling a luxury dining room and its chandelier',
+  },
+  {
+    src: '/brand/images/transluescent1.png',
+    alt: 'Luminous backlit stretch ceiling glowing above an onyx-walled lounge',
+    vision: 'Translucent backlit stretch ceiling casting an even glow over a warm lounge',
+  },
+  {
+    src: '/brand/images/22.png',
+    alt: 'Starfield and linear-LED stretch ceiling above a luxury city-view lounge',
+    vision: 'Dark feature ceiling with starfield and linear LEDs over a designer lounge',
   },
 ]
 
