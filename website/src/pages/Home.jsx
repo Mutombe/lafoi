@@ -149,14 +149,6 @@ function Hero() {
     })
   }
 
-  // Kinetic word-by-word reveal for the headline
-  const headlineWords = [
-    { text: 'Light,', weight: 'light', delay: 0.15 },
-    { text: 'shaped', weight: 'light', delay: 0.30 },
-    { text: 'by', weight: 'normal', delay: 0.55 },
-    { text: 'surface', weight: 'normal', delay: 0.75, shimmer: true },
-  ]
-
   return (
     <section
       ref={ref}
@@ -183,9 +175,10 @@ function Hero() {
         style={{ y: midY }}
       />
 
-      {/* refined cinematic overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
+      {/* Lighter cinematic overlays — let the ceiling photography read clearly,
+          keeping just enough shade at the bottom-left for the sub-text + buttons. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/80 via-lafoi-dark/15 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/45 via-transparent to-transparent pointer-events-none" />
 
       {/* Parallax depth layer 3, foreground gradient (0.8× scroll), fades out */}
       <motion.div
@@ -231,19 +224,9 @@ function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="inline-flex items-center gap-2.5 px-4 py-2 rounded-sm bg-white/8 backdrop-blur-md border border-white/15">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lafoi-green opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-lafoi-green-light" />
-            </span>
-            <EditableText page="home" field="hero.status" as="span" className="text-[10px] sm:text-[11px] font-sora text-white/85 font-medium tracking-[0.22em] uppercase">
-              Stretch ceilings · Architectural lighting · Harare
-            </EditableText>
-          </span>
-
-          {/* Mobile-only Vol.01 sits below the status pill (replaces the floating top-right label on small screens) */}
+          {/* Mobile-only Vol.01 label */}
           <motion.div
-            className="lg:hidden mt-3 flex items-center gap-2 pl-1"
+            className="lg:hidden flex items-center gap-2 pl-1"
             initial={{ opacity: 0, filter: 'blur(8px)' }}
             animate={{ opacity: 1, filter: 'blur(0px)' }}
             transition={{ duration: 1.0, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -257,56 +240,6 @@ function Hero() {
 
         <div className="mt-auto pb-28 sm:pb-24 lg:pb-20 grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
           <div className="lg:col-span-8">
-            {/* KINETIC TYPOGRAPHY, word-by-word reveal */}
-            <h1
-              className="font-display text-white tracking-[-0.035em] leading-[0.98] text-[3rem] sm:text-[4.5rem] lg:text-[6.4rem] xl:text-[7.2rem]"
-              style={{ fontVariationSettings: '"opsz" 144' }}
-            >
-              <span className="block overflow-hidden">
-                <motion.span
-                  className="inline-block font-light text-white/95"
-                  initial={{ y: '110%', opacity: 0 }}
-                  animate={{ y: '0%', opacity: 1 }}
-                  transition={{ duration: 1.0, delay: 0.10, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {headlineWords[0].text}
-                </motion.span>{' '}
-                <motion.span
-                  className="inline-block font-light text-white/95"
-                  initial={{ y: '110%', opacity: 0 }}
-                  animate={{ y: '0%', opacity: 1 }}
-                  transition={{ duration: 1.0, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {headlineWords[1].text}
-                </motion.span>
-              </span>
-              <span className="block overflow-hidden">
-                <motion.span
-                  className="inline-block font-normal text-white"
-                  initial={{ y: '110%', opacity: 0 }}
-                  animate={{ y: '0%', opacity: 1 }}
-                  transition={{ duration: 1.0, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  by
-                </motion.span>{' '}
-                <motion.span
-                  className="inline-block font-normal word-shimmer"
-                  initial={{ y: '110%', opacity: 0 }}
-                  animate={{ y: '0%', opacity: 1 }}
-                  transition={{ duration: 1.0, delay: 0.65, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  surface
-                </motion.span>
-                <motion.span
-                  className="inline-block text-lafoi-green-light"
-                  initial={{ y: '110%', opacity: 0 }}
-                  animate={{ y: '0%', opacity: 1 }}
-                  transition={{ duration: 1.0, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  .
-                </motion.span>
-              </span>
-            </h1>
 
             <motion.p
               className="mt-6 lg:mt-8 max-w-xl text-sm sm:text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.55]"
