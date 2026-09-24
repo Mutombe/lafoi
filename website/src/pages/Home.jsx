@@ -597,8 +597,8 @@ function FinishGallery() {
                     <ArrowRight size={13} weight="bold" className="group-hover:translate-x-0.5 transition-transform" />
                   </Link>
                 </div>
-                <div className="-mx-4 sm:-mx-6 lg:-mx-10">
-                  <div className="flex gap-3 lg:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none px-4 sm:px-6 lg:px-10 pb-3">
+                <div>
+                  <div className="flex gap-3 lg:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3">
                     {shots.map((src, i) => (
                       <Link
                         key={i}
