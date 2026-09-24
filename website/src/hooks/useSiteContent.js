@@ -43,7 +43,7 @@ export function useSiteContent(page) {
     return v === undefined || v === null || v === '' ? fallback : v
   }
 
-  return { c, ready: !!data }
+  return { c, ready: !!data, data: data || null }
 }
 
 export default useSiteContent

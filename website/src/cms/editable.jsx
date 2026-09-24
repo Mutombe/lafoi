@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import { useSiteContent } from '../hooks/useSiteContent'
 
@@ -86,6 +87,122 @@ export function CmsEditLayer() {
   return null
 }
 
+/* ===========================================================================
+   AUTO EDITOR — makes EVERY text element on a page editable without wrapping.
+   In edit mode it tags each leaf text node under <main> as editable; on the
+   live site it applies whatever has been saved for those nodes. Nodes are keyed
+   by their position in the DOM (stable as long as the layout doesn't change).
+   =========================================================================== */
+
+const AUTO_SEL = 'h1,h2,h3,h4,h5,h6,p,li,blockquote,figcaption,dt,dd,button,span,a,strong,em,small,label'
+const norm = (s) => (s || '').replace(/ /g, ' ').replace(/\s+/g, ' ').trim()
+
+function pageSlugFromPath(pathname) {
+  const p = (pathname || '/').replace(/^\/+|\/+$/g, '')
+  return p === '' ? 'home' : p.replace(/\//g, '_')
+}
+
+function hashStr(s) {
+  let h = 5381
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0
+  return h.toString(36)
+}
+
+// Position-based key: sequence of tag+index from <main> down to the element.
+function autoKeyFor(el, root) {
+  const parts = []
+  let node = el
+  while (node && node !== root && node.parentElement) {
+    const parent = node.parentElement
+    const tag = node.tagName
+    let idx = 0
+    for (const child of parent.children) { if (child === node) break; if (child.tagName === tag) idx++ }
+    parts.unshift(tag.toLowerCase() + idx)
+    node = parent
+  }
+  return 'a' + hashStr(parts.join('/'))
+}
+
+// A "leaf text" element holds text directly with no child elements to split it.
+function isLeafText(el) {
+  for (const child of el.childNodes) if (child.nodeType === 1) return false
+  const t = norm(el.textContent)
+  return t.length >= 1 && /[A-Za-z0-9]/.test(t)
+}
+
+export function CmsAutoLayer() {
+  const location = useLocation()
+  const page = pageSlugFromPath(location.pathname)
+  const { c, ready, data } = useSiteContent(page)
+  const editedRef = useRef(new Set())
+
+  useEffect(() => {
+    const editing = isCmsEdit
+    // On the live site, only do the (observer-backed) apply work when this page
+    // actually has saved auto-content — otherwise there's nothing to maintain.
+    if (!editing) {
+      const hasAuto = data && Object.keys(data).some((k) => k.startsWith('auto.'))
+      if (!hasAuto) return undefined
+    }
+    let raf
+    const run = () => {
+      const root = document.querySelector('main')
+      if (!root) return
+      root.querySelectorAll(AUTO_SEL).forEach((el) => {
+        let key
+        const existing = el.getAttribute('data-cms-field')
+        const isAuto = el.getAttribute('data-cms-auto') === '1'
+        if (isAuto) {
+          key = existing.slice(existing.indexOf('.') + 1)
+        } else if (!existing && !el.closest('[data-cms-field]') && !el.closest('#cms-banner') && isLeafText(el)) {
+          key = autoKeyFor(el, root)
+          if (editing) {
+            el.setAttribute('data-cms-field', 'auto.' + key)
+            el.setAttribute('data-cms-auto', '1')
+            el.setAttribute('contenteditable', 'true')
+            el.setAttribute('spellcheck', 'false')
+          }
+        } else {
+          return
+        }
+        // Apply the saved value, but never fight the field the user is editing.
+        if (el === document.activeElement) return
+        if (editedRef.current.has(key)) return
+        const v = c('auto.' + key, null)
+        if (v != null && v !== '' && norm(el.textContent) !== norm(String(v))) {
+          el.textContent = v
+        }
+      })
+    }
+    const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(run) }
+    schedule()
+    // In edit mode we ignore characterData mutations so typing isn't disturbed.
+    const obs = new MutationObserver(schedule)
+    obs.observe(document.body, { childList: true, subtree: true, characterData: !editing })
+
+    let onBlur
+    if (editing) {
+      onBlur = (e) => {
+        const el = e.target
+        if (!el || !el.getAttribute || el.getAttribute('data-cms-auto') !== '1') return
+        const field = el.getAttribute('data-cms-field') || ''
+        const key = field.slice(field.indexOf('.') + 1)
+        const value = norm(el.innerText)
+        editedRef.current.add(key)
+        post({ type: 'update', page, section: 'auto', key, value, fieldType: 'richtext' })
+      }
+      document.addEventListener('focusout', onBlur, true)
+    }
+    return () => {
+      cancelAnimationFrame(raf)
+      obs.disconnect()
+      if (onBlur) document.removeEventListener('focusout', onBlur, true)
+    }
+  }, [page, ready]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return null
+}
+
 /**
  * The actual contentEditable node. Kept as an isolated, memoised component so
  * React never re-renders it (which would fight the browser's editing / reset
@@ -149,7 +266,7 @@ export function EditableText({ page, field, as: Tag = 'span', className = '', ch
   const value = c(field, def)
 
   if (!isCmsEdit) {
-    return <Tag className={className}>{render ? render(value) : value}</Tag>
+    return <Tag className={className} data-cms-field={field}>{render ? render(value) : value}</Tag>
   }
 
   const { section, key } = splitField(field)

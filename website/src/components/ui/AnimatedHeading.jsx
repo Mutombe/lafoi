@@ -39,13 +39,17 @@ export default function AnimatedHeading({
     )
   }
 
+  // Mark CMS-bound headings so the auto-editor treats the whole heading as one
+  // field instead of making each animated word individually editable.
+  const cmsAttr = page && field ? { 'data-cms-field': field } : {}
+
   if (reduce) {
-    return <Tag className={className}>{value}</Tag>
+    return <Tag className={className} {...cmsAttr}>{value}</Tag>
   }
 
   const words = value.split(' ')
   return (
-    <Tag className={className}>
+    <Tag className={className} {...cmsAttr}>
       {words.map((word, i) => (
         <React.Fragment key={i}>
           <span

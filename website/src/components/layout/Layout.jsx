@@ -6,7 +6,7 @@ import WelcomeModal from './WelcomeModal'
 import { toast } from 'sonner'
 import Navbar from './Navbar'
 import Footer from './Footer'
-import { CmsEditLayer, isCmsEdit } from '../../cms/editable'
+import { CmsEditLayer, CmsAutoLayer, isCmsEdit } from '../../cms/editable'
 
 export default function Layout({ children }) {
   const [cookieVisible, setCookieVisible] = useState(false)
@@ -68,6 +68,9 @@ export default function Layout({ children }) {
 
       {/* WYSIWYG edit-mode layer (only active inside the dashboard iframe) */}
       <CmsEditLayer />
+      {/* Auto-editor: makes every text node editable in the CMS, applies saved
+          values on the live site. */}
+      <CmsAutoLayer />
 
       {/* First-visit welcome modal — suppressed while editing in the CMS */}
       {!isCmsEdit && <WelcomeModal />}
