@@ -36,7 +36,7 @@ const navGroups = [
       { name: 'Epoxy Flooring',     path: '/services/epoxy-flooring',              icon: Drop,        desc: 'Seamless resin systems' },
       { name: '3D Digital Twins',   path: '/services/3d-digital-twins',            icon: Cube,        desc: 'Matterport spatial capture' },
       { name: 'All Services',       path: '/services',                             icon: Palette,     desc: 'Full service catalog' },
-      { name: 'Products',           path: '/products',                             icon: Package,     desc: 'Membranes, lighting & accessories' },
+      { name: 'Finishes & Products', path: '/portfolio',                            icon: Package,     desc: 'Membranes, lighting & accessories' },
     ],
   },
   {
@@ -70,7 +70,7 @@ const searchableContent = [
   { title: 'Commercial Installations', path: '/portfolio', section: 'Projects', keywords: 'commercial office hotel restaurant retail' },
   { title: 'Free Consultation', path: '/contact', section: 'Connect', keywords: 'consultation free quote estimate' },
   // Products
-  { title: 'All Products & Materials', path: '/products', section: 'Products', keywords: 'products catalog catalogue range materials membrane' },
+  { title: 'All Products & Materials', path: '/portfolio', section: 'Products', keywords: 'products catalog catalogue range materials membrane' },
   { title: 'Matte Stretch Ceiling', path: '/products/matte-stretch-membrane', section: 'Products', keywords: 'matte ceiling membrane pvc' },
   { title: 'Glossy Stretch Ceiling', path: '/products/gloss-lacquer-membrane', section: 'Products', keywords: 'gloss lacquer mirror reflective ceiling' },
   { title: 'Translucent Ceiling', path: '/products/translucent-backlit-membrane', section: 'Products', keywords: 'translucent backlit luminous ceiling' },
@@ -418,7 +418,7 @@ export default function Navbar() {
                 {[
                   { name: 'Home', to: '/' },
                   { name: 'Services', to: '/services' },
-                  { name: 'Products', to: '/products' },
+                  { name: 'Finishes & Products', to: '/portfolio' },
                   { name: 'Portfolio', to: '/portfolio' },
                   { name: 'About', to: '/about' },
                   { name: 'Shop', to: '/shop' },

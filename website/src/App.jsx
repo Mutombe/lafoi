@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { lazy, Suspense } from 'react'
 import Layout from './components/layout/Layout'
@@ -150,7 +150,8 @@ export default function App() {
               <Route path="/services" element={<Services />} />
               <Route path="/services/:serviceSlug" element={<Services />} />
               <Route path="/portfolio" element={<Portfolio />} />
-              <Route path="/products" element={<Products />} />
+              {/* Products catalogue is now folded into Portfolio (one combined page). */}
+              <Route path="/products" element={<Navigate to="/portfolio" replace />} />
               <Route path="/products/:slug" element={<ProductDetail />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/projects/:slug" element={<ProjectDetail />} />

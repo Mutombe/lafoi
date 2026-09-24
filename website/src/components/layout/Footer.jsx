@@ -21,7 +21,7 @@ const footerLinks = {
     { name: 'Design Consultation', path: '/services/design-consultation' },
     { name: '3D Digital Twins', path: '/services/3d-digital-twins' },
     { name: 'Maintenance & Support', path: '/services/maintenance-support' },
-    { name: 'All Products', path: '/products' },
+    { name: 'Finishes & Products', path: '/portfolio' },
     { name: 'Shop', path: '/shop' },
   ],
   Company: [

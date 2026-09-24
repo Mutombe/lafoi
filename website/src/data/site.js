@@ -41,7 +41,6 @@ export const products = [
     image: '/brand/images/matte.png',
     gallery: [
       '/brand/images/matte.png',
-      '/brand/images/22.png',
     ],
     vision: 'Flat, non-reflective matte ceiling with recessed downlights',
     featured: true,

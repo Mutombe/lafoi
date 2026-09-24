@@ -15,7 +15,8 @@ import VideoShowcase from '../components/ui/VideoShowcase'
 import MagneticCard from '../components/ui/MagneticCard'
 import KineticTextStrip from '../components/ui/KineticTextStrip'
 import { useSEO, breadcrumbsLd } from '../utils/seo'
-import { projects as siteProjects } from '../data/site'
+import { projects as siteProjects, products } from '../data/site'
+import { Link } from 'react-router-dom'
 import { linkifyProse } from '../utils/linkify.jsx'
 
 const PORTFOLIO_HERO_SLIDES = [
@@ -100,6 +101,8 @@ export default function Portfolio() {
 
 
       <VideoGallery />
+
+      <FinishesShowcase />
 
       {/* Filter & Gallery */}
       <section className="relative py-20 lg:py-28 bg-lafoi-cream overflow-hidden">
@@ -325,6 +328,66 @@ export default function Portfolio() {
 /* ============================================================================
    VIDEO GALLERY, 4×2 row of in-motion captures, modal player
    ============================================================================ */
+
+/* Finishes & products catalogue — folded into Portfolio so work and products
+   live on one page instead of two near-identical galleries. */
+function FinishesShowcase() {
+  return (
+    <section className="relative py-20 lg:py-28 bg-white overflow-hidden">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12 lg:mb-16">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-3 mb-5">
+              <span className="block w-10 h-px bg-lafoi-green/60" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
+                The catalogue
+              </p>
+            </div>
+            <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.05] tracking-[-0.02em]">
+              Finishes, lighting &amp; accessories.
+            </h2>
+          </div>
+          <p className="font-general text-lafoi-gray max-w-sm leading-relaxed">
+            Every finish and fixture we install — tap any to see the specification, colour range and where it works best.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
+          {products.map((p) => {
+            const src = p.image
+            return (
+              <Link
+                key={p.slug}
+                to={`/products/${p.slug}`}
+                className="group relative rounded-sm overflow-hidden bg-lafoi-dark shadow-[0_16px_44px_-28px_rgba(17,17,17,0.4)]"
+              >
+                <div className="relative aspect-[4/5]">
+                  <picture>
+                    <source srcSet={String(src).replace(/\.(png|jpe?g)$/i, '.webp')} type="image/webp" />
+                    <img
+                      src={src}
+                      alt={`${p.name}, ${p.vision || p.shortDesc || p.finish}`}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    />
+                  </picture>
+                  <div aria-hidden className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(17,17,17,0) 0%, rgba(17,17,17,0) 30%, rgba(17,17,17,0.55) 70%, rgba(17,17,17,0.9) 100%)' }} />
+                  <div className="absolute inset-x-4 bottom-4 z-10">
+                    <p className="text-[9px] font-sora text-lafoi-green-light tracking-[0.26em] uppercase mb-1">{p.category}</p>
+                    <h3 className="font-display font-light text-white text-lg leading-[1.1]">
+                      {p.name.replace(/ Stretch Ceiling$| Ceiling$/i, '')}
+                    </h3>
+                  </div>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
 
 function VideoGallery() {
   // Eight studio captures. Generic, category-level captions, no fabricated clients.
