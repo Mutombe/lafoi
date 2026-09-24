@@ -182,64 +182,6 @@ const allServices = [
     imageVision: 'Shashl Studio with sculptural cloud-form stretch ceiling and quilted padded walls',
   },
   {
-    slug: 'flooring',
-    icon: Stack,
-    title: 'Flooring',
-    subtitle: 'Hardwood, vinyl, laminate, parquet',
-    // Pending brand photography; using context-correct stock that clearly
-    // shows hardwood/parquet floor as the subject of the frame.
-    hero: 'https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=1920&q=80',
-    heroVision: 'Wide-plank engineered hardwood floor in a contemporary interior',
-    desc: 'Specialist flooring in engineered hardwood, luxury vinyl, laminate and parquet. Substrate prep and detailing handled in-house so the floor reads as one plane.',
-    features: [
-      { label: 'Engineered hardwood', detail: 'Oak, walnut, ash, wide and narrow plank' },
-      { label: 'Luxury vinyl (LVP)', detail: 'Waterproof, click-lock, premium underlay' },
-      { label: 'Laminate', detail: 'AC4 to AC5 commercial-grade options' },
-      { label: 'Parquet patterns', detail: 'Chevron, herringbone, basket weave' },
-      { label: 'Substrate prep', detail: 'Self-levelling, moisture barrier, acoustic underlay' },
-      { label: 'Detailing', detail: 'Skirting, transitions, expansion joints' },
-    ],
-    applications: [
-      'Residential living spaces',
-      'Bedrooms & studies',
-      'Office floors',
-      'Retail & showroom',
-      'Restaurants & lounges',
-      'Heritage refurbishment',
-    ],
-    image: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=1400&q=80',
-    imageVision: 'Wide-plank wood floor in a contemporary interior',
-  },
-  {
-    slug: 'epoxy-flooring',
-    icon: Drop,
-    title: 'Epoxy Flooring',
-    subtitle: 'Seamless resin systems',
-    // Pending brand photography; using context-correct stock that clearly
-    // shows a glossy seamless epoxy floor surface.
-    hero: 'https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=1920&q=80',
-    heroVision: 'High-gloss seamless epoxy resin floor in a showroom',
-    desc: 'Industrial-strength epoxy resin floors — seamless, hygienic, chemically resistant. Metallic flake, solid colour, self-levelling and food-grade variants.',
-    features: [
-      { label: 'Self-levelling', detail: 'Mirror-flat finish, 2 to 4 mm thick' },
-      { label: 'Metallic flake', detail: 'Decorative shimmer for showrooms' },
-      { label: 'Anti-slip', detail: 'Quartz aggregate broadcast for wet areas' },
-      { label: 'Food-grade', detail: 'HACCP-compatible, seamless coving' },
-      { label: 'Chemical resistance', detail: 'Solvent, acid, oil-rated systems' },
-      { label: 'Cure time', detail: 'Walkable in 24 hours, full cure in 7 days' },
-    ],
-    applications: [
-      'Garages & workshops',
-      'Retail showrooms',
-      'Commercial kitchens',
-      'Healthcare facilities',
-      'Industrial floors',
-      'Modern residential',
-    ],
-    image: 'https://images.unsplash.com/photo-1604762524889-3e2fcc145683?w=1400&q=80',
-    imageVision: 'Glossy seamless epoxy floor surface',
-  },
-  {
     slug: '3d-digital-twins',
     icon: Cube,
     title: '3D Digital Twins',
@@ -297,7 +239,7 @@ export default function Services() {
       : {
           title: 'Stretch Ceiling Solutions, Lighting, Interior Design | La Foi Designs',
           description:
-            'Explore stretch ceilings, architectural lighting, interior design, flooring, epoxy systems, design consultation and maintenance for residential and commercial spaces in Zimbabwe.',
+            'Explore stretch ceilings, architectural lighting, interior design, design consultation and maintenance for residential and commercial spaces in Zimbabwe.',
           path: '/services',
           jsonLd: breadcrumbsLd([
             { name: 'Home', path: '/' },
@@ -391,7 +333,7 @@ function ServicesHero() {
             <div className="flex items-center gap-3 mb-7">
               <span className="block w-12 h-px bg-lafoi-green/60" />
               <EditableText page="services" field="hero.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                Eight services &middot; One studio
+                Six services &middot; One studio
               </EditableText>
             </div>
 
@@ -419,7 +361,7 @@ function ServicesHero() {
             </h1>
 
             <EditableText page="services" field="hero.subcopy" as="p" multiline render={linkifyProse} className="mt-7 max-w-md text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
-              Eight services, each engineered to stand alone, designed to work together — from the ceiling overhead to the floor, wall and finish that meet it.
+              Six services, each engineered to stand alone, designed to work together — from the ceiling overhead to the floor, wall and finish that meet it.
             </EditableText>
 
             {/* Bullet list of all services, each links to its detail page */}
@@ -428,8 +370,6 @@ function ServicesHero() {
                 { name: 'Stretch Ceiling Installation', slug: 'stretch-ceiling-installation' },
                 { name: 'Lighting Solutions', slug: 'lighting-solutions' },
                 { name: 'Interior Design', slug: 'interior-design' },
-                { name: 'Flooring', slug: 'flooring' },
-                { name: 'Epoxy Flooring', slug: 'epoxy-flooring' },
                 { name: 'Design Consultation & Customisation', slug: 'design-consultation' },
                 { name: '3D Digital Twins', slug: '3d-digital-twins' },
                 { name: 'Maintenance & Support', slug: 'maintenance-support' },
@@ -531,7 +471,7 @@ function ServicesEditorial() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
-                Eight services.{' '}
+                Six services.{' '}
                 <span className="text-lafoi-green">Read like a magazine.</span>
               </h2>
             </AnimatedSection>

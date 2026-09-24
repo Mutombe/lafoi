@@ -82,7 +82,7 @@ export default function Home() {
   useSEO({
     title: 'Stretch Ceilings in Zimbabwe',
     description:
-      'Modern stretch ceilings, architectural lighting, interior design, flooring and epoxy systems for homes, offices, hotels, and retail spaces in Zimbabwe. Request a quote from La Foi Designs.',
+      'Modern stretch ceilings, architectural lighting, interior design for homes, offices, hotels, and retail spaces in Zimbabwe. Request a quote from La Foi Designs.',
     path: '/',
     image: '/brand/images/50.png',
     jsonLd: breadcrumbsLd([{ name: 'Home', path: '/' }]),
@@ -564,8 +564,8 @@ function FinishGallery() {
             const shots = p.gallery && p.gallery.length ? p.gallery : [p.image]
             return (
               <div key={p.slug}>
-                {/* Row label — one line of text, then the pictures */}
-                <div className="flex items-end justify-between gap-4 mb-4 px-1">
+                {/* Row label — one line of text, then the pictures (same left edge) */}
+                <div className="flex items-end justify-between gap-4 mb-4">
                   <div className="min-w-0">
                     <div className="flex items-baseline gap-3">
                       <h3 className="font-display font-light text-lafoi-dark text-2xl sm:text-3xl leading-none">
@@ -1137,7 +1137,7 @@ function BentoProject({ project, large = false }) {
    8. TESTIMONIAL, typography-first pull-quote
    ============================================================================ */
 
-function ReviewAvatar({ author, avatar }) {
+function ReviewAvatar({ author, avatar, logo }) {
   // Build initials from author name (first letter of first 1-2 words).
   const initials = author
     .split(/\s+/)
@@ -1146,6 +1146,15 @@ function ReviewAvatar({ author, avatar }) {
     .map((w) => w[0])
     .join('')
     .toUpperCase()
+
+  // A company logo (if provided) reads best on white, contained not cropped.
+  if (logo) {
+    return (
+      <span className="shrink-0 w-10 h-10 rounded-md bg-white border border-lafoi-dark/10 flex items-center justify-center overflow-hidden">
+        <img src={logo} alt={author} width="80" height="80" loading="lazy" decoding="async" className="max-w-[80%] max-h-[80%] object-contain" />
+      </span>
+    )
+  }
 
   if (avatar) {
     return (
@@ -1221,12 +1230,13 @@ function Testimonial() {
           </AnimatedSection>
         </div>
 
-        {/* review cards — masonry, every real review at once */}
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 lg:gap-6">
+        {/* review cards — one horizontal, swipeable row so the section stays short */}
+        <div className="-mx-4 sm:-mx-6 lg:-mx-10">
+          <div className="flex gap-5 lg:gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none px-4 sm:px-6 lg:px-10 pb-4 items-stretch">
           {reviews.map((r, i) => (
             <div
               key={i}
-              className="break-inside-avoid mb-5 lg:mb-6 rounded-sm bg-white border border-lafoi-dark/8 p-6 lg:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_18px_38px_-18px_rgba(0,0,0,0.14)] hover:border-lafoi-green/25 transition-all duration-500"
+              className="snap-start shrink-0 w-[85vw] sm:w-[360px] lg:w-[380px] flex flex-col rounded-sm bg-white border border-lafoi-dark/8 p-6 lg:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_18px_38px_-18px_rgba(0,0,0,0.14)] hover:border-lafoi-green/25 transition-all duration-500"
             >
               <div className="flex items-center justify-between mb-4">
                 <span className="inline-flex items-center gap-0.5">
@@ -1250,11 +1260,11 @@ function Testimonial() {
                   </span>
                 )}
               </div>
-              <blockquote className="font-display font-light text-lafoi-dark text-[17px] lg:text-lg leading-[1.5] tracking-[-0.01em]">
+              <blockquote className="flex-1 font-display font-light text-lafoi-dark text-[17px] lg:text-lg leading-[1.5] tracking-[-0.01em]">
                 {r.quote}
               </blockquote>
               <div className="flex items-center gap-3 mt-6 pt-5 border-t border-lafoi-dark/[0.07]">
-                <ReviewAvatar author={r.author} avatar={r.avatar} />
+                <ReviewAvatar author={r.author} avatar={r.avatar} logo={r.logo} />
                 <div className="min-w-0">
                   <p className="font-sora text-sm font-semibold text-lafoi-dark leading-tight truncate">
                     {r.author}
@@ -1264,6 +1274,10 @@ function Testimonial() {
               </div>
             </div>
           ))}
+          </div>
+          <p className="mt-3 px-4 sm:px-6 lg:px-10 text-center font-sora text-[10px] tracking-[0.28em] uppercase text-lafoi-gray/45">
+            Swipe for more reviews &rarr;
+          </p>
         </div>
 
         {/* kinetic name marquee, sourced from reviews data */}
