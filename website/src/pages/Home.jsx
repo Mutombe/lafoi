@@ -47,6 +47,16 @@ const HOME_HERO_SLIDES = [
     alt: 'Mirror-gloss stretch ceiling reflecting a chandelier-lit dining room',
     vision: 'High-gloss mirror ceiling doubling a luxury dining room and its chandelier',
   },
+  {
+    src: '/brand/images/35.png',
+    alt: 'Marble-print gloss stretch ceiling with warm linear LEDs above a bespoke kitchen',
+    vision: 'Printed-marble gloss ceiling with concealed linear lighting over a designer kitchen',
+  },
+  {
+    src: '/brand/images/stretch-mirror.png',
+    alt: 'Gold geometric mirror-panel stretch ceiling with lit framing in a luxury arcade',
+    vision: 'Faceted gold mirror-panel ceiling with illuminated framing in an upscale retail space',
+  },
 ]
 
 /* ============================================================================
