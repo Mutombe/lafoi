@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight,
   ArrowUpRight,
+  CaretLeft,
+  CaretRight,
   MapPin,
   Calendar,
   Ruler,
@@ -570,61 +572,9 @@ function FinishGallery() {
         {/* Per-finish rows — each ceiling type shows a swipeable row of its own
             photography (sdceilings-style): minimal words, lots of pictures. */}
         <div className="mt-12 lg:mt-16 space-y-12 lg:space-y-16">
-          {stretchProducts.map((p) => {
-            const shots = p.gallery && p.gallery.length ? p.gallery : [p.image]
-            return (
-              <div key={p.slug}>
-                {/* Row label — one line of text, then the pictures (same left edge) */}
-                <div className="flex items-end justify-between gap-4 mb-4">
-                  <div className="min-w-0">
-                    <div className="flex items-baseline gap-3">
-                      <h3 className="font-display font-light text-lafoi-dark text-2xl sm:text-3xl leading-none">
-                        {p.finish}
-                      </h3>
-                      <span className="font-sora text-[10px] tracking-[0.26em] uppercase text-lafoi-green">
-                        {shots.length} {shots.length === 1 ? 'view' : 'views'}
-                      </span>
-                    </div>
-                    <p className="text-sm text-lafoi-gray font-general mt-1.5 line-clamp-1 max-w-xl">
-                      {finishMeta[p.finish] || p.shortDesc}
-                    </p>
-                  </div>
-                  <Link
-                    to={`/products/${p.slug}`}
-                    className="group shrink-0 inline-flex items-center gap-1.5 font-sora text-xs tracking-wide text-lafoi-gray hover:text-lafoi-green transition-colors"
-                  >
-                    Explore
-                    <ArrowRight size={13} weight="bold" className="group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                </div>
-                <div>
-                  <div className="flex gap-3 lg:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3">
-                    {shots.map((src, i) => (
-                      <Link
-                        key={i}
-                        to={`/products/${p.slug}`}
-                        className="group relative snap-start shrink-0 w-[72vw] sm:w-[340px] lg:w-[400px] aspect-[4/3] rounded-sm overflow-hidden bg-lafoi-dark shadow-[0_16px_44px_-26px_rgba(17,17,17,0.4)]"
-                      >
-                        <picture>
-                          <source srcSet={src.replace(/\.(png|jpe?g)$/i, '.webp')} type="image/webp" />
-                          <img
-                            src={src}
-                            alt={`${p.finish} stretch ceiling — La Foi install`}
-                            loading="lazy"
-                            decoding="async"
-                            className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-                          />
-                        </picture>
-                        <span aria-hidden className="absolute top-3 right-3 w-8 h-8 rounded-full border border-white/25 bg-black/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <ArrowUpRight size={12} weight="bold" className="text-white" />
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+          {stretchProducts.map((p) => (
+            <FinishRow key={p.slug} p={p} blurb={finishMeta[p.finish] || p.shortDesc} />
+          ))}
         </div>
 
         <div className="mt-10 flex justify-center">
@@ -638,6 +588,112 @@ function FinishGallery() {
         </div>
       </div>
     </section>
+  )
+}
+
+/* One ceiling-type row: a horizontally-scrollable strip of that finish's photos,
+   with prev/next buttons at the bottom for mouse users (mobile uses touch). */
+function FinishRow({ p, blurb }) {
+  const shots = p.gallery && p.gallery.length ? p.gallery : [p.image]
+  const scroller = useRef(null)
+  const [atStart, setAtStart] = useState(true)
+  const [atEnd, setAtEnd] = useState(false)
+
+  const update = () => {
+    const el = scroller.current
+    if (!el) return
+    setAtStart(el.scrollLeft <= 4)
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4)
+  }
+  useEffect(() => {
+    update()
+    const el = scroller.current
+    if (!el) return
+    el.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      el.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
+  const scrollBy = (dir) => {
+    const el = scroller.current
+    if (!el) return
+    el.scrollBy({ left: dir * Math.round(el.clientWidth * 0.85), behavior: 'smooth' })
+  }
+
+  return (
+    <div>
+      {/* Row label — one line of text, then the pictures (same left edge) */}
+      <div className="flex items-end justify-between gap-4 mb-4">
+        <div className="min-w-0">
+          <div className="flex items-baseline gap-3">
+            <h3 className="font-display font-light text-lafoi-dark text-2xl sm:text-3xl leading-none">{p.finish}</h3>
+            <span className="font-sora text-[10px] tracking-[0.26em] uppercase text-lafoi-green">
+              {shots.length} {shots.length === 1 ? 'view' : 'views'}
+            </span>
+          </div>
+          <p className="text-sm text-lafoi-gray font-general mt-1.5 line-clamp-1 max-w-xl">{blurb}</p>
+        </div>
+        <Link
+          to={`/products/${p.slug}`}
+          className="group shrink-0 inline-flex items-center gap-1.5 font-sora text-xs tracking-wide text-lafoi-gray hover:text-lafoi-green transition-colors"
+        >
+          Explore
+          <ArrowRight size={13} weight="bold" className="group-hover:translate-x-0.5 transition-transform" />
+        </Link>
+      </div>
+
+      <div ref={scroller} className="flex gap-3 lg:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3">
+        {shots.map((src, i) => (
+          <Link
+            key={i}
+            to={`/products/${p.slug}`}
+            className="group relative snap-start shrink-0 w-[72vw] sm:w-[340px] lg:w-[400px] aspect-[4/3] rounded-sm overflow-hidden bg-lafoi-dark shadow-[0_16px_44px_-26px_rgba(17,17,17,0.4)]"
+          >
+            <picture>
+              <source srcSet={src.replace(/\.(png|jpe?g)$/i, '.webp')} type="image/webp" />
+              <img
+                src={src}
+                alt={`${p.finish} stretch ceiling — La Foi install`}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+              />
+            </picture>
+            <span aria-hidden className="absolute top-3 right-3 w-8 h-8 rounded-full border border-white/25 bg-black/20 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <ArrowUpRight size={12} weight="bold" className="text-white" />
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Prev / next controls — shown on laptop & desktop where there's no touch;
+          hidden on mobile (touch swipe works). Disabled at the ends. */}
+      {shots.length > 1 && (
+        <div className="hidden sm:flex items-center gap-2 mt-2">
+          <button
+            type="button"
+            onClick={() => scrollBy(-1)}
+            disabled={atStart}
+            aria-label={`Scroll ${p.finish} photos left`}
+            className="w-10 h-10 rounded-full border border-lafoi-dark/15 bg-white text-lafoi-dark flex items-center justify-center hover:border-lafoi-green hover:text-lafoi-green transition-colors disabled:opacity-30 disabled:pointer-events-none"
+          >
+            <CaretLeft size={16} weight="bold" />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollBy(1)}
+            disabled={atEnd}
+            aria-label={`Scroll ${p.finish} photos right`}
+            className="w-10 h-10 rounded-full border border-lafoi-dark/15 bg-white text-lafoi-dark flex items-center justify-center hover:border-lafoi-green hover:text-lafoi-green transition-colors disabled:opacity-30 disabled:pointer-events-none"
+          >
+            <CaretRight size={16} weight="bold" />
+          </button>
+        </div>
+      )}
+    </div>
   )
 }
 
