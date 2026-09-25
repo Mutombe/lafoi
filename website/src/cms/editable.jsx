@@ -138,14 +138,17 @@ export function CmsAutoLayer() {
 
   useEffect(() => {
     const editing = isCmsEdit
-    // On the live site, only do the (observer-backed) apply work when this page
-    // actually has saved auto-content — otherwise there's nothing to maintain.
     if (!editing) {
       const hasAuto = data && Object.keys(data).some((k) => k.startsWith('auto.'))
       if (!hasAuto) return undefined
     }
-    let raf
-    const run = () => {
+
+    // Loop guard: we set each key's value AT MOST ONCE. This is what keeps the
+    // DOM-patching from fighting React and pegging the CPU — even if React later
+    // re-renders a node, we never patch it again.
+    const applied = new Map()
+
+    const applyAll = () => {
       const root = document.querySelector('main')
       if (!root) return
       root.querySelectorAll(AUTO_SEL).forEach((el) => {
@@ -165,38 +168,46 @@ export function CmsAutoLayer() {
         } else {
           return
         }
-        // Apply the saved value, but never fight the field the user is editing.
         if (el === document.activeElement) return
         if (editedRef.current.has(key)) return
         const v = c('auto.' + key, null)
-        if (v != null && v !== '' && norm(el.textContent) !== norm(String(v))) {
-          el.textContent = v
-        }
+        if (v == null || v === '') return
+        if (applied.get(key) === v) return // already handled this key — never loop
+        applied.set(key, v)
+        if (norm(el.textContent) !== norm(String(v))) el.textContent = v
       })
     }
-    const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(run) }
-    schedule()
-    // In edit mode we ignore characterData mutations so typing isn't disturbed.
-    const obs = new MutationObserver(schedule)
-    obs.observe(document.body, { childList: true, subtree: true, characterData: !editing })
 
-    let onBlur
-    if (editing) {
-      onBlur = (e) => {
-        const el = e.target
-        if (!el || !el.getAttribute || el.getAttribute('data-cms-auto') !== '1') return
-        const field = el.getAttribute('data-cms-field') || ''
-        const key = field.slice(field.indexOf('.') + 1)
-        const value = norm(el.innerText)
-        editedRef.current.add(key)
-        post({ type: 'update', page, section: 'auto', key, value, fieldType: 'richtext' })
-      }
-      document.addEventListener('focusout', onBlur, true)
+    // LIVE SITE: apply a few times after render to catch late content, then stop.
+    // No MutationObserver — a persistent one re-fired on every DOM/text change
+    // and, combined with React re-renders, thrashed the CPU (hero flicker + lag).
+    if (!editing) {
+      const timers = [60, 400, 1200, 3000].map((ms) => setTimeout(applyAll, ms))
+      return () => timers.forEach(clearTimeout)
     }
+
+    // EDIT MODE (iframe only): attach editability to new content as it mounts.
+    // Observer ignores characterData so typing is never disturbed; apply-once
+    // guard prevents any loop here too.
+    let raf
+    const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(applyAll) }
+    schedule()
+    const obs = new MutationObserver(schedule)
+    obs.observe(document.body, { childList: true, subtree: true })
+    const onBlur = (e) => {
+      const el = e.target
+      if (!el || !el.getAttribute || el.getAttribute('data-cms-auto') !== '1') return
+      const field = el.getAttribute('data-cms-field') || ''
+      const key = field.slice(field.indexOf('.') + 1)
+      applied.delete(key) // user re-editing: let their fresh value through once
+      editedRef.current.add(key)
+      post({ type: 'update', page, section: 'auto', key, value: norm(el.innerText), fieldType: 'richtext' })
+    }
+    document.addEventListener('focusout', onBlur, true)
     return () => {
       cancelAnimationFrame(raf)
       obs.disconnect()
-      if (onBlur) document.removeEventListener('focusout', onBlur, true)
+      document.removeEventListener('focusout', onBlur, true)
     }
   }, [page, ready]) // eslint-disable-line react-hooks/exhaustive-deps
 
