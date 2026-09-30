@@ -89,8 +89,37 @@ export default function Expenses() {
   const [categoryFilter, setCategoryFilter] = useState('')
   const [projectFilter, setProjectFilter] = useState('') // '' all, '__none__' global, otherwise project id
   const [paymentFilter, setPaymentFilter] = useState('')
-  const [dateFrom, setDateFrom] = useState('')
-  const [dateTo, setDateTo] = useState('')
+
+  // The month selector is the MASTER date filter for the whole page: the table,
+  // the cashflow summary and the header total all follow it. "All time" clears it.
+  const monthOptions = useMemo(() => {
+    const now = new Date()
+    const months = Array.from({ length: 18 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      return {
+        value: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+        label: d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
+      }
+    })
+    return [{ value: 'all', label: 'All time' }, ...months]
+  }, [])
+  const [monthSel, setMonthSel] = useState(monthOptions[1].value) // current month by default
+
+  const monthBounds = useMemo(() => {
+    if (monthSel === 'all') return { from: '', to: '', label: 'All time', full: 'All time', isAll: true }
+    const [y, m] = monthSel.split('-').map(Number)
+    const iso = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`
+    const first = new Date(y, m - 1, 1)
+    return {
+      from: iso(first),
+      to: iso(new Date(y, m, 0)),
+      label: first.toLocaleDateString(undefined, { month: 'long' }),
+      full: first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
+      isAll: false,
+    }
+  }, [monthSel])
+  const dateFrom = monthBounds.from
+  const dateTo = monthBounds.to
 
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
@@ -171,32 +200,7 @@ export default function Expenses() {
     return Array.from(s).sort()
   }, [incomeByCurrency, expensesByCurrency])
 
-  // Month picker for the header total. The dropdown offers the last 18 months;
-  // whichever is selected drives the "spent" total shown in the header,
-  // independent of the filter strip below.
-  const monthOptions = useMemo(() => {
-    const now = new Date()
-    return Array.from({ length: 18 }, (_, i) => {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      return {
-        value: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
-        label: d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
-      }
-    })
-  }, [])
-  const [monthSel, setMonthSel] = useState(monthOptions[0].value)
-
-  const monthBounds = useMemo(() => {
-    const [y, m] = monthSel.split('-').map(Number)
-    const iso = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`
-    const first = new Date(y, m - 1, 1)
-    return {
-      from: iso(first),
-      to: iso(new Date(y, m, 0)),
-      label: first.toLocaleDateString(undefined, { month: 'long' }),
-      full: first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
-    }
-  }, [monthSel])
+  // Header total follows the same month selector as everything else.
   const monthArgs = useMemo(
     () => ({ page: 1, page_size: 500, incurred_on__gte: monthBounds.from, incurred_on__lte: monthBounds.to }),
     [monthBounds],
@@ -414,10 +418,9 @@ export default function Expenses() {
     setCategoryFilter('')
     setProjectFilter('')
     setPaymentFilter('')
-    setDateFrom('')
-    setDateTo('')
+    setMonthSel('all')
   }
-  const filtersActive = !!(search || categoryFilter || projectFilter || paymentFilter || dateFrom || dateTo)
+  const filtersActive = !!(search || categoryFilter || projectFilter || paymentFilter || monthSel !== 'all')
 
   return (
     <div>
@@ -494,13 +497,11 @@ export default function Expenses() {
             {PAYMENT_METHODS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
           </select>
         </div>
-        <div>
-          <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-1.5">From</p>
-          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="px-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body" />
-        </div>
-        <div>
-          <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-1.5">To</p>
-          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="px-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body" />
+        <div className="min-w-[170px]">
+          <p className="font-sora text-[10px] tracking-[0.22em] uppercase text-lafoi-gray-medium mb-1.5">Period</p>
+          <select value={monthSel} onChange={(e) => setMonthSel(e.target.value)} className="w-full px-3 py-2.5 rounded-full bg-white border border-lafoi-dark/12 focus:border-lafoi-green focus:outline-none text-sm font-body">
+            {monthOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
         </div>
         {filtersActive && (
           <button onClick={clearAll} className="px-3 py-2 text-xs font-sora tracking-[0.16em] uppercase text-lafoi-gray-medium hover:text-lafoi-green transition-colors inline-flex items-center gap-1">

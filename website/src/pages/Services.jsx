@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform, useInView } from 'framer-motion'
 import { Link, useParams } from 'react-router-dom'
 import {
@@ -18,6 +18,8 @@ import {
   GridFour,
   Drop,
   Cube,
+  CaretLeft,
+  CaretRight,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
@@ -856,6 +858,85 @@ function ServicesCTA() {
    SERVICE DETAIL, /services/:slug
    ============================================================================ */
 
+// Real ceiling photography per service, shown as a swipeable strip below the hero.
+const SERVICE_GALLERIES = {
+  'stretch-ceiling-installation': ['/brand/images/12.png', '/brand/images/metallic.png', '/brand/images/matte.png', '/brand/images/satin.png', '/brand/images/22.png', '/brand/images/mirror.png'],
+  'lighting-solutions': ['/brand/images/3.png', '/brand/images/carved.png', '/brand/images/11.png', '/brand/images/np8.jpg', '/brand/images/46.png'],
+  'design-consultation': ['/brand/images/29.png', '/brand/images/stretch-mirror.png', '/brand/images/35.png', '/brand/images/50.png'],
+  'maintenance-support': ['/brand/images/62.png', '/brand/images/8.png', '/brand/images/np11.jpg'],
+  'interior-design': ['/brand/images/50.png', '/brand/images/35.png', '/brand/images/29.png', '/brand/images/mirror.png'],
+  '3d-digital-twins': ['/brand/images/46.png', '/brand/images/50.png', '/brand/images/22.png'],
+}
+
+/* A swipeable strip of a service's ceiling photos, with prev/next buttons for
+   mouse users — the same pattern as the landing-page finish rows. */
+function ServiceGallery({ shots, title }) {
+  const scroller = useRef(null)
+  const [atStart, setAtStart] = useState(true)
+  const [atEnd, setAtEnd] = useState(false)
+
+  const update = () => {
+    const el = scroller.current
+    if (!el) return
+    setAtStart(el.scrollLeft <= 4)
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 4)
+  }
+  useEffect(() => {
+    update()
+    const el = scroller.current
+    if (!el) return
+    el.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update) }
+  }, [shots])
+
+  const scrollBy = (dir) => {
+    const el = scroller.current
+    if (!el) return
+    el.scrollBy({ left: dir * Math.round(el.clientWidth * 0.85), behavior: 'smooth' })
+  }
+
+  if (!shots || shots.length === 0) return null
+
+  return (
+    <section className="relative bg-lafoi-cream pt-16 lg:pt-24 overflow-hidden">
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="flex items-end justify-between gap-4 mb-5">
+          <div className="min-w-0">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="block w-10 h-px bg-lafoi-green/60" />
+              <p className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">In the wild</p>
+            </div>
+            <h2 className="font-display font-light text-lafoi-dark text-3xl sm:text-4xl leading-none">
+              {title} <span className="text-lafoi-green italic">in real spaces.</span>
+            </h2>
+          </div>
+          {shots.length > 1 && (
+            <div className="hidden sm:flex items-center gap-2 shrink-0">
+              <button type="button" onClick={() => scrollBy(-1)} disabled={atStart} aria-label="Scroll photos left" className="w-10 h-10 rounded-full border border-lafoi-dark/15 bg-white text-lafoi-dark flex items-center justify-center hover:border-lafoi-green hover:text-lafoi-green transition-colors disabled:opacity-30 disabled:pointer-events-none">
+                <CaretLeft size={16} weight="bold" />
+              </button>
+              <button type="button" onClick={() => scrollBy(1)} disabled={atEnd} aria-label="Scroll photos right" className="w-10 h-10 rounded-full border border-lafoi-dark/15 bg-white text-lafoi-dark flex items-center justify-center hover:border-lafoi-green hover:text-lafoi-green transition-colors disabled:opacity-30 disabled:pointer-events-none">
+                <CaretRight size={16} weight="bold" />
+              </button>
+            </div>
+          )}
+        </div>
+        <div ref={scroller} className="flex gap-3 lg:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-3">
+          {shots.map((src, i) => (
+            <div key={i} className="group relative snap-start shrink-0 w-[72vw] sm:w-[340px] lg:w-[400px] aspect-[4/3] rounded-sm overflow-hidden bg-lafoi-dark shadow-[0_16px_44px_-26px_rgba(17,17,17,0.4)]">
+              <picture>
+                <source srcSet={src.replace(/\.(png|jpe?g)$/i, '.webp')} type="image/webp" />
+                <img src={src} alt={`${title} — La Foi install`} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]" />
+              </picture>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function ServiceDetail({ service }) {
   // adjacent
   const idx = allServices.findIndex((s) => s.slug === service.slug)
@@ -965,6 +1046,9 @@ function ServiceDetail({ service }) {
           </div>
         </div>
       </section>
+
+      {/* Ceiling photography for this service — swipeable strip like the landing page */}
+      <ServiceGallery shots={SERVICE_GALLERIES[service.slug]} title={service.title} />
 
       {/* BODY, two-column with editorial sticky sidebar */}
       <section className="relative py-20 lg:py-32 bg-lafoi-cream overflow-hidden">

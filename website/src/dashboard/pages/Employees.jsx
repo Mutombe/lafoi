@@ -22,7 +22,8 @@ const empty = () => ({
   first_name: '', last_name: '', email: '', phone: '',
   national_id: '', tax_id: '', job_title: '', department: '',
   hire_date: new Date().toISOString().slice(0, 10), end_date: '',
-  status: 'active', base_salary: 0, transport_allowance: 0, total_remuneration: 0,
+  status: 'active', employment_type: 'permanent',
+  base_salary: 0, transport_allowance: 0, total_remuneration: 0,
   pay_frequency: 'monthly', currency: 'USD',
   default_allowances: [], default_deductions: [],
   home_address: '',
@@ -37,6 +38,14 @@ const STATUS_PALETTE_EMP = {
   terminated: 'bg-lafoi-gray-light text-lafoi-gray border-lafoi-dark/10',
 }
 
+const EMPLOYMENT_TYPES = [
+  ['permanent', 'Permanent'],
+  ['part_time', 'Part-time'],
+  ['contract', 'Contract / Fixed-term'],
+  ['service_provider', 'Service provider'],
+]
+const EMP_TYPE_LABEL = Object.fromEntries(EMPLOYMENT_TYPES)
+
 export default function Employees() {
   const confirm = useConfirm()
   const navigate = useNavigate()
@@ -45,6 +54,7 @@ export default function Employees() {
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebouncedValue(search, 300)
   const [statusFilter, setStatusFilter] = useState('')
+  const [empTypeFilter, setEmpTypeFilter] = useState('')
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
@@ -55,6 +65,7 @@ export default function Employees() {
     page_size: pageSize,
     search: debouncedSearch || undefined,
     status: statusFilter || undefined,
+    employment_type: empTypeFilter || undefined,
   }
   const { data, isLoading: isFirstLoad, isFetching } = useListEmployeesQuery(queryArgs)
   const { optimisticCreate, optimisticUpdate, optimisticDelete } = useOptimisticRow('listEmployees', queryArgs)
@@ -90,6 +101,7 @@ export default function Employees() {
       job_title: editing.job_title || '', department: editing.department || '',
       hire_date: editing.hire_date || null, end_date: editing.end_date || null,
       status: editing.status, currency: editing.currency || 'USD',
+      employment_type: editing.employment_type || 'permanent',
       base_salary: Number(editing.base_salary) || 0,
       transport_allowance: Number(editing.transport_allowance) || 0,
       total_remuneration: Number(editing.total_remuneration) || 0,
@@ -165,7 +177,14 @@ export default function Employees() {
     { key: 'full_name', label: 'Name', priority: 'high', mobileLabel: 'Name', render: (r) => (
       <div>
         <Link to={`/dashboard/employees/${r.id}`} onClick={(e) => e.stopPropagation()} className="font-sora text-sm font-medium hover:text-lafoi-green">{r.full_name}</Link>
-        <p className="text-xs text-lafoi-gray-medium">{r.job_title || '—'}</p>
+        <p className="text-xs text-lafoi-gray-medium flex items-center flex-wrap gap-x-1.5">
+          {r.job_title || '—'}
+          {r.employment_type && r.employment_type !== 'permanent' && (
+            <span className="inline-block px-1.5 py-0.5 rounded-full bg-lafoi-green/10 text-lafoi-green-dark text-[9px] font-sora font-medium tracking-wide uppercase whitespace-nowrap">
+              {EMP_TYPE_LABEL[r.employment_type] || r.employment_type}
+            </span>
+          )}
+        </p>
       </div>
     )},
     { key: 'department', label: 'Department', priority: 'low' },
@@ -214,6 +233,10 @@ export default function Employees() {
             <Select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }} className="w-40">
               <option value="">All statuses</option>
               {['active', 'on_leave', 'terminated'].map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
+            </Select>
+            <Select value={empTypeFilter} onChange={(e) => { setEmpTypeFilter(e.target.value); setPage(1) }} className="w-44">
+              <option value="">All types</option>
+              {EMPLOYMENT_TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
             </Select>
             <div className="relative">
               <MagnifyingGlass size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-lafoi-gray-medium" />
@@ -314,6 +337,11 @@ export default function Employees() {
                 <option value="active">Active</option>
                 <option value="on_leave">On leave</option>
                 <option value="terminated">Terminated</option>
+              </Select>
+            </Field>
+            <Field label="Employment type" hint="Part-time, contract & service providers can be paid and reported separately.">
+              <Select value={editing.employment_type || 'permanent'} onChange={(e) => setEditing({ ...editing, employment_type: e.target.value })}>
+                {EMPLOYMENT_TYPES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
               </Select>
             </Field>
 
