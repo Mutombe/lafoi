@@ -107,6 +107,7 @@ export default function Home() {
       transition={{ duration: 0.5 }}
     >
       <Hero />
+      <CompaniesSection />
       <SectionDivider shape="wave" from="dark" to="cream" />
       <FinishBand />
       <SectionDivider shape="angular" from="cream" to="dark" />
@@ -1336,8 +1337,17 @@ function Testimonial() {
           </p>
         </div>
 
-        {/* Clients — a logo wall you can drag / swipe through */}
-        <AnimatedSection delay={0.2} className="mt-16 lg:mt-24">
+      </div>
+    </section>
+  )
+}
+
+/* Client logo wall — sits just below the hero on the landing page. */
+function CompaniesSection() {
+  return (
+    <section className="relative bg-lafoi-cream pt-12 lg:pt-16 pb-4 overflow-hidden">
+      <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+        <AnimatedSection>
           <EditableText page="home" field="companies.label" as="p" className="text-center text-[10px] font-sora text-lafoi-gray tracking-[0.3em] uppercase mb-8">
             In good company
           </EditableText>
@@ -1360,7 +1370,7 @@ function CompanyLogos() {
     { name: 'Mag-Grip Products', logo: '/brand/logos/maggrip.png' },
     { name: 'Invarium', logo: '/brand/logos/invarium.png' },
     { name: 'The Spot Restaurant', logo: '/brand/logos/thespot.png' },
-    { name: 'Freda Rebecca' },
+    { name: 'Freda Rebecca Gold Mine', logo: '/brand/logos/fredarebecca.png' },
   ]
   const ref = useRef(null)
   const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false })
