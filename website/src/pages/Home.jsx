@@ -1353,13 +1353,13 @@ function Testimonial() {
 function CompanyLogos() {
   const companies = [
     { name: 'University of Zimbabwe', logo: '/brand/logos/uz.png' },
+    { name: 'Mutapa Gold Resources', logo: '/brand/logos/mutapa.png' },
     { name: 'Pro-Fitness Health Club', logo: '/brand/logos/profitness.png' },
     { name: 'GAP Construction', logo: '/brand/logos/gap.png' },
+    { name: 'Geo Pomona Waste Management', logo: '/brand/logos/geopomona.png' },
     { name: 'Mag-Grip Products', logo: '/brand/logos/maggrip.png' },
-    { name: 'Mutapa Gold Resources' },
-    { name: 'Inverium' },
-    { name: 'Geo Pomona' },
-    { name: 'The Spot Bar' },
+    { name: 'Invarium', logo: '/brand/logos/invarium.png' },
+    { name: 'The Spot Restaurant', logo: '/brand/logos/thespot.png' },
     { name: 'Freda Rebecca' },
   ]
   const ref = useRef(null)
