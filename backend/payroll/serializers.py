@@ -18,6 +18,7 @@ from .models import (
 
 class EmployeeSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(read_only=True)
+    employment_type_display = serializers.CharField(source="get_employment_type_display", read_only=True)
     # total_remuneration is a stored field — writeable, defaults to
     # base+transport on the model's save() when left blank or zero, so
     # HR can override the sum when needed without breaking the math.
@@ -28,6 +29,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "id", "employee_code", "first_name", "last_name", "full_name",
             "email", "phone", "national_id", "tax_id", "job_title", "department",
             "hire_date", "end_date", "status",
+            "employment_type", "employment_type_display",
             "base_salary", "transport_allowance", "total_remuneration",
             "pay_frequency", "currency",
             "currency_split",

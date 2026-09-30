@@ -66,7 +66,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     permission_classes = [HasModuleAccess.for_module("employees")]
-    filterset_fields = ("status", "department", "pay_frequency")
+    filterset_fields = ("status", "department", "pay_frequency", "employment_type")
     search_fields = ("employee_code", "first_name", "last_name", "email", "phone", "department", "job_title")
     ordering_fields = ("hire_date", "first_name", "last_name", "base_salary")
 

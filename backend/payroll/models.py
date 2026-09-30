@@ -26,6 +26,12 @@ class Employee(models.Model):
         BIWEEKLY = "biweekly", "Biweekly"
         WEEKLY = "weekly", "Weekly"
 
+    class EmploymentType(models.TextChoices):
+        PERMANENT = "permanent", "Permanent"
+        PART_TIME = "part_time", "Part-time"
+        CONTRACT = "contract", "Contract / Fixed-term"
+        SERVICE_PROVIDER = "service_provider", "Service provider"
+
     employee_code = models.CharField(max_length=24, unique=True, blank=True, help_text="Auto: EMP-####")
     first_name = models.CharField(max_length=120)
     last_name = models.CharField(max_length=120)
@@ -39,6 +45,10 @@ class Employee(models.Model):
     hire_date = models.DateField(default=date.today)
     end_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.ACTIVE)
+    employment_type = models.CharField(
+        max_length=20, choices=EmploymentType.choices, default=EmploymentType.PERMANENT,
+        help_text="Permanent, part-time, contract or service provider — lets non-everyday staff be paid & reported separately.",
+    )
 
     base_salary = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
     # Flat transport allowance paid alongside the base salary. Kept as its
