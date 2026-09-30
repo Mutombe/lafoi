@@ -18,17 +18,17 @@ import { linkifyProse } from '../utils/linkify.jsx'
 
 const FAQ_HERO_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    src: '/brand/images/10.png',
     alt: 'Calm contemporary living room',
     vision: 'Reassuring quiet space',
   },
   {
-    src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+    src: '/brand/images/46.png',
     alt: 'Luxurious lobby with backlit ceiling',
     vision: 'Editorial answer space',
   },
   {
-    src: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=2200&q=85',
+    src: '/brand/images/3.png',
     alt: 'Contemporary architecture interior',
     vision: 'Architectural confidence',
   },

@@ -21,17 +21,17 @@ import { useSEO, breadcrumbsLd } from '../utils/seo'
 
 const CAREERS_HERO_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1758691736975-9f7f643d178e?w=2200&q=85',
+    src: '/brand/images/50.png',
     alt: 'La Foi Designs Team',
     vision: 'Team in motion',
   },
   {
-    src: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=2200&q=85',
+    src: '/brand/images/29.png',
     alt: 'Open-plan office with acoustic ceiling',
     vision: 'Workspace where craft happens',
   },
   {
-    src: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=2200&q=85',
+    src: '/brand/images/12.png',
     alt: 'Minimalist gallery space',
     vision: 'Studio environment',
   },
@@ -74,7 +74,7 @@ const perks = [
     title: 'International training',
     desc: 'Trained on the membrane and lighting systems first introduced to Zimbabwe by our studio. Hands-on workshops and a craft taught nowhere else in the country.',
     feature: true,
-    image: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1200&q=80',
+    image: '/brand/images/29.png',
     vision: 'Open-plan office where the craft is taught',
   },
   {
@@ -92,7 +92,7 @@ const perks = [
     title: 'Diverse work',
     desc: 'Residential, commercial, hospitality, retail. The brief changes weekly, and so does the craft you bring to it.',
     feature: true,
-    image: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1200&q=80',
+    image: '/brand/images/30.png',
     vision: 'Hospitality lobby with sculptural ceiling',
   },
 ]
@@ -624,7 +624,7 @@ function GeneralApplyCTA() {
     <section className="relative min-h-[70vh] lg:min-h-[80vh] flex items-center overflow-hidden bg-lafoi-dark">
       <div className="absolute inset-0">
         <OptimizedImage
-          src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=2000&q=85"
+          src="/brand/images/12.png"
           alt="Quiet studio environment"
           className="w-full h-full object-cover object-center"
           fill

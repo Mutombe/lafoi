@@ -52,9 +52,9 @@ export default function ProjectDetail() {
       push(src, g.alt || `${project.title}, view ${i + 1}`, g.vision || project.vision)
     })
     const fallbacks = [
-      'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
-      'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
-      'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+      '/brand/images/46.png',
+      '/brand/images/27.png',
+      '/brand/images/10.png',
     ]
     fallbacks.forEach((f) => push(f, project.title, project.vision))
     return result.slice(0, 3)

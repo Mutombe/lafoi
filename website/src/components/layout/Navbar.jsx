@@ -511,22 +511,24 @@ function NavLink({ to, label, active, lightText }) {
 
 function DropdownMenu({ group, active, onOpen, onClose, currentPath, lightText }) {
   const isActiveGroup = group.items.some(item => currentPath.startsWith(item.path))
-  const timeoutRef = useRef(null)
+  const ref = useRef(null)
 
-  const handleMouseEnter = () => {
-    clearTimeout(timeoutRef.current)
-    onOpen()
-  }
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(onClose, 150)
-  }
+  // Click to open, click anywhere outside (or a link) to close — far easier to
+  // hit with a mouse than a hover menu with a tiny bridge.
+  useEffect(() => {
+    if (!active) return
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose() }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [active, onClose])
 
   return (
-    <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div className="relative" ref={ref}>
       <button
+        onClick={() => (active ? onClose() : onOpen())}
+        aria-expanded={active}
         className={`flex items-center gap-1.5 px-4 py-2 font-general text-sm transition-colors ${
-          isActiveGroup
+          isActiveGroup || active
             ? 'text-lafoi-green font-medium'
             : lightText
               ? 'text-white/90 hover:text-white font-medium'
@@ -543,13 +545,14 @@ function DropdownMenu({ group, active, onOpen, onClose, currentPath, lightText }
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.18 }}
           >
             <div className="w-64 bg-white rounded-sm shadow-xl shadow-black/[0.06] border border-gray-100 p-2 overflow-hidden">
               {group.items.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={onClose}
                   className="flex items-start gap-3 p-3 rounded-sm hover:bg-lafoi-green/5 transition-colors group"
                 >
                   <div className="w-9 h-9 rounded-full bg-lafoi-green/10 flex items-center justify-center shrink-0 group-hover:bg-lafoi-green/20 transition-colors">

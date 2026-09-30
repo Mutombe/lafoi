@@ -22,17 +22,17 @@ import { linkifyProse } from '../utils/linkify.jsx'
 
 const PRODUCTS_HERO_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    src: '/brand/images/10.png',
     alt: 'Calm contemporary living room with stretch ceiling',
     vision: 'Material-first matte ceiling',
   },
   {
-    src: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=2200&q=85',
+    src: '/brand/images/26.png',
     alt: 'Spa-like bathroom with skylight ceiling',
     vision: 'Translucent membrane in bathroom',
   },
   {
-    src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=2200&q=85',
+    src: '/brand/images/11.png',
     alt: 'Modern interior with ceiling design',
     vision: 'Surface and light meeting in living space',
   },
@@ -84,10 +84,10 @@ export default function Products() {
   }, [])
 
   const applicationBento = [
-    { label: 'Residential', desc: 'Homes that breathe.', img: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=1200&q=80', vision: 'Calm contemporary living room with stretch ceiling' },
-    { label: 'Hospitality', desc: 'Rooms that perform.', img: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=1200&q=80', vision: 'Hotel lobby with luminous backlit ceiling' },
-    { label: 'Office', desc: 'Spaces that focus.', img: 'https://images.unsplash.com/photo-1595513279524-fa90ad188c98?w=1200&q=80', vision: 'Open-plan office with acoustic ceiling treatment' },
-    { label: 'Retail', desc: 'Stores that sell themselves.', img: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=1200&q=80', vision: 'Luxury retail showroom with gloss ceiling and track lighting' },
+    { label: 'Residential', desc: 'Homes that breathe.', img: '/brand/images/10.png', vision: 'Calm contemporary living room with stretch ceiling' },
+    { label: 'Hospitality', desc: 'Rooms that perform.', img: '/brand/images/46.png', vision: 'Hotel lobby with luminous backlit ceiling' },
+    { label: 'Office', desc: 'Spaces that focus.', img: '/brand/images/29.png', vision: 'Open-plan office with acoustic ceiling treatment' },
+    { label: 'Retail', desc: 'Stores that sell themselves.', img: '/brand/images/30.png', vision: 'Luxury retail showroom with gloss ceiling and track lighting' },
   ]
 
   return (
@@ -433,7 +433,7 @@ export default function Products() {
       <section className="relative py-20 lg:py-28 overflow-hidden">
         <div className="absolute inset-0">
           <OptimizedImage
-            src="https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=1920&q=80"
+            src="/brand/images/27.png"
             alt="Refined residential interior with stretch ceiling and integrated lighting"
             className="w-full h-full object-cover"
             fill

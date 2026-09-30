@@ -19,17 +19,17 @@ import { posts } from '../data/blog'
 
 const BLOG_HERO_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+    src: '/brand/images/10.png',
     alt: 'Calm contemporary living room',
     vision: 'Editorial blog cover',
   },
   {
-    src: 'https://images.unsplash.com/photo-1618259715220-a89a4e4da76b?w=2200&q=85',
+    src: '/brand/images/18.png',
     alt: 'Country hotel interior with elegant design',
     vision: 'Stories from the field',
   },
   {
-    src: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=2200&q=85',
+    src: '/brand/images/12.png',
     alt: 'Minimalist gallery space',
     vision: 'Quiet contemplation',
   },
@@ -83,12 +83,12 @@ export default function Blog() {
 function BlogHero() {
   // Magazine Cover. Cream BG. LEFT, magazine stamp + headline + subtitle. RIGHT, 3x2 thumb grid.
   const thumbs = [
-    'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=600&q=80',
-    'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=600&q=80',
-    'https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=600&q=80',
-    'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=600&q=80',
-    'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=600&q=80',
-    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600&q=80',
+    '/brand/images/10.png',
+    '/brand/images/27.png',
+    '/brand/images/45.png',
+    '/brand/images/30.png',
+    '/brand/images/46.png',
+    '/brand/images/3.png',
   ]
 
   return (

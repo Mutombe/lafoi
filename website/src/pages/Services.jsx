@@ -276,9 +276,9 @@ function ServicesHero() {
   // LEFT, heading + intro + 4-bullet service list.
   // RIGHT, 2x2 image bento (4 tiles) showing each service capability.
   const bentoTiles = [
-    { src: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=900&q=80', label: 'Stretch ceilings', vision: 'Stretch membrane install' },
-    { src: 'https://images.unsplash.com/photo-1768270181430-3e3672a32283?w=900&q=80', label: 'Lighting', vision: 'Architectural lighting' },
-    { src: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80', label: 'Interior design', vision: 'Curated residential interior' },
+    { src: '/brand/images/10.png', label: 'Stretch ceilings', vision: 'Stretch membrane install' },
+    { src: '/brand/images/30.png', label: 'Lighting', vision: 'Architectural lighting' },
+    { src: '/brand/images/11.png', label: 'Interior design', vision: 'Curated residential interior' },
     { src: '/brand/images/45.png', label: 'Interior design', vision: 'Printed-marble boardroom ceiling' },
   ]
 
@@ -783,7 +783,7 @@ function ServicesCTA() {
     <section className="relative min-h-[80vh] lg:min-h-[88vh] flex items-center overflow-hidden bg-lafoi-dark">
       <div className="absolute inset-0">
         <OptimizedImage
-          src="https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2000&q=85"
+          src="/brand/images/27.png"
           alt="Master suite with luminous stretch ceiling and warm perimeter lighting"
           className="w-full h-full object-cover object-center"
           fill
@@ -857,22 +857,6 @@ function ServicesCTA() {
    ============================================================================ */
 
 function ServiceDetail({ service }) {
-  const detailSlides = [
-    { src: service.hero, alt: `${service.title} service hero, ${service.heroVision}`, vision: service.heroVision },
-    {
-      src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
-      alt: 'Luminous backlit translucent stretch ceiling spanning a hospitality lobby',
-      vision: 'Luminous backlit ceiling',
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
-      alt: 'Master suite with stretch ceiling and integrated cove lighting',
-      vision: 'Suite ceiling and lighting',
-    },
-  ]
-    .filter((s, i, arr) => arr.findIndex((x) => x.src === s.src) === i)
-    .slice(0, 3)
-
   // adjacent
   const idx = allServices.findIndex((s) => s.slug === service.slug)
   const prev = allServices[(idx - 1 + allServices.length) % allServices.length]
@@ -889,7 +873,14 @@ function ServiceDetail({ service }) {
     >
       {/* Hero */}
       <section className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark">
-        <HeroSlideshow slides={detailSlides} interval={6500} parallax overlay={false} />
+        <OptimizedImage
+          src={service.hero}
+          alt={`${service.title} — ${service.heroVision}`}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          fill
+          priority
+          vision={service.heroVision}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/40 to-lafoi-dark/55 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-lafoi-dark/55 via-transparent to-lafoi-dark/20 pointer-events-none" />
 

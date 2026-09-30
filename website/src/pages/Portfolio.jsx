@@ -21,17 +21,17 @@ import { linkifyProse } from '../utils/linkify.jsx'
 
 const PORTFOLIO_HERO_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+    src: '/brand/images/46.png',
     alt: 'Luxurious lobby with backlit ceiling',
     vision: 'Editorial portfolio cover',
   },
   {
-    src: 'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
+    src: '/brand/images/27.png',
     alt: 'Luxury modern living room with premium ceiling',
     vision: 'Residential transformation',
   },
   {
-    src: 'https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=2200&q=85',
+    src: '/brand/images/45.png',
     alt: 'Indoor pool with stone walls and natural light',
     vision: 'Hospitality wellness',
   },
@@ -400,6 +400,8 @@ function VideoGallery() {
     { src: '/brand/videos/27.mp4', title: 'Printed ceiling reveal',   caption: 'Printed design · Retail' },
     { src: '/brand/videos/36.mp4', title: 'Translucent ceiling reveal',     caption: 'Translucent finish · Commercial' },
     { src: '/brand/videos/47.mp4', title: 'Acoustic ceiling',         caption: 'Acoustic ceiling · Office space' },
+    { src: '/brand/videos/35.mp4', title: 'Matte ceiling install',    caption: 'Matte finish · Hospitality' },
+    { src: '/brand/videos/28.mp4', title: 'Black glass ceiling',      caption: 'Gloss black · Feature install' },
   ]
 
   return (
@@ -454,12 +456,12 @@ function PortfolioHero() {
           is position:relative). */}
       <div className="absolute inset-0">
         <OptimizedImage
-          src="/brand/images/14.png"
-          alt="Commercial kitchen with continuous linear LED tracks"
+          src="/brand/images/50.png"
+          alt="Mirror-gloss stretch ceiling reflecting a luxury hotel lounge"
           className="absolute inset-0 w-full h-full object-cover object-center"
           fill
           priority
-          vision="Commercial kitchen with linear LED tracks, single still cinematic frame"
+          vision="High-gloss mirror ceiling doubling a luxury lounge, single still cinematic frame"
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-lafoi-dark/90 via-lafoi-dark/30 to-lafoi-dark/60" />

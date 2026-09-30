@@ -5,7 +5,6 @@
 // All Unsplash IDs below are verified working, pulled from existing
 // Portfolio.jsx, Services.jsx, and About.jsx usage. Do not swap unverified IDs.
 
-const U = (id, w = 1200, q = 80) => `https://images.unsplash.com/photo-${id}?w=${w}&q=${q}`
 
 // ============================================================================
 // PRODUCTS, 18 entries across Stretch Ceilings, Lighting, Accessories
@@ -325,11 +324,11 @@ export const products = [
       'Lifespan': '40,000 hours',
       'Profile': 'Aluminium with frosted diffuser',
           },
-    image: U('1758194090785-8e09b7288199', 1600, 85),
+    image: '/brand/images/46.png',
     gallery: [
-      U('1730367019975-4ad8d9e14ef2'),
-      U('1768270181430-3e3672a32283'),
-      U('1600210492486-724fe5c67fb0'),
+      '/brand/images/45.png',
+      '/brand/images/30.png',
+      '/brand/images/3.png',
     ],
     vision: 'Ballroom ceiling shifting from warm white to deep amber across an evening scene',
     featured: false,
@@ -359,11 +358,11 @@ export const products = [
       'Mapping': 'Real sky or abstract',
             'Membrane': 'Dark matte (recommended)',
     },
-    image: U('1765434670017-c0d28ecde29a', 1600, 85),
+    image: '/brand/images/12.png',
     gallery: [
-      U('1639663742190-1b3dba2eebcf'),
-      U('1730367019975-4ad8d9e14ef2'),
-      U('1600585154340-be6161a56a0c'),
+      '/brand/images/27.png',
+      '/brand/images/45.png',
+      '/brand/images/11.png',
     ],
     vision: 'Master bedroom with a ceiling of 300 pinpoint stars on deep navy backdrop',
     featured: true,
@@ -393,11 +392,11 @@ export const products = [
       'IP rating': 'IP44',
       'Dimming': 'Phase-cut, 1-10V, DALI',
           },
-    image: U('1600210492486-724fe5c67fb0', 1600, 85),
+    image: '/brand/images/3.png',
     gallery: [
-      U('1638284457192-27d3d0ec51aa'),
-      U('1600566753190-17f0baa2a6c3'),
-      U('1639663742190-1b3dba2eebcf'),
+      '/brand/images/10.png',
+      '/brand/images/12.png',
+      '/brand/images/27.png',
     ],
     vision: 'Flush downlight integrated into a matte stretch ceiling in a contemporary kitchen',
     featured: false,
@@ -427,11 +426,11 @@ export const products = [
       'Recess depth': '85 mm',
       'Dimming': 'DALI, 0-10V',
           },
-    image: U('1600585154340-be6161a56a0c', 1600, 85),
+    image: '/brand/images/11.png',
     gallery: [
-      U('1768270181430-3e3672a32283'),
-      U('1600210492486-724fe5c67fb0'),
-      U('1638284457192-27d3d0ec51aa'),
+      '/brand/images/30.png',
+      '/brand/images/3.png',
+      '/brand/images/10.png',
     ],
     vision: 'Linear wall washer producing an even gradient down a textured feature wall',
     featured: false,
@@ -565,11 +564,11 @@ export const products = [
       'Compatibility': 'All La Foi membranes',
       'Warranty': '10 years',
           },
-    image: U('1600607687939-ce8a6c25118c', 1600, 85),
+    image: '/brand/images/12.png',
     gallery: [
-      U('1638284457192-27d3d0ec51aa'),
-      U('1600566753190-17f0baa2a6c3'),
-      U('1600210492486-724fe5c67fb0'),
+      '/brand/images/10.png',
+      '/brand/images/12.png',
+      '/brand/images/3.png',
     ],
     vision: 'Detailed shot of trimless edge profile where ceiling membrane meets a plastered wall',
     featured: false,
@@ -598,11 +597,11 @@ export const products = [
       'Fire rating': 'B-s1,d0',
       'UV stability': '10+ years',
           },
-    image: U('1600210492486-724fe5c67fb0', 1600, 85),
+    image: '/brand/images/3.png',
     gallery: [
-      U('1758194090785-8e09b7288199'),
-      U('1638284457192-27d3d0ec51aa'),
-      U('1768270181430-3e3672a32283'),
+      '/brand/images/46.png',
+      '/brand/images/10.png',
+      '/brand/images/30.png',
     ],
     vision: 'Diffuser panel layered above a translucent ceiling membrane in a clinical environment',
     featured: false,

@@ -20,17 +20,17 @@ import { linkifyProse } from '../utils/linkify.jsx'
 
 const PROJECTS_HERO_SLIDES = [
   {
-    src: 'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
+    src: '/brand/images/46.png',
     alt: 'Luminous hotel ballroom ceiling backlit and glowing across full plane',
     vision: 'Transformation hero, backlit hotel ballroom',
   },
   {
-    src: 'https://images.unsplash.com/photo-1634146601607-9f319f71b5ee?w=2200&q=85',
+    src: '/brand/images/13.png',
     alt: 'Building with dramatic architectural ceiling',
     vision: 'Sculptural ceiling drama',
   },
   {
-    src: 'https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=2200&q=85',
+    src: '/brand/images/45.png',
     alt: 'Indoor pool with stone walls and natural light',
     vision: 'Spa hospitality transformation',
   },
@@ -287,7 +287,7 @@ export default function Projects() {
       <section className="relative py-20 lg:py-28 overflow-hidden">
         <div className="absolute inset-0">
           <OptimizedImage
-            src="https://images.unsplash.com/photo-1730367019975-4ad8d9e14ef2?w=1920&q=80"
+            src="/brand/images/45.png"
             alt="Spa interior with printed photographic sky stretch ceiling and warm lighting"
             className="w-full h-full object-cover"
             fill

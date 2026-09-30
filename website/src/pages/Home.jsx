@@ -22,7 +22,6 @@ import AnimatedSection from '../components/ui/AnimatedSection'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import SectionDivider from '../components/ui/SectionDivider'
-import VideoShowcase from '../components/ui/VideoShowcase'
 import ScrollReveal from '../components/ui/ScrollReveal'
 import MagneticCard from '../components/ui/MagneticCard'
 import KineticTextStrip from '../components/ui/KineticTextStrip'
@@ -120,7 +119,7 @@ export default function Home() {
       <SectionDivider shape="angular" from="dark" to="cream" />
       <ProjectsBento />
       <SectionDivider shape="s-curve" from="cream" to="cream" />
-      <VideoShowcaseSection />
+      <ShowroomSection />
       <SectionDivider shape="subtle-wave" from="cream" to="cream" />
       <Testimonial />
       <SectionDivider shape="subtle-wave" from="cream" to="cream" />
@@ -1254,15 +1253,6 @@ function ReviewAvatar({ author, avatar, logo }) {
 function Testimonial() {
   // All real, verified reviews shown at once as a masonry of cards — more
   // trustworthy than a single rotating quote, and it fills the section properly.
-  const clientNames = [
-    ...reviews.map((r) => r.author),
-    'Mutapa Gold Resources',
-    'Inverium',
-    'Geo Pomona',
-    'The Spot Bar',
-    'Freda Rebecca',
-  ]
-
   return (
     <section className="relative bg-lafoi-cream py-24 lg:py-36 overflow-hidden">
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
@@ -1346,116 +1336,135 @@ function Testimonial() {
           </p>
         </div>
 
-        {/* kinetic name marquee, sourced from reviews data */}
+        {/* Clients — a logo wall you can drag / swipe through */}
         <AnimatedSection delay={0.2} className="mt-16 lg:mt-24">
-          <EditableText page="home" field="auto.in-good-company-92b62f" as="p" multiline className="text-center text-[10px] font-sora text-lafoi-gray tracking-[0.3em] uppercase mb-8">
-                In good company
-              </EditableText>
-          <div className="relative overflow-hidden marquee-pause">
-            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-lafoi-cream to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-lafoi-cream to-transparent z-10 pointer-events-none" />
-            <div className="flex marquee-track whitespace-nowrap">
-              {[...clientNames, ...clientNames].map((c, i) => (
-                <span
-                  key={i}
-                  className="mx-8 font-display font-light italic text-2xl lg:text-3xl text-lafoi-gray/55"
-                >
-                  {c}
-                  <span className="inline-block ml-16 w-1 h-1 rounded-full bg-lafoi-green/30 align-middle" />
-                </span>
-              ))}
-            </div>
-          </div>
+          <EditableText page="home" field="companies.label" as="p" className="text-center text-[10px] font-sora text-lafoi-gray tracking-[0.3em] uppercase mb-8">
+            In good company
+          </EditableText>
+          <CompanyLogos />
         </AnimatedSection>
       </div>
     </section>
   )
 }
 
-/* ============================================================================
-   8.5  VIDEO SHOWCASE, bento of in-motion captures, modal player
-   ============================================================================ */
-
-function VideoShowcaseSection() {
-  // Catalogue insight: every material category has a "Play video" affordance.
-  // We adopt the pattern with our own footage. Five tiles: 1 large + 4 small.
-  // Captions are intentionally generic, category-level, no fabricated clients.
-  const videos = [
-    {
-      src: '/brand/videos/7.mp4',
-      title: 'Studio in motion',
-      caption: 'Stretch ceiling install · Residential',
-    },
-    {
-      src: '/brand/videos/27.mp4',
-      title: 'Printed photographic ceiling',
-      caption: 'Artprint install · Custom design',
-    },
-    {
-      src: '/brand/videos/35.mp4',
-      title: 'Matte ceiling install',
-      caption: 'Matte finish · Hospitality',
-    },
-    {
-      src: '/brand/videos/47.mp4',
-      title: 'Acoustic ceiling',
-      caption: 'Commercial space · Harare',
-    },
-    {
-      src: '/brand/videos/28.mp4',
-      title: 'Black glass ceiling',
-      caption: 'Gloss black · Feature install',
-    },
+/* Client logo wall — real logos where we have them, names otherwise. Drag with
+   a mouse or swipe on touch (no auto-scroll, so nothing crawls on mobile). */
+function CompanyLogos() {
+  const companies = [
+    { name: 'University of Zimbabwe', logo: '/brand/logos/uz.png' },
+    { name: 'Pro-Fitness Health Club', logo: '/brand/logos/profitness.png' },
+    { name: 'GAP Construction', logo: '/brand/logos/gap.png' },
+    { name: 'Mag-Grip Products', logo: '/brand/logos/maggrip.png' },
+    { name: 'Mutapa Gold Resources' },
+    { name: 'Inverium' },
+    { name: 'Geo Pomona' },
+    { name: 'The Spot Bar' },
+    { name: 'Freda Rebecca' },
   ]
+  const ref = useRef(null)
+  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false })
+
+  const onDown = (e) => {
+    drag.current = { down: true, startX: e.clientX, startLeft: ref.current.scrollLeft, moved: false }
+  }
+  const onMove = (e) => {
+    if (!drag.current.down) return
+    const dx = e.clientX - drag.current.startX
+    if (Math.abs(dx) > 3) drag.current.moved = true
+    ref.current.scrollLeft = drag.current.startLeft - dx
+  }
+  const onUp = () => { drag.current.down = false }
 
   return (
-    <section className="relative bg-lafoi-cream py-24 lg:py-36 overflow-hidden">
-      <div aria-hidden className="absolute inset-0 mesh-gradient-1 opacity-40 pointer-events-none" />
+    <div
+      ref={ref}
+      onPointerDown={onDown}
+      onPointerMove={onMove}
+      onPointerUp={onUp}
+      onPointerLeave={onUp}
+      className="flex items-center gap-8 sm:gap-12 overflow-x-auto scrollbar-none pb-2 px-1 cursor-grab active:cursor-grabbing select-none"
+    >
+      {companies.map((c) => (
+        <div key={c.name} className="shrink-0 flex items-center justify-center h-16 sm:h-20" title={c.name}>
+          {c.logo ? (
+            <img
+              src={c.logo}
+              alt={c.name}
+              draggable={false}
+              loading="lazy"
+              className="max-h-12 sm:max-h-16 w-auto object-contain opacity-70 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500"
+            />
+          ) : (
+            <span className="font-display font-light italic text-xl sm:text-2xl text-lafoi-gray/50 hover:text-lafoi-gray whitespace-nowrap transition-colors duration-300">
+              {c.name}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* ============================================================================
+   8.5  3D DESIGNS — interactive Matterport showroom
+   ============================================================================ */
+
+function ShowroomSection() {
+  return (
+    <section className="relative bg-lafoi-dark text-white py-24 lg:py-32 overflow-hidden">
       <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-14 lg:mb-20">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-10 lg:mb-14">
           <div className="max-w-2xl">
             <AnimatedSection>
               <div className="flex items-center gap-3 mb-5">
-                <span className="block w-10 h-px bg-lafoi-green/60" />
-                <EditableText page="home" field="video.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green">
-                05 · In motion
-              </EditableText>
-</div>
+                <span className="block w-10 h-px bg-lafoi-green-light/60" />
+                <EditableText page="home" field="showroom.eyebrow" as="p" className="font-sora text-[10px] font-semibold tracking-[0.3em] uppercase text-lafoi-green-light">
+                  05 · 3D designs
+                </EditableText>
+              </div>
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
-              <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-6xl">
-                See it{' '}
-                <span className="font-display italic font-light text-lafoi-green">
-                  built.
-                </span>
+              <h2 className="heading-xl text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.02]">
+                <EditableText page="home" field="showroom.title" as="span">Step inside</EditableText>{' '}
+                <span className="font-display italic font-light text-lafoi-green-light">our work.</span>
               </h2>
             </AnimatedSection>
             <AnimatedSection delay={0.2}>
-              <p className="mt-6 max-w-xl text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
-                {linkifyProse(
-                  'Every finished ceiling begins long before the final photograph — measured, shaped, and lit with precision. What looks effortless is the result of careful planning and craft.'
-                )}
-              </p>
+              <EditableText page="home" field="showroom.subtitle" as="p" multiline render={(t) => linkifyProse(t, { variant: 'dark' })} className="mt-6 max-w-xl text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.7]">
+                Walk through our showroom in interactive 3D — drag to look around, and click the floor to move from room to room, exactly as if you were standing there.
+              </EditableText>
             </AnimatedSection>
           </div>
           <AnimatedSection delay={0.2}>
             <Link
-              to="/portfolio"
-              className="group inline-flex items-center gap-3 text-lafoi-dark font-sora text-sm font-medium hover:text-lafoi-green transition-colors duration-300"
+              to="/services/3d-digital-twins"
+              className="group inline-flex items-center gap-3 text-white/80 font-sora text-sm font-medium hover:text-white transition-colors duration-300"
             >
-              <span className="font-display font-light text-base">More in the gallery</span>
-              <span className="w-10 h-10 rounded-full border border-lafoi-dark/20 group-hover:border-lafoi-green group-hover:bg-lafoi-green flex items-center justify-center transition-all duration-300">
-                <ArrowRight
-                  size={14}
-                  weight="bold"
-                  className="group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300"
-                />
+              <span className="font-display font-light text-base">About 3D twins</span>
+              <span className="w-10 h-10 rounded-full border border-white/25 group-hover:border-lafoi-green-light group-hover:bg-lafoi-green-light flex items-center justify-center transition-all duration-300">
+                <ArrowRight size={14} weight="bold" className="group-hover:translate-x-0.5 transition-transform duration-300" />
               </span>
             </Link>
           </AnimatedSection>
         </div>
 
-        <VideoShowcase videos={videos} layout="bento" />
+        <AnimatedSection delay={0.15}>
+          <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-sm overflow-hidden ring-1 ring-white/10 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.75)] bg-black">
+            <iframe
+              title="La Foi showroom — interactive Matterport 3D tour"
+              src="https://my.matterport.com/show/?m=w6rLGbghgQ6&play=1&qs=1&title=0"
+              className="absolute inset-0 w-full h-full"
+              frameBorder="0"
+              allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer"
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
+          <p className="mt-3 font-sora text-[11px] tracking-wide text-white/45">
+            Drag to look around · click the floor to walk · use the fullscreen control for the full experience.
+          </p>
+        </AnimatedSection>
       </div>
     </section>
   )

@@ -50,9 +50,9 @@ export default function ProductDetail() {
     )
     // Fill to 3 with verified fallbacks if needed
     const fallbacks = [
-      'https://images.unsplash.com/photo-1639663742190-1b3dba2eebcf?w=2200&q=85',
-      'https://images.unsplash.com/photo-1758194090785-8e09b7288199?w=2200&q=85',
-      'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=2200&q=85',
+      '/brand/images/27.png',
+      '/brand/images/46.png',
+      '/brand/images/10.png',
     ]
     fallbacks.forEach((f) => push(f, product.name, product.vision))
     return result.slice(0, 3)
