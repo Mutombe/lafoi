@@ -52,6 +52,13 @@ Work Execution:
 • Delays caused by other contractors or client work are not our responsibility.
 • Scaffolding and site protection to be provided by client (extra if required).
 
+Electrical Works:
+• Electrical cabling is not included in our quotation. Our scope is limited to installing and connecting the light fittings to the electrical cables already installed and provided by the client's electrician.
+• For new-build projects, the electrician responsible for the electrical installation must be present on site during our installation works. The electrician will be required to coordinate with and assist our technicians with any necessary electrical connections, positioning, and related electrical requirements.
+• Where the required electrical works have not yet been completed, we can recommend a qualified electrical contractor that we regularly work with to carry out the necessary electrical installation. Any electrical works undertaken by such a contractor will be quoted separately unless otherwise agreed in writing.
+• Any curtain pockets, speakers, access points, fixtures, fittings, or other items that need to be mounted, recessed, or supported from the ceiling must be communicated to us before the quotation is prepared and prior to the installation of the stretch ceiling. This will allow us to include the necessary structural platforms, supports, framing, or other provisions in our quotation and ensure they are installed before the stretch ceiling is fitted.
+• Any electrical, structural, or ceiling-related requirements that are not disclosed prior to installation and subsequently require additional work may be subject to additional charges.
+
 General Terms:
 • Extra work or materials needed on site will be charged separately.
 • Openings for lights, grilles or other fixtures are not included unless quoted.
