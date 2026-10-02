@@ -321,14 +321,8 @@ def _header_flowable(doc_label: str, doc_number: str, st, show_flag: bool = Fals
 
     address_html = "<br/>".join(_contact_lines(co))
 
-    # Row 1 — brand identity (left) + document label & number (right)
-    brand = []
-    if logo is not None:
-        brand.append(logo)
-        brand.append(Spacer(1, 4))
-    brand.append(Paragraph(co.get("name", "La Foi Designs"), st["LFTitle"]))
-    if co.get("tagline"):
-        brand.append(Paragraph(co["tagline"], st["LFTagline"]))
+    # Row 1 — logo (left) + document label & number (right)
+    logo_cell = logo if logo is not None else ""
 
     doc_block = [
         Paragraph(doc_label.upper(), ParagraphStyle(
@@ -342,22 +336,29 @@ def _header_flowable(doc_label: str, doc_number: str, st, show_flag: bool = Fals
         ),
     ]
 
-    # Row 2 — address (left) sits level with the flag (right). The flag is only
-    # added for quotations; for other documents the right cell stays empty.
-    addr_cell = Paragraph(address_html, st["LFBodySmall"]) if address_html else ""
+    # Row 2 — company text block (name / tagline / address) on the left; the flag
+    # on the right top-aligns with it, so the flag's top sits level with the
+    # "La Foi Designs" line (not the logo). Flag only for quotations.
+    text_block = [Paragraph(co.get("name", "La Foi Designs"), st["LFTitle"])]
+    if co.get("tagline"):
+        text_block.append(Paragraph(co["tagline"], st["LFTagline"]))
+    if address_html:
+        text_block.append(Spacer(1, 3))
+        text_block.append(Paragraph(address_html, st["LFBodySmall"]))
+
     flag_cell = ""
     if show_flag:
         flag = _flag_flowable(width_mm=26)
         if flag is not None:
             flag_cell = flag
 
-    table = Table([[brand, doc_block], [addr_cell, flag_cell]], colWidths=[None, 70 * mm])
+    table = Table([[logo_cell, doc_block], [text_block, flag_cell]], colWidths=[None, 70 * mm])
     table.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ("ALIGN", (1, 0), (1, -1), "RIGHT"),
         ("LEFTPADDING", (0, 0), (-1, -1), 0),
         ("RIGHTPADDING", (0, 0), (-1, -1), 0),
-        ("TOPPADDING", (0, 1), (-1, 1), 3),   # small gap above the address/flag row
+        ("TOPPADDING", (0, 1), (-1, 1), 4),   # gap between the logo row and the text/flag row
         ("BOTTOMPADDING", (0, 0), (-1, 0), 0),
     ]))
     return table
