@@ -259,6 +259,11 @@ BRAND_LOGO_PATH = Path(
     config("BRAND_LOGO_PATH", default=str(BASE_DIR / "static" / "brand" / "logo.png"))
 )
 
+# Flag shown on the quotation PDF header (right column, under the number).
+BRAND_FLAG_PATH = Path(
+    config("BRAND_FLAG_PATH", default=str(BASE_DIR / "static" / "brand" / "germany-flag.png"))
+)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
