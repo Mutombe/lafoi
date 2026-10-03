@@ -27,6 +27,7 @@ const BlogPost = lazy(() => import('./pages/BlogPost'))
 const Shop = lazy(() => import('./pages/Shop'))
 const Launch = lazy(() => import('./pages/Launch'))
 const DesignView = lazy(() => import('./pages/DesignView'))
+const HeroPreview = lazy(() => import('./pages/HeroPreview'))
 
 // Dashboard
 const DashboardLayout = lazy(() => import('./dashboard/components/DashboardLayout'))
@@ -72,6 +73,7 @@ export default function App() {
   const location = useLocation()
   const isDashboard = location.pathname.startsWith('/dashboard')
   const isDesignView = location.pathname.startsWith('/view/')
+  const isHeroPreview = location.pathname.startsWith('/hero-preview')
 
   // Client-facing secure viewer runs with no site chrome at all.
   if (isDesignView) {
@@ -79,6 +81,18 @@ export default function App() {
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/view/:token" element={<DesignView />} />
+        </Routes>
+      </Suspense>
+    )
+  }
+
+  // Hero concepts for team review — standalone, no site chrome.
+  if (isHeroPreview) {
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          <Route path="/hero-preview" element={<HeroPreview />} />
+          <Route path="/hero-preview/:n" element={<HeroPreview />} />
         </Routes>
       </Suspense>
     )
