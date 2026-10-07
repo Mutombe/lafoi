@@ -19,6 +19,7 @@ import {
   Star,
 } from '@phosphor-icons/react'
 import AnimatedSection from '../components/ui/AnimatedSection'
+import EditorialHero from '../components/home/EditorialHero'
 import OptimizedImage from '../components/ui/OptimizedImage'
 import HeroSlideshow from '../components/ui/HeroSlideshow'
 import SectionDivider from '../components/ui/SectionDivider'
@@ -106,7 +107,7 @@ export default function Home() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Hero />
+      <EditorialHero />
       <CompaniesSection />
       <SectionDivider shape="wave" from="dark" to="cream" />
       <FinishBand />

@@ -96,7 +96,7 @@ const searchableContent = [
 // in dark colour there.
 // NB: '/services' (the catalogue list) has a CREAM hero → dark nav text. Its
 // detail pages '/services/:slug' have dark heroes, covered by darkHeroPrefixes.
-const darkHeroPages = ['/', '/about', '/portfolio', '/careers', '/projects', '/contact', '/launch']
+const darkHeroPages = ['/about', '/portfolio', '/careers', '/projects', '/contact', '/launch']
 // Pages with sub-routes that also have dark image heroes (e.g. /products is a
 // light cream hero, but /products/:slug and /services/:slug are dark).
 const darkHeroPrefixes = ['/projects/', '/services/', '/products/']
@@ -107,6 +107,7 @@ function useHasDarkHero(pathname) {
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [heroPassed, setHeroPassed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -118,14 +119,26 @@ export default function Navbar() {
   const hasDarkHero = useHasDarkHero(location.pathname)
   // When not scrolled on a dark hero page, text should be white
   const isLightText = hasDarkHero && !scrolled
+  // Home carries its own hero header (logo + pill nav), so the global navbar
+  // stays hidden over the hero and slides in only once scrolled past it.
+  const isHome = location.pathname === '/'
   const { count: cartCount, openCart } = useCart()
   const isAuthed = useSelector(selectIsAuthenticated)
   const currentUser = useSelector(selectCurrentUser)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+      // Reveal the global navbar on home only after scrolling past ~85% of the hero.
+      setHeroPassed(window.scrollY > window.innerHeight * 0.85)
+    }
+    handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+    }
   }, [])
 
   useEffect(() => {
@@ -180,6 +193,9 @@ export default function Navbar() {
     setSearchOpen(false)
     setSearchQuery('')
   }
+
+  // On the homepage the editorial hero is the header until you scroll past it.
+  if (isHome && !heroPassed) return null
 
   return (
     <>
