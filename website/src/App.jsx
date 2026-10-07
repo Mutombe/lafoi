@@ -86,13 +86,12 @@ export default function App() {
     )
   }
 
-  // Hero concepts for team review — standalone, no site chrome.
+  // Hero concept for team review — standalone, no site chrome.
   if (isHeroPreview) {
     return (
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/hero-preview" element={<HeroPreview />} />
-          <Route path="/hero-preview/:n" element={<HeroPreview />} />
         </Routes>
       </Suspense>
     )
