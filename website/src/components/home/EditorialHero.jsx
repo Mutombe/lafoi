@@ -41,7 +41,7 @@ export default function EditorialHero() {
     <section className="relative min-h-screen bg-lafoi-cream flex flex-col overflow-hidden">
       {/* Top bar */}
       <div className="relative z-30 max-w-[1280px] w-full mx-auto px-5 sm:px-6 lg:px-10 pt-4 sm:pt-6 flex items-center justify-between gap-3">
-        <Link to="/" className="group inline-flex items-center" aria-label="La Foi Designs — home">
+        <Link to="/" className="group inline-flex items-center" aria-label="La Foi Designs, home">
           <Logo tone="dark" variant="wordmark" imgClassName="h-8 sm:h-10 lg:h-11 w-auto group-hover:scale-105 transition-transform duration-300" />
         </Link>
 
@@ -114,7 +114,7 @@ export default function EditorialHero() {
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }}
           className="mt-5 sm:mt-6 max-w-xl text-[15px] sm:text-base text-lafoi-gray font-general leading-relaxed">
-          Zimbabwe’s first dedicated stretch-ceiling studio — matte, gloss, translucent, printed and starfield finishes with bespoke lighting, installed in two to four days.
+          Zimbabwe’s first dedicated stretch-ceiling studio. Matte, gloss, translucent, printed and starfield finishes, each with its lighting designed in and fitted in two to four days.
         </motion.p>
 
         {/* Interactive finish selector */}
