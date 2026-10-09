@@ -144,7 +144,7 @@ function BlogHero() {
             </p>
 
             <p className="mt-8 font-sora text-[11px] tracking-[0.3em] uppercase text-lafoi-gray-medium">
-              {posts.length} entries &middot; Curated journal
+              {posts.length} entries &middot; Studio journal
             </p>
           </motion.div>
 

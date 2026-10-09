@@ -55,7 +55,7 @@ const allServices = [
     subtitle: 'Premium ceiling systems',
     hero: '/brand/images/12.png',
     heroVision: 'White gloss stretch ceiling with linear LEDs in a contemporary kitchen, a recent La Foi install',
-    desc: 'Tensioned PVC and fabric ceilings — matte, satin, gloss, translucent, printed, stars and acoustic — across a wide colour range, engineered to disappear into great architecture.',
+    desc: 'Tensioned PVC and fabric ceilings in matte, satin, gloss, translucent, printed, stars and acoustic finishes, across a wide colour range, engineered to disappear into great architecture.',
     features: [
       { label: 'Finish library', detail: 'Matte, satin, gloss, translucent, printed, stars, acoustic' },
       { label: 'Colour range', detail: 'A wide custom colour range' },
@@ -82,7 +82,7 @@ const allServices = [
     subtitle: 'Architectural illumination',
     hero: '/brand/images/3.png',
     heroVision: 'Continuous recessed linear LEDs in a La Foi stretch-ceiling install',
-    desc: 'From fibre-optic starry skies to programmable LED arrays — atmosphere designed alongside the ceiling, never bolted on after.',
+    desc: 'From fibre-optic starry skies to programmable LED arrays: atmosphere designed alongside the ceiling, never bolted on after.',
     features: [
       { label: 'LED systems', detail: 'Strip, panel and linear integration' },
       { label: 'Fibre optic', detail: 'Starry skies and edge accents' },
@@ -127,7 +127,7 @@ const allServices = [
       'Architectural projects',
     ],
     image: '/brand/images/stretch-mirror.png',
-    imageVision: 'La Foi bespoke mirror-panel ceiling with lit framing, designed end to end',
+    imageVision: 'La Foi custom mirror-panel ceiling with lit framing, designed end to end',
   },
   {
     slug: 'maintenance-support',
@@ -163,11 +163,11 @@ const allServices = [
     subtitle: 'Concept to completion',
     hero: '/brand/projects/greystone-park/greystone-2.jpeg',
     heroVision: 'Greystone Park dressing room with high-gloss ceiling and back-lit oval mirrors',
-    desc: 'A full interior design service from first conversation to final styling — space planning, materials, furniture and supervised installation, every trade co-ordinated.',
+    desc: 'A full interior design service from first conversation to final styling: space planning, materials, furniture and supervised installation, every trade co-ordinated.',
     features: [
       { label: 'Concept design', detail: 'Mood boards, design intent, sample boards' },
       { label: 'Space planning', detail: 'Measured drawings, circulation, zoning' },
-      { label: 'Material palette', detail: 'Wall, floor, ceiling, joinery curated together' },
+      { label: 'Material palette', detail: 'Wall, floor, ceiling, joinery chosen together' },
       { label: 'Furniture & FF&E', detail: 'Sourced, specified, scheduled' },
       { label: 'Project supervision', detail: 'Single point of contact across trades' },
       { label: 'Visualisation', detail: '3D renders before commitment' },
@@ -191,7 +191,7 @@ const allServices = [
     matterport: 'https://my.matterport.com/show/?m=w6rLGbghgQ6',
     hero: '/brand/images/46.png',
     heroVision: 'Geometric linear-LED stretch ceiling, the kind of finished La Foi space captured as a 3D twin',
-    desc: 'We scan a finished space with Matterport into a navigable 3D digital twin clients open from any device. Walk the room from anywhere and pull true measurements from the model — the difference between describing a space and standing in it.',
+    desc: 'We scan a finished space with Matterport into a navigable 3D digital twin clients open from any device. Walk the room from anywhere and pull true measurements from the model, the difference between describing a space and standing in it.',
     features: [
       { label: 'Matterport capture', detail: 'Millimetre-accurate 3D scan of the finished room' },
       { label: 'Virtual walkthrough', detail: 'Navigate space to space from any browser or phone' },
@@ -280,7 +280,7 @@ function ServicesHero() {
   const bentoTiles = [
     { src: '/brand/images/10.png', label: 'Stretch ceilings', vision: 'Stretch membrane install' },
     { src: '/brand/images/30.png', label: 'Lighting', vision: 'Architectural lighting' },
-    { src: '/brand/images/11.png', label: 'Interior design', vision: 'Curated residential interior' },
+    { src: '/brand/images/11.png', label: 'Interior design', vision: 'Styled residential interior' },
     { src: '/brand/images/45.png', label: 'Interior design', vision: 'Printed-marble boardroom ceiling' },
   ]
 
@@ -363,7 +363,7 @@ function ServicesHero() {
             </h1>
 
             <EditableText page="services" field="hero.subcopy" as="p" multiline render={linkifyProse} className="mt-7 max-w-md text-base lg:text-[17px] text-lafoi-gray font-body font-light leading-[1.7]">
-              Six services, each engineered to stand alone, designed to work together — from the ceiling overhead to the floor, wall and finish that meet it.
+              Six services, each engineered to stand alone, designed to work together, from the ceiling overhead to the floor, wall and finish that meet it.
             </EditableText>
 
             {/* Bullet list of all services, each links to its detail page */}
@@ -473,8 +473,8 @@ function ServicesEditorial() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
-                Six services.{' '}
-                <span className="text-lafoi-green">Read like a magazine.</span>
+                Six services,{' '}
+                <span className="text-lafoi-green">read like a magazine.</span>
               </h2>
             </AnimatedSection>
           </div>
@@ -670,8 +670,8 @@ function Process() {
           </AnimatedSection>
           <AnimatedSection delay={0.1}>
             <h2 className="font-display font-light text-white text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em]">
-              Four stages.{' '}
-              <span className="text-lafoi-green-light">No surprises.</span>
+              Four stages,{' '}
+              <span className="text-lafoi-green-light">no surprises.</span>
             </h2>
           </AnimatedSection>
         </div>
@@ -927,7 +927,7 @@ function ServiceGallery({ shots, title }) {
             <div key={i} className="group relative snap-start shrink-0 w-[72vw] sm:w-[340px] lg:w-[400px] aspect-[4/3] rounded-sm overflow-hidden bg-lafoi-dark shadow-[0_16px_44px_-26px_rgba(17,17,17,0.4)]">
               <picture>
                 <source srcSet={src.replace(/\.(png|jpe?g)$/i, '.webp')} type="image/webp" />
-                <img src={src} alt={`${title} — La Foi install`} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]" />
+                <img src={src} alt={`${title}, La Foi install`} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]" />
               </picture>
             </div>
           ))}
@@ -956,7 +956,7 @@ function ServiceDetail({ service }) {
       <section className="relative h-[100svh] min-h-[640px] flex flex-col overflow-hidden bg-lafoi-dark">
         <OptimizedImage
           src={service.hero}
-          alt={`${service.title} — ${service.heroVision}`}
+          alt={`${service.title}, ${service.heroVision}`}
           className="absolute inset-0 w-full h-full object-cover object-center"
           fill
           priority
@@ -1108,7 +1108,7 @@ function ServiceDetail({ service }) {
                     </div>
                     <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-sm overflow-hidden bg-lafoi-dark ring-1 ring-lafoi-dark/10 shadow-[0_24px_60px_-30px_rgba(17,17,17,0.5)]">
                       <iframe
-                        title={`${service.title} — interactive Matterport 3D tour`}
+                        title={`${service.title}, interactive Matterport 3D tour`}
                         src={`${service.matterport}${service.matterport.includes('?') ? '&' : '?'}play=1&qs=1&title=0`}
                         className="absolute inset-0 w-full h-full"
                         frameBorder="0"

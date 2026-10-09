@@ -136,7 +136,7 @@ export default function Projects() {
 
               <p className="mt-8 max-w-lg mx-auto text-base lg:text-lg text-white/75 font-body font-light leading-[1.65]">
                 {linkifyProse(
-                  'Deep case studies across residence, hospitality, commercial and retail — brief, approach, outcome, and the ceilings and lighting specified.',
+                  'Deep case studies across residence, hospitality, commercial and retail, covering brief, approach, outcome and the ceilings and lighting specified.',
                   { variant: 'dark' }
                 )}
               </p>

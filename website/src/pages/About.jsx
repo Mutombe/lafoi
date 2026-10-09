@@ -165,7 +165,7 @@ function AboutHero() {
                 Founded January 2024 in Belgravia, Harare, Zimbabwe’s first dedicated stretch ceiling and architectural lighting studio.
               </EditableText>
               <EditableText page="about" field="hero.p2" as="p" multiline render={linkifyProse} className="text-white/80">
-                Built on one conviction: the ceiling deserves the same care as the floor beneath it. Premium stretch ceilings and bespoke lighting, installed in two to four days, depending on the design.
+                Built on one conviction: the ceiling deserves the same care as the floor beneath it. Premium stretch ceilings and custom lighting, installed in two to four days, depending on the design.
               </EditableText>
             </div>
 
@@ -234,7 +234,7 @@ function Mission() {
 
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-white text-3xl sm:text-4xl lg:text-[3.2rem] xl:text-[3.6rem] leading-[1.08] tracking-[-0.02em] mb-8 max-w-xl">
-                World-class ceiling technology,{' '}
+                European ceiling technology,{' '}
                 <span className="italic text-lafoi-green-light">brought home</span>{' '}
                 to Zimbabwe.
               </h2>
@@ -244,7 +244,7 @@ function Mission() {
               <div className="space-y-5 font-body font-light text-base lg:text-[17px] text-white/70 leading-[1.7] max-w-lg">
                 <p>
                   {linkifyProse(
-                    'We transform interiors with durable, versatile stretch ceilings held to the highest standard — a finish no Zimbabwean studio could specify until 2024.',
+                    'We transform interiors with durable, versatile stretch ceilings held to the highest standard: a finish no Zimbabwean studio could specify until 2024.',
                     { variant: 'dark' }
                   )}
                 </p>
@@ -378,7 +378,7 @@ function StoryTimeline() {
       year: '2024',
       sub: 'January',
       title: 'The beginning',
-      copy: 'La Foi Designs is founded with a single bold mission, to bring world-class stretch ceiling technology to Zimbabwe for the very first time.',
+      copy: 'La Foi Designs is founded with a single bold mission, to bring European stretch ceiling technology to Zimbabwe for the very first time.',
     },
     {
       year: '01',
@@ -396,7 +396,7 @@ function StoryTimeline() {
       year: '03',
       sub: 'Craft',
       title: 'A team trained for the work',
-      copy: 'Four leads — managing, operations, projects, marketing — and a trained crew. Every ceiling goes up under experienced eyes.',
+      copy: 'Four leads (managing, operations, projects, marketing) and a trained crew. Every ceiling goes up under experienced eyes.',
     },
     {
       year: '04',
@@ -549,7 +549,7 @@ function Values() {
       title: 'Precision',
       desc: 'Every measurement, cut, and installation is executed with meticulous attention to detail.',
       image: '/brand/images/35.png',
-      vision: 'Precision, a marble-print gloss ceiling with concealed linear LEDs above a bespoke kitchen',
+      vision: 'Precision, a marble-print gloss ceiling with concealed linear LEDs above a custom kitchen',
       icon: Target,
     },
   ]
@@ -571,15 +571,15 @@ function Values() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-lafoi-dark text-4xl sm:text-5xl lg:text-[3.6rem] leading-[1.05] tracking-[-0.02em]">
-                Six principles.{' '}
-                <span className="text-lafoi-green">One studio.</span>
+                Six principles,{' '}
+                <span className="text-lafoi-green">one studio.</span>
               </h2>
             </AnimatedSection>
           </div>
           <AnimatedSection delay={0.2} direction="right">
             <p className="font-body text-lafoi-gray max-w-sm leading-relaxed">
               {linkifyProse(
-                'More than a company — a team united by shared values that inform every project we accept.'
+                'A team united by shared values that inform every project we accept.'
               )}
             </p>
           </AnimatedSection>
@@ -733,7 +733,7 @@ function Partners() {
       country: 'Engineered',
       role: 'PVC & fabric membrane',
       title: 'Built to last',
-      desc: 'Stretch ceilings are tensioned PVC or fabric — fire-rated, water-resistant, fully washable, and built to outlast the room beneath them.',
+      desc: 'Stretch ceilings are tensioned PVC or fabric: fire-rated, water-resistant, fully washable, and built to outlast the room beneath them.',
       features: [
         { label: 'Fire-rated', detail: 'B-s1, d0 self-extinguishing membrane' },
         { label: 'Water-tight', detail: 'Holds water in a leak, protects below' },
@@ -863,8 +863,8 @@ function Team() {
 
             <AnimatedSection delay={0.1}>
               <h2 className="font-display font-light text-white text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.1] tracking-[-0.02em] mb-7">
-                Four leads.{' '}
-                <span className="text-lafoi-green-light">One studio.</span>
+                Four leads,{' '}
+                <span className="text-lafoi-green-light">one studio.</span>
               </h2>
             </AnimatedSection>
 
@@ -1024,7 +1024,7 @@ function AboutCTA() {
           <AnimatedSection delay={0.25} direction="left">
             <p className="mt-8 max-w-xl text-base lg:text-lg text-white/70 font-body font-light leading-relaxed">
               {linkifyProse(
-                "Experience the La Foi difference. Book a free design consultation and let us show you what's possible, at no cost, no obligation, no rush. Browse our portfolio first, or read the technical guide.",
+                "Book a free design consultation and we'll show you what's possible, at no cost and no obligation. Browse our portfolio first, or read the technical guide.",
                 { variant: 'dark' }
               )}
             </p>

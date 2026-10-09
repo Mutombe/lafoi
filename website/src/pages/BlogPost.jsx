@@ -82,7 +82,7 @@ export default function BlogPost() {
         <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-sm overflow-hidden bg-lafoi-dark">
           <OptimizedImage
             src={post.image}
-            alt={`${post.title} — ${post.vision || ''}`}
+            alt={post.vision ? `${post.title}, ${post.vision}` : post.title}
             className="w-full h-full object-cover object-center"
             fill
             priority

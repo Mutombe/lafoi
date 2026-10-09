@@ -31,7 +31,7 @@ export default function Shop() {
   useSEO({
     title: 'Shop, Lamps, Humidifiers & Companion Pieces',
     description:
-      'A curated companion line of lamps, humidifiers, lighting accessories, and care kits to live alongside your stretch ceiling. Order via WhatsApp.',
+      'A companion line of lamps, humidifiers, lighting accessories, and care kits to live alongside your stretch ceiling. Order via WhatsApp.',
     path: '/shop',
     jsonLd: breadcrumbsLd([
       { name: 'Home', path: '/' },
@@ -119,7 +119,7 @@ function ShopHero() {
               transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             >
               {linkifyProse(
-                "A curated selection of lamps, humidifiers and care kits chosen to live alongside our stretch ceilings. Pieces are sourced from our partners, honest companions, not branded merchandise.\n\nOrder via WhatsApp. We handle delivery in Harare and shipping nationwide, and confirm everything before you pay."
+                "A selection of lamps, humidifiers and care kits chosen to live alongside our stretch ceilings. Pieces are sourced from our partners, honest companions, not branded merchandise.\n\nOrder via WhatsApp. We handle delivery in Harare and shipping nationwide, and confirm everything before you pay."
               )}
             </motion.div>
 
@@ -407,7 +407,7 @@ function ShopCTA() {
             </div>
             <h2 className="font-display font-light tracking-[-0.025em] leading-[1.02]"
               style={{ fontSize: 'clamp(2.25rem, 4.5vw, 3.75rem)' }}>
-              We're a phone call away ,{' '}
+              We're a phone call away,{' '}
               <span className="italic text-lafoi-green-light">always.</span>
             </h2>
             <p className="mt-6 text-base text-white/65 font-general leading-relaxed max-w-xl">

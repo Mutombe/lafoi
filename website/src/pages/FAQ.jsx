@@ -40,11 +40,11 @@ const faqCategories = [
     questions: [
       {
         q: 'What are stretch ceilings?',
-        a: 'Stretch ceilings are a modern ceiling finishing system made from PVC or fabric membranes that are stretched and fixed to a perimeter track. They create a perfectly smooth, seamless surface that can be customized with different colors, finishes, prints, and lighting integration.',
+        a: 'Stretch ceilings are a modern ceiling finishing system made from PVC or fabric membranes that are stretched and fixed to a perimeter track. They create a perfectly smooth, continuous surface that can be customized with different colors, finishes, prints, and lighting integration.',
       },
       {
         q: 'Is La Foi Designs the first stretch ceiling company in Zimbabwe?',
-        a: "Yes. Founded in January 2024, La Foi Designs is proud to be Zimbabwe's first and leading provider of stretch ceiling solutions. We pioneered this technology in the country through our work introducing premium membrane technology to the country.",
+        a: "Yes. Founded in January 2024, La Foi Designs is Zimbabwe's first and leading stretch ceiling company. We introduced the membrane technology to the country.",
       },
       {
         q: 'What areas do you service?',
@@ -57,7 +57,7 @@ const faqCategories = [
     questions: [
       {
         q: 'What finishes are available?',
-        a: 'We offer a comprehensive range including matte, gloss (mirror-like), satin, translucent (for backlighting), perforated (acoustic), suede, and printed finishes. Each is available in over 200 colors.',
+        a: 'We offer matte, gloss (mirror-like), satin, translucent (for backlighting), perforated (acoustic), suede, and printed finishes. Each is available in over 200 colors.',
       },
       {
         q: 'Are your ceilings fire-rated?',
@@ -99,7 +99,7 @@ const faqCategories = [
     questions: [
       {
         q: 'How much do stretch ceilings cost?',
-        a: 'Pricing depends on the area size, ceiling type, finish, and lighting requirements. We provide free consultations and detailed quotations. Contact us for a personalized quote tailored to your project.',
+        a: 'Pricing depends on the area size, ceiling type, finish, and lighting requirements. We provide free consultations and detailed quotations. Contact us for a quote based on your project.',
       },
       {
         q: 'Do you offer free consultations?',

@@ -41,7 +41,7 @@ const HOME_HERO_SLIDES = [
   },
   {
     src: '/brand/images/35.png',
-    alt: 'Marble-print gloss stretch ceiling with warm linear LEDs above a bespoke kitchen',
+    alt: 'Marble-print gloss stretch ceiling with warm linear LEDs above a designer kitchen',
     vision: 'Printed-marble gloss ceiling with concealed linear lighting over a designer kitchen',
   },
   {
@@ -267,7 +267,7 @@ function Hero() {
               >
                 stretch ceilings
               </Link>{' '}
-              and bespoke{' '}
+              and custom{' '}
               <Link
                 to="/services/lighting-solutions"
                 className="prose-link-dark prose-link-arrow"
@@ -565,7 +565,7 @@ function FinishGallery() {
           </div>
           <AnimatedSection delay={0.2} direction="right">
             <EditableText page="home" field="finish.intro" as="p" multiline render={linkifyProse} className="text-lafoi-gray font-general max-w-sm leading-relaxed">
-              Every finish answers a different brief — calm or theatrical, silent or sculptural. We help you choose the one your space is asking for.
+              Every finish answers a different brief: calm or theatrical, silent or sculptural. We help you choose the one your space is asking for.
             </EditableText>
           </AnimatedSection>
         </div>
@@ -657,7 +657,7 @@ function FinishRow({ p, blurb }) {
               <source srcSet={src.replace(/\.(png|jpe?g)$/i, '.webp')} type="image/webp" />
               <img
                 src={src}
-                alt={`${p.finish} stretch ceiling — La Foi install`}
+                alt={`${p.finish} stretch ceiling, La Foi install`}
                 loading="lazy"
                 decoding="async"
                 className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -733,7 +733,7 @@ function Approach() {
     {
       num: '02',
       title: 'Craft',
-      copy: 'Custom-cut ceilings, hand-joined seams, lighting prepped to scene — built off-site so the room stays calm.',
+      copy: 'Custom-cut ceilings, hand-joined seams, lighting prepped to scene. Built off-site so the room stays calm.',
       image: '/brand/images/np9.jpg',
       vision: 'La Foi crew mounting a printed stretch ceiling on site, branded shirts, careful hands',
     },
@@ -878,9 +878,9 @@ function Approach() {
             </AnimatedSection>
             <AnimatedSection delay={0.1}>
               <h2 className="heading-xl text-lafoi-dark text-4xl sm:text-5xl lg:text-[4rem] leading-[1.05]">
-                Three stages.
+                Three stages,
                 <br />
-                <span className="font-display font-light text-lafoi-green">No surprises.</span>
+                <span className="font-display font-light text-lafoi-green">from first visit to final reveal.</span>
               </h2>
             </AnimatedSection>
           </div>
@@ -1443,7 +1443,7 @@ function ShowroomSection() {
             </AnimatedSection>
             <AnimatedSection delay={0.2}>
               <EditableText page="home" field="showroom.subtitle" as="p" multiline render={(t) => linkifyProse(t, { variant: 'dark' })} className="mt-6 max-w-xl text-base lg:text-[17px] text-white/70 font-body font-light leading-[1.7]">
-                Walk through our showroom in interactive 3D — drag to look around, and click the floor to move from room to room, exactly as if you were standing there.
+                Walk through our showroom in interactive 3D. Drag to look around, and click the floor to move from room to room, exactly as if you were standing there.
               </EditableText>
             </AnimatedSection>
           </div>
@@ -1463,7 +1463,7 @@ function ShowroomSection() {
         <AnimatedSection delay={0.15}>
           <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-sm overflow-hidden ring-1 ring-white/10 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.75)] bg-black">
             <iframe
-              title="La Foi showroom — interactive Matterport 3D tour"
+              title="La Foi showroom, interactive Matterport 3D tour"
               src="https://my.matterport.com/show/?m=w6rLGbghgQ6&play=1&qs=1&title=0"
               className="absolute inset-0 w-full h-full"
               frameBorder="0"
@@ -1495,7 +1495,7 @@ function WhyLaFoi() {
     {
       icon: Sparkle,
       title: 'Innovative & Modern',
-      copy: 'Premium PVC and fabric ceilings paired with bespoke architectural lighting design.',
+      copy: 'Premium PVC and fabric ceilings paired with custom architectural lighting design.',
     },
     {
       icon: Lightning,
@@ -1542,7 +1542,7 @@ function WhyLaFoi() {
           <AnimatedSection direction="right" className="lg:col-span-5">
             <p className="text-base lg:text-lg text-lafoi-gray font-general leading-relaxed">
               {linkifyProse(
-                'We pioneered stretch ceilings in Zimbabwe and remain the country’s leading installer. Tensioned PVC and fabric go up in two to four days — clean, fire-rated, washable.'
+                'We pioneered stretch ceilings in Zimbabwe and remain the country’s leading installer. Tensioned PVC and fabric go up in two to four days: clean, fire-rated, washable.'
               )}
             </p>
           </AnimatedSection>

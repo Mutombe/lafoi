@@ -27,15 +27,15 @@ const EVENT = {
 
 const PROGRAM = [
   { time: '17:15', title: 'Guest Arrival & Registration', detail: 'Welcome drinks & networking' },
-  { time: '18:00 – 18:20', title: 'Welcome & Opening Remarks', detail: 'The MC acknowledges VIPs and introduces the evening’s theme' },
-  { time: '18:20 – 18:30', title: 'CEO Address', detail: 'Takudzwa Mhembere' },
-  { time: '18:30 – 18:35', title: 'COO Address', detail: 'Ashley Tafirenyika' },
-  { time: '18:35 – 18:42', title: 'Keynote Speaker', detail: 'Dr. Tinashe Manzungu' },
-  { time: '18:42 – 18:52', title: 'Keynote Speaker', detail: 'Hon. K. D. Mnangagwa' },
-  { time: '18:52 – 19:12', title: 'Guest of Honour & Ribbon Cutting', detail: 'Hon. Tinoda Machakaire', highlight: true },
-  { time: '19:12 – 19:17', title: 'Vote of Thanks', detail: 'Faith Mhembere — Managing Director' },
-  { time: '19:17 – 20:00', title: 'Canapés & Refreshments', detail: '' },
-  { time: '20:00 – 20:20', title: '“Live-Ceiling” Gallery', detail: 'An immersive walk-through of our work' },
+  { time: '18:00 to 18:20', title: 'Welcome & Opening Remarks', detail: 'The MC acknowledges VIPs and introduces the evening’s theme' },
+  { time: '18:20 to 18:30', title: 'CEO Address', detail: 'Takudzwa Mhembere' },
+  { time: '18:30 to 18:35', title: 'COO Address', detail: 'Ashley Tafirenyika' },
+  { time: '18:35 to 18:42', title: 'Keynote Speaker', detail: 'Dr. Tinashe Manzungu' },
+  { time: '18:42 to 18:52', title: 'Keynote Speaker', detail: 'Hon. K. D. Mnangagwa' },
+  { time: '18:52 to 19:12', title: 'Guest of Honour & Ribbon Cutting', detail: 'Hon. Tinoda Machakaire', highlight: true },
+  { time: '19:12 to 19:17', title: 'Vote of Thanks', detail: 'Faith Mhembere, Managing Director' },
+  { time: '19:17 to 20:00', title: 'Canapés & Refreshments', detail: '' },
+  { time: '20:00 to 20:20', title: '“Live-Ceiling” Gallery', detail: 'An immersive walk-through of our work' },
   { time: '20:30', title: 'Departure', detail: '' },
 ]
 
@@ -54,7 +54,7 @@ const PEOPLE = [
     org: 'CEO & Co-Founder, La Foi Designs',
     tag: 'Leadership',
     icon: Star,
-    bio: 'The visionary entrepreneur behind La Foi Designs — the pioneering force introducing stretch ceiling technology to Africa. Holding a BSc in Business Management & Marketing and an MSc in Supply Chain & Logistics Management, Takudzwa is engineering Africa’s interior revolution from the top down, bringing world-class European technology to Zimbabwe’s residential, commercial and hospitality sectors.',
+    bio: 'The visionary entrepreneur behind La Foi Designs, the pioneering force introducing stretch ceiling technology to Africa. Holding a BSc in Business Management & Marketing and an MSc in Supply Chain & Logistics Management, Takudzwa is engineering Africa’s interior revolution from the top down, bringing European stretch ceiling technology to Zimbabwe’s residential, commercial and hospitality sectors.',
   },
   {
     name: 'Ashley Tafirenyika',
@@ -62,7 +62,7 @@ const PEOPLE = [
     org: 'Chief Operating Officer, La Foi Designs',
     tag: 'Leadership',
     icon: Star,
-    bio: 'The engine behind La Foi Designs’ operational excellence. A BSc graduate in Business Management & Entrepreneurship from Chinhoyi University of Technology, Ashley blends strategic thinking with a boots-on-the-ground approach — ensuring every project is delivered with precision, speed and an uncompromising standard of quality. Where the CEO sets the vision, Ashley makes it happen.',
+    bio: 'The engine behind La Foi Designs’ operational excellence. A BSc graduate in Business Management & Entrepreneurship from Chinhoyi University of Technology, Ashley blends strategic thinking with a boots-on-the-ground approach, ensuring every project is delivered with precision, speed and an uncompromising standard of quality. Where the CEO sets the vision, Ashley makes it happen.',
   },
   {
     name: 'Dr. Tinashe Manzungu',
@@ -78,7 +78,7 @@ const PEOPLE = [
     org: 'Deputy Minister of Finance & Investment Promotion',
     tag: 'Keynote',
     icon: Microphone,
-    bio: 'A politician, entrepreneur and legal professional — one of the youngest serving ministers in government. Executive Director of Flame Lily Venture Capital and a Non-Executive Director of the National Building Society. He holds an LLB (Hons) from the University of Zimbabwe and a BSc in Business Administration (Actuarial Science) from Drake University, USA — placing him at the intersection of law, finance and investment policy.',
+    bio: 'A politician, entrepreneur and legal professional, one of the youngest serving ministers in government. Executive Director of Flame Lily Venture Capital and a Non-Executive Director of the National Building Society. He holds an LLB (Hons) from the University of Zimbabwe and a BSc in Business Administration (Actuarial Science) from Drake University, USA, placing him at the intersection of law, finance and investment policy.',
   },
   {
     name: 'Hon. Tinoda Machakaire',
@@ -95,7 +95,7 @@ const PEOPLE = [
     org: 'Co-Founder & Managing Director, La Foi Designs',
     tag: 'Leadership',
     icon: Star,
-    bio: 'A dynamic professional whose work bridges healthcare, entrepreneurship and women’s empowerment. Trained in Podiatry at the University of Huddersfield in the UK, Faith is the Co-Founder and Managing Director of La Foi Designs. A woman of resilience, vision and purpose, she embodies the excellence of African women making a global impact — building businesses, restoring health and inspiring communities.',
+    bio: 'A dynamic professional whose work bridges healthcare, entrepreneurship and women’s empowerment. Trained in Podiatry at the University of Huddersfield in the UK, Faith is the Co-Founder and Managing Director of La Foi Designs. A woman of resilience, vision and purpose, she embodies the excellence of African women making a global impact: building businesses, restoring health and inspiring communities.',
   },
 ]
 
@@ -106,7 +106,7 @@ export default function Launch() {
   useSEO({
     title: 'Official Company Launch | La Foi Designs',
     description:
-      'La Foi Designs official company launch — Friday 13 June 2026 at Cecilia Business Center, 6 Chelmsford Road, Belgravia, Harare. The evening introducing stretch ceiling technology to Africa. View the programme and download the booklet.',
+      'La Foi Designs official company launch, Friday 13 June 2026 at Cecilia Business Center, 6 Chelmsford Road, Belgravia, Harare. The evening introducing stretch ceiling technology to Africa. View the programme and download the booklet.',
     path: '/launch',
     image: '/brand/images/50.png',
     jsonLd: [
@@ -117,7 +117,7 @@ export default function Launch() {
       {
         '@context': 'https://schema.org',
         '@type': 'Event',
-        name: 'La Foi Designs — Official Company Launch',
+        name: 'La Foi Designs: Official Company Launch',
         startDate: '2026-06-13T17:15:00+02:00',
         endDate: '2026-06-13T20:30:00+02:00',
         eventStatus: 'https://schema.org/EventScheduled',
@@ -187,7 +187,7 @@ function LaunchHero() {
 
         <AnimatedSection delay={0.2}>
           <p className="mt-7 max-w-xl text-base lg:text-lg text-white/75 font-body font-light leading-[1.7]">
-            Join us for the evening La Foi Designs opens its doors to the world — bringing world-class European
+            Join us for the evening La Foi Designs opens its doors to the world, bringing European
             stretch ceiling technology to Zimbabwe for the very first time.
           </p>
         </AnimatedSection>
@@ -357,7 +357,7 @@ function BookletCTA() {
           </span>
           <h2 className="font-display text-4xl sm:text-5xl tracking-tight">Take the evening with you</h2>
           <p className="mt-4 max-w-xl mx-auto text-white/70 font-body font-light leading-[1.7]">
-            The full programme, the order of proceedings, and the profiles of every speaker and dignitary —
+            The full programme, the order of proceedings, and the profiles of every speaker and dignitary,
             collected in one keepsake booklet.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">

@@ -137,7 +137,7 @@ export default function Products() {
             transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
             {linkifyProse(
-              'Premium stretch ceilings and bespoke architectural lighting — engineered to disappear into great architecture.'
+              'Stretch ceilings and architectural lighting, engineered to disappear into great architecture.'
             )}
           </motion.p>
 
@@ -214,7 +214,7 @@ export default function Products() {
               </div>
               <p className="font-general text-lafoi-gray max-w-md">
                 {linkifyProse(
-                  'The ceilings our designers reach for first — proven, versatile, documented across our portfolio.'
+                  'The ceilings our designers reach for first, proven and documented across our portfolio.'
                 )}
               </p>
             </div>
