@@ -47,4 +47,12 @@
   <url><loc>https://lafoidesigns.co.zw/projects/chishawasha-residence</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://lafoidesigns.co.zw/projects/greystone-park-residence</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://lafoidesigns.co.zw/projects/shashl-studio</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- Blog articles -->
+  <url><loc>https://lafoidesigns.co.zw/blog/stretch-ceilings-transform-small-spaces</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/blog/acoustic-stretch-ceilings-science</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/blog/fiber-optic-starry-skies</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/blog/stretch-ceilings-vs-plastering</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/blog/stretch-membrane-manufacturing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafoidesigns.co.zw/blog/zimbabwe-interior-trends-2026</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>

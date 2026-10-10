@@ -142,7 +142,7 @@ export default function EditorialHero() {
             <div key={s + i} className={`group relative shrink-0 snap-center w-[78%] sm:w-auto aspect-[4/5] overflow-hidden bg-lafoi-dark ${i === 0 ? 'rounded-tl-[32px] sm:rounded-tl-[40px] rounded-br-lg rounded-tr-lg rounded-bl-lg' : i === 2 ? 'rounded-tr-[32px] sm:rounded-tr-[40px] rounded-bl-lg rounded-tl-lg rounded-br-lg' : 'rounded-lg'}`}>
               <picture>
                 <source srcSet={`/brand/images/${s.replace(/\.(png|jpe?g)$/i, '.webp')}`} type="image/webp" />
-                <img src={img(s)} alt="La Foi stretch ceiling" className="absolute inset-0 w-full h-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105" />
+                <img src={img(s)} alt={`${active.key} finish stretch ceiling with integrated lighting by La Foi Designs, Harare`} className="absolute inset-0 w-full h-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105" />
               </picture>
             </div>
           ))}

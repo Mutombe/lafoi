@@ -27,7 +27,7 @@ const defaultMeta = {
   description: COMPANY_DESC,
   keywords:
     'stretch ceilings Zimbabwe, stretch ceilings Harare, architectural lighting, custom lighting, interior design, La Foi Designs, ceiling lighting Zimbabwe',
-  image: '/og-image.jpg',
+  image: '/og-image.png',
 }
 
 // Site-wide structured data blocks emitted on every page.
@@ -153,7 +153,7 @@ function injectJsonLd(blocks) {
   })
 }
 
-export function useSEO({ title, description, keywords, image, path = '', jsonLd } = {}) {
+export function useSEO({ title, description, keywords, image, path = '', jsonLd, robots } = {}) {
   useEffect(() => {
     const fullTitle = title ? `${title} | ${COMPANY_NAME}` : defaultMeta.title
     const fullDescription = description || defaultMeta.description
@@ -165,6 +165,9 @@ export function useSEO({ title, description, keywords, image, path = '', jsonLd 
 
     document.title = fullTitle
 
+    // Index by default; pages like the hero-preview review route pass
+    // robots:'noindex,nofollow' so they never show up in search results.
+    setMetaTag('robots', robots || 'index, follow, max-image-preview:large, max-snippet:-1')
     setMetaTag('description', fullDescription)
     setMetaTag('keywords', fullKeywords)
     setMetaTag('og:title', fullTitle, true)
@@ -198,7 +201,7 @@ export function useSEO({ title, description, keywords, image, path = '', jsonLd 
       // Don't restore the default title on unmount; the next route's useSEO
       // call will set its own. Restoring causes a brief flicker.
     }
-  }, [title, description, keywords, image, path, JSON.stringify(jsonLd)])
+  }, [title, description, keywords, image, path, robots, JSON.stringify(jsonLd)])
 }
 
 /* ============================================================================

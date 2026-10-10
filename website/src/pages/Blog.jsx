@@ -163,7 +163,7 @@ function BlogHero() {
                 >
                   <OptimizedImage
                     src={src}
-                    alt=""
+                    alt={`La Foi Designs stretch ceiling and lighting detail ${i + 1}`}
                     className="w-full h-full object-cover"
                     fill
                     vision="Field notes thumbnail"
