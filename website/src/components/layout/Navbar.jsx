@@ -14,38 +14,7 @@ import { useSelector } from 'react-redux'
 import { selectIsAuthenticated, selectCurrentUser } from '../../dashboard/store/authSlice'
 import Logo from '../shared/Logo'
 import { useCart } from '../../store/cart'
-
-const navGroups = [
-  {
-    label: 'Discover',
-    items: [
-      { name: 'Official Launch', path: '/launch', icon: Star, desc: 'Our company launch — 13 June 2026' },
-      { name: 'Our Story', path: '/about', icon: Sparkle, desc: 'The journey behind La Foi' },
-      { name: 'Portfolio', path: '/portfolio', icon: Camera, desc: 'Stunning transformations' },
-      { name: 'Projects', path: '/projects', icon: Camera, desc: 'Case studies & transformations' },
-      { name: 'Blog & Insights', path: '/blog', icon: Newspaper, desc: 'Design trends & tips' },
-    ],
-  },
-  {
-    label: 'Services',
-    items: [
-      { name: 'Stretch Ceilings',  path: '/services/stretch-ceiling-installation', icon: SquaresFour, desc: 'Premium membrane systems' },
-      { name: 'Lighting Solutions', path: '/services/lighting-solutions',          icon: Lightbulb,   desc: 'Architectural illumination' },
-      { name: 'Interior Design',    path: '/services/interior-design',             icon: PaintBrush,  desc: 'Concept to completion' },
-      { name: '3D Digital Twins',   path: '/services/3d-digital-twins',            icon: Cube,        desc: 'Matterport spatial capture' },
-      { name: 'All Services',       path: '/services',                             icon: Palette,     desc: 'Full service catalog' },
-      { name: 'Finishes & Products', path: '/portfolio',                            icon: Package,     desc: 'Membranes, lighting & accessories' },
-    ],
-  },
-  {
-    label: 'Connect',
-    items: [
-      { name: 'Contact Us', path: '/contact', icon: Phone, desc: 'Start your project' },
-      { name: 'Careers', path: '/careers', icon: Briefcase, desc: 'Join our team' },
-      { name: 'FAQs', path: '/faq', icon: Question, desc: 'Common questions' },
-    ],
-  },
-]
+import { navGroups } from './navData'
 
 const searchableContent = [
   { title: 'Stretch Ceiling Installation', path: '/services/stretch-ceiling-installation', section: 'Services', keywords: 'stretch ceiling pvc fabric membrane install' },
@@ -107,7 +76,6 @@ function useHasDarkHero(pathname) {
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
-  const [heroPassed, setHeroPassed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -119,26 +87,18 @@ export default function Navbar() {
   const hasDarkHero = useHasDarkHero(location.pathname)
   // When not scrolled on a dark hero page, text should be white
   const isLightText = hasDarkHero && !scrolled
-  // Home carries its own hero header (logo + pill nav), so the global navbar
-  // stays hidden over the hero and slides in only once scrolled past it.
+  // Home carries its own sticky hero header (logo + full pill nav), so the
+  // global navbar is suppressed there entirely — no second nav to keep in sync.
   const isHome = location.pathname === '/'
   const { count: cartCount, openCart } = useCart()
   const isAuthed = useSelector(selectIsAuthenticated)
   const currentUser = useSelector(selectCurrentUser)
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-      // Reveal the global navbar on home only after scrolling past ~85% of the hero.
-      setHeroPassed(window.scrollY > window.innerHeight * 0.85)
-    }
+    const handleScroll = () => setScrolled(window.scrollY > 50)
     handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('resize', handleScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleScroll)
-    }
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
@@ -194,8 +154,8 @@ export default function Navbar() {
     setSearchQuery('')
   }
 
-  // On the homepage the editorial hero is the header until you scroll past it.
-  if (isHome && !heroPassed) return null
+  // On the homepage the editorial hero carries its own sticky header.
+  if (isHome) return null
 
   return (
     <>
