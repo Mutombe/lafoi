@@ -1464,7 +1464,7 @@ function ShowroomSection() {
           <div className="relative aspect-[16/10] sm:aspect-[16/9] rounded-sm overflow-hidden ring-1 ring-white/10 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.75)] bg-black">
             <iframe
               title="La Foi showroom, interactive Matterport 3D tour"
-              src="https://my.matterport.com/show/?m=w6rLGbghgQ6&play=1&qs=1&title=0"
+              src="https://my.matterport.com/show/?m=i8b6nSLsyfb&play=1&qs=1&title=0"
               className="absolute inset-0 w-full h-full"
               frameBorder="0"
               allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer"

@@ -188,7 +188,7 @@ const allServices = [
     icon: Cube,
     title: '3D Digital Twins',
     subtitle: 'Matterport spatial capture',
-    matterport: 'https://my.matterport.com/show/?m=w6rLGbghgQ6',
+    matterport: 'https://my.matterport.com/show/?m=i8b6nSLsyfb',
     hero: '/brand/images/46.png',
     heroVision: 'Geometric linear-LED stretch ceiling, the kind of finished La Foi space captured as a 3D twin',
     desc: 'We scan a finished space with Matterport into a navigable 3D digital twin clients open from any device. Walk the room from anywhere and pull true measurements from the model, the difference between describing a space and standing in it.',
