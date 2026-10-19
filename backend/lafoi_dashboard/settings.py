@@ -197,8 +197,16 @@ REST_FRAMEWORK["DEFAULT_PAGINATION_CLASS"] = "lafoi_dashboard.pagination.Scalabl
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    # Rotation is OFF on purpose. With rotation + blacklist, a refresh consumes
+    # the old refresh token, so any *second* refresh carrying that same token is
+    # rejected. The dashboard fires ~6 queries in parallel and admins keep
+    # several tabs open, so concurrent/stale refreshes were routine — the loser
+    # of the race got "session expired" moments after signing in. A stable,
+    # reusable refresh token for its 7-day life removes the race entirely. This
+    # is an internal studio tool for trusted staff, so the modest security
+    # trade-off (a leaked refresh token stays valid longer) is acceptable.
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
