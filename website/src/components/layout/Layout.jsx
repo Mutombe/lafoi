@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Cookie, Shield, FileText } from '@phosphor-icons/react'
 import WelcomeModal from './WelcomeModal'
 import { toast } from 'sonner'
-import Navbar from './Navbar'
+import SiteNav from './SiteNav'
 import Footer from './Footer'
 import { CmsEditLayer, CmsAutoLayer, isCmsEdit } from '../../cms/editable'
 
@@ -62,7 +62,7 @@ export default function Layout({ children }) {
         />
       </div>
 
-      <Navbar />
+      <SiteNav />
       <main className="flex-1">{children}</main>
       <Footer onOpenPolicy={() => setPolicyOpen(true)} onOpenPrivacy={() => setPrivacyOpen(true)} />
 

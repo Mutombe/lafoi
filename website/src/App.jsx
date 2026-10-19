@@ -86,14 +86,18 @@ export default function App() {
     )
   }
 
-  // Hero concept for team review — standalone, no site chrome.
+  // Hero concept for team review — the hero plus the shared site nav, no other
+  // chrome. Wrapped in CartProvider so SiteNav's cart hook resolves here too.
   if (isHeroPreview) {
     return (
-      <Suspense fallback={<LoadingScreen />}>
-        <Routes>
-          <Route path="/hero-preview" element={<HeroPreview />} />
-        </Routes>
-      </Suspense>
+      <CartProvider>
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes>
+            <Route path="/hero-preview" element={<HeroPreview />} />
+          </Routes>
+        </Suspense>
+        <CartDrawer />
+      </CartProvider>
     )
   }
 
