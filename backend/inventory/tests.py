@@ -144,6 +144,48 @@ class ItemAPITests(TestCase):
         self.assertEqual(self.item.cost_price, Decimal('7.50'))
         self.assertTrue(Item.objects.filter(sku='NEW-001').exists())
 
+    def _import(self, csv_text):
+        upload = BytesIO(csv_text.encode('utf-8'))
+        upload.name = 'inv.csv'
+        return self.client.post('/api/items/import_csv/', {'file': upload}, format='multipart')
+
+    def test_csv_import_sets_size_and_opening_stock(self):
+        # No sku: matches nothing yet -> creates, stores size_spec, and sets
+        # the on-hand balance at the default location via an adjust movement.
+        resp = self._import(
+            'name,size_spec,unit,opening_stock\n'
+            'H Profiles,2.5m,piece,386\n'
+        )
+        self.assertEqual(resp.status_code, 200, resp.content)
+        body = resp.json()
+        self.assertEqual(body['created'], 1)
+        self.assertEqual(body['stock_set'], 1)
+        item = Item.objects.get(name='H Profiles', size_spec='2.5m')
+        self.assertEqual(item.on_hand, Decimal('386'))
+
+    def test_csv_import_opening_stock_is_idempotent(self):
+        csv_text = 'name,size_spec,unit,opening_stock\nH Profiles,3m,piece,10\n'
+        first = self._import(csv_text).json()
+        second = self._import(csv_text).json()
+        # First run creates the item + posts one balance movement; the second
+        # matches the same item (no duplicate) and posts nothing (delta is 0).
+        self.assertEqual(first['created'], 1)
+        self.assertEqual(first['stock_set'], 1)
+        self.assertEqual(second['created'], 0)
+        self.assertEqual(second['updated'], 1)
+        self.assertEqual(second['stock_set'], 0)
+        self.assertEqual(Item.objects.filter(name='H Profiles', size_spec='3m').count(), 1)
+        self.assertEqual(Movement.objects.filter(reason='adjust').count(), 1)
+
+    def test_csv_import_matches_existing_item_by_name_and_size(self):
+        # An item that already exists (seeded in setUpTestData) with the same
+        # name + blank size is updated, not duplicated.
+        resp = self._import('name,unit,reorder_threshold\nAluminium trim 3m,piece,99\n')
+        self.assertEqual(resp.json()['updated'], 1)
+        self.assertEqual(resp.json()['created'], 0)
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.reorder_threshold, Decimal('99'))
+
     def test_export_csv_streams_catalogue(self):
         resp = self.client.get('/api/items/export_csv/')
         self.assertEqual(resp.status_code, 200)

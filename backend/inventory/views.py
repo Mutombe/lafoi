@@ -297,14 +297,30 @@ class ItemViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='import_csv', parser_classes=[MultiPartParser, FormParser])
     def import_csv(self, request):
-        """Upsert items by SKU from a CSV upload.
+        """Upsert items from a CSV upload, optionally setting opening balances.
 
-        Recognised columns (header-driven, all optional except SKU + name):
-          sku, name, barcode, category, supplier, unit,
+        Recognised columns (header-driven, all optional except `name`):
+          sku, name, barcode, size_spec, category, supplier, unit,
           cost_price, sale_price, currency,
-          reorder_threshold, reorder_quantity, is_active
+          reorder_threshold, reorder_quantity, is_active,
+          opening_stock, location
 
-        Returns: {created: N, updated: N, errors: [{row, error}]}.
+        Matching (so re-importing never duplicates):
+          - If `sku` is given, upsert by SKU.
+          - Otherwise match an existing item by name + size_spec (case-
+            insensitive). One match updates it; none creates it; several is an
+            error (ambiguous — add a SKU to disambiguate).
+
+        Opening balance:
+          - When `opening_stock` is a non-blank number, the item's on-hand at
+            `location` is SET to that absolute figure by posting an `adjust`
+            movement for the difference. This is idempotent — importing the same
+            file twice posts a correcting movement only the first time.
+          - `location` resolves an existing StockLocation by name; if omitted we
+            use the default location, or the only location when there is exactly
+            one. With stock but no resolvable location, the row errors.
+
+        Returns: {created, updated, stock_set, errors: [{row, error}]}.
         """
         upload = request.FILES.get('file') or request.FILES.get('csv')
         if not upload:
@@ -317,11 +333,18 @@ class ItemViewSet(viewsets.ModelViewSet):
         reader = csv.DictReader(io.StringIO(text))
         created = 0
         updated = 0
+        stock_set = 0
         errors = []
 
         # Build name → instance lookups once so we don't query per row.
         cat_by_name = {c.name.lower(): c for c in Category.objects.all()}
         sup_by_name = {s.name.lower(): s for s in Supplier.objects.all()}
+        loc_by_name = {l.name.lower(): l for l in StockLocation.objects.all()}
+        default_loc = (
+            next((l for l in loc_by_name.values() if l.is_default), None)
+            or (next(iter(loc_by_name.values())) if len(loc_by_name) == 1 else None)
+        )
+        user = request.user if request.user.is_authenticated else None
 
         for idx, raw_row in enumerate(reader, start=2):  # row 1 = header
             row = {(k or '').strip().lower(): (v or '').strip() for k, v in raw_row.items() if k}
@@ -333,10 +356,12 @@ class ItemViewSet(viewsets.ModelViewSet):
 
             cat = cat_by_name.get(row.get('category', '').lower()) if row.get('category') else None
             sup = sup_by_name.get(row.get('supplier', '').lower()) if row.get('supplier') else None
+            size_spec = row.get('size_spec', '') or ''
             try:
                 payload = {
                     'name': name,
                     'barcode': row.get('barcode', '') or '',
+                    'size_spec': size_spec,
                     'unit': row.get('unit') or 'piece',
                     'currency': row.get('currency') or 'USD',
                     'cost_price': _to_decimal(row.get('cost_price'), 'cost_price'),
@@ -349,19 +374,47 @@ class ItemViewSet(viewsets.ModelViewSet):
                 }
                 if sku:
                     item, was_created = Item.objects.update_or_create(sku=sku, defaults=payload)
-                    if was_created:
-                        created += 1
-                    else:
-                        updated += 1
+                    created, updated = (created + 1, updated) if was_created else (created, updated + 1)
                 else:
-                    Item.objects.create(**payload)
-                    created += 1
+                    matches = Item.objects.filter(name__iexact=name, size_spec__iexact=size_spec)
+                    if matches.count() > 1:
+                        errors.append({"row": idx, "error": f"{matches.count()} existing items match '{name}' / '{size_spec}'. Add a sku column to disambiguate."})
+                        continue
+                    existing = matches.first()
+                    if existing:
+                        for field, value in payload.items():
+                            setattr(existing, field, value)
+                        existing.save()
+                        item = existing
+                        updated += 1
+                    else:
+                        item = Item.objects.create(**payload)
+                        created += 1
+
+                # --- Opening balance (absolute set via an adjust movement) ---
+                raw_stock = row.get('opening_stock')
+                if raw_stock not in (None, ''):
+                    target = _to_decimal(raw_stock, 'opening_stock')
+                    loc = loc_by_name.get(row.get('location', '').lower()) if row.get('location') else default_loc
+                    if loc is None:
+                        errors.append({"row": idx, "error": "opening_stock given but no `location` column and no default location to apply it to."})
+                        continue
+                    stock = Stock.objects.filter(item=item, location=loc).first()
+                    current = stock.quantity if stock else Decimal('0')
+                    delta = target - current
+                    if delta != 0:
+                        Movement.objects.create(
+                            item=item, location=loc, quantity=delta, reason='adjust',
+                            reference='CSV import', notes='Opening balance via CSV import',
+                            performed_by=user,
+                        )
+                        stock_set += 1
             except ValidationError:
                 raise
             except Exception as exc:  # pragma: no cover — defence in depth
                 errors.append({"row": idx, "error": str(exc)})
 
-        return Response({"created": created, "updated": updated, "errors": errors})
+        return Response({"created": created, "updated": updated, "stock_set": stock_set, "errors": errors})
 
 
 class StockViewSet(viewsets.ReadOnlyModelViewSet):
