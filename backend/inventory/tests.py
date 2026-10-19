@@ -177,6 +177,19 @@ class ItemAPITests(TestCase):
         self.assertEqual(Item.objects.filter(name='H Profiles', size_spec='3m').count(), 1)
         self.assertEqual(Movement.objects.filter(reason='adjust').count(), 1)
 
+    def test_csv_import_creates_missing_category(self):
+        novel = 'Fibre Optics Kit'
+        self.assertFalse(Category.objects.filter(name__iexact=novel).exists())
+        resp = self._import(f'name,category,unit\n2835 6000K,{novel},roll\n')
+        self.assertEqual(resp.status_code, 200, resp.content)
+        self.assertEqual(resp.json()['created'], 1)
+        item = Item.objects.get(name='2835 6000K')
+        self.assertIsNotNone(item.category)
+        self.assertEqual(item.category.name, novel)
+        # A second row with the same category name (any case) reuses it.
+        self._import(f'name,category,unit\nCOB 3000K,{novel.lower()},roll\n')
+        self.assertEqual(Category.objects.filter(name__iexact=novel).count(), 1)
+
     def test_csv_import_matches_existing_item_by_name_and_size(self):
         # An item that already exists (seeded in setUpTestData) with the same
         # name + blank size is updated, not duplicated.

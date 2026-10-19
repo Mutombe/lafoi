@@ -305,6 +305,10 @@ class ItemViewSet(viewsets.ModelViewSet):
           reorder_threshold, reorder_quantity, is_active,
           opening_stock, location
 
+        Categories named in the file are created when they don't already
+        exist (matched case-insensitively), so a first import can bring its own
+        taxonomy. Suppliers are only linked when they already exist.
+
         Matching (so re-importing never duplicates):
           - If `sku` is given, upsert by SKU.
           - Otherwise match an existing item by name + size_spec (case-
@@ -354,7 +358,13 @@ class ItemViewSet(viewsets.ModelViewSet):
                 errors.append({"row": idx, "error": "Missing `name` column."})
                 continue
 
-            cat = cat_by_name.get(row.get('category', '').lower()) if row.get('category') else None
+            cat_name = row.get('category', '')
+            cat = cat_by_name.get(cat_name.lower()) if cat_name else None
+            if cat_name and cat is None:
+                # Auto-create categories named in the file so a first import can
+                # bring its own taxonomy without pre-seeding every category.
+                cat = Category.objects.create(name=cat_name)
+                cat_by_name[cat_name.lower()] = cat
             sup = sup_by_name.get(row.get('supplier', '').lower()) if row.get('supplier') else None
             size_spec = row.get('size_spec', '') or ''
             try:
